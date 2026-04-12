@@ -123,7 +123,7 @@
               id="schedule[date]"
               phx-hook="SetLocalDateValue"
               data-value={raw(get_field(@changeset, :scheduled_for) |> maybe_print_datetime())}
-              class="bg-white hover:bg-fluxo-100 text-black"
+              class="bg-white hover:bg-emerald-100 text-black"
             />
           </div>
           <div class="flex flex-col">
@@ -132,7 +132,7 @@
               type="time"
               id="schedule[time]"
               name="schedule[time]"
-              class="bg-white hover:bg-fluxo-100 text-black"
+              class="bg-white hover:bg-emerald-100 text-black"
               phx-hook="SetLocalTimeValue"
               data-value={raw(get_field(@changeset, :scheduled_for) |> maybe_print_datetime())}
             />
@@ -300,7 +300,7 @@
               type="text"
               name="emails"
               class="text-black"
-              placeholder="contato@suaempresa.com.br, teste@suaempresa.com.br"
+              placeholder="ola@suaempresa.com.br, teste@suaempresa.com.br"
               autofocus
             />
           </div>
@@ -318,4 +318,6 @@
             </button>
           </div>
       <% end %>
-    </form
+    </form>
+  </div>
+</div>

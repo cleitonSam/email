@@ -13,7 +13,7 @@
 
 <div class="container mb-4">
   <p>
-    {dgettext("admin", "Aqui você pode gerenciar outros usuários da sua instância do Fluxo Email MKT.")}
+    {dgettext("admin", "Here you can manage other users on your Fluxo Email MKT instance.")}
   </p>
 </div>
 
@@ -99,4 +99,6 @@
       <div class="flex gap-3 justify-center py-8">
         <.pagination_nav pagination={@users} href={&~p"/admin/users?page=#{&1 + 1}"} />
       </div>
-    <% end 
+    <% end %>
+  </div>
+<% end %>

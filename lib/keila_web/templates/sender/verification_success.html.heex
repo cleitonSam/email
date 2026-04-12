@@ -5,11 +5,13 @@
     </h1>
     <p class="text-lg text-gray-200">
       {gettext(
-        "Obrigado por verificar seu remetente. Agora você pode começar a enviar emails com o Fluxo Email MKT."
+        "Thank you for verifying your sender. You can now start sending emails with Fluxo Email MKT."
       )}
     </p>
     <p>
       <a class="button" href={Routes.project_path(@conn, :show, @sender.project_id)}>
         {gettext("Back to your project")}
       </a>
-    </p
+    </p>
+  </div>
+</div>

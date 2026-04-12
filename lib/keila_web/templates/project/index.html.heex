@@ -7,10 +7,10 @@
         </span>
         <div class="flex flex-col gap-4 max-w-md">
           <h1 class="text-xl sm:text-2xl">
-            {gettext("Bem-vindo ao Fluxo Email MKT!")}
+            {gettext("Welcome to Fluxo Email MKT!")}
           </h1>
           {gettext_md("""
-          O Fluxo Email MKT organiza contatos, formulários e campanhas em *projetos*.
+          Fluxo Email MKT organizes contacts, forms, and campaigns in *projects*.
 
           You can create multiple projects, e.g. if you want
           to separate your gardening business newsletter from
@@ -46,4 +46,6 @@
       <a class="card bg-gray-800 text-2xl" href={Routes.project_path(@conn, :show, project.id)}>
         {project.name}
       </a>
-    <% en
+    <% end %>
+  </div>
+<% end %>

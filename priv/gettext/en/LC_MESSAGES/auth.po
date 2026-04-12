@@ -218,4 +218,6 @@ msgid "Hey there,\n\nplease verify your sender email address by visiting the fol
 msgstr ""
 
 #: lib/keila/auth/emails.ex:115
-#, elixir-autogen, elixir-format, fu
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Please Verify Your Email for Fluxo Email MKT"
+msgstr ""

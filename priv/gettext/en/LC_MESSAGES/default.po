@@ -836,7 +836,7 @@ msgstr ""
 
 #: lib/keila_web/templates/project/new.html.heex:26
 #, elixir-autogen, elixir-format
-msgid "My Fluxo Email MKT Project"
+msgid "Meu Projeto"
 msgstr ""
 
 #: lib/keila/contacts/contacts.ex:270
@@ -1602,7 +1602,7 @@ msgstr ""
 
 #: lib/keila_web/templates/project/_empty_state_templates_campaigns.html.heex:8
 #, elixir-autogen, elixir-format
-msgid "You can get started sending campaigns with Fluxo Email MKT’s default template now.\n\nTo create your design, you can use the template editor.\n"
+msgid "You can get started sending campaigns with Keila’s default template now.\n\nTo create your design, you can use the template editor.\n"
 msgstr ""
 
 #: lib/keila_web/templates/project/_empty_state_campaigns.html.heex:8
@@ -1948,7 +1948,7 @@ msgstr ""
 
 #: lib/keila_web/templates/campaign/_wysiwyg_dialogs.html.heex:278
 #, elixir-autogen, elixir-format
-msgid "Read more about [how to use Liquid in Fluxo Email MKT](https://fluxodigitaltech.com.br/docs/campaigns#liquid-templating)\nor about [custom contact data](https://fluxodigitaltech.com.br/docs/contacts#contact-data).\n"
+msgid "Read more about [how to use Liquid in Fluxo Email MKT](https://fluxodigitaltech.com.br)\nor about [custom contact data](https://fluxodigitaltech.com.br).\n"
 msgstr ""
 
 #: lib/keila_web/templates/campaign/_wysiwyg_dialogs.html.heex:239
@@ -3517,3 +3517,12 @@ msgstr ""
 
 #: lib/keila_web/templates/campaign/_block_editor.html.heex:159
 #, elixir-autogen, elixir-format
+msgctxt "text-alignment"
+msgid "Left"
+msgstr ""
+
+#: lib/keila_web/templates/campaign/_block_editor.html.heex:165
+#, elixir-autogen, elixir-format, fuzzy
+msgctxt "text-alignment"
+msgid "Right"
+msgstr ""

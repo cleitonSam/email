@@ -164,4 +164,6 @@ msgid "Status"
 msgstr ""
 
 #: extra/keila_cloud_web/templates/cloud_admin/user_account_status.html.heex:52
-#, elixi
+#, elixir-autogen, elixir-format
+msgid "Update status"
+msgstr ""

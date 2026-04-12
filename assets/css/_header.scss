@@ -15,13 +15,13 @@
 }
 
 .menu-link {
-    @apply flex gap-2 items-center text-white hover:bg-fluxo-600 hover:text-white px-3 py-2 rounded-md text-sm font-medium;
+    @apply flex gap-2 items-center text-white hover:bg-fluxo-700/50 px-3 py-2 rounded-md text-sm font-medium transition-all duration-150;
 
     &.menu-link--active {
-        @apply bg-fluxo-600 text-white;
+        @apply bg-gradient-to-r from-fluxo-600 to-fluxo-500 text-white;
     }
 
     &.sml-4.menu-link--active {
-        @apply bg-fluxo-700 text-white;
+        @apply bg-gradient-to-r from-fluxo-600 to-fluxo-500 text-white;
     }
 }

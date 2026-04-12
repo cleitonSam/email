@@ -24,11 +24,11 @@ html {
 }
 
 .card {
-    @apply p-4 sm:max-w-5xl sm:p-8;
+    @apply p-4 sm:max-w-5xl sm:p-8 bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl shadow-lg transition-all duration-200 hover:border-fluxo-500/30 hover:shadow-fluxo/10;
 }
 
 .button {
-    @apply rounded inline-flex flex-nowrap whitespace-nowrap px-2 py-1 gap-2 outline-none items-center focus:outline-none cursor-pointer disabled:cursor-default;
+    @apply rounded-lg inline-flex flex-nowrap whitespace-nowrap px-2 py-1 gap-2 outline-none items-center focus:outline-none cursor-pointer disabled:cursor-default transition-all duration-200;
 
     svg {
         @apply w-6 flex-grow-0;
@@ -42,12 +42,12 @@ html {
     }
 
     &.button--cta {
-        @apply bg-fluxo-600 text-white outline-none
-            hover:ring-2 hover:ring-fluxo-400
-            focus:ring-2 hover:ring-fluxo-400
+        @apply bg-gradient-to-r from-fluxo-500 to-fluxo-600 text-white outline-none transform
+            hover:ring-2 hover:ring-fluxo-400 hover:scale-[1.02] hover:shadow-fluxo
+            focus:ring-2 focus:ring-fluxo-400
             active:bg-fluxo-700
             disabled:bg-gray-700 disabled:text-gray-500
-            disabled:ring-gray-600 disabled:hover:ring-gray-600;
+            disabled:ring-gray-600 disabled:hover:ring-gray-600 disabled:transform-none disabled:scale-100;
     }
 
     &.button--muted {
@@ -56,7 +56,7 @@ html {
     }
 
     &.button--white {
-        @apply bg-white text-fluxo-600 ring-2 ring-fluxo-600 hover:bg-gray-50 hover:ring-fluxo-400 focus:ring-fluxo-400 active:bg-gray-200 active:text-fluxo-600;
+        @apply bg-white text-fluxo-600 border border-gray-200 hover:bg-gray-50 hover:ring-fluxo-400 focus:ring-fluxo-400 active:bg-gray-200 active:text-fluxo-600;
     }
 
     &.button--white-frame {
@@ -98,13 +98,15 @@ html {
 }
 
 select,
-input[type="date"] {
-    color: black !important;
+input[type="date"],
+input:not([type="checkbox"]):not([type="radio"]),
+textarea {
+    @apply rounded-lg bg-gray-800 border border-gray-700 text-white placeholder-gray-500 focus:border-fluxo-500 focus:ring-fluxo-500/20;
 }
 
 .form-error-indicator + input,
 .form-error-indicator + textarea {
-    @apply bg-red-300 text-gray-900;
+    @apply bg-red-300 text-gray-900 border-red-500;
 }
 
 .form-error-indicator + div.h-captcha iframe,
@@ -119,10 +121,14 @@ input[disabled] {
 
 .tabs {
     .tab-label {
-        @apply inline-block bg-gray-600 hover:bg-gray-500 px-2 py-2 rounded-t;
+        @apply inline-block bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-t text-white transition-all duration-200 relative;
 
         &.active {
-            @apply bg-gray-50 text-gray-900;
+            @apply bg-fluxo-600 text-white;
+
+            &::after {
+                @apply content-[''] absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-fluxo-400 to-cyan-400;
+            }
         }
     }
 
@@ -385,4 +391,18 @@ Hover helper to bridge the gap between the Plus button and the toolbox
 /* Fix for Safari SVG display issues */
 svg {
     flex: auto;
+}
+
+/* Utility Classes for Modern Design */
+
+.glass-card {
+    @apply bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl;
+}
+
+.gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-fluxo-400 to-cyan-400;
+}
+
+.hover-glow {
+    @apply transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,102,255,0.3)];
 }

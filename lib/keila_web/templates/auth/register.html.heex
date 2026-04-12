@@ -1,35 +1,36 @@
-<div class="container mt-8">
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-950 via-fluxo-900/20 to-gray-950">
   <.form
     :let={f}
     for={@changeset}
     action={Routes.auth_path(@conn, :post_register)}
-    class="rounded shadow-fluxo p-8 mt-8 max-w-xl mx-auto flex flex-col gap-4 bg-fluxo-900 text-gray-50"
+    class="rounded-2xl bg-white/5 backdrop-blur-lg border border-white/10 shadow-2xl p-10 max-w-md mx-auto flex flex-col gap-4 text-gray-50"
   >
-    <h1 class="text-5xl font-bold">
-      {gettext("Comece a enviar emails com Fluxo Email MKT")}
+    <div class="text-center mb-6"><span class="inline-block h-16 w-16 text-fluxo-400">{render_icon(:logo)}</span></div>
+    <h1 class="font-display text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-fluxo-400 to-cyan-400">
+      {gettext("Start sending emails with Keila now")}
     </h1>
     <p class="text-lg text-gray-200">
       {gettext(
-        "Crie sua conta agora e comece seu projeto de email marketing em minutos."
+        "Register your Keila account now and start your newsletter project within minutes."
       )}
     </p>
     <div class="flex flex-col">
       {label(f, :email, gettext("Email"))}
       <%= with_validation(f, :email) do %>
         {text_input(f, :email,
-          placeholder: gettext("voce@suaempresa.com.br"),
-          class: "text-black",
+          placeholder: gettext("you@keila.io"),
+          class: "bg-gray-800/50 border border-gray-700 text-white",
           autofocus: true
         )}
       <% end %>
     </div>
     <div class="flex flex-col">
-      {label(f, :password, gettext("Password"))}
+      {label(f, :password, gettext("Senha"))}
       <p class="text-gray-300 text-sm mb-2">
         {gettext("Must have at least 10 characters.")}
       </p>
       <%= with_validation(f, :password) do %>
-        {password_input(f, :password, class: "text-black")}
+        {password_input(f, :password, class: "bg-gray-800/50 border border-gray-700 text-white")}
       <% end %>
     </div>
     <div class="flex flex-col">
@@ -44,14 +45,14 @@
       {hidden_input(f, :locale, value: Gettext.get_locale())}
     </div>
     <div class="flex justify-end mt-8">
-      <button class="button button--cta button--large">
+      <button class="w-full button button--cta button--large">
         {render_icon(:key)}
         {gettext("Sign up now")}
       </button>
     </div>
     <p>
       {gettext("Already have an account?")}
-      <a href={Routes.auth_path(@conn, :login)} class="underline">{gettext("Sign in.")}</a>
+      <a href={Routes.auth_path(@conn, :login)} class="text-fluxo-400 hover:text-cyan-400 transition-colors">{gettext("Sign in.")}</a>
     </p>
   </.form>
 </div>

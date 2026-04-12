@@ -1,0 +1,169 @@
+## "msgid"s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove "msgid"s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use "mix gettext.extract --merge" or "mix gettext.merge"
+## to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: pt\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: lib/keila_web/templates/user_admin/show_credits.html.heex:12
+#, elixir-autogen, elixir-format
+msgid "%{remaining} / %{total} credits"
+msgstr "%{remaining} / %{total} créditos"
+
+#: lib/keila_web/templates/user_admin/index.html.heex:26
+#, elixir-autogen, elixir-format
+msgid "Activation"
+msgstr "Ativação"
+
+#: lib/keila_web/templates/user_admin/index.html.heex:54
+#: lib/keila_web/templates/user_admin/show_credits.html.heex:26
+#: lib/keila_web/templates/user_admin/show_credits.html.heex:85
+#, elixir-autogen, elixir-format
+msgid "Add credits"
+msgstr "Adicionar créditos"
+
+#: lib/keila_web/templates/user_admin/show_credits.html.heex:3
+#, elixir-autogen, elixir-format
+msgid "Administer Credits for %{email}"
+msgstr "Administrar créditos para %{email}"
+
+#: lib/keila_web/controllers/user_admin_controller.ex:17
+#, elixir-autogen, elixir-format
+msgid "Administrate Users"
+msgstr "Administrar usuários"
+
+#: lib/keila_web/templates/user_admin/show_credits.html.heex:29
+#, elixir-autogen, elixir-format
+msgid "Amount"
+msgstr "Quantidade"
+
+#: lib/keila_web/templates/shared_sender_admin/delete.html.heex:10
+#, elixir-autogen, elixir-format
+msgid "Campaigns associated with this sender will not be deleted."
+msgstr "Campanhas associadas a este remetente não serão excluídas."
+
+#: lib/keila_web/templates/shared_sender_admin/index.html.heex:9
+#, elixir-autogen, elixir-format
+msgid "Create a new Shared Sender"
+msgstr "Criar novo remetente compartilhado"
+
+#: lib/keila_web/templates/user_admin/index.html.heex:28
+#, elixir-autogen, elixir-format
+msgid "Credits"
+msgstr "Créditos"
+
+#: lib/keila_web/templates/user_admin/show_credits.html.heex:9
+#, elixir-autogen, elixir-format
+msgid "Credits for account %{account}"
+msgstr "Créditos para a conta %{account}"
+
+#: lib/keila_web/templates/shared_sender_admin/delete.html.heex:3
+#, elixir-autogen, elixir-format
+msgid "Delete Shared Sender %{sender}?"
+msgstr "Excluir remetente compartilhado %{sender}?"
+
+#: lib/keila_web/templates/shared_sender_admin/delete.html.heex:13
+#, elixir-autogen, elixir-format
+msgid "Deleting a shared sender cannot be undone."
+msgstr "A exclusão de um remetente compartilhado não pode ser desfeita."
+
+#: lib/keila_web/templates/user_admin/index.html.heex:24
+#, elixir-autogen, elixir-format
+msgid "Email"
+msgstr "Email"
+
+#: lib/keila_web/templates/user_admin/index.html.heex:16
+#, elixir-autogen, elixir-format
+msgid "Here you can manage other users on your Fluxo Email MKT instance."
+msgstr "Aqui você pode gerenciar outros usuários em sua instância do Fluxo Email MKT."
+
+#: lib/keila_web/templates/shared_sender_admin/edit.html.heex:9
+#, elixir-autogen, elixir-format
+msgid "New Shared Sender"
+msgstr "Novo remetente compartilhado"
+
+#: lib/keila_web/templates/shared_sender_admin/edit.html.heex:51
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Shared Sender Name"
+msgstr "Nome do remetente compartilhado"
+
+#: lib/keila_web/templates/shared_sender_admin/edit.html.heex:54
+#, elixir-autogen, elixir-format
+msgid "My Shared Sender"
+msgstr "Meu remetente compartilhado"
+
+#: lib/keila_web/templates/shared_sender_admin/index.html.heex:4
+#, elixir-autogen, elixir-format
+msgid "Shared Senders"
+msgstr "Remetentes compartilhados"
+
+#: lib/keila_web/templates/shared_sender_admin/index.html.heex:17
+#, elixir-autogen, elixir-format
+msgid "Shared Senders are available to all users on this instance of Fluxo Email MKT."
+msgstr "Remetentes compartilhados estão disponíveis para todos os usuários nesta instância do Fluxo Email MKT."
+
+#: lib/keila_web/templates/user_admin/index.html.heex:25
+#, elixir-autogen, elixir-format
+msgid "Sign-up"
+msgstr "Cadastro"
+
+#: lib/keila_web/templates/shared_sender_admin/delete.html.heex:26
+#, elixir-autogen, elixir-format
+msgid "Type in the shared sender name to confirm its deletion:"
+msgstr "Digite o nome do remetente compartilhado para confirmar sua exclusão:"
+
+#: lib/keila_web/templates/user_admin/index.html.heex:77
+#, elixir-autogen, elixir-format
+msgid "Login as"
+msgstr "Fazer login como"
+
+#: lib/keila_web/templates/layout/app.html.heex:16
+#, elixir-autogen, elixir-format
+msgid "A new version of Fluxo Email MKT is available."
+msgstr "Uma nova versão do Fluxo Email MKT está disponível."
+
+#: lib/keila_web/templates/layout/app.html.heex:17
+#, elixir-autogen, elixir-format
+msgid "Read more"
+msgstr "Leia mais"
+
+#: lib/keila_web/templates/layout/_menu.html.heex:153
+#, elixir-autogen, elixir-format
+msgid "System Info"
+msgstr "Informações do sistema"
+
+#: lib/keila_web/templates/instance_admin/show.html.heex:4
+#, elixir-autogen, elixir-format
+msgid "You are currently running Fluxo Email MKT %{version} on %{host}."
+msgstr "Você está executando o Fluxo Email MKT %{version} em %{host}."
+
+#: lib/keila_web/templates/instance_admin/show.html.heex:19
+#, elixir-autogen, elixir-format
+msgid "There are updates available for your Fluxo Email MKT instance!"
+msgstr "Existem atualizações disponíveis para sua instância do Fluxo Email MKT!"
+
+#: lib/keila_web/templates/instance_admin/show.html.heex:42
+#, elixir-autogen, elixir-format
+msgid "Update checks are disabled."
+msgstr "As verificações de atualização estão desativadas."
+
+#: lib/keila_web/templates/instance_admin/show.html.heex:37
+#, elixir-autogen, elixir-format
+msgid "You seem to be running the most recent version of Fluxo Email MKT!"
+msgstr "Parece que você está executando a versão mais recente do Fluxo Email MKT!"
+
+#: extra/keila_cloud_web/templates/cloud_admin/user_account_status.html.heex:47
+#, elixir-autogen, elixir-format
+msgid "Status"
+msgstr "Status"
+
+#: extra/keila_cloud_web/templates/cloud_admin/user_account_status.html.heex:52
+#, elixir-autogen, elixir-format
+msgid "Update status"
+msgstr "Atualizar status"

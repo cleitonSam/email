@@ -1,0 +1,449 @@
+================================================================================
+FLUXO EMAIL MKT - PRODUCTION DEPLOYMENT SETUP SUMMARY
+================================================================================
+
+Project: Keila Email Marketing Platform (Rebranded as "Fluxo Email MKT")
+Date: April 12, 2026
+Location: C:\Users\cleit\OneDrive\Documentos\Fluxo\email\
+
+================================================================================
+FILES CREATED
+================================================================================
+
+1. docker-compose.prod.yml (2.9 KB)
+   ├─ Production-ready Docker Compose configuration
+   ├─ External PostgreSQL: server.fluxodigitaltech.com.br:5440
+   ├─ External Redis: server.fluxodigitaltech.com.br:6379
+   ├─ Internal Redis for local caching
+   ├─ Port 4001 mapped to internal port 4000
+   ├─ Health checks every 30 seconds
+   ├─ Auto-restart policy (unless-stopped)
+   ├─ Volume persistence (/opt/app/uploads)
+   └─ Isolated Docker network (fluxo_emailmkt_network)
+
+2. .env.production (4.6 KB)
+   ├─ Complete environment configuration template
+   ├─ Pre-filled with known values:
+   │  ├─ DB_URL: postgres://postgres:o2026Secure99x@server.fluxodigitaltech.com.br:5440/fluxo_emailmkt
+   │  └─ REDIS_URL: redis://default:a0b5ce3da557ad432a2f@server.fluxodigitaltech.com.br:6379
+   ├─ Requires configuration:
+   │  ├─ SECRET_KEY_BASE (generate: openssl rand -base64 32)
+   │  ├─ MAILER_SMTP_HOST
+   │  ├─ MAILER_SMTP_USER
+   │  ├─ MAILER_SMTP_PASSWORD
+   │  ├─ MAILER_SMTP_FROM_EMAIL
+   │  └─ USER_CONTENT_BASE_URL (recommended for security)
+   └─ All settings documented with detailed comments
+
+3. scripts/deploy.sh (11 KB)
+   ├─ Automated deployment orchestration script
+   ├─ Commands:
+   │  ├─ ./scripts/deploy.sh [up]     - Full deployment (default)
+   │  ├─ ./scripts/deploy.sh down     - Stop containers
+   │  ├─ ./scripts/deploy.sh restart  - Restart services
+   │  ├─ ./scripts/deploy.sh logs     - View logs (follow)
+   │  ├─ ./scripts/deploy.sh migrate  - Run migrations
+   │  ├─ ./scripts/deploy.sh status   - Show container status
+   │  └─ ./scripts/deploy.sh help     - Display help
+   ├─ Features:
+   │  ├─ Environment validation
+   │  ├─ Automatic database creation
+   │  ├─ Docker image building
+   │  ├─ Container orchestration
+   │  ├─ Database migration execution
+   │  ├─ Health check monitoring
+   │  └─ Color-coded output for clarity
+   └─ Executable: chmod +x scripts/deploy.sh
+
+4. scripts/preflight-check.sh (5.5 KB)
+   ├─ Pre-deployment verification script
+   ├─ Validates all requirements before deploy:
+   │  ├─ System commands (docker, docker-compose, psql)
+   │  ├─ Project files and configuration
+   │  ├─ Environment variables
+   │  ├─ Database connectivity
+   │  ├─ Redis connectivity
+   │  ├─ SMTP configuration
+   │  ├─ DNS resolution
+   │  ├─ Docker daemon status
+   │  ├─ Disk space availability
+   │  ├─ Network connectivity
+   │  └─ Port availability
+   ├─ Provides detailed feedback for each check
+   └─ Executable: chmod +x scripts/preflight-check.sh
+
+5. DEPLOYMENT.md (15+ KB)
+   ├─ Complete deployment guide and reference
+   ├─ Sections:
+   │  ├─ Prerequisites & system requirements
+   │  ├─ Quick start guide (5 minutes)
+   │  ├─ Configuration details
+   │  ├─ Network architecture diagram
+   │  ├─ Environment variable reference
+   │  ├─ Common operations (logs, restart, migrate)
+   │  ├─ Reverse proxy configuration (Nginx, Caddy)
+   │  ├─ Backup and recovery procedures
+   │  ├─ Monitoring and maintenance
+   │  ├─ Troubleshooting guide
+   │  ├─ Security considerations
+   │  └─ Deployment checklist
+   └─ Comprehensive reference documentation
+
+6. PRODUCTION_README.md (6+ KB)
+   ├─ Quick reference for production deployment
+   ├─ Sections:
+   │  ├─ Files overview
+   │  ├─ Quick start (5 minutes)
+   │  ├─ Infrastructure overview
+   │  ├─ Key configuration notes
+   │  ├─ Port mapping reference
+   │  ├─ Health checks
+   │  ├─ Common tasks (update, backup, migrate)
+   │  ├─ Security checklist
+   │  ├─ Troubleshooting quick tips
+   │  └─ Environment variables reference
+   └─ Concise reference for operational teams
+
+================================================================================
+DEPLOYMENT WORKFLOW
+================================================================================
+
+Step 1: Pre-Flight Checks
+─────────────────────────────────────────────────────────────────────────────
+$ ./scripts/preflight-check.sh
+
+Verifies:
+  • Docker and Docker Compose are installed
+  • PostgreSQL client (psql) is available
+  • Configuration file exists
+  • Environment variables are set
+  • Database server is reachable
+  • Redis server is reachable
+  • SMTP settings are configured
+  • DNS/domain resolves
+  • Port 4001 is available
+  • Sufficient disk space
+
+Step 2: Configure Environment
+─────────────────────────────────────────────────────────────────────────────
+$ nano .env.production
+
+Update these critical values:
+  1. SECRET_KEY_BASE=$(openssl rand -base64 32)
+  2. MAILER_SMTP_HOST=your-smtp-server
+  3. MAILER_SMTP_USER=your-username
+  4. MAILER_SMTP_PASSWORD=your-password
+  5. MAILER_SMTP_FROM_EMAIL=noreply@emailmkt.fluxodigitaltech.com.br
+  6. USER_CONTENT_BASE_URL=https://cdn.emailmkt.fluxodigitaltech.com.br
+
+Step 3: Create Database
+─────────────────────────────────────────────────────────────────────────────
+On PostgreSQL server (server.fluxodigitaltech.com.br:5440):
+
+$ psql -h server.fluxodigitaltech.com.br -p 5440 -U postgres
+postgres=# CREATE DATABASE fluxo_emailmkt;
+postgres=# \q
+
+Step 4: Deploy Application
+─────────────────────────────────────────────────────────────────────────────
+$ ./scripts/deploy.sh
+
+The script will:
+  1. Validate all environment configuration
+  2. Create database if needed
+  3. Build Docker images
+  4. Start containers
+  5. Run database migrations
+  6. Show application status
+
+Step 5: Configure Reverse Proxy
+─────────────────────────────────────────────────────────────────────────────
+Configure Nginx, Caddy, or similar to:
+  • Listen on port 80 and 443
+  • Forward traffic to localhost:4001
+  • Enable HTTPS with SSL certificate
+  • Add security headers
+
+Step 6: Access Application
+─────────────────────────────────────────────────────────────────────────────
+$ https://emailmkt.fluxodigitaltech.com.br
+
+Step 7: Setup Monitoring & Backups
+─────────────────────────────────────────────────────────────────────────────
+  • Monitor logs: ./scripts/deploy.sh logs
+  • Setup log aggregation
+  • Configure automated backups
+  • Setup health check alerts
+  • Document runbooks
+
+================================================================================
+INFRASTRUCTURE OVERVIEW
+================================================================================
+
+External Services (Shared Infrastructure):
+┌──────────────────────────────────────────────────────────────────────────┐
+│ PostgreSQL 12+                                                           │
+│   Host: server.fluxodigitaltech.com.br:5440                             │
+│   User: postgres                                                         │
+│   Password: o2026Secure99x                                              │
+│   Database: fluxo_emailmkt (create before deploy)                       │
+├──────────────────────────────────────────────────────────────────────────┤
+│ Redis 6+                                                                 │
+│   Host: server.fluxodigitaltech.com.br:6379                             │
+│   Password: a0b5ce3da557ad432a2f                                        │
+│   Purpose: Session storage, background jobs                             │
+├──────────────────────────────────────────────────────────────────────────┤
+│ SMTP Server                                                              │
+│   Host: <configured in .env.production>                                 │
+│   Port: 587 (STARTTLS)                                                  │
+│   Purpose: Email sending                                                │
+└──────────────────────────────────────────────────────────────────────────┘
+
+Application Containers (This Deployment):
+┌──────────────────────────────────────────────────────────────────────────┐
+│ fluxo-emailmkt (Keila Application)                                       │
+│   Image: fluxo/emailmkt:latest                                          │
+│   Port: 4000 (internal) → 4001 (host)                                   │
+│   Restart: unless-stopped                                               │
+│   Volume: /opt/app/uploads → fluxo_emailmkt_uploads                     │
+├──────────────────────────────────────────────────────────────────────────┤
+│ redis (Local Cache)                                                      │
+│   Image: redis:7-alpine                                                 │
+│   Port: 6379 (internal only)                                            │
+│   Volume: /data → fluxo_emailmkt_redis                                  │
+└──────────────────────────────────────────────────────────────────────────┘
+
+Network:
+                    Internet / Users
+                           │
+                           ↓ HTTPS:443
+        ┌────────────────────────────────────┐
+        │    Reverse Proxy (Nginx/Caddy)     │
+        │  emailmkt.fluxodigitaltech.com.br  │
+        │         :80/:443                   │
+        └────────────────────────────────────┘
+                           │
+                           ↓ HTTP:4001
+        ┌────────────────────────────────────┐
+        │      Docker Container Network      │
+        │  (fluxo_emailmkt_network bridge)   │
+        ├────────────────────────────────────┤
+        │ fluxo-emailmkt:4000                │
+        │ redis:6379 (local only)            │
+        └────────────────────────────────────┘
+                    │          │
+         ┌──────────┘          └──────────┐
+         ↓                                 ↓
+ PostgreSQL:5440           Redis:6379 (shared)
+  (shared server)          (shared server)
+
+================================================================================
+CONFIGURATION SUMMARY
+================================================================================
+
+Application:
+  • Name: Fluxo Email MKT (Keila)
+  • Port: 4001 (via reverse proxy on 443)
+  • Domain: emailmkt.fluxodigitaltech.com.br
+  • Protocol: HTTPS
+  • Restart: Automatic (unless-stopped)
+
+Database:
+  • Type: PostgreSQL 12+
+  • Host: server.fluxodigitaltech.com.br:5440
+  • Database: fluxo_emailmkt
+  • User: postgres
+  • SSL: Disabled (can be enabled in .env.production)
+
+Cache:
+  • Type: Redis 6+
+  • Host: server.fluxodigitaltech.com.br:6379
+  • Purpose: Session storage, background jobs
+  • Also: Local Redis container for internal caching
+
+Email:
+  • SMTP: Configured in .env.production
+  • Port: 587 (STARTTLS) or 465 (SSL)
+  • From: noreply@emailmkt.fluxodigitaltech.com.br
+  • Auth: Username/Password
+
+Storage:
+  • User Uploads: /opt/app/uploads (Docker volume)
+  • CDN URL: https://cdn.emailmkt.fluxodigitaltech.com.br (recommended)
+
+Health Checks:
+  • Endpoint: http://localhost:4000/health
+  • Interval: 30 seconds
+  • Timeout: 10 seconds
+  • Retries: 3
+
+Logging:
+  • Level: info (can be set to debug/error)
+  • View: docker-compose logs -f fluxo-emailmkt
+  • Or: ./scripts/deploy.sh logs
+
+================================================================================
+SECURITY CHECKLIST
+================================================================================
+
+Before Production Deployment:
+
+[ ] SECRET_KEY_BASE is unique (32+ characters, randomly generated)
+[ ] .env.production is NOT committed to git
+[ ] .env.production is in .gitignore
+[ ] MAILER_SMTP credentials are validated
+[ ] SMTP server has IP whitelist (if applicable)
+[ ] PostgreSQL requires strong password
+[ ] Redis requires password authentication
+[ ] Database is in private network/VPC
+[ ] Firewall restricts database access
+[ ] HTTPS is enabled on reverse proxy
+[ ] SSL certificate is valid and auto-renewing
+[ ] USER_CONTENT_BASE_URL uses separate domain
+[ ] Firewall blocks direct access to port 4001
+[ ] SSH access is locked down
+[ ] Regular backups are automated
+[ ] Backup restoration is tested
+[ ] Monitoring and alerting configured
+[ ] Log aggregation is setup
+[ ] Database audit logging enabled
+[ ] Rate limiting configured
+[ ] DDoS protection enabled
+[ ] Security headers configured
+
+================================================================================
+COMMON OPERATIONS
+================================================================================
+
+View Status:
+  $ ./scripts/deploy.sh status
+  $ docker-compose -f docker-compose.prod.yml ps
+
+View Logs:
+  $ ./scripts/deploy.sh logs
+  $ docker-compose -f docker-compose.prod.yml logs -f fluxo-emailmkt
+
+Restart:
+  $ ./scripts/deploy.sh restart
+  $ docker-compose -f docker-compose.prod.yml restart fluxo-emailmkt
+
+Stop:
+  $ ./scripts/deploy.sh down
+  $ docker-compose -f docker-compose.prod.yml down
+
+Run Migrations:
+  $ ./scripts/deploy.sh migrate
+
+Update Application:
+  $ git pull
+  $ ./scripts/deploy.sh
+
+Backup Database:
+  $ PGPASSWORD=o2026Secure99x pg_dump \
+      -h server.fluxodigitaltech.com.br \
+      -p 5440 \
+      -U postgres \
+      fluxo_emailmkt | gzip > backup_$(date +%Y%m%d).sql.gz
+
+Monitor Resources:
+  $ docker stats fluxo-emailmkt-app redis
+
+Execute Command:
+  $ docker-compose -f docker-compose.prod.yml exec fluxo-emailmkt \
+      /bin/sh -c "command here"
+
+================================================================================
+TROUBLESHOOTING QUICK REFERENCE
+================================================================================
+
+Container Won't Start:
+  → Check logs: ./scripts/deploy.sh logs
+  → Verify config: grep -E "^[A-Z]" .env.production
+  → Test DB: psql $DB_URL -c "SELECT 1"
+
+Database Connection Error:
+  → Verify DB_URL in .env.production
+  → Test from VPS: psql -h server.fluxodigitaltech.com.br -p 5440 -U postgres
+  → Check firewall/network
+
+Redis Connection Error:
+  → Check REDIS_URL in .env.production
+  → Test: redis-cli -u "$REDIS_URL" ping
+  → Verify password
+
+SMTP/Email Not Working:
+  → Check logs for SMTP errors: ./scripts/deploy.sh logs | grep -i smtp
+  → Verify credentials: grep MAILER .env.production
+  → Test SMTP: telnet your.smtp.server 587
+
+Health Check Failing:
+  → Check app logs: ./scripts/deploy.sh logs
+  → Test endpoint: curl -v http://localhost:4001/health
+  → Monitor: docker stats fluxo-emailmkt-app
+
+High Memory Usage:
+  → Check container: docker stats fluxo-emailmkt-app --no-stream
+  → Restart to clear: ./scripts/deploy.sh restart
+  → Review logs for errors
+
+DNS Not Resolving:
+  → Verify: dig emailmkt.fluxodigitaltech.com.br
+  → Check DNS provider settings
+  → Propagation may take 24-48 hours
+
+================================================================================
+NEXT STEPS
+================================================================================
+
+1. Read PRODUCTION_README.md for quick reference
+2. Read DEPLOYMENT.md for complete guide
+3. Run: ./scripts/preflight-check.sh
+4. Configure: .env.production
+5. Create: fluxo_emailmkt database on PostgreSQL
+6. Deploy: ./scripts/deploy.sh
+7. Configure: Reverse proxy (Nginx/Caddy)
+8. Setup: Monitoring, backups, alerts
+9. Document: Your specific runbooks and procedures
+10. Test: Backup and recovery process
+
+================================================================================
+SUPPORT RESOURCES
+================================================================================
+
+Documentation:
+  • DEPLOYMENT.md           - Complete guide
+  • PRODUCTION_README.md    - Quick reference
+  • scripts/deploy.sh --help - Script help
+
+External Resources:
+  • Keila Docs:          https://docs.keila.io
+  • Docker Docs:         https://docs.docker.com
+  • Docker Compose Docs: https://docs.docker.com/compose
+  • PostgreSQL Docs:     https://www.postgresql.org/docs
+  • Redis Docs:          https://redis.io/documentation
+
+Command Help:
+  • ./scripts/deploy.sh help
+  • ./scripts/preflight-check.sh
+  • docker-compose --help
+  • psql --help
+
+================================================================================
+VERSION INFORMATION
+================================================================================
+
+Setup Version: 1.0
+Creation Date: April 12, 2026
+Keila Version: Latest (from ops/Dockerfile)
+Elixir: 1.18-alpine
+PostgreSQL: 12+ (external)
+Redis: 7-alpine (internal) + 6+ (external)
+Docker: 20.10+
+Docker Compose: 2.0+
+
+================================================================================
+END OF SUMMARY
+================================================================================
+
+For detailed information, refer to DEPLOYMENT.md and PRODUCTION_README.md
+Ready to deploy? Start with: ./scripts/preflight-check.sh

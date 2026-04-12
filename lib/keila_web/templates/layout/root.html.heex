@@ -4,6 +4,9 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet" />
     {csrf_meta_tag()}
     <title>
       {get_meta(
@@ -11,11 +14,11 @@
         view_module(@conn),
         view_template(@conn),
         :title,
-        gettext("Open Source Newsletter Tool")
-      ) <> " · Keila"}
+        gettext("Email Marketing Profissional")
+      ) <> " · Fluxo Email MKT"}
     </title>
     <meta property="og:image" content={Routes.static_url(@conn, "/images/og_image.png")} />
-    <meta property="og:description" content="Open Source Newsletters" />
+    <meta property="og:description" content="Fluxo Email MKT - Email Marketing Profissional" />
     <meta name="twitter:card" content="summary" />
     <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/css/app.css")} />
     <script

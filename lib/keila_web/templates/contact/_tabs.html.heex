@@ -2,7 +2,7 @@
   <a
     href={Routes.contact_path(@conn, :index, @current_project.id)}
     class={
-      "rounded-t p-4 text-center flex flex-col #{if @contacts_status == :active, do: "bg-emerald-700 hover:bg-emerald-600", else: "bg-gray-700 hover:bg-gray-600"}"
+      "rounded-t p-4 text-center flex flex-col #{if @contacts_status == :active, do: "bg-fluxo-600 hover:bg-fluxo-500", else: "bg-gray-700 hover:bg-gray-600"}"
     }
   >
     <span class="text-3xl">{@contacts_stats.active}</span>
@@ -12,7 +12,7 @@
   <a
     href={Routes.contact_path(@conn, :index_unsubscribed, @current_project.id)}
     class={
-      "rounded-t p-4 text-center flex flex-col #{if @contacts_status == :unsubscribed, do: "bg-emerald-700 hover:bg-emerald-600", else: "bg-gray-700 hover:bg-gray-600"}"
+      "rounded-t p-4 text-center flex flex-col #{if @contacts_status == :unsubscribed, do: "bg-fluxo-600 hover:bg-fluxo-500", else: "bg-gray-700 hover:bg-gray-600"}"
     }
   >
     <span class="text-3xl">{@contacts_stats.unsubscribed}</span>
@@ -22,7 +22,7 @@
   <a
     href={Routes.contact_path(@conn, :index_unreachable, @current_project.id)}
     class={
-      "rounded-t p-4 text-center flex flex-col #{if @contacts_status == :unreachable, do: "bg-emerald-700 hover:bg-emerald-600", else: "bg-gray-700 hover:bg-gray-600"}"
+      "rounded-t p-4 text-center flex flex-col #{if @contacts_status == :unreachable, do: "bg-fluxo-600 hover:bg-fluxo-500", else: "bg-gray-700 hover:bg-gray-600"}"
     }
   >
     <span class="text-3xl">{@contacts_stats.unreachable}</span>

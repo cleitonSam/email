@@ -6,7 +6,7 @@
     <p class="text-lg text-gray-200">
       {dgettext(
         "auth",
-        "You need to verify your email before you can use Keila. Please check your inbox."
+        "Você precisa verificar seu email antes de usar o Fluxo Email MKT. Confira sua caixa de entrada."
       )}
     </p>
     <.form :let={_f} for={@conn} action={Routes.auth_path(@conn, :post_activate_resend)}>

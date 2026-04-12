@@ -15,7 +15,7 @@
       x-init="Hooks.ContactsTable.mounted.call({el: $el})"
     >
       <tr class="text-left">
-        <th><input type="checkbox" x-model="checked" class="text-emerald-500" /></th>
+        <th><input type="checkbox" x-model="checked" class="text-fluxo-500" /></th>
         <th class="p-2">
           <div class="flex gap-1">
             <.table_sort_button key="email" current_key={@sort_by} current_order={@sort_order} />
@@ -60,7 +60,7 @@
             {checkbox(f, :id,
               hidden_input: false,
               "x_bind:checked": "checked",
-              class: "text-emerald-500",
+              class: "text-fluxo-500",
               checked_value: contact.id,
               name: "contact[id][]"
             )}

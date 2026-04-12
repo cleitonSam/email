@@ -43,7 +43,7 @@
         <div class="form-row form-row-checkbox">
           {checkbox(f, :replace,
             checked: @import_replace,
-            class: "appearance-none checked:bg-emerald-600"
+            class: "appearance-none checked:bg-fluxo-600"
           )}
           {label(f, :replace, gettext("Replace duplicates"))}
         </div>
@@ -55,7 +55,7 @@
       <div class="h-3 relative w-full rounded-full overflow-hidden mt-4">
         <div class="w-full h-full bg-gray-200 absolute"></div>
         <div
-          class="h-full bg-emerald-500 absolute"
+          class="h-full bg-fluxo-500 absolute"
           style={
             "width:#{@import_progress / case @import_total do
               0 -> 1

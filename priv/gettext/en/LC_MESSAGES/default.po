@@ -666,7 +666,7 @@ msgstr ""
 
 #: lib/keila_web/templates/account/edit.html.heex:43
 #, elixir-autogen, elixir-format
-msgid "Here you can update your Keila password."
+msgid "Here you can update your Fluxo Email MKT password."
 msgstr ""
 
 #: lib/keila_web/views/public_form_view.ex:126
@@ -836,7 +836,7 @@ msgstr ""
 
 #: lib/keila_web/templates/project/new.html.heex:26
 #, elixir-autogen, elixir-format
-msgid "My Keila Project"
+msgid "My Fluxo Email MKT Project"
 msgstr ""
 
 #: lib/keila/contacts/contacts.ex:270
@@ -1077,7 +1077,7 @@ msgstr ""
 
 #: lib/keila_web/templates/auth/reset_change_password.html.heex:12
 #, elixir-autogen, elixir-format
-msgid "Set a new secure password to keep using Keila."
+msgid "Set a new secure password to keep using Fluxo Email MKT."
 msgstr ""
 
 #: lib/keila_web/templates/campaign/_settings_dialog.html.heex:28
@@ -1182,7 +1182,7 @@ msgstr ""
 
 #: lib/keila_web/templates/sender/verification_success.html.heex:7
 #, elixir-autogen, elixir-format
-msgid "Thank you for verifying your sender. You can now start sending emails with Keila."
+msgid "Thank you for verifying your sender. You can now start sending emails with Fluxo Email MKT."
 msgstr ""
 
 #: lib/keila_web/templates/form/edit_live.html.heex:140
@@ -1199,7 +1199,7 @@ msgstr ""
 #: lib/keila_web/templates/form/edit_live.html.heex:515
 #: lib/keila_web/templates/form/edit_live.html.heex:665
 #, elixir-autogen, elixir-format
-msgid "Thanks for trying out Keila!"
+msgid "Thanks for trying out Fluxo Email MKT!"
 msgstr ""
 
 #: lib/keila/contacts/import.ex:42
@@ -1321,7 +1321,7 @@ msgstr ""
 
 #: lib/keila_web/templates/project/index.html.heex:10
 #, elixir-autogen, elixir-format
-msgid "Welcome to Keila!"
+msgid "Welcome to Fluxo Email MKT!"
 msgstr ""
 
 #: lib/keila_web/views/public_form_view.ex:351
@@ -1406,7 +1406,7 @@ msgstr ""
 #: lib/keila_web/templates/auth/reset.html.heex:17
 #: lib/keila_web/templates/user_admin/new.html.heex:28
 #, elixir-autogen, elixir-format
-msgid "you@keila.io"
+msgid "voce@suaempresa.com.br"
 msgstr ""
 
 #: lib/keila_web/templates/contact/import_live.html.heex:130
@@ -1502,7 +1502,7 @@ msgstr ""
 
 #: lib/keila_web/templates/project/_empty_state_forms_contacts.html.heex:6
 #, elixir-autogen, elixir-format
-msgid "Grow your audience with Keila!"
+msgid "Grow your audience with Fluxo Email MKT!"
 msgstr ""
 
 #: lib/keila_web/templates/project/_empty_state_forms_contacts.html.heex:8
@@ -1523,12 +1523,12 @@ msgstr ""
 
 #: lib/keila_web/templates/template/_empty_state.html.heex:10
 #, elixir-autogen, elixir-format
-msgid "Keila comes with a great default template so you don’t have\nto become a designer before you start sending emails.\n\nBut if you want a more personalized look for your campaigns,\ncreate your own design with the template editor.\n"
+msgid "Fluxo Email MKT comes with a great default template so you don’t have\nto become a designer before you start sending emails.\n\nBut if you want a more personalized look for your campaigns,\ncreate your own design with the template editor.\n"
 msgstr ""
 
 #: lib/keila_web/templates/project/index.html.heex:12
 #, elixir-autogen, elixir-format
-msgid "Keila organizes contacts, forms, and campaigns in *projects*.\n\nYou can create multiple projects, e.g. if you want\nto separate your gardening business newsletter from\nyour chess club member list.\n"
+msgid "Fluxo Email MKT organizes contacts, forms, and campaigns in *projects*.\n\nYou can create multiple projects, e.g. if you want\nto separate your gardening business newsletter from\nyour chess club member list.\n"
 msgstr ""
 
 #: lib/keila_web/templates/project/_empty_state_senders.html.heex:6
@@ -1602,12 +1602,12 @@ msgstr ""
 
 #: lib/keila_web/templates/project/_empty_state_templates_campaigns.html.heex:8
 #, elixir-autogen, elixir-format
-msgid "You can get started sending campaigns with Keila’s default template now.\n\nTo create your design, you can use the template editor.\n"
+msgid "You can get started sending campaigns with Fluxo Email MKT’s default template now.\n\nTo create your design, you can use the template editor.\n"
 msgstr ""
 
 #: lib/keila_web/templates/project/_empty_state_campaigns.html.heex:8
 #, elixir-autogen, elixir-format
-msgid "You’re ready to send your first campaign with Keila.\n"
+msgid "You’re ready to send your first campaign with Fluxo Email MKT.\n"
 msgstr ""
 
 #: lib/keila_web/templates/contact/_tabs.html.heex:9
@@ -1948,7 +1948,7 @@ msgstr ""
 
 #: lib/keila_web/templates/campaign/_wysiwyg_dialogs.html.heex:278
 #, elixir-autogen, elixir-format
-msgid "Read more about [how to use Liquid in Keila](https://www.keila.io/docs/campaigns#liquid-templating)\nor about [custom contact data](https://www.keila.io/docs/contacts#contact-data).\n"
+msgid "Read more about [how to use Liquid in Fluxo Email MKT](https://fluxodigitaltech.com.br/docs/campaigns#liquid-templating)\nor about [custom contact data](https://fluxodigitaltech.com.br/docs/contacts#contact-data).\n"
 msgstr ""
 
 #: lib/keila_web/templates/campaign/_wysiwyg_dialogs.html.heex:239
@@ -2028,7 +2028,7 @@ msgstr ""
 
 #: lib/keila_web/templates/account/edit.html.heex:78
 #, elixir-autogen, elixir-format
-msgid "Here you can change the language for the Keila interface."
+msgid "Here you can change the language for the Fluxo Email MKT interface."
 msgstr ""
 
 #: lib/keila_web/views/template_view.ex:48
@@ -2085,7 +2085,7 @@ msgstr ""
 
 #: lib/keila_web/templates/api_key/_empty_state.html.heex:10
 #, elixir-autogen, elixir-format
-msgid "With API keys, you can use the Keila API to manage campaigns\nand contacts programmatically.\n"
+msgid "With API keys, you can use the Fluxo Email MKT API to manage campaigns\nand contacts programmatically.\n"
 msgstr ""
 
 #: lib/keila_web/views/template_view.ex:193
@@ -2828,12 +2828,12 @@ msgstr ""
 
 #: lib/keila/mailings/sender_adapters/shared_ses.ex:59
 #, elixir-autogen, elixir-format
-msgid "Verify Your Email for Keila"
+msgid "Verify Your Email for Fluxo Email MKT"
 msgstr ""
 
 #: lib/keila/mailings/sender_adapters/shared_ses.ex:62
 #, elixir-autogen, elixir-format
-msgid "Please click on the following link to verify your email address %{email} for use with Keila."
+msgid "Please click on the following link to verify your email address %{email} for use with Fluxo Email MKT."
 msgstr ""
 
 #: lib/keila_web/templates/sender/_shared_ses_config.html.heex:7
@@ -2982,7 +2982,7 @@ msgstr ""
 
 #: lib/keila_web/templates/auth/register.html.heex:12
 #, elixir-autogen, elixir-format, fuzzy
-msgid "Register your Keila account now and start your newsletter project within minutes."
+msgid "Register your Fluxo Email MKT account now and start your newsletter project within minutes."
 msgstr ""
 
 #: lib/keila_web/templates/campaign/edit_live.html.heex:55
@@ -2998,7 +2998,7 @@ msgstr ""
 
 #: lib/keila_web/templates/auth/register.html.heex:9
 #, elixir-autogen, elixir-format
-msgid "Start sending emails with Keila now"
+msgid "Start sending emails with Fluxo Email MKT now"
 msgstr ""
 
 #: lib/keila_web/templates/contact/edit.html.heex:110

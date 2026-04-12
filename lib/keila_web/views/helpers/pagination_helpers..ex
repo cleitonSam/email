@@ -64,7 +64,7 @@ defmodule KeilaWeb.PaginationHelpers do
       |> assign(
         :class,
         if(assigns.page == assigns.current_page,
-          do: "button bg-emerald-500 text-black",
+          do: "button bg-fluxo-500 text-black",
           else: "button"
         )
       )

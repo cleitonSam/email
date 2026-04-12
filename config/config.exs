@@ -123,7 +123,7 @@ config :keila, KeilaWeb.Gettext,
 config :ex_cldr,
   default_backend: Keila.Cldr
 
-config(:keila, Keila.Auth.Emails, from_email: "keila@localhost")
+config(:keila, Keila.Auth.Emails, from_email: "noreply@fluxodigitaltech.com.br")
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

@@ -35,7 +35,7 @@ function getIcon(iconName) {
 function createUrlInput(
   placeholder,
   value = "",
-  className = "w-full px bg-white hover:bg-emerald-100 text-black mb-6"
+  className = "w-full px bg-white hover:bg-fluxo-100 text-black mb-6"
 ) {
   const input = document.createElement("input")
   input.type = "url"
@@ -65,7 +65,7 @@ function createIconColorSelect(selectedValue = "white") {
   label.className = "block text-sm font-medium mb-2"
 
   const select = document.createElement("select")
-  select.className = "w-full px bg-white hover:bg-emerald-100 text-black mb-6"
+  select.className = "w-full px bg-white hover:bg-fluxo-100 text-black mb-6"
   select.innerHTML = `
     <option value="black">${getText("color-black")}</option>
     <option value="white">${getText("color-white")}</option>
@@ -226,7 +226,7 @@ export default class SocialIcons {
 
   showNetworkSelector() {
     const select = document.createElement("select")
-    select.className = "w-full px bg-white hover:bg-emerald-100 text-black mb-6"
+    select.className = "w-full px bg-white hover:bg-fluxo-100 text-black mb-6"
 
     const defaultOption = document.createElement("option")
     defaultOption.textContent = getText("select-site")

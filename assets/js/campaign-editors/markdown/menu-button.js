@@ -28,7 +28,7 @@ export class MenuButton {
     // It needs to be fast. Maybe debounce it in the future.
 
     const isActive = this.isActive(editorState)
-    this.dom.classList.toggle("bg-emerald-300", isActive)
+    this.dom.classList.toggle("bg-fluxo-300", isActive)
 
     const isEnabled = this.isEnabled(editorState)
     this.dom.classList.toggle("bg-gray-100", !isEnabled)

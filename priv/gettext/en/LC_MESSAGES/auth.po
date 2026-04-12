@@ -50,12 +50,12 @@ msgstr ""
 
 #: lib/keila/auth/emails.ex:95
 #, elixir-autogen, elixir-format
-msgid "Hey there,\n\nyou can login to Keila with the following link:\n\n%{url}\n\nIf you haven’t requested a login, simply ignore this message.\n"
+msgid "Hey there,\n\nyou can login to Fluxo Email MKT with the following link:\n\n%{url}\n\nIf you haven’t requested a login, simply ignore this message.\n"
 msgstr ""
 
 #: lib/keila/auth/emails.ex:70
 #, elixir-autogen, elixir-format
-msgid "Hey there,\n\nyou have requested a password reset for your Keila account.\n\nYou can set a new password by visiting the following link:\n\n%{url}\n\nIf you weren’t trying to reset your password, simply ignore this message.\n"
+msgid "Hey there,\n\nyou have requested a password reset for your Fluxo Email MKT account.\n\nYou can set a new password by visiting the following link:\n\n%{url}\n\nIf you weren’t trying to reset your password, simply ignore this message.\n"
 msgstr ""
 
 #: lib/keila_web/templates/auth/reset_success.html.heex:7
@@ -169,12 +169,12 @@ msgstr ""
 
 #: lib/keila_web/templates/auth/activate_success.html.heex:4
 #, elixir-autogen, elixir-format
-msgid "Welcome to Keila!"
+msgid "Welcome to Fluxo Email MKT!"
 msgstr ""
 
 #: lib/keila/auth/emails.ex:22
 #, elixir-autogen, elixir-format
-msgid "Welcome to Keila,\n\nplease confirm your new account by visiting the following link:\n\n%{url}\n\nIf you weren’t trying to create an account, simply ignore this message.\n"
+msgid "Welcome to Fluxo Email MKT,\n\nplease confirm your new account by visiting the following link:\n\n%{url}\n\nIf you weren’t trying to create an account, simply ignore this message.\n"
 msgstr ""
 
 #: lib/keila_web/templates/auth/activate_resend_success.html.heex:7
@@ -189,12 +189,12 @@ msgstr ""
 
 #: lib/keila_web/templates/auth/reset_change_password_success.html.heex:7
 #, elixir-autogen, elixir-format
-msgid "You can now continue using Keila."
+msgid "You can now continue using Fluxo Email MKT."
 msgstr ""
 
 #: lib/keila_web/templates/auth/activate_required.html.heex:7
 #, elixir-autogen, elixir-format
-msgid "You need to verify your email before you can use Keila. Please check your inbox."
+msgid "You need to verify your email before you can use Fluxo Email MKT. Please check your inbox."
 msgstr ""
 
 #: lib/keila/auth/emails.ex:66
@@ -219,5 +219,5 @@ msgstr ""
 
 #: lib/keila/auth/emails.ex:115
 #, elixir-autogen, elixir-format, fuzzy
-msgid "Please Verify Your Email for Keila"
+msgid "Please Verify Your Email for Fluxo Email MKT"
 msgstr ""

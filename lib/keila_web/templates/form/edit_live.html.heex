@@ -132,7 +132,7 @@
         </div>
         <%= with_validation(fs, :captcha_required) do %>
           <%= label(fs, :captcha_required) do %>
-            {checkbox(fs, :captcha_required, class: "text-emerald-500")}
+            {checkbox(fs, :captcha_required, class: "text-fluxo-500")}
             {gettext("Require captcha")}
           <% end %>
         <% end %>
@@ -150,7 +150,7 @@
         </div>
         <%= with_validation(fs, :csrf_disabled) do %>
           <%= label(fs, :csrf_disabled) do %>
-            {checkbox(fs, :csrf_disabled, class: "text-emerald-500")}
+            {checkbox(fs, :csrf_disabled, class: "text-fluxo-500")}
             {gettext("Allow embedding as HTML")}
           <% end %>
         <% end %>
@@ -335,7 +335,7 @@
             <%= with_validation(fs, :double_opt_in_required) do %>
               <%= label(fs, :double_opt_in_required) do %>
                 {checkbox(fs, :double_opt_in_required,
-                  class: "text-emerald-500",
+                  class: "text-fluxo-500",
                   x_model: "enable"
                 )}
                 {gettext("Require double opt-in")}
@@ -512,7 +512,7 @@
             {render_icon(:paper_airplane)}
           </span>
           <p class="text-2xl">
-            {gettext("Thanks for trying out Keila!")}
+            {gettext("Obrigado por usar o Fluxo Email MKT!")}
           </p>
         </div>
         <p>
@@ -545,7 +545,7 @@
             <%= with_validation(fs, :welcome_enabled) do %>
               <%= label(fs, :welcome_enabled) do %>
                 {checkbox(fs, :welcome_enabled,
-                  class: "text-emerald-500",
+                  class: "text-fluxo-500",
                   x_model: "enable"
                 )}
                 {gettext("Send welcome email")}
@@ -662,7 +662,7 @@
             {render_icon(:paper_airplane)}
           </span>
           <p class="text-2xl">
-            {gettext("Thanks for trying out Keila!")}
+            {gettext("Obrigado por usar o Fluxo Email MKT!")}
           </p>
         </div>
         <p>

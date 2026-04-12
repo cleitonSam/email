@@ -1,0 +1,106 @@
+version: "3.8"
+
+services:
+  fluxo-emailmkt:
+    build:
+      context: .
+      dockerfile: ops/Dockerfile
+    image: fluxo/emailmkt:latest
+    container_name: fluxo-emailmkt-app
+    restart: unless-stopped
+    ports:
+      - "4001:4000"
+    environment:
+      # Core Configuration
+      MIX_ENV: prod
+      PORT: 4000
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+
+      # Database Configuration (External PostgreSQL)
+      DB_URL: ${DB_URL}
+      DB_ENABLE_SSL: ${DB_ENABLE_SSL:-false}
+      DB_VERIFY_SSL_HOST: ${DB_VERIFY_SSL_HOST:-TRUE}
+
+      # Redis Configuration
+      REDIS_URL: ${REDIS_URL}
+
+      # URL Configuration
+      URL_HOST: ${URL_HOST}
+      URL_PORT: ${URL_PORT:-443}
+      URL_SCHEMA: ${URL_SCHEMA:-https}
+      URL_PATH: ${URL_PATH:-/}
+
+      # SMTP Mailer Configuration
+      MAILER_TYPE: ${MAILER_TYPE:-smtp}
+      MAILER_SMTP_HOST: ${MAILER_SMTP_HOST}
+      MAILER_SMTP_PORT: ${MAILER_SMTP_PORT:-587}
+      MAILER_SMTP_USER: ${MAILER_SMTP_USER}
+      MAILER_SMTP_PASSWORD: ${MAILER_SMTP_PASSWORD}
+      MAILER_SMTP_FROM_EMAIL: ${MAILER_SMTP_FROM_EMAIL}
+      MAILER_ENABLE_SSL: ${MAILER_ENABLE_SSL:-false}
+      MAILER_ENABLE_STARTTLS: ${MAILER_ENABLE_STARTTLS:-true}
+
+      # File Storage Configuration
+      USER_CONTENT_DIR: /opt/app/uploads
+      USER_CONTENT_BASE_URL: ${USER_CONTENT_BASE_URL}
+
+      # Security and Features
+      DISABLE_REGISTRATION: ${DISABLE_REGISTRATION:-false}
+      DISABLE_SENDER_CREATION: ${DISABLE_SENDER_CREATION:-false}
+      ENABLE_QUOTAS: ${ENABLE_QUOTAS:-false}
+      DISABLE_UPDATE_CHECKS: ${DISABLE_UPDATE_CHECKS:-false}
+      DISABLE_PRECEDENCE_HEADER: ${DISABLE_PRECEDENCE_HEADER:-false}
+
+      # Logging and Monitoring
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+
+      # Optional: Hashid Salt (generated from SECRET_KEY_BASE if not provided)
+      HASHID_SALT: ${HASHID_SALT}
+
+    volumes:
+      # User uploads and content storage
+      - fluxo_emailmkt_uploads:/opt/app/uploads
+
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:4000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+    depends_on:
+      - redis
+
+    networks:
+      - fluxo_emailmkt_network
+
+    labels:
+      com.fluxo.app: "emailmkt"
+      com.fluxo.version: "1.0"
+
+  redis:
+    image: redis:7-alpine
+    container_name: fluxo-emailmkt-redis
+    restart: unless-stopped
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - fluxo_emailmkt_redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    networks:
+      - fluxo_emailmkt_network
+    labels:
+      com.fluxo.app: "emailmkt-cache"
+
+volumes:
+  fluxo_emailmkt_uploads:
+    driver: local
+  fluxo_emailmkt_redis:
+    driver: local
+
+networks:
+  fluxo_emailmkt_network:
+    driver: bridge

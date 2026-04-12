@@ -1,5 +1,5 @@
 <%= if @current_user do %>
-  <aside class="flex bg-gray-800 overflow-y-auto">
+  <aside class="flex bg-fluxo-800 overflow-y-auto">
     <div id="main-menu" class="container sm:h-screen sm:flex sm:flex-col">
       <input id="main-menu-toggle" type="checkbox" aria-hidden="true" class="hidden" />
       <div class="absolute inset-y-0 h-14 top-2 right-4 flex items-center sm:hidden">
@@ -27,7 +27,7 @@
           <span class="flex justify-end h-10 w-10">
             {render_icon(:logo)}
           </span>
-          <span class="text-2xl font-light">Keila</span>
+          <span class="text-2xl font-bold bg-clip-text text-transparent bg-fluxo-gradient">Fluxo Email MKT</span>
         </a>
       </div>
       <nav class="font-medium hidden flex-col gap-1 mt-2 mb-4 sm:flex flex-grow">
@@ -159,13 +159,13 @@
     </div>
   </aside>
 <% else %>
-  <header class="bg-gray-900">
-    <div class="container my-4 text-emerald-500 flex justify-center">
+  <header class="bg-fluxo-800">
+    <div class="container my-4 text-fluxo-400 flex justify-center">
       <a href={Routes.project_path(@conn, :index)} class="inline-flex items-start">
         <span class="flex h-11 w-11 -mr-1">
           {render_icon(:logo)}
         </span>
-        <span class="text-3xl font-light">Keila</span>
+        <span class="text-3xl font-bold bg-clip-text text-transparent bg-fluxo-gradient">Fluxo Email MKT</span>
       </a>
     </div>
   </header>

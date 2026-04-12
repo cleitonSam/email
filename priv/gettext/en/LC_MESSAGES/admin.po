@@ -80,7 +80,7 @@ msgstr ""
 
 #: lib/keila_web/templates/user_admin/index.html.heex:16
 #, elixir-autogen, elixir-format
-msgid "Here you can manage other users on your Keila instance."
+msgid "Here you can manage other users on your Fluxo Email MKT instance."
 msgstr ""
 
 #: lib/keila_web/templates/shared_sender_admin/edit.html.heex:9
@@ -105,7 +105,7 @@ msgstr ""
 
 #: lib/keila_web/templates/shared_sender_admin/index.html.heex:17
 #, elixir-autogen, elixir-format
-msgid "Shared Senders are available to all users on this instance of Keila."
+msgid "Shared Senders are available to all users on this instance of Fluxo Email MKT."
 msgstr ""
 
 #: lib/keila_web/templates/user_admin/index.html.heex:25
@@ -125,7 +125,7 @@ msgstr ""
 
 #: lib/keila_web/templates/layout/app.html.heex:16
 #, elixir-autogen, elixir-format
-msgid "A new version of Keila is available."
+msgid "A new version of Fluxo Email MKT is available."
 msgstr ""
 
 #: lib/keila_web/templates/layout/app.html.heex:17
@@ -140,12 +140,12 @@ msgstr ""
 
 #: lib/keila_web/templates/instance_admin/show.html.heex:4
 #, elixir-autogen, elixir-format
-msgid "You are currently running Keila %{version} on %{host}."
+msgid "You are currently running Fluxo Email MKT %{version} on %{host}."
 msgstr ""
 
 #: lib/keila_web/templates/instance_admin/show.html.heex:19
 #, elixir-autogen, elixir-format
-msgid "There are updates available for your Keila instance!"
+msgid "There are updates available for your Fluxo Email MKT instance!"
 msgstr ""
 
 #: lib/keila_web/templates/instance_admin/show.html.heex:42
@@ -155,7 +155,7 @@ msgstr ""
 
 #: lib/keila_web/templates/instance_admin/show.html.heex:37
 #, elixir-autogen, elixir-format
-msgid "You seem to be running the most recent version of Keila!"
+msgid "You seem to be running the most recent version of Fluxo Email MKT!"
 msgstr ""
 
 #: extra/keila_cloud_web/templates/cloud_admin/user_account_status.html.heex:47

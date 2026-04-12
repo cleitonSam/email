@@ -4,7 +4,7 @@
     for={@changeset}
     action={Routes.auth_path(@conn, :post_login)}
     method="post"
-    class="rounded shadow p-8 mt-8 max-w-xl mx-auto flex flex-col gap-4 bg-gray-900 text-gray-50"
+    class="rounded shadow-fluxo p-8 mt-8 max-w-xl mx-auto flex flex-col gap-4 bg-fluxo-900 text-gray-50"
   >
     <h1 class="text-5xl font-bold">
       {dgettext("auth", "Sign in.")}
@@ -15,7 +15,7 @@
     <div class="flex flex-col">
       {label(f, :email, "Email")}
       <%= with_validation(f, :email) do %>
-        {text_input(f, :email, placeholder: gettext("you@keila.io"), class: "text-black")}
+        {text_input(f, :email, placeholder: gettext("voce@suaempresa.com.br"), class: "text-black")}
       <% end %>
     </div>
     <div class="flex flex-col">

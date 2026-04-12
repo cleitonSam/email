@@ -1,17 +1,17 @@
-/*! Keila | AGPLv3 License | https://www.keila.io */
+/*! Fluxo Email MKT | Powered by Fluxo Digital Tech | https://fluxodigitaltech.com.br */
 
 @import "_inter.scss";
 @import "_header.scss";
 
 html {
-    font-family: "Inter", sans-serif;
+    font-family: "Poppins", "Inter", sans-serif;
     overflow-y: scroll;
     @apply bg-gray-950;
 }
 
 @supports (font-variation-settings: normal) {
     html {
-        font-family: "Inter var", sans-serif;
+        font-family: "Poppins", "Inter var", sans-serif;
     }
 }
 
@@ -35,17 +35,17 @@ html {
     }
 
     &:not(.button--cta):not(.button--warn):not(.button--text):not(.button--muted):not(.button--white-frame):not(.button--white) {
-        @apply ring-2 ring-emerald-500
-            hover:ring-emerald-700;
-        focus: ring-emerald-700;
-        active: ring-emerald-900;
+        @apply ring-2 ring-fluxo-500
+            hover:ring-fluxo-700;
+        focus: ring-fluxo-700;
+        active: ring-fluxo-900;
     }
 
     &.button--cta {
-        @apply bg-emerald-700 text-white outline-none
-            hover:ring-2 hover:ring-emerald-400
-            focus:ring-2 hover:ring-emerald-400
-            active:bg-emerald-800
+        @apply bg-fluxo-600 text-white outline-none
+            hover:ring-2 hover:ring-fluxo-400
+            focus:ring-2 hover:ring-fluxo-400
+            active:bg-fluxo-700
             disabled:bg-gray-700 disabled:text-gray-500
             disabled:ring-gray-600 disabled:hover:ring-gray-600;
     }
@@ -56,7 +56,7 @@ html {
     }
 
     &.button--white {
-        @apply bg-white text-emerald-600 ring-2 ring-emerald-600 hover:bg-gray-50 hover:ring-emerald-400 focus:ring-emerald-400 active:bg-gray-200 active:text-emerald-600;
+        @apply bg-white text-fluxo-600 ring-2 ring-fluxo-600 hover:bg-gray-50 hover:ring-fluxo-400 focus:ring-fluxo-400 active:bg-gray-200 active:text-fluxo-600;
     }
 
     &.button--white-frame {
@@ -160,7 +160,7 @@ input[disabled] {
 }
 
 .bg-onboarding {
-    @apply bg-gradient-to-r from-red-900 via-indigo-900 to-emerald-900;
+    @apply bg-fluxo-gradient-dark;
 }
 
 /*

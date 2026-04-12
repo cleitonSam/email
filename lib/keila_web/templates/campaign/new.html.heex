@@ -68,67 +68,67 @@
 
     <div class="form-row">
       <%= inputs_for(f, :settings, fn fs -> %>
-        {label(fs, :type, gettext("Choose Your Editor"))}
-        <div class="flex gap-4">
+        <label class="text-lg font-semibold text-gray-200 mb-3">{gettext("Choose Your Editor")}</label>
+        <div class="grid grid-cols-2 gap-4">
           {radio_button(fs, :type, "text", class: "hidden", x_model: "type")}
           <label
             for={input_id(fs, :type, "text")}
-            class="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4 hover:border-fluxo-500/30 transition-all cursor-pointer 600"
-            x-bind:class="type == 'text' && 'outline outline-2 outline-fluxo-500'"
+            class="group bg-gray-900/60 border-2 border-gray-700/50 rounded-2xl p-5 hover:border-fluxo-500/40 hover:bg-gray-800/60 transition-all duration-300 cursor-pointer flex flex-col items-center text-center"
+            x-bind:class="type == 'text' && 'border-fluxo-500 bg-fluxo-500/10 shadow-lg shadow-fluxo-500/10'"
           >
-            <h3 class="text-bold text-xl">{gettext("Plain Text")}</h3>
-            <div class="flex w-24 h-24 bg-gradient-to-br from-gray-200 to-gray-300 rounded text-gray-600 p-2 my-4">
+            <div class="flex w-14 h-14 bg-gradient-to-br from-fluxo-600 to-fluxo-400 rounded-xl text-white p-3 mb-3 group-hover:scale-110 transition-transform duration-300">
               {render_icon(:plain_text)}
             </div>
-            <p class="text-sm">
+            <h3 class="font-bold text-base text-white mb-1">{gettext("Plain Text")}</h3>
+            <p class="text-xs text-gray-400 leading-relaxed">
               {gettext(
                 "The simplest type of email. Text and nothing else. No images, no links, just text."
               )}
             </p>
           </label>
+
           {radio_button(fs, :type, "markdown", class: "hidden", x_model: "type")}
           <label
             for={input_id(fs, :type, "markdown")}
-            class="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4 hover:border-fluxo-500/30 transition-all cursor-pointer"
-            x-bind:class="type == 'markdown' && 'outline outline-2 outline-fluxo-500'"
+            class="group bg-gray-900/60 border-2 border-gray-700/50 rounded-2xl p-5 hover:border-fluxo-500/40 hover:bg-gray-800/60 transition-all duration-300 cursor-pointer flex flex-col items-center text-center"
+            x-bind:class="type == 'markdown' && 'border-fluxo-500 bg-fluxo-500/10 shadow-lg shadow-fluxo-500/10'"
           >
-            <h3 class="text-bold text-xl">{gettext("Markdown")}</h3>
-            <div class="flex w-24 h-24 bg-gradient-to-br from-gray-200 to-gray-300 rounded text-gray-600 p-2 my-4">
+            <div class="flex w-14 h-14 bg-gradient-to-br from-cyan-500 to-fluxo-500 rounded-xl text-white p-3 mb-3 group-hover:scale-110 transition-transform duration-300">
               {render_icon(:markdown)}
             </div>
-            <p class="text-sm">
+            <h3 class="font-bold text-base text-white mb-1">{gettext("Markdown")}</h3>
+            <p class="text-xs text-gray-400 leading-relaxed">
               {gettext("Use the Markdown editor to create beautiful single-column hybrid emails.")}
             </p>
           </label>
+
           {radio_button(fs, :type, "block", class: "hidden", x_model: "type")}
           <label
             for={input_id(fs, :type, "block")}
-            class="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4 hover:border-fluxo-500/30 transition-all cursor-pointer 600 relative"
-            x-bind:class="type == 'block' && 'outline outline-2 outline-fluxo-500'"
+            class="group bg-gray-900/60 border-2 border-gray-700/50 rounded-2xl p-5 hover:border-fluxo-500/40 hover:bg-gray-800/60 transition-all duration-300 cursor-pointer flex flex-col items-center text-center relative overflow-hidden"
+            x-bind:class="type == 'block' && 'border-fluxo-500 bg-fluxo-500/10 shadow-lg shadow-fluxo-500/10'"
           >
-            <h3 class="text-bold text-xl">{gettext("Block")}</h3>
-            <div class="flex w-24 h-24 bg-gradient-to-br from-gray-200 to-gray-300 rounded text-gray-600 p-2 my-4">
+            <span class="absolute top-2 right-2 bg-fluxo-500 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">beta</span>
+            <div class="flex w-14 h-14 bg-gradient-to-br from-purple-500 to-fluxo-500 rounded-xl text-white p-3 mb-3 group-hover:scale-110 transition-transform duration-300">
               {render_icon(:block)}
             </div>
-            <p class="text-sm">
+            <h3 class="font-bold text-base text-white mb-1">{gettext("Block")}</h3>
+            <p class="text-xs text-gray-400 leading-relaxed">
               {gettext("Create stunning emails with multi-column layouts with the Block editor.")}
             </p>
-            <span class="absolute bg-fluxo-600 text-white right-0 top-5 px-4 rotate-45 text-md rounded-md">
-              beta
-            </span>
           </label>
 
           {radio_button(fs, :type, "mjml", class: "hidden", x_model: "type")}
           <label
             for={input_id(fs, :type, "mjml")}
-            class="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4 hover:border-fluxo-500/30 transition-all cursor-pointer"
-            x-bind:class="type == 'mjml' && 'outline outline-2 outline-fluxo-500'"
+            class="group bg-gray-900/60 border-2 border-gray-700/50 rounded-2xl p-5 hover:border-fluxo-500/40 hover:bg-gray-800/60 transition-all duration-300 cursor-pointer flex flex-col items-center text-center"
+            x-bind:class="type == 'mjml' && 'border-fluxo-500 bg-fluxo-500/10 shadow-lg shadow-fluxo-500/10'"
           >
-            <h3 class="text-bold text-xl">{gettext("MJML")}</h3>
-            <div class="flex w-24 h-24 bg-gradient-to-br from-gray-200 to-gray-300 rounded text-gray-600 p-2 my-4">
+            <div class="flex w-14 h-14 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl text-white p-3 mb-3 group-hover:scale-110 transition-transform duration-300">
               {render_icon(:mjml)}
             </div>
-            <p class="text-sm">
+            <h3 class="font-bold text-base text-white mb-1">{gettext("MJML")}</h3>
+            <p class="text-xs text-gray-400 leading-relaxed">
               {gettext("Build fully customized responsive email layouts with MJML.")}
             </p>
           </label>

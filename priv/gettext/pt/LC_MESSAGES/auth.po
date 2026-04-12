@@ -30,8 +30,8 @@ msgstr "Verifique sua caixa de entrada!"
 
 #: lib/keila_web/templates/auth/login.html.heex:34
 #, elixir-autogen, elixir-format
-msgid "Don’t have an account?"
-msgstr ""
+msgid "Don't have an account?"
+msgstr "Não tem uma conta?"
 
 #: lib/keila_web/templates/auth/login.html.heex:40
 #, elixir-autogen, elixir-format
@@ -45,23 +45,23 @@ msgstr "Comece agora!"
 
 #: lib/keila/auth/emails.ex:46
 #, elixir-autogen, elixir-format
-msgid "Hey there,\n\nplease confirm your new email address by visiting the following link:\n\n%{url}\n\nIf you weren’t trying to change your email address, simply ignore this message.\n"
-msgstr ""
+msgid "Hey there,\n\nplease confirm your new email address by visiting the following link:\n\n%{url}\n\nIf you weren't trying to change your email address, simply ignore this message.\n"
+msgstr "Olá,\n\npor favor confirme seu novo endereço de email visitando o seguinte link:\n\n%{url}\n\nSe você não estava tentando alterar seu endereço de email, simplesmente ignore esta mensagem.\n"
 
 #: lib/keila/auth/emails.ex:95
 #, elixir-autogen, elixir-format
-msgid "Hey there,\n\nyou can login to Fluxo Email MKT with the following link:\n\n%{url}\n\nIf you haven’t requested a login, simply ignore this message.\n"
-msgstr ""
+msgid "Hey there,\n\nyou can login to Fluxo Email MKT with the following link:\n\n%{url}\n\nIf you haven't requested a login, simply ignore this message.\n"
+msgstr "Olá,\n\nvocê pode fazer login no Fluxo Email MKT com o seguinte link:\n\n%{url}\n\nSe você não solicitou um login, simplesmente ignore esta mensagem.\n"
 
 #: lib/keila/auth/emails.ex:70
 #, elixir-autogen, elixir-format
-msgid "Hey there,\n\nyou have requested a password reset for your Fluxo Email MKT account.\n\nYou can set a new password by visiting the following link:\n\n%{url}\n\nIf you weren’t trying to reset your password, simply ignore this message.\n"
-msgstr ""
+msgid "Hey there,\n\nyou have requested a password reset for your Fluxo Email MKT account.\n\nYou can set a new password by visiting the following link:\n\n%{url}\n\nIf you weren't trying to reset your password, simply ignore this message.\n"
+msgstr "Olá,\n\nvocê solicitou uma redefinição de senha para sua conta do Fluxo Email MKT.\n\nVocê pode definir uma nova senha visitando o seguinte link:\n\n%{url}\n\nSe você não estava tentando redefinir sua senha, simplesmente ignore esta mensagem.\n"
 
 #: lib/keila_web/templates/auth/reset_success.html.heex:7
 #, elixir-autogen, elixir-format
-msgid "If you have an account, we’ve sent you a verification link to %{email}."
-msgstr ""
+msgid "If you have an account, we've sent you a verification link to %{email}."
+msgstr "Se você tem uma conta, enviamos um link de verificação para %{email}."
 
 #: lib/keila_web/templates/auth/404.html.heex:7
 #, elixir-autogen, elixir-format
@@ -164,8 +164,8 @@ msgstr "Obrigado por verificar seu email."
 
 #: lib/keila_web/templates/auth/404.html.heex:4
 #, elixir-autogen, elixir-format
-msgid "That didn’t work :-("
-msgstr ""
+msgid "That didn't work :-("
+msgstr "Isso não funcionou :-("
 
 #: lib/keila_web/templates/auth/activate_success.html.heex:4
 #, elixir-autogen, elixir-format
@@ -174,18 +174,18 @@ msgstr "Bem-vindo ao Fluxo Email MKT!"
 
 #: lib/keila/auth/emails.ex:22
 #, elixir-autogen, elixir-format
-msgid "Welcome to Fluxo Email MKT,\n\nplease confirm your new account by visiting the following link:\n\n%{url}\n\nIf you weren’t trying to create an account, simply ignore this message.\n"
-msgstr ""
+msgid "Welcome to Fluxo Email MKT,\n\nplease confirm your new account by visiting the following link:\n\n%{url}\n\nIf you weren't trying to create an account, simply ignore this message.\n"
+msgstr "Bem-vindo ao Fluxo Email MKT,\n\npor favor confirme sua nova conta visitando o seguinte link:\n\n%{url}\n\nSe você não estava tentando criar uma conta, simplesmente ignore esta mensagem.\n"
 
 #: lib/keila_web/templates/auth/activate_resend_success.html.heex:7
 #, elixir-autogen, elixir-format
-msgid "We’ve resent your verification link to %{email}."
-msgstr ""
+msgid "We've resent your verification link to %{email}."
+msgstr "Reenviamos seu link de verificação para %{email}."
 
 #: lib/keila_web/templates/auth/register_success.html.heex:7
 #, elixir-autogen, elixir-format
-msgid "We’ve sent you a verification link to %{email}."
-msgstr ""
+msgid "We've sent you a verification link to %{email}."
+msgstr "Enviamos um link de verificação para %{email}."
 
 #: lib/keila_web/templates/auth/reset_change_password_success.html.heex:7
 #, elixir-autogen, elixir-format
@@ -215,7 +215,7 @@ msgstr "Faça login com sua nova senha"
 #: lib/keila/auth/emails.ex:119
 #, elixir-autogen, elixir-format
 msgid "Hey there,\n\nplease verify your sender email address by visiting the following link:\n\n%{url}\n\nIf you didn't request this verification, please ignore this message and\ndo not click on the link.\n"
-msgstr ""
+msgstr "Olá,\n\npor favor verifique seu endereço de email de remetente visitando o seguinte link:\n\n%{url}\n\nSe você não solicitou esta verificação, por favor ignore esta mensagem e\nnão clique no link.\n"
 
 #: lib/keila/auth/emails.ex:115
 #, elixir-autogen, elixir-format, fuzzy

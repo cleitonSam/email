@@ -1,6 +1,6 @@
 <main role="main" class="static-container flex-grow bg-gray-950 text-gray-300 min-h-screen">
   <%= if Phoenix.Flash.get(@flash, :info) do %>
-    <div class="bg-fluxo-200 text-black" role="alert">
+    <div class="bg-emerald-200 text-black" role="alert">
       <p class="container py-5 my-0">{Phoenix.Flash.get(@flash, :info)}</p>
     </div>
   <% end %>
@@ -13,7 +13,7 @@
     <div class="bg-amber-200 text-black" role="alert">
       <p class="container py-5 my-0">
         <a href={~p"/admin/instance"}>
-          {dgettext("admin", "Uma nova versão do Fluxo Email MKT está disponível.")}
+          {dgettext("admin", "A new version of Fluxo Email MKT is available.")}
           <span class="underline">{dgettext("admin", "Read more")}</span>
         </a>
       </p>
@@ -23,19 +23,19 @@
     <%= if assigns[:current_account] do %>
       <%= case @current_account.status do %>
         <% :default -> %>
-          <div class="bg-gradient-to-b from-fluxo-200 to-fluxo-300 text-black" role="alert">
+          <div class="bg-gradient-to-b from-emerald-200 to-emerald-300 text-black" role="alert">
             <p class="container py-5 my-0">
               <a href={~p"/account"}>
                 {dgettext(
                   "cloud",
-                  "Bem-vindo ao Fluxo Email MKT! Para começar a enviar emails, escolha um plano."
+                  "Welcome to Fluxo Email MKT, have a look around! To start sending emails, please choose a subscription."
                 )}
                 <span class="underline">{dgettext("cloud", "Select plan")}</span>
               </a>
             </p>
           </div>
         <% :onboarding_required -> %>
-          <div class="bg-gradient-to-b from-fluxo-200 to-fluxo-300 text-black" role="alert">
+          <div class="bg-gradient-to-b from-emerald-200 to-emerald-300 text-black" role="alert">
             <p class="container py-5 my-0">
               <a href={~p"/account/onboarding"}>
                 {dgettext(
@@ -47,7 +47,7 @@
             </p>
           </div>
         <% :under_review -> %>
-          <div class="bg-gradient-to-b from-fluxo-200 to-fluxo-300 text-black" role="alert">
+          <div class="bg-gradient-to-b from-emerald-200 to-emerald-300 text-black" role="alert">
             <p class="container py-5 my-0">
               <a href={~p"/account/onboarding"}>
                 {dgettext(
@@ -65,7 +65,7 @@
           <%= if system_disruption_message do %>
             <div class="bg-amber-200 text-black" role="alert">
               <p class="container py-5 my-0">
-                <a href="https://fluxodigitaltech.com.br">
+                <a href="https://fluxodigitaltech.com.br/status">
                   {system_disruption_message}
                   <span class="underline">
                     {dgettext("cloud", "Status page")}
@@ -78,4 +78,4 @@
     <% end %>
   <% end %>
   {@inner_content}
-<
+</main>

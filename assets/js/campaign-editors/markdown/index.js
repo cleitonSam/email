@@ -84,4 +84,4 @@ class MarkdownEditor {
   }
 }
 
-export { MarkdownEditor }
+export { Markdown

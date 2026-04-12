@@ -194,6 +194,4 @@ const linkWithLiquid = function(state, silent) {
 }
 
 export const markdownItLinkWithLiquid = (md) => {
-  md.inline.ruler.at("link", linkWithLiquid)
-  return md
-}
+  md.inline.ruler.at("link", lin

@@ -155,6 +155,4 @@ module.exports = function parseLinkDestination(str, start, max) {
 
   result.str = unescapeAll(str.slice(start, pos))
   result.pos = pos
-  result.ok = true
-  return result
-}
+  result.o

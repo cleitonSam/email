@@ -1,8 +1,10 @@
-Hey {{ contact.first_name | default: "there" }}!
+Olá {{ contact.first_name | default: "" }}!
 
-You can write your campaign text here. This is a plain-text campaign, so no HTML!
+Este é um email de texto simples enviado pelo Fluxo Email MKT.
 
-You can use the Liquid templating language (https://shopify.github.io/liquid/) here.
+Emails em texto simples são ótimos para mensagens diretas e pessoais.
+Sem imagens, sem formatação — apenas a sua mensagem.
 
-Please make sure to include the following in every campaign:
-{{ unsubscribe_link }}
+---
+Enviado com Fluxo Email MKT
+Para cancelar sua inscrição: {{ unsubscribe_link }}

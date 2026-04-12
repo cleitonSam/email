@@ -97,7 +97,7 @@ defmodule Keila.Templates.DefaultTemplate do
   @signature """
   [Unsubscribe]({{ unsubscribe_link }})
 
-  Powered by [Keila - OpenSource Newsletters](https://www.keila.io/)
+  Powered by [Fluxo Email MKT](https://fluxodigitaltech.com.br)
   """
 
   @deprecated "Use HybridTemplate instead"

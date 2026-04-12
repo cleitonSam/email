@@ -1,38 +1,43 @@
-<div class="container mt-8">
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-950 via-fluxo-900/20 to-gray-950 px-4">
   <.form
     :let={f}
     for={@changeset}
     action={Routes.auth_path(@conn, :post_reset)}
-    class="rounded shadow p-8 mt-8 max-w-xl mx-auto flex flex-col gap-4 bg-gray-900 text-gray-50"
+    class="w-full max-w-md bg-gray-900/80 backdrop-blur-xl border border-gray-700/50 rounded-2xl shadow-2xl p-8 sm:p-10 flex flex-col gap-5 text-gray-50"
   >
-    <h1 class="text-5xl font-bold">
-      {gettext("Reset your password.")}
-    </h1>
-    <p class="text-lg text-gray-200">
-      {gettext("If you’ve forgotten your password, you can request an email to reset it here.")}
-    </p>
-    <div class="flex flex-col">
-      {label(f, :email, gettext("Email"))}
+    <div class="flex flex-col items-center gap-3 mb-2">
+      <span class="h-14 w-14 text-fluxo-400">
+        {render_icon(:logo)}
+      </span>
+      <h1 class="font-display text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-fluxo-400 to-cyan-400 text-center">
+        {dgettext("auth", "Reset your password.")}
+      </h1>
+      <p class="text-gray-400 text-center text-sm">
+        {dgettext("auth", "If you've forgotten your password, you can request an email to reset it here.")}
+      </p>
+    </div>
+    <div class="flex flex-col gap-1.5">
+      {label(f, :email, gettext("Email"), class: "text-sm font-medium text-gray-300")}
       <%= with_validation(f, :email) do %>
-        {text_input(f, :email, placeholder: gettext("you@fluxodigitaltech.com.br"), class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
+        {text_input(f, :email, placeholder: gettext("voce@suaempresa.com.br"), autofocus: true, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-500")}
       <% end %>
     </div>
-    <div class="flex justify-end mt-8">
-      <button class="button button--cta button--large">
-        {gettext("Request password reset")}
-      </button>
+    <button type="submit" class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-fluxo-600 to-fluxo-500 hover:from-fluxo-500 hover:to-fluxo-400 text-white font-semibold py-3 px-6 rounded-lg shadow-lg shadow-fluxo-500/25 hover:shadow-fluxo-500/40 transition-all duration-300 transform hover:scale-[1.02]">
+      {gettext("Request password reset")}
+    </button>
+    <div class="flex flex-col items-center gap-2 text-sm">
+      <p class="text-gray-400">
+        {dgettext("auth", "Don't have an account?")}
+        <a href={Routes.auth_path(@conn, :register)} class="text-fluxo-400 hover:text-cyan-400 font-medium transition-colors ml-1">
+          {dgettext("auth", "Sign up.")}
+        </a>
+      </p>
+      <p class="text-gray-500">
+        {gettext("Remember your password again?")}
+        <a href={Routes.auth_path(@conn, :login)} class="text-gray-400 hover:text-fluxo-400 transition-colors ml-1">
+          {gettext("Try signing in.")}
+        </a>
+      </p>
     </div>
-    <p>
-      {gettext("Don’t have an account?")}
-      <a href={Routes.auth_path(@conn, :register)} class="underline">
-        {gettext("Sign up.")}
-      </a>
-    </p>
-    <p>
-      {gettext("Remember your password again?")}
-      <a href={Routes.auth_path(@conn, :login)} class="underline">
-        {gettext("Try signing in.")}
-      </a>
-    </p>
   </.form>
 </div>

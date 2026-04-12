@@ -4,7 +4,7 @@
   <% end %>
 
   <%= if Keila.Accounts.credits_enabled?() do %>
-    <div class="rounded shadow p-8 mt-8 max-w-5xl mx-auto flex flex-col gap-4 bg-gray-900 text-gray-50">
+    <div class="bg-gray-900/80 backdrop-blur-sm border border-gray-700/50 rounded-2xl shadow-xl p-8 mt-8 max-w-5xl mx-auto flex flex-col gap-4 text-gray-50">
       <h2 class="text-3xl font-bold">
         {gettext("Sending Quota")}
       </h2>
@@ -33,7 +33,7 @@
     :let={f}
     for={@changeset}
     action={Routes.account_path(@conn, :post_edit)}
-    class="rounded shadow p-8 mt-8 max-w-5xl mx-auto flex flex-col gap-4 bg-gray-900 text-gray-50"
+    class="bg-gray-900/80 backdrop-blur-sm border border-gray-700/50 rounded-2xl shadow-xl p-8 mt-8 max-w-5xl mx-auto flex flex-col gap-4 text-gray-50"
     @change="setUnsavedReminder(true)"
   >
     <h2 class="text-3xl font-bold">
@@ -68,7 +68,7 @@
     :let={f}
     for={@changeset}
     action={Routes.account_path(@conn, :post_edit)}
-    class="rounded shadow p-8 mt-8 max-w-5xl mx-auto flex flex-col gap-4 bg-gray-900 text-gray-50"
+    class="bg-gray-900/80 backdrop-blur-sm border border-gray-700/50 rounded-2xl shadow-xl p-8 mt-8 max-w-5xl mx-auto flex flex-col gap-4 text-gray-50"
     @change="setUnsavedReminder(true)"
   >
     <h2 class="text-3xl font-bold">

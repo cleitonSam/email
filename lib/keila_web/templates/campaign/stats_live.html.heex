@@ -111,7 +111,7 @@
       <% :preparing -> %>
         <p class="flex gap-4 items-center">
           <svg
-            class="animate-spin h-16 w-16 text-emerald-500"
+            class="animate-spin h-16 w-16 text-fluxo-500"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 100 100"
           >
@@ -131,7 +131,7 @@
       <% :sending -> %>
         <div class="flex gap-4 items-center">
           <svg
-            class="animate-spin h-16 w-16 text-emerald-500"
+            class="animate-spin h-16 w-16 text-fluxo-500"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 100 100"
           >
@@ -151,7 +151,7 @@
             <div class="flex gap-4 items-center mt-4">
               <span>{"#{@stats.sent_count}/#{@stats.recipients_count}"}</span>
               <div class="h-3 relative flex-grow rounded-full overflow-hidden">
-                <div class="w-full h-full bg-gray-200 absolute"></div>
+                <div class="w-full h-full bg-gray-700 absolute rounded-full"></div>
                 <div
                   class="h-full bg-fluxo-500 absolute"
                   style={
@@ -184,7 +184,7 @@
 
                   If you have any questions, please reach out to our support at [%{support_email}](mailto:%{support_email}).
                   """,
-                  support_email: "hello@keila.io"
+                  support_email: "suporte@fluxodigitaltech.com.br"
                 )}
               </div>
               <p class="mt-4">
@@ -220,25 +220,25 @@
         {gettext("Share")}
       </a>
     </div>
-    <div class="bg-gray-800 p-4 grid lg:grid-cols-2 gap-8 items-center xl:p-4 xl:grid-cols-3 xl:gap-4 whitespace-nowrap">
-      <div class="flex flex-row gap-4 xl:p-4">
-        <div class="flex h-14 w-14 p-4 bg-fluxo-800 rounded-full text-white">
+    <div class="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 grid lg:grid-cols-2 gap-6 items-center xl:p-6 xl:grid-cols-3 xl:gap-6 whitespace-nowrap">
+      <div class="flex flex-row gap-4 xl:p-4 bg-gray-800/50 rounded-xl p-4 border border-gray-700/30 hover:border-fluxo-500/30 transition-all duration-300">
+        <div class="flex h-14 w-14 p-4 bg-gradient-to-br from-fluxo-600 to-fluxo-400 rounded-xl text-white shadow-lg shadow-fluxo-500/20">
           {render_icon(:mail)}
         </div>
         <div class="flex flex-col">
-          <div class="text-sm">{gettext("emails sent")}</div>
-          <div class="text-3xl">{@stats.sent_count}</div>
+          <div class="text-xs uppercase tracking-wider text-gray-400 font-medium">{gettext("emails sent")}</div>
+          <div class="text-3xl font-bold text-white">{@stats.sent_count}</div>
         </div>
       </div>
       <%= if !@campaign.settings.do_not_track do %>
-        <div class="flex flex-row gap-4 xl:p-4">
-          <div class="flex h-14 w-14 p-4 bg-cyan-800 rounded-full text-white">
+        <div class="flex flex-row gap-4 xl:p-4 bg-gray-800/50 rounded-xl p-4 border border-gray-700/30 hover:border-cyan-500/30 transition-all duration-300">
+          <div class="flex h-14 w-14 p-4 bg-gradient-to-br from-cyan-600 to-cyan-400 rounded-xl text-white shadow-lg shadow-cyan-500/20">
             {render_icon(:mail_open)}
           </div>
           <div>
-            <div class="text-sm">{gettext("emails opened")}</div>
+            <div class="text-xs uppercase tracking-wider text-gray-400 font-medium">{gettext("emails opened")}</div>
             <div class="flex flex-row gap-2 items-end">
-              <span class="text-3xl">{@stats.open_count}</span>
+              <span class="text-3xl font-bold text-white">{@stats.open_count}</span>
               <%= if @stats.sent_count > 0 do %>
                 <span class="text-xl opacity-75">
                   {(@stats.open_count / @stats.sent_count * 100) |> Float.round(1)}&thinsp;%
@@ -247,14 +247,14 @@
             </div>
           </div>
         </div>
-        <div class="flex flex-row gap-4 xl:p-4">
-          <div class="flex h-14 w-14 p-4 bg-purple-800 rounded-full text-white">
+        <div class="flex flex-row gap-4 xl:p-4 bg-gray-800/50 rounded-xl p-4 border border-gray-700/30 hover:border-purple-500/30 transition-all duration-300">
+          <div class="flex h-14 w-14 p-4 bg-gradient-to-br from-purple-600 to-purple-400 rounded-xl text-white shadow-lg shadow-purple-500/20">
             {render_icon(:cursor_click)}
           </div>
           <div>
-            <div class="text-sm">{gettext("emails clicked")}</div>
+            <div class="text-xs uppercase tracking-wider text-gray-400 font-medium">{gettext("emails clicked")}</div>
             <div class="flex flex-row gap-2 items-end">
-              <span class="text-3xl">{@stats.click_count}</span>
+              <span class="text-3xl font-bold text-white">{@stats.click_count}</span>
               <%= if @stats.sent_count > 0 do %>
                 <span class="text-xl opacity-75">
                   {(@stats.click_count / @stats.sent_count * 100) |> Float.round(1)}&thinsp;%
@@ -279,14 +279,14 @@
           </div>
         </div>
       <% end %>
-      <div class="flex flex-row gap-4 xl:p-4">
-        <div class="flex h-14 w-14 p-4 bg-gray-400 text-gray-900 rounded-full">
+      <div class="flex flex-row gap-4 xl:p-4 bg-gray-800/50 rounded-xl p-4 border border-gray-700/30 hover:border-amber-500/30 transition-all duration-300">
+        <div class="flex h-14 w-14 p-4 bg-gradient-to-br from-amber-600 to-amber-400 rounded-xl text-white shadow-lg shadow-amber-500/20">
           {render_icon(:thumb_down)}
         </div>
         <div>
-          <div class="text-sm">{gettext("unsubscribes")}</div>
+          <div class="text-xs uppercase tracking-wider text-gray-400 font-medium">{gettext("unsubscribes")}</div>
           <div class="flex flex-row gap-2 items-end">
-            <span class="text-3xl">{@stats.unsubscribe_count}</span>
+            <span class="text-3xl font-bold text-white">{@stats.unsubscribe_count}</span>
             <%= if @stats.sent_count > 0 do %>
               <span class="text-xl opacity-75">
                 {(@stats.unsubscribe_count / @stats.sent_count * 100) |> Float.round(1)}&thinsp;%
@@ -295,14 +295,14 @@
           </div>
         </div>
       </div>
-      <div class="flex flex-row gap-4 xl:p-4">
-        <div class="flex h-14 w-14 p-4 bg-gray-400 text-gray-900 rounded-full">
+      <div class="flex flex-row gap-4 xl:p-4 bg-gray-800/50 rounded-xl p-4 border border-gray-700/30 hover:border-red-500/30 transition-all duration-300">
+        <div class="flex h-14 w-14 p-4 bg-gradient-to-br from-red-600 to-red-400 rounded-xl text-white shadow-lg shadow-red-500/20">
           {render_icon(:arrow_uturn_left)}
         </div>
         <div>
-          <div class="text-sm">{gettext("bounces")}</div>
+          <div class="text-xs uppercase tracking-wider text-gray-400 font-medium">{gettext("bounces")}</div>
           <div class="flex flex-row gap-2 items-end">
-            <span class="text-3xl">{@stats.hard_bounce_count}</span>
+            <span class="text-3xl font-bold text-white">{@stats.hard_bounce_count}</span>
             <%= if @stats.sent_count > 0 do %>
               <span class="text-xl opacity-75">
                 {(@stats.hard_bounce_count / @stats.sent_count * 100) |> Float.round(1)}&thinsp;%
@@ -311,14 +311,14 @@
           </div>
         </div>
       </div>
-      <div class="flex flex-row gap-4 xl:p-4">
-        <div class="flex h-14 w-14 p-4 bg-gray-400 text-gray-900 rounded-full">
+      <div class="flex flex-row gap-4 xl:p-4 bg-gray-800/50 rounded-xl p-4 border border-gray-700/30 hover:border-orange-500/30 transition-all duration-300">
+        <div class="flex h-14 w-14 p-4 bg-gradient-to-br from-orange-600 to-orange-400 rounded-xl text-white shadow-lg shadow-orange-500/20">
           {render_icon(:exclamation_triangle)}
         </div>
         <div>
-          <div class="text-sm">{gettext("complaints")}</div>
+          <div class="text-xs uppercase tracking-wider text-gray-400 font-medium">{gettext("complaints")}</div>
           <div class="flex flex-row gap-2 items-end">
-            <span class="text-3xl">{@stats.complaint_count}</span>
+            <span class="text-3xl font-bold text-white">{@stats.complaint_count}</span>
             <%= if @stats.sent_count > 0 do %>
               <span class="text-xl opacity-75">
                 {(@stats.complaint_count / @stats.sent_count * 100) |> Float.round(1)}&thinsp;%
@@ -344,7 +344,7 @@
       </div>
 
       <h3 class="font-light text-2xl mt-8 mb-4">{gettext("Links")}</h3>
-      <table class="w-full text-left">
+      <table class="w-full text-left bg-gray-800/50 rounded-xl border border-gray-700/30 overflow-hidden">
         <tr>
           <th>
             {gettext("URL")}

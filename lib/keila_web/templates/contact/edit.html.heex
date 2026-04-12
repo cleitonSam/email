@@ -6,7 +6,7 @@
       <%= if assigns[:contact] do %>
         <span>{@contact.email}</span>
         <%= if @contact.double_opt_in_at do %>
-          <span class="w-6 h-6 flex text-green-300">
+          <span class="w-6 h-6 flex text-fluxo-400">
             {render_icon(:check_circle)}
           </span>
         <% end %>

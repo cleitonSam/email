@@ -23,7 +23,7 @@
     <%= if assigns[:current_account] do %>
       <%= case @current_account.status do %>
         <% :default -> %>
-          <div class="bg-gradient-to-b from-emerald-200 to-emerald-300 text-black" role="alert">
+          <div class="bg-gradient-to-b from-fluxo-600/20 to-fluxo-700/20 text-fluxo-100 border-b border-fluxo-500/30" role="alert">
             <p class="container py-5 my-0">
               <a href={~p"/account"}>
                 {dgettext(
@@ -35,7 +35,7 @@
             </p>
           </div>
         <% :onboarding_required -> %>
-          <div class="bg-gradient-to-b from-emerald-200 to-emerald-300 text-black" role="alert">
+          <div class="bg-gradient-to-b from-fluxo-600/20 to-fluxo-700/20 text-fluxo-100 border-b border-fluxo-500/30" role="alert">
             <p class="container py-5 my-0">
               <a href={~p"/account/onboarding"}>
                 {dgettext(
@@ -47,7 +47,7 @@
             </p>
           </div>
         <% :under_review -> %>
-          <div class="bg-gradient-to-b from-emerald-200 to-emerald-300 text-black" role="alert">
+          <div class="bg-gradient-to-b from-fluxo-600/20 to-fluxo-700/20 text-fluxo-100 border-b border-fluxo-500/30" role="alert">
             <p class="container py-5 my-0">
               <a href={~p"/account/onboarding"}>
                 {dgettext(

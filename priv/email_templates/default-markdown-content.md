@@ -1,30 +1,30 @@
-Hey {{ contact.first_name | default: "there" }}!
+Olá {{ contact.first_name | default: "" }}!
 
-This is a Markdown campaign, so your recipients will get this message as text and HTML!
+Bem-vindo ao **Fluxo Email MKT** — sua plataforma de email marketing profissional.
 
-# Big Headline
-## Smaller headline
-### Smallest headline
+# Comece Agora
+## Crie campanhas incríveis
+### Em poucos minutos
 
-#### [Awesome Button](https://keila.io)
-
-![Alt text](https://www.keila.io/newsletter-assets/ai-elephant.jpg "Image Title")
-
-*Images should be 600px wide.*
+#### [Acessar Painel →](https://fluxodigitaltech.com.br)
 
 ---
 
-There are many things you can do in your Keila campaign. Try block quotes:
+Com o Fluxo Email MKT você pode:
 
-> The question is, are we happy to suppose that our grandchildren may never be able to see an elephant except in a picture book? *– David Attenborough*
+- **Criar** newsletters profissionais com editor visual
+- **Segmentar** sua audiência para envios direcionados
+- **Automatizar** suas campanhas de email
+- **Analisar** métricas de abertura, cliques e conversões
 
-Some other things you can do include:
+> "A melhor forma de prever o futuro é criá-lo." *— Peter Drucker*
 
-- Add spacers for additional structure
-- Make lists
-- Make text *italic* or **bold**
-- [Include links](https://keila.io)
+### Próximos Passos
 
-1) Make!
-2) Ordered!
-3) Lists!
+1) Configure seu remetente
+2) Importe seus contatos
+3) Crie sua primeira campanha
+
+---
+
+*Dúvidas? Responda este email ou acesse nossa documentação.*

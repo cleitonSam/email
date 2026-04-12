@@ -102,14 +102,14 @@ defmodule Keila.Templates.HybridTemplate do
   @signature """
   [Unsubscribe]({{ unsubscribe_link }})
 
-  Powered by [Keila - OpenSource Newsletters](https://www.keila.io/)
+  Powered by [Fluxo Email MKT](https://fluxodigitaltech.com.br)
   """
 
   @text_signature """
   Unsubscribe:
   {{ unsubscribe_link }}
 
-  This newsletter is powered by Keila: https://www.keila.io
+  Este email foi enviado com Fluxo Email MKT: https://fluxodigitaltech.com.br
   """
 
   @spec styles() :: Keila.Templates.Css.t()

@@ -123,7 +123,7 @@
               id="schedule[date]"
               phx-hook="SetLocalDateValue"
               data-value={raw(get_field(@changeset, :scheduled_for) |> maybe_print_datetime())}
-              class="bg-white hover:bg-fluxo-500/20 text-black"
+              class="bg-gray-800 hover:bg-fluxo-500/20 text-white border border-gray-700 rounded-lg"
             />
           </div>
           <div class="flex flex-col">
@@ -132,7 +132,7 @@
               type="time"
               id="schedule[time]"
               name="schedule[time]"
-              class="bg-white hover:bg-fluxo-500/20 text-black"
+              class="bg-gray-800 hover:bg-fluxo-500/20 text-white border border-gray-700 rounded-lg"
               phx-hook="SetLocalTimeValue"
               data-value={raw(get_field(@changeset, :scheduled_for) |> maybe_print_datetime())}
             />

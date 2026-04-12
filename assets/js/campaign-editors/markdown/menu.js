@@ -54,7 +54,7 @@ export function buildMenu(items) {
   })
 }
 
-/** Menu for the Fluxo Email MKT CampaignEditLive page */
+/** Menu for the Keila CampaignEditLive page */
 export function buildDefaultMenu() {
   const findButton = action => {
     return el => el.querySelector(`[data-action=${action}]`)
@@ -276,3 +276,5 @@ export function buildDefaultMenu() {
     buttonIndentDecrease,
     buttonLiquid,
     buttonTogglePreview
+  ])
+}

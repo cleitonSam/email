@@ -1,12 +1,12 @@
 /*
- * This file is part of Fluxo Email MKT.
+ * This file is part of Keila.
  *
- * Fluxo Email MKT is free software. You can redistribute it and/or modify
+ * Keila is free software. You can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
- * Fluxo Email MKT is distributed in the hope that it will be useful, but WITHOUT ANY
+ * Keila is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.
  *
@@ -155,4 +155,6 @@ module.exports = function parseLinkDestination(str, start, max) {
 
   result.str = unescapeAll(str.slice(start, pos))
   result.pos = pos
-  result.o
+  result.ok = true
+  return result
+}

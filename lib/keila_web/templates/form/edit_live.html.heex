@@ -109,25 +109,25 @@
         <div class="flex flex-col">
           {label(f, :name, gettext("Name"))}
           <%= with_validation(f, :name) do %>
-            {text_input(f, :name, class: "text-black")}
+            {text_input(f, :name, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
           <% end %>
         </div>
         <div class="flex flex-col">
           {label(fs, :submit_label, gettext("Button label"))}
           <%= with_validation(fs, :submit_label) do %>
-            {text_input(fs, :submit_label, class: "text-black")}
+            {text_input(fs, :submit_label, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
           <% end %>
         </div>
         <div class="flex flex-col">
           {label(fs, :intro_text, gettext("Intro text"))}
           <%= with_validation(fs, :intro_text) do %>
-            {text_input(fs, :intro_text, class: "text-black")}
+            {text_input(fs, :intro_text, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
           <% end %>
         </div>
         <div class="flex flex-col">
           {label(fs, :fine_print, gettext("Fine print"))}
           <%= with_validation(fs, :fine_print) do %>
-            {textarea(fs, :fine_print, class: "text-black", rows: 3)}
+            {textarea(fs, :fine_print, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", rows: 3)}
           <% end %>
         </div>
         <%= with_validation(fs, :captcha_required) do %>
@@ -139,13 +139,13 @@
         <div class="flex flex-col">
           {label(fs, :success_text, gettext("Thank you message"))}
           <%= with_validation(fs, :success_text) do %>
-            {text_input(fs, :success_text, class: "text-black")}
+            {text_input(fs, :success_text, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
           <% end %>
         </div>
         <div class="flex flex-col">
           {label(fs, :success_text, gettext("Thank you redirect URL"))}
           <%= with_validation(fs, :success_url) do %>
-            {url_input(fs, :success_url, class: "text-black")}
+            {url_input(fs, :success_url, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
           <% end %>
         </div>
         <%= with_validation(fs, :csrf_disabled) do %>
@@ -217,13 +217,13 @@
                   {gettext("Dropdown"), "enum"},
                   {gettext("Tags"), "tags"}
                 ],
-                class: "text-black"
+                class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all"
               )}
             </div>
             <div class="flex flex-col" x-show="cast">
               {label(fs, :key, gettext("Data Key"))}
               <%= with_validation(fs, :key) do %>
-                {text_input(fs, :key, class: "text-black", required: true)}
+                {text_input(fs, :key, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", required: true)}
               <% end %>
               <div class="text-xs">
                 {gettext_md(
@@ -241,7 +241,7 @@
           <div class="flex flex-col" x-show="cast">
             {label(fs, :label, gettext("Label"))}
             <%= with_validation(fs, :label) do %>
-              {text_input(fs, :label, class: "text-black")}
+              {text_input(fs, :label, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
             <% end %>
           </div>
 
@@ -250,7 +250,7 @@
               <div class="flex flex-col" x-show="cast">
                 {label(fs, :placeholder, gettext("Placeholder"))}
                 <%= with_validation(fs, :placeholder) do %>
-                  {text_input(fs, :placeholder, class: "text-black")}
+                  {text_input(fs, :placeholder, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
                 <% end %>
               </div>
             <% type when type in [:enum, :tags] -> %>
@@ -347,7 +347,7 @@
                 {label(fs, :double_opt_in_subject, gettext("Custom email subject"))}
                 <%= with_validation(fs, :double_opt_in_subject) do %>
                   {text_input(fs, :double_opt_in_subject,
-                    class: "text-black",
+                    class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
                     placeholder: Keila.Mailings.DoubleOptInEmailBuilder.default_subject()
                   )}
                 <% end %>
@@ -411,7 +411,7 @@
                     [{gettext("Default"), nil} | Enum.map(@templates, &{&1.name, &1.id})],
                     id: "form_settings_double_opt_in_template_id",
                     name: "form_settings_double_opt_in_template_id",
-                    class: "text-black",
+                    class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
                     x_ref: "double_opt_in_template_id",
                     phx_update: "ignore",
                     "x-on:input.stop":
@@ -437,7 +437,7 @@
                 <br />
                 <%= with_validation(fs, :double_opt_in_markdown_body) do %>
                   {textarea(fs, :double_opt_in_markdown_body,
-                    class: "text-black",
+                    class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
                     rows: 8,
                     placeholder: Keila.Mailings.DoubleOptInEmailBuilder.default_markdown_body()
                   )}
@@ -455,7 +455,7 @@
                     is required.
                     """)}
                   </div>
-                  {text_input(fs, :double_opt_in_message, class: "text-black")}
+                  {text_input(fs, :double_opt_in_message, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
                 <% end %>
               </div>
             </template>
@@ -470,7 +470,7 @@
                     is required.
                     """)}
                   </div>
-                  {url_input(fs, :double_opt_in_url, class: "text-black")}
+                  {url_input(fs, :double_opt_in_url, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
                 <% end %>
               </div>
             </template>
@@ -485,7 +485,7 @@
                     has already been used.
                     """)}
                   </div>
-                  {text_input(fs, :failure_text, class: "text-black")}
+                  {text_input(fs, :failure_text, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
                 <% end %>
               </div>
             </template>
@@ -500,7 +500,7 @@
                     has expired or has already been used.
                     """)}
                   </div>
-                  {url_input(fs, :failure_url, class: "text-black")}
+                  {url_input(fs, :failure_url, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
                 <% end %>
               </div>
             </template>
@@ -557,7 +557,7 @@
                 {label(fs, :welcome_subject, gettext("Email subject"))}
                 <%= with_validation(fs, :welcome_subject) do %>
                   {text_input(fs, :welcome_subject,
-                    class: "text-black",
+                    class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
                     placeholder: Keila.Mailings.WelcomeEmailBuilder.default_subject()
                   )}
                 <% end %>
@@ -621,7 +621,7 @@
                     [{gettext("Default"), nil} | Enum.map(@templates, &{&1.name, &1.id})],
                     id: "form_settings_welcome_template_id",
                     name: "form_settings_welcome_template_id",
-                    class: "text-black",
+                    class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
                     x_ref: "welcome_template_id",
                     phx_update: "ignore",
                     "x-on:input.stop":
@@ -647,7 +647,7 @@
                 <br />
                 <%= with_validation(fs, :welcome_markdown_body) do %>
                   {textarea(fs, :welcome_markdown_body,
-                    class: "text-black",
+                    class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
                     rows: 8,
                     placeholder: Keila.Mailings.WelcomeEmailBuilder.default_markdown_body()
                   )}
@@ -684,49 +684,49 @@
         <div class="flex flex-col">
           {label(fs, :body_bg_color, gettext("Body background"))}
           <%= with_validation(fs, :body_bg_color) do %>
-            {text_input(fs, :body_bg_color, class: "text-black", type: "color")}
+            {text_input(fs, :body_bg_color, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", type: "color")}
           <% end %>
         </div>
         <div class="flex flex-col">
           {label(fs, :form_bg_color, gettext("Form background"))}
           <%= with_validation(fs, :form_bg_color) do %>
-            {text_input(fs, :form_bg_color, class: "text-black", type: "color")}
+            {text_input(fs, :form_bg_color, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", type: "color")}
           <% end %>
         </div>
         <div class="flex flex-col">
           {label(fs, :text_color, gettext("Form text color"))}
           <%= with_validation(fs, :text_color) do %>
-            {text_input(fs, :text_color, class: "text-black", type: "color")}
+            {text_input(fs, :text_color, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", type: "color")}
           <% end %>
         </div>
         <div class="flex flex-col">
           {label(fs, :input_bg_color, gettext("Input background"))}
           <%= with_validation(fs, :input_bg_color) do %>
-            {text_input(fs, :input_bg_color, class: "text-black", type: "color")}
+            {text_input(fs, :input_bg_color, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", type: "color")}
           <% end %>
         </div>
         <div class="flex flex-col">
           {label(fs, :input_text_color, gettext("Input text color"))}
           <%= with_validation(fs, :input_text_color) do %>
-            {text_input(fs, :input_text_color, class: "text-black", type: "color")}
+            {text_input(fs, :input_text_color, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", type: "color")}
           <% end %>
         </div>
         <div class="flex flex-col">
           {label(fs, :input_border_color, gettext("Input border color"))}
           <%= with_validation(fs, :input_border_color) do %>
-            {text_input(fs, :input_border_color, class: "text-black", type: "color")}
+            {text_input(fs, :input_border_color, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", type: "color")}
           <% end %>
         </div>
         <div class="flex flex-col">
           {label(fs, :submit_bg_color, gettext("Submit button background"))}
           <%= with_validation(fs, :submit_bg_color) do %>
-            {text_input(fs, :submit_bg_color, class: "text-black", type: "color")}
+            {text_input(fs, :submit_bg_color, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", type: "color")}
           <% end %>
         </div>
         <div class="flex flex-col">
           {label(fs, :submit_text_color, gettext("Submit text color"))}
           <%= with_validation(fs, :submit_text_color) do %>
-            {text_input(fs, :submit_text_color, class: "text-black", type: "color")}
+            {text_input(fs, :submit_text_color, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", type: "color")}
           <% end %>
         </div>
       <% end) %>

@@ -3,7 +3,7 @@
     <div class="form-row">
       {label(@form, :sendgrid_api_key, gettext("API Key"))}
       <%= with_validation(@form, :sendgrid_api_key) do %>
-        {password_input(@form, :sendgrid_api_key, class: "text-black", phx_update: :ignore)}
+        {password_input(@form, :sendgrid_api_key, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", phx_update: :ignore)}
       <% end %>
     </div>
   <% else %>
@@ -22,7 +22,7 @@
 
       <template x-if="show">
         <%= with_validation(@form, :sendgrid_api_key) do %>
-          {password_input(@form, :sendgrid_api_key, class: "text-black", x_ref: "password")}
+          {password_input(@form, :sendgrid_api_key, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", x_ref: "password")}
         <% end %>
       </template>
     </div>

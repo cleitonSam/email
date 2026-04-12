@@ -7,7 +7,7 @@
     <%= with_validation(@form, :smtp_relay) do %>
       {text_input(@form, :smtp_relay,
         placeholder: gettext("mail.example.org"),
-        class: "text-black"
+        class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all"
       )}
     <% end %>
   </div>
@@ -22,7 +22,7 @@
           {gettext("Password"), "password"},
           {gettext("None"), "none"}
         ],
-        class: "text-black",
+        class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
         "x-model": "smtpAuthMethod"
       )}
     <% end %>
@@ -34,7 +34,7 @@
       {text_input(
         @form,
         :smtp_username,
-        class: "text-black",
+        class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
         "x-bind:disabled": "smtpAuthMethod !== 'password'"
       )}
     <% end %>
@@ -48,7 +48,7 @@
           {password_input(
             @form,
             :smtp_password,
-            class: "text-black",
+            class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
             phx_update: "ignore"
           )}
         <% end %>
@@ -74,7 +74,7 @@
               {password_input(
                 @form,
                 :smtp_password,
-                class: "text-black",
+                class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
                 x_ref: "password",
                 phx_update: "ignore"
               )}
@@ -108,7 +108,7 @@
       {label(@form, :smtp_port, gettext("Port"))}
       <%= with_validation(@form, :smtp_port) do %>
         {number_input(@form, :smtp_port,
-          class: "text-black",
+          class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
           "x-model": "port",
           phx_update: "ignore"
         )}

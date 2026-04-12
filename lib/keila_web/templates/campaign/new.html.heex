@@ -25,7 +25,7 @@
             f,
             :sender_id,
             Enum.map(@senders, &{"#{&1.name} (#{&1.from_name} <#{&1.from_email}>)", &1.id}),
-            class: "text-black"
+            class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all"
           )}
         <% end %>
       <% else %>
@@ -48,7 +48,7 @@
           f,
           :segment_id,
           [{gettext("All Contacts"), nil}] ++ Enum.map(@segments, &{&1.name, &1.id}),
-          class: "text-black"
+          class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all"
         )}
       <% end %>
     </div>
@@ -58,7 +58,7 @@
       <%= with_validation(f, :subject) do %>
         {text_input(f, :subject,
           placeholder: gettext("My Campaign Subject"),
-          class: "text-black",
+          class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
           autofocus: true
         )}
       <% end %>
@@ -73,8 +73,8 @@
           {radio_button(fs, :type, "text", class: "hidden", x_model: "type")}
           <label
             for={input_id(fs, :type, "text")}
-            class="bg-gray-800 p-4 600"
-            x-bind:class="type == 'text' && 'outline outline-2 outline-green-500'"
+            class="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4 hover:border-fluxo-500/30 transition-all cursor-pointer 600"
+            x-bind:class="type == 'text' && 'outline outline-2 outline-fluxo-500'"
           >
             <h3 class="text-bold text-xl">{gettext("Plain Text")}</h3>
             <div class="flex w-24 h-24 bg-gradient-to-br from-gray-200 to-gray-300 rounded text-gray-600 p-2 my-4">
@@ -89,8 +89,8 @@
           {radio_button(fs, :type, "markdown", class: "hidden", x_model: "type")}
           <label
             for={input_id(fs, :type, "markdown")}
-            class="bg-gray-800 p-4"
-            x-bind:class="type == 'markdown' && 'outline outline-2 outline-green-500'"
+            class="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4 hover:border-fluxo-500/30 transition-all cursor-pointer"
+            x-bind:class="type == 'markdown' && 'outline outline-2 outline-fluxo-500'"
           >
             <h3 class="text-bold text-xl">{gettext("Markdown")}</h3>
             <div class="flex w-24 h-24 bg-gradient-to-br from-gray-200 to-gray-300 rounded text-gray-600 p-2 my-4">
@@ -103,8 +103,8 @@
           {radio_button(fs, :type, "block", class: "hidden", x_model: "type")}
           <label
             for={input_id(fs, :type, "block")}
-            class="bg-gray-800 p-4 600 relative"
-            x-bind:class="type == 'block' && 'outline outline-2 outline-green-500'"
+            class="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4 hover:border-fluxo-500/30 transition-all cursor-pointer 600 relative"
+            x-bind:class="type == 'block' && 'outline outline-2 outline-fluxo-500'"
           >
             <h3 class="text-bold text-xl">{gettext("Block")}</h3>
             <div class="flex w-24 h-24 bg-gradient-to-br from-gray-200 to-gray-300 rounded text-gray-600 p-2 my-4">
@@ -113,7 +113,7 @@
             <p class="text-sm">
               {gettext("Create stunning emails with multi-column layouts with the Block editor.")}
             </p>
-            <span class="absolute bg-green-600 text-white right-0 top-5 px-4 rotate-45 text-md rounded-md">
+            <span class="absolute bg-fluxo-600 text-white right-0 top-5 px-4 rotate-45 text-md rounded-md">
               beta
             </span>
           </label>
@@ -121,8 +121,8 @@
           {radio_button(fs, :type, "mjml", class: "hidden", x_model: "type")}
           <label
             for={input_id(fs, :type, "mjml")}
-            class="bg-gray-800 p-4"
-            x-bind:class="type == 'mjml' && 'outline outline-2 outline-green-500'"
+            class="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4 hover:border-fluxo-500/30 transition-all cursor-pointer"
+            x-bind:class="type == 'mjml' && 'outline outline-2 outline-fluxo-500'"
           >
             <h3 class="text-bold text-xl">{gettext("MJML")}</h3>
             <div class="flex w-24 h-24 bg-gradient-to-br from-gray-200 to-gray-300 rounded text-gray-600 p-2 my-4">
@@ -153,7 +153,7 @@
             f,
             :template_id,
             [{gettext("Default"), nil} | Enum.map(@templates, &{&1.name, &1.id})],
-            class: "text-black"
+            class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all"
           )}
         <% end %>
       </div>
@@ -172,7 +172,7 @@
         <%= with_validation(f, :preview_text) do %>
           {textarea(f, :preview_text,
             placeholder: gettext("Can you summarize your campaign in 50 characters?"),
-            class: "text-black",
+            class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
             autofocus: true
           )}
         <% end %>

@@ -5,7 +5,7 @@
 </div>
 
 <div class="container">
-  <div class="p-4 ring ring-red-900">
+  <div class="p-4 bg-red-900/20 border border-red-800/50 rounded-xl">
     <p class="text-lg text-gray-200">
       {gettext("Campaigns associated with this sender will not be deleted.")}
     </p>
@@ -28,7 +28,7 @@
           gettext("Type in the sender name to confirm its deletion:")
         )}
         <%= with_validation(f, :delete_confirmation) do %>
-          {text_input(f, :delete_confirmation, placeholder: @sender.name, class: "text-black")}
+          {text_input(f, :delete_confirmation, placeholder: @sender.name, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
         <% end %>
       </div>
       <div class="flex gap-4 mt-4">

@@ -68,7 +68,7 @@
         <%= with_validation(f, :email) do %>
           {text_input(f, :email,
             placeholder: gettext("subscriber@example.com"),
-            class: "text-black",
+            class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
             autofocus: true
           )}
         <% end %>
@@ -76,13 +76,13 @@
       <div class="form-row">
         {label(f, :first_name, gettext("First name"))}
         <%= with_validation(f, :first_name) do %>
-          {text_input(f, :first_name, placeholder: gettext("Jane"), class: "text-black")}
+          {text_input(f, :first_name, placeholder: gettext("Jane"), class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
         <% end %>
       </div>
       <div class="form-row">
         {label(f, :last_name, gettext("Last name"))}
         <%= with_validation(f, :last_name) do %>
-          {text_input(f, :last_name, placeholder: gettext("Doe"), class: "text-black")}
+          {text_input(f, :last_name, placeholder: gettext("Doe"), class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
         <% end %>
       </div>
       <div class="form-row">
@@ -114,7 +114,7 @@
         <%= with_validation(f, :external_id) do %>
           {text_input(f, :external_id,
             placeholder: gettext("920207"),
-            class: "text-black",
+            class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
             autofocus: true
           )}
         <% end %>

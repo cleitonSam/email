@@ -50,7 +50,7 @@
     <div class="form-row max-w-xl">
       {label(f, :name, gettext("Name"))}
       <%= with_validation(f, :name) do %>
-        {text_input(f, :name, class: "text-black")}
+        {text_input(f, :name, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
       <% end %>
     </div>
     <br />

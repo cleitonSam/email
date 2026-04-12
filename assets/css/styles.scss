@@ -24,7 +24,7 @@ html {
 }
 
 .card {
-    @apply p-4 sm:max-w-5xl sm:p-8 bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl shadow-lg transition-all duration-200 hover:border-fluxo-500/30 hover:shadow-fluxo/10;
+    @apply p-4 sm:max-w-5xl sm:p-8 bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl shadow-lg transition-all duration-200 hover:border-fluxo-500/30;
 }
 
 .button {

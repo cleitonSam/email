@@ -12,4 +12,10 @@
       <option value="inserted_at"></option>
     </select>
     <select name="sort_order" value={@sort_order} class="hidden">
-      <option value="1"><
+      <option value="1"></option>
+      <option value="-1"></option>
+    </select>
+    <input type="hidden" name="page" value="1" />
+    <button class="button button--cta">{gettext("Search")}</button>
+  </form>
+</div>

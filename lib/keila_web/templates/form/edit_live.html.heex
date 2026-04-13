@@ -625,20 +625,20 @@
               </div>
               <!-- Device switcher -->
               <div class="flex items-center gap-1 bg-gray-700/50 rounded-lg p-0.5">
-                <button type="button" @click="previewDevice = 'desktop'" :class="previewDevice === 'desktop' ? 'bg-gray-600 text-white' : 'text-gray-400 hover:text-gray-300'" class="p-1.5 rounded-md transition-colors">
+                <button type="button" @click="previewDevice = 'desktop'" x-bind:class="previewDevice === 'desktop' ? 'p-1.5 rounded-md transition-colors bg-gray-600 text-white' : 'p-1.5 rounded-md transition-colors text-gray-400 hover:text-gray-300'">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                 </button>
-                <button type="button" @click="previewDevice = 'mobile'" :class="previewDevice === 'mobile' ? 'bg-gray-600 text-white' : 'text-gray-400 hover:text-gray-300'" class="p-1.5 rounded-md transition-colors">
+                <button type="button" @click="previewDevice = 'mobile'" x-bind:class="previewDevice === 'mobile' ? 'p-1.5 rounded-md transition-colors bg-gray-600 text-white' : 'p-1.5 rounded-md transition-colors text-gray-400 hover:text-gray-300'">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                 </button>
               </div>
             </div>
             <div
-              class="form-main flex justify-center transition-all duration-300"
-              :class="previewDevice === 'mobile' ? 'p-6 md:p-10' : 'p-6 md:p-10'"
+              
+              x-bind:class="'form-main flex justify-center transition-all duration-300 p-6 md:p-10'"
               style={build_styles(%{"background-color" => @form_preview.settings.body_bg_color})}
             >
-              <div :class="previewDevice === 'mobile' ? 'max-w-[375px] w-full' : 'w-full'" class="transition-all duration-300">
+              <div x-bind:class="previewDevice === 'mobile' ? 'transition-all duration-300 max-w-[375px] w-full' : 'transition-all duration-300 w-full'">
                 {KeilaWeb.PublicFormView.render("show.html",
                   form: @form_preview,
                   mode: :preview,

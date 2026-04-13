@@ -1,17 +1,17 @@
 <main role="main" class="static-container flex-grow bg-gray-950 text-gray-300 min-h-screen">
   <%= if Phoenix.Flash.get(@flash, :info) do %>
-    <div class="bg-fluxo-600/20 text-fluxo-200" role="alert">
-      <p class="container py-5 my-0">{Phoenix.Flash.get(@flash, :info)}</p>
+    <div class="bg-fluxo-600/15 text-fluxo-200 border-b border-fluxo-500/20 backdrop-blur-sm" role="alert">
+      <p class="container py-4 my-0 flex items-center gap-2 text-sm">{Phoenix.Flash.get(@flash, :info)}</p>
     </div>
   <% end %>
   <%= if Phoenix.Flash.get(@flash, :errors) do %>
-    <div class="bg-yellow-200" role="alert">
-      <p class="container py-5 my-0">{Phoenix.Flash.get(@flash, :error)}</p>
+    <div class="bg-red-500/15 text-red-200 border-b border-red-500/20 backdrop-blur-sm" role="alert">
+      <p class="container py-4 my-0 flex items-center gap-2 text-sm">{Phoenix.Flash.get(@flash, :error)}</p>
     </div>
   <% end %>
   <%= if assigns[:is_admin?] && assigns[:instance_updates_available?] do %>
-    <div class="bg-amber-200 text-black" role="alert">
-      <p class="container py-5 my-0">
+    <div class="bg-amber-500/15 text-amber-200 border-b border-amber-500/20 backdrop-blur-sm" role="alert">
+      <p class="container py-4 my-0 flex items-center gap-2 text-sm">
         <a href={~p"/admin/instance"}>
           {dgettext("admin", "A new version of Fluxo Email MKT is available.")}
           <span class="underline">{dgettext("admin", "Read more")}</span>
@@ -63,19 +63,6 @@
         <% _other -> %>
           <% system_disruption_message = KeilaCloud.system_disruption_message() %>
           <%= if system_disruption_message do %>
-            <div class="bg-amber-200 text-black" role="alert">
-              <p class="container py-5 my-0">
-                <a href="https://fluxodigitaltech.com.br/status">
-                  {system_disruption_message}
-                  <span class="underline">
-                    {dgettext("cloud", "Status page")}
-                  </span>
-                </a>
-              </p>
-            </div>
-          <% end %>
-      <% end %>
-    <% end %>
-  <% end %>
-  {@inner_content}
-</main>
+            <div class="bg-amber-500/15 text-amber-200 border-b border-amber-500/20 backdrop-blur-sm" role="alert">
+              <p class="container py-4 my-0 flex items-center gap-2 text-sm">
+                <a href="https://fluxodigitalte

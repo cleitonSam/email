@@ -1,10 +1,10 @@
 <div class="container flex py-8 sm:py-11 mb-4">
   <div class="flex-grow gap-4 flex flex-col sm:flex-row sm:items-center">
-    <h1 class="text-2xl sm:text-3xl text-gray-100">
+    <h1 class="text-2xl sm:text-3xl font-bold text-white">
       {gettext("Campaigns")}
     </h1>
     <div class="flex-grow flex flex-row-reverse justify-end gap-4 sm:flex-row">
-      <a href={Routes.campaign_path(@conn, :new, @current_project.id)} class="button">
+      <a href={Routes.campaign_path(@conn, :new, @current_project.id)} class="button button--cta">
         {render_icon(:document_add)}
         {gettext("Create new campaign")}
       </a>
@@ -16,17 +16,35 @@
   {render("_empty_state.html", assigns)}
 <% end %>
 
-<div class="container grid gap-4 md:grid-cols-2 md:gap-8">
+<div class="container grid gap-4 md:grid-cols-2 md:gap-6">
   <%= for campaign <- @campaigns do %>
-    <div class="card bg-gray-800">
-      <h2 class="font-light text-2xl flex items-center gap-2 mb-2">
-        {campaign.subject}
-      </h2>
-      <p class="text-sm flex items-center gap-2">
+    <div class="group bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6 hover:border-fluxo-500/30 hover:shadow-lg hover:shadow-fluxo-500/5 transition-all duration-300">
+      <div class="flex items-start justify-between gap-3 mb-3">
+        <h2 class="font-semibold text-xl text-white group-hover:text-fluxo-300 transition-colors line-clamp-2">
+          {campaign.subject}
+        </h2>
+        <%= cond do %>
+          <% campaign.sent_at -> %>
+            <span class="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-fluxo-500/10 text-fluxo-300 border border-fluxo-500/20">
+              <span class="inline-flex h-3.5 w-3.5">{render_icon(:check_circle)}</span>
+              {gettext("Sent")}
+            </span>
+          <% campaign.scheduled_for -> %>
+            <span class="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-300 border border-amber-500/20">
+              <span class="inline-flex h-3.5 w-3.5">{render_icon(:clock)}</span>
+              {gettext("Scheduled")}
+            </span>
+          <% true -> %>
+            <span class="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-gray-700/50 text-gray-400 border border-gray-600/30">
+              {gettext("draft")}
+            </span>
+        <% end %>
+      </div>
+      <p class="text-sm text-gray-400 flex items-center gap-2 mb-4">
         {cond do
           campaign.sent_at ->
             [
-              content_tag(:span, render_icon(:cake), class: "inline-flex h-5 w-5"),
+              content_tag(:span, render_icon(:cake), class: "inline-flex h-4 w-4 text-gray-500"),
               gettext("Sent at:"),
               " ",
               local_datetime_tag(campaign.sent_at)
@@ -34,7 +52,7 @@
 
           campaign.scheduled_for ->
             [
-              content_tag(:span, render_icon(:clock), class: "inline-flex h-5 w-5"),
+              content_tag(:span, render_icon(:clock), class: "inline-flex h-4 w-4 text-gray-500"),
               gettext("Scheduled for:"),
               " ",
               local_datetime_tag(campaign.scheduled_for)
@@ -48,11 +66,10 @@
             ]
         end}
       </p>
-      <br />
-      <div class="flex flex-row gap-4 justify-end">
+      <div class="flex flex-row gap-3 justify-end border-t border-gray-800/50 pt-4">
         <a
           href={Routes.campaign_path(@conn, :clone, @current_project.id, campaign.id)}
-          class="button button--text"
+          class="button button--text button--small"
         >
           {render_icon(:duplicate)}
           {gettext("Clone")}
@@ -60,7 +77,7 @@
         <%= if is_nil(campaign.sent_at) do %>
           <a
             href={Routes.campaign_path(@conn, :edit, @current_project.id, campaign.id)}
-            class="button"
+            class="button button--small"
           >
             {render_icon(:pencil_alt)}
             {gettext("Edit")}
@@ -68,7 +85,7 @@
         <% else %>
           <a
             href={Routes.campaign_path(@conn, :stats, @current_project.id, campaign.id)}
-            class="button"
+            class="button button--cta button--small"
           >
             {render_icon(:chart_bar)}
             {gettext("Stats")}

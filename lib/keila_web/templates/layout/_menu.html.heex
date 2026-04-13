@@ -1,12 +1,12 @@
 <%= if @current_user do %>
-  <aside class="flex bg-gray-800 overflow-y-auto">
+  <aside class="flex bg-gradient-to-b from-gray-900 to-gray-950 overflow-y-auto border-r border-gray-800/50">
     <div id="main-menu" class="container sm:h-screen sm:flex sm:flex-col">
       <input id="main-menu-toggle" type="checkbox" aria-hidden="true" class="hidden" />
       <div class="absolute inset-y-0 h-14 top-2 right-4 flex items-center sm:hidden">
         <label
           id="show-main-menu"
           for="main-menu-toggle"
-          class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+          class="inline-flex items-center justify-center p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-fluxo-500"
           aria-expanded="false"
         >
           <span class="sr-only">{gettext("Open menu")}</span>
@@ -15,22 +15,22 @@
         <label
           id="hide-main-menu"
           for="main-menu-toggle"
-          class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+          class="inline-flex items-center justify-center p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-fluxo-500"
           aria-expanded="false"
         >
           <span class="sr-only">{gettext("Close menu")}</span>
           <span class="inline-flex h-6 w-6">{render_icon(:x)}</span>
         </label>
       </div>
-      <div class="shrink-0 grow-0 flex mx-4 text-white border-b border-fluxo-700/50 pb-4">
-        <a href={Routes.project_path(@conn, :index)} class="flex items-center sm:h-24 my-4">
-          <span class="flex justify-end h-10 w-10">
+      <div class="shrink-0 grow-0 flex mx-4 text-white border-b border-gray-800/50 pb-4">
+        <a href={Routes.project_path(@conn, :index)} class="flex items-center sm:h-24 my-4 group">
+          <span class="flex justify-end h-10 w-10 group-hover:scale-110 transition-transform duration-300">
             {render_icon(:logo)}
           </span>
-          <span class="text-2xl font-light bg-clip-text text-transparent bg-gradient-to-r from-fluxo-400 to-cyan-400">Fluxo Email MKT</span>
+          <span class="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-fluxo-400 to-cyan-400">Fluxo Email MKT</span>
         </a>
       </div>
-      <nav class="font-medium hidden flex-col gap-1 mt-2 mb-4 sm:flex flex-grow">
+      <nav class="font-medium hidden flex-col gap-0.5 mt-3 mb-4 sm:flex flex-grow px-2">
         <%= if is_nil(assigns[:current_project]) do %>
           {menu_link(@conn, :project, :index, [], gettext("Projects"),
             exact: true,
@@ -39,8 +39,9 @@
         <% else %>
           <a
             href={Routes.project_path(@conn, :index)}
-            class="block text-xs font-light text-white my-2 align-middle hover:underline"
+            class="flex items-center gap-2 text-xs text-gray-400 my-2 px-2 hover:text-fluxo-400 transition-colors"
           >
+            <span class="inline-flex h-3 w-3">{render_icon(:chevron_left)}</span>
             {gettext("Back to projects overview")}
           </a>
           {menu_link(@conn, :project, :show, [@current_project.id], @current_project.name,
@@ -64,6 +65,7 @@
               indent: 1
             )}
           <% end %>
+          <div class="border-t border-gray-800/50 my-2 mx-2"></div>
           {menu_link(@conn, :contact, :index, [@current_project.id], gettext("Contacts"),
             icon: :user_group,
             exclude: [
@@ -92,6 +94,7 @@
             icon: :filter,
             exclude: [{:form, :new, [@current_project.id]}]
           )}
+          <div class="border-t border-gray-800/50 my-2 mx-2"></div>
           {menu_link(@conn, :form, :index, [@current_project.id], gettext("Forms"),
             icon: :template,
             exclude: [{:form, :new, [@current_project.id]}]
@@ -119,6 +122,7 @@
               indent: 1
             )}
           <% end %>
+          <div class="border-t border-gray-800/50 my-2 mx-2"></div>
           {menu_link(@conn, :campaign, :index, [@current_project.id], gettext("Campaigns"),
             icon: :at_symbol,
             exclude: [{:campaign, :new, [@current_project.id]}]
@@ -135,12 +139,14 @@
               indent: 1
             )}
           <% end %>
+          <div class="border-t border-gray-800/50 my-2 mx-2"></div>
           {menu_link(@conn, :api_key, :index, [@current_project.id], gettext("API Keys"),
             exact: true,
             icon: :code
           )}
         <% end %>
         <div class="hidden sm:block sm:flex-grow"></div>
+        <div class="border-t border-gray-800/50 my-2 mx-2"></div>
         {menu_link(@conn, Routes.account_path(@conn, :edit), gettext("Account"), icon: :user)}
         <%= if assigns[:is_admin?] do %>
           {menu_link(@conn, Routes.user_admin_path(@conn, :index), gettext("Users"), icon: :users)}
@@ -159,13 +165,13 @@
     </div>
   </aside>
 <% else %>
-  <header class="bg-gray-900">
+  <header class="bg-gradient-to-b from-gray-900 to-gray-950 border-b border-gray-800/50">
     <div class="container my-4 text-fluxo-400 flex justify-center">
-      <a href={Routes.project_path(@conn, :index)} class="inline-flex items-start">
-        <span class="flex h-11 w-11 -mr-1">
+      <a href={Routes.project_path(@conn, :index)} class="inline-flex items-start group">
+        <span class="flex h-11 w-11 -mr-1 group-hover:scale-110 transition-transform duration-300">
           {render_icon(:logo)}
         </span>
-        <span class="text-3xl font-light bg-clip-text text-transparent bg-gradient-to-r from-fluxo-400 to-cyan-400">Fluxo Email MKT</span>
+        <span class="text-3xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-fluxo-400 to-cyan-400">Fluxo Email MKT</span>
       </a>
     </div>
   </header>

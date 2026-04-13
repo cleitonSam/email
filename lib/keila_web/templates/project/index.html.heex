@@ -1,6 +1,6 @@
 <%= if Enum.empty?(@projects) do %>
   <div class="container mt-4 sm:mt-8">
-    <div class="flex gap-4 p-4 sm:p-8 bg-onboarding">
+    <div class="flex gap-4 p-4 sm:p-8 bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm border border-gray-700/50 rounded-2xl shadow-xl">
       <div class="flex gap-8">
         <span class="hidden sm:flex h-24 w-24 grow-0 shrink-0">
           {render_icon(:logo)}
@@ -33,7 +33,7 @@
         {gettext("Your Projects")}
       </h1>
       <div class="flex-grow flex flex-row-reverse justify-end gap-4 sm:flex-row">
-        <a href={Routes.project_path(@conn, :new)} class="button button--large">
+        <a href={Routes.project_path(@conn, :new)} class="button button--cta button--large">
           {render_icon(:document_add)}
           {gettext("Create a new project")}
         </a>
@@ -41,11 +41,6 @@
     </div>
   </div>
 
-  <div class="container grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8">
+  <div class="container grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 md:gap-6">
     <%= for project <- @projects do %>
-      <a class="card bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl hover:border-fluxo-500/50 hover:shadow-fluxo transition-all duration-300 text-2xl" href={Routes.project_path(@conn, :show, project.id)}>
-        {project.name}
-      </a>
-    <% end %>
-  </div>
-<% end %>
+      <a class="group block p-6 bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl hover:border-fluxo-500/40 hover:shadow-lg hover:shadow-fluxo-500/10 transition-all duration-300 hover:-translate-y-0.5" href={Routes.project_path(@conn, :show, proje

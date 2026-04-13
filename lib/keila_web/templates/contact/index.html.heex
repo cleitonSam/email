@@ -1,6 +1,6 @@
 <div class="container flex pt-8 sm:pt-11 mb-4">
   <div class="flex-grow gap-4 flex flex-col sm:flex-row sm:items-center">
-    <h1 class="text-2xl sm:text-3xl text-gray-100">
+    <h1 class="text-2xl sm:text-3xl font-bold text-white">
       {gettext("Contacts")}
     </h1>
     <div class="flex-grow flex flex-row-reverse justify-end gap-4 sm:flex-row">
@@ -14,7 +14,7 @@
         {render_icon(:user_add)}
         {gettext("Import")}
       </a>
-      <a href={Routes.contact_path(@conn, :new, @current_project.id)} class="button">
+      <a href={Routes.contact_path(@conn, :new, @current_project.id)} class="button button--cta">
         {render_icon(:document_add)}
         {gettext("Create")}
       </a>
@@ -36,5 +36,4 @@
         {render("_empty_state.html", assigns)}
       </div>
     <% true -> %>
-  <% end %>
-<% end %>
+  <

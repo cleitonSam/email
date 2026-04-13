@@ -1,31 +1,23 @@
-<div class="container grid gap-4 sm:grid-cols-3">
+<div class="container grid gap-3 sm:grid-cols-3">
   <a
     href={Routes.contact_path(@conn, :index, @current_project.id)}
     class={
-      "rounded-t p-4 text-center flex flex-col #{if @contacts_status == :active, do: "bg-fluxo-600 hover:bg-fluxo-500", else: "bg-gray-700 hover:bg-gray-600"}"
+      "rounded-xl p-5 text-center flex flex-col gap-1 transition-all duration-300 border #{if @contacts_status == :active, do: "bg-fluxo-600/20 border-fluxo-500/50 ring-1 ring-fluxo-500/30", else: "bg-gray-900/60 border-gray-800/50 hover:border-gray-700/80 hover:bg-gray-800/40"}"
     }
   >
-    <span class="text-3xl">{@contacts_stats.active}</span>
-    <span>{gettext("active subscribers")}</span>
+    <span class="text-3xl font-bold text-white">{@contacts_stats.active}</span>
+    <span class="text-sm text-gray-400">{gettext("active subscribers")}</span>
   </a>
 
   <a
     href={Routes.contact_path(@conn, :index_unsubscribed, @current_project.id)}
     class={
-      "rounded-t p-4 text-center flex flex-col #{if @contacts_status == :unsubscribed, do: "bg-fluxo-600 hover:bg-fluxo-500", else: "bg-gray-700 hover:bg-gray-600"}"
+      "rounded-xl p-5 text-center flex flex-col gap-1 transition-all duration-300 border #{if @contacts_status == :unsubscribed, do: "bg-amber-600/20 border-amber-500/50 ring-1 ring-amber-500/30", else: "bg-gray-900/60 border-gray-800/50 hover:border-gray-700/80 hover:bg-gray-800/40"}"
     }
   >
-    <span class="text-3xl">{@contacts_stats.unsubscribed}</span>
-    <span>{gettext("unsubscribed contacts")}</span>
+    <span class="text-3xl font-bold text-white">{@contacts_stats.unsubscribed}</span>
+    <span class="text-sm text-gray-400">{gettext("unsubscribed contacts")}</span>
   </a>
 
   <a
-    href={Routes.contact_path(@conn, :index_unreachable, @current_project.id)}
-    class={
-      "rounded-t p-4 text-center flex flex-col #{if @contacts_status == :unreachable, do: "bg-fluxo-600 hover:bg-fluxo-500", else: "bg-gray-700 hover:bg-gray-600"}"
-    }
-  >
-    <span class="text-3xl">{@contacts_stats.unreachable}</span>
-    <span>{gettext("unreachable contacts")}</span>
-  </a>
-</div>
+    href={Routes.contact_path(@conn, :index_unreach

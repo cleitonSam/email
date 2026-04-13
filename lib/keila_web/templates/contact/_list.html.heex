@@ -5,7 +5,7 @@
     as="contact"
     action={Routes.contact_path(@conn, :delete, @current_project.id)}
     method="delete"
-    class=" p-4 bg-gray-800"
+    class="p-4 sm:p-6 bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl shadow-lg"
   >
     {hidden_input(f, :return, value: @contacts_status)}
     {hidden_input(f, :require_confirmation, value: "true")}
@@ -14,79 +14,82 @@
       class="w-full"
       x-init="Hooks.ContactsTable.mounted.call({el: $el})"
     >
-      <tr class="text-left">
-        <th><input type="checkbox" x-model="checked" class="text-fluxo-500" /></th>
-        <th class="p-2">
-          <div class="flex gap-1">
-            <.table_sort_button key="email" current_key={@sort_by} current_order={@sort_order} />
-            {gettext("Email")}
-          </div>
-        </th>
-        <th class="p-2 hidden lg:table-cell gap-2">
-          <div class="flex gap-1">
-            <.table_sort_button
-              key="first_name"
-              current_key={@sort_by}
-              current_order={@sort_order}
-            />
-            {gettext("First name")}
-          </div>
-        </th>
-        <th class="p-2 hidden lg:table-cell gap-2">
-          <div class="flex gap-1">
-            <.table_sort_button
-              key="last_name"
-              current_key={@sort_by}
-              current_order={@sort_order}
-            />
-            {gettext("Last name")}
-          </div>
-        </th>
-        <th class="p-2 hidden lg:table-cell gap-2">
-          <div class="flex gap-1">
-            <.table_sort_button
-              key="inserted_at"
-              current_key={@sort_by}
-              current_order={@sort_order}
-            />
-            {gettext("Added")}
-          </div>
-        </th>
-        <th class="p-2"></th>
-      </tr>
+      <thead>
+        <tr class="text-left border-b border-gray-700/50">
+          <th class="px-3 py-3"><input type="checkbox" x-model="checked" class="text-fluxo-500 rounded bg-gray-800 border-gray-600" /></th>
+          <th class="px-3 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+            <div class="flex gap-1 items-center">
+              <.table_sort_button key="email" current_key={@sort_by} current_order={@sort_order} />
+              {gettext("Email")}
+            </div>
+          </th>
+          <th class="px-3 py-3 hidden lg:table-cell text-xs font-semibold text-gray-400 uppercase tracking-wider">
+            <div class="flex gap-1 items-center">
+              <.table_sort_button
+                key="first_name"
+                current_key={@sort_by}
+                current_order={@sort_order}
+              />
+              {gettext("First name")}
+            </div>
+          </th>
+          <th class="px-3 py-3 hidden lg:table-cell text-xs font-semibold text-gray-400 uppercase tracking-wider">
+            <div class="flex gap-1 items-center">
+              <.table_sort_button
+                key="last_name"
+                current_key={@sort_by}
+                current_order={@sort_order}
+              />
+              {gettext("Last name")}
+            </div>
+          </th>
+          <th class="px-3 py-3 hidden lg:table-cell text-xs font-semibold text-gray-400 uppercase tracking-wider">
+            <div class="flex gap-1 items-center">
+              <.table_sort_button
+                key="inserted_at"
+                current_key={@sort_by}
+                current_order={@sort_order}
+              />
+              {gettext("Added")}
+            </div>
+          </th>
+          <th class="px-3 py-3"></th>
+        </tr>
+      </thead>
+      <tbody>
       <%= for contact <- @contacts.data do %>
-        <tr>
-          <td>
+        <tr class="border-b border-gray-800/40 hover:bg-gray-800/30 transition-colors duration-150">
+          <td class="px-3 py-3">
             {checkbox(f, :id,
               hidden_input: false,
               "x_bind:checked": "checked",
-              class: "text-fluxo-500",
+              class: "text-fluxo-500 rounded bg-gray-800 border-gray-600",
               checked_value: contact.id,
               name: "contact[id][]"
             )}
           </td>
-          <td class="p-2">
+          <td class="px-3 py-3">
             <a
-              class="button button--text overflow-x-hidden"
+              class="text-fluxo-400 hover:text-cyan-400 transition-colors font-medium overflow-x-hidden"
               href={Routes.contact_path(@conn, :edit, @current_project.id, contact.id)}
             >
               {contact.email}
             </a>
           </td>
-          <td class="p-2 hidden lg:table-cell">
+          <td class="px-3 py-3 hidden lg:table-cell text-gray-300">
             {contact.first_name}
           </td>
-          <td class="p-2 hidden lg:table-cell">
+          <td class="px-3 py-3 hidden lg:table-cell text-gray-300">
             {contact.last_name}
           </td>
-          <td class="p-2 hidden lg:table-cell">
+          <td class="px-3 py-3 hidden lg:table-cell text-gray-400 text-sm">
             {local_datetime_tag(contact.inserted_at)}
           </td>
-          <td class="p-2 flex justify-end gap-2">
-            <.delete_button struct={contact} icon={:trash} class="button button--text" />
+          <td class="px-3 py-3 flex justify-end gap-1">
+            <.delete_button struct={contact} icon={:trash} class="button button--text text-gray-400 hover:text-red-400" />
 
             <a
-              class="button button--text"
+              class="button button--text text-gray-400 hover:text-fluxo-400"
               href={Routes.contact_path(@conn, :edit, @current_project.id, contact.id)}
             >
               {render_icon(:pencil_alt)}
@@ -94,43 +97,6 @@
           </td>
         </tr>
       <% end %>
+      </tbody>
     </table>
-    <button class="button mt-4">
-      {gettext("Delete all selected contacts")}
-    </button>
-  </.form>
-
-  <%= for contact <- @contacts.data do %>
-    <.delete_form
-      struct={contact}
-      as={:contact}
-      route={~p"/projects/#{@current_project.id}/contacts"}
-      return={@contacts_status}
-    />
-  <% end %>
-
-  <%= if @contacts.page_count > 1 do %>
-    <div class="flex gap-3 justify-center py-8">
-      <.pagination_nav
-        pagination={@contacts}
-        href={
-          fn n ->
-            query = %{
-              "page" => n + 1,
-              "sort_by" => @sort_by,
-              "sort_order" => @sort_order,
-              "search" => @search
-            }
-
-            Routes.contact_path(
-              @conn,
-              if(@contacts_status == :active, do: :index, else: :"index_#{@contacts_status}"),
-              @current_project.id,
-              query
-            )
-          end
-        }
-      />
-    </div>
-  <% end %>
-</div>
+    <button class="button

@@ -24,7 +24,7 @@ html {
 }
 
 .card {
-    @apply p-4 sm:max-w-5xl sm:p-8 bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl shadow-lg transition-all duration-200 hover:border-fluxo-500/30;
+    @apply p-4 sm:max-w-5xl sm:p-8 bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-2xl shadow-lg transition-all duration-300 hover:border-fluxo-500/30 hover:shadow-xl hover:shadow-fluxo-500/5;
 }
 
 .button {
@@ -43,9 +43,9 @@ html {
 
     &.button--cta {
         @apply bg-gradient-to-r from-fluxo-500 to-fluxo-600 text-white outline-none transform
-            hover:ring-2 hover:ring-fluxo-400 hover:scale-[1.02] hover:shadow-fluxo
+            hover:ring-2 hover:ring-fluxo-400 hover:scale-[1.02] hover:shadow-lg hover:shadow-fluxo-500/30
             focus:ring-2 focus:ring-fluxo-400
-            active:bg-fluxo-700
+            active:bg-fluxo-700 active:scale-[0.98]
             disabled:bg-gray-700 disabled:text-gray-500
             disabled:ring-gray-600 disabled:hover:ring-gray-600 disabled:transform-none disabled:scale-100;
     }
@@ -93,7 +93,7 @@ html {
     @apply py-2;
 
     .invalid-feedback {
-        @apply p-1 italic font-bold border-2 border-red-500 rounded rounded-l-none;
+        @apply p-2 text-sm text-red-400 bg-red-500/10 border border-red-500/30 rounded-lg;
     }
 }
 
@@ -101,7 +101,15 @@ select,
 input[type="date"],
 input:not([type="checkbox"]):not([type="radio"]),
 textarea {
-    @apply rounded-lg bg-gray-800 border border-gray-700 text-white placeholder-gray-500 focus:border-fluxo-500 focus:ring-fluxo-500/20;
+    @apply rounded-lg bg-gray-800/60 border border-gray-700/80 text-white placeholder-gray-500 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all duration-200;
+}
+
+input[type="checkbox"] {
+    @apply rounded bg-gray-800 border-gray-600 text-fluxo-500 focus:ring-fluxo-500/30 focus:ring-offset-0 transition-colors;
+}
+
+input[type="radio"] {
+    @apply bg-gray-800 border-gray-600 text-fluxo-500 focus:ring-fluxo-500/30 focus:ring-offset-0 transition-colors;
 }
 
 .form-error-indicator + input,
@@ -116,15 +124,15 @@ textarea {
 }
 
 input[disabled] {
-    @apply bg-gray-300 text-gray-500;
+    @apply bg-gray-800/30 text-gray-500 border-gray-700/50 cursor-not-allowed;
 }
 
 .tabs {
     .tab-label {
-        @apply inline-block bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-t text-white transition-all duration-200 relative;
+        @apply inline-block bg-gray-800/60 hover:bg-gray-700/80 px-4 py-2.5 rounded-t-lg text-gray-300 hover:text-white transition-all duration-300 relative font-medium text-sm;
 
         &.active {
-            @apply bg-fluxo-600 text-white;
+            @apply bg-gray-900/80 text-white border-t-2 border-x border-fluxo-500 border-gray-700/50;
 
             &::after {
                 @apply content-[''] absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-fluxo-400 to-cyan-400;
@@ -133,7 +141,7 @@ input[disabled] {
     }
 
     .tab-content {
-        @apply p-4 ring-1 ring-inset ring-gray-600 flex flex-col gap-4;
+        @apply p-5 ring-1 ring-inset ring-gray-700/50 bg-gray-900/30 rounded-b-lg flex flex-col gap-4;
     }
 }
 
@@ -167,6 +175,97 @@ input[disabled] {
 
 .bg-onboarding {
     @apply bg-fluxo-gradient-dark;
+}
+
+/* Table Styles */
+table {
+    @apply w-full;
+
+    thead {
+        th {
+            @apply text-xs font-semibold text-gray-400 uppercase tracking-wider px-4 py-3 text-left border-b border-gray-800/80;
+        }
+    }
+
+    tbody {
+        tr {
+            @apply border-b border-gray-800/40 transition-colors duration-150 hover:bg-gray-800/30;
+
+            td {
+                @apply px-4 py-3.5 text-sm text-gray-300;
+            }
+        }
+    }
+}
+
+/* Badge/Tag Styles */
+.badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+
+    &.badge--success {
+        @apply bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/20;
+    }
+
+    &.badge--warning {
+        @apply bg-amber-500/10 text-amber-400 ring-1 ring-amber-500/20;
+    }
+
+    &.badge--danger {
+        @apply bg-red-500/10 text-red-400 ring-1 ring-red-500/20;
+    }
+
+    &.badge--info {
+        @apply bg-fluxo-500/10 text-fluxo-400 ring-1 ring-fluxo-500/20;
+    }
+
+    &.badge--neutral {
+        @apply bg-gray-500/10 text-gray-400 ring-1 ring-gray-500/20;
+    }
+}
+
+/* Page Header Styles */
+.page-header {
+    @apply flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6;
+
+    h1, h2 {
+        @apply text-2xl font-bold text-white;
+    }
+}
+
+/* Tooltip Styles */
+.tooltip {
+    @apply relative;
+
+    &::after {
+        @apply absolute z-10 px-3 py-1.5 text-xs font-medium text-white bg-gray-800 rounded-lg shadow-lg border border-gray-700/50 opacity-0 invisible transition-all duration-200;
+        content: attr(data-tooltip);
+    }
+
+    &:hover::after {
+        @apply opacity-100 visible;
+    }
+}
+
+/* Skeleton Loading */
+.skeleton {
+    @apply animate-pulse bg-gray-800/50 rounded-lg;
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+    @apply w-2;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-gray-950;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-gray-700 rounded-full;
+
+    &:hover {
+        @apply bg-gray-600;
+    }
 }
 
 /*
@@ -396,7 +495,7 @@ svg {
 /* Utility Classes for Modern Design */
 
 .glass-card {
-    @apply bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl;
+    @apply bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl shadow-xl;
 }
 
 .gradient-text {
@@ -405,4 +504,46 @@ svg {
 
 .hover-glow {
     @apply transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,102,255,0.3)];
+}
+
+.hover-lift {
+    @apply transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg;
+}
+
+.section-divider {
+    @apply border-t border-gray-800/50 my-6;
+}
+
+.text-muted {
+    @apply text-gray-400 text-sm;
+}
+
+.text-label {
+    @apply text-xs font-semibold text-gray-400 uppercase tracking-wider;
+}
+
+/* Focus visible for keyboard navigation */
+*:focus-visible {
+    @apply outline-2 outline-offset-2 outline-fluxo-500;
+}
+
+/* Selection color */
+::selection {
+    @apply bg-fluxo-500/30 text-white;
+}
+
+/* Smooth page transitions */
+.page-enter {
+    animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

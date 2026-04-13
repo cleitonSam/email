@@ -94,11 +94,7 @@
     <div class="container grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-8">
       <%= for campaign <- @campaigns do %>
         <div
-          x-show="filterCampaign({
-            sent_at: <%= if campaign.sent_at, do: "true", else: "null" %>,
-            scheduled_for: <%= if campaign.scheduled_for, do: "true", else: "null" %>,
-            id: "<%= campaign.id %>"
-          })"
+          x-show={"filterCampaign({sent_at: #{if campaign.sent_at, do: "true", else: "null"}, scheduled_for: #{if campaign.scheduled_for, do: "true", else: "null"}, id: '#{campaign.id}'})"}
           class="card-hover-effect bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6 animate-fade-in"
         >
           <!-- Status Indicator -->
@@ -135,8 +131,7 @@
                       {gettext("Scheduled")}
                     </span>
                   <% true -> %>
-                    <span class="metric-badge">
-                      @apply bg-gray-700/50 text-gray-400 border-gray-600/30;
+                    <span class="metric-badge bg-gray-700/50 text-gray-400 border border-gray-600/30">
                       {gettext("Draft")}
                     </span>
                 <% end %>

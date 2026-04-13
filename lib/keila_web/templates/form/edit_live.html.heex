@@ -5,7 +5,7 @@
     <h1 class="text-2xl md:text-3xl font-bold text-white">
       {gettext("Edit Form")}
     </h1>
-    <div class="flex-grow flex flex-row justify-end gap-4 sm:flex-row" x-data>
+    <div class="flex-grow flex flex-row justify-end gap-3 sm:flex-row" x-data>
       <a
         class="button button--text button--large"
         href={Routes.form_path(@socket, :index, @current_project.id)}
@@ -39,7 +39,7 @@
 </div>
 
 <div
-  class="container grid grid-cols-3 gap-4 tabs"
+  class="container grid grid-cols-1 lg:grid-cols-3 gap-6 tabs"
   x-data="{tab: 'settings', showClipboardMessage: false}"
 >
   <.form
@@ -53,121 +53,141 @@
     <div class="flex gap-1 flex-wrap">
       <a
         href="#"
-        class="tab-label"
+        class="tab-label flex items-center gap-2"
         x-bind:class="{ 'active': tab === 'settings' }"
         @click.prevent="tab = 'settings'"
         phx-click="set_tab"
         phx-value-tab="settings"
       >
+        <svg class="w-4 h-4 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><circle cx="12" cy="12" r="3"></circle></svg>
         {gettext("Settings")}
       </a>
       <a
         href="#"
-        class="tab-label"
+        class="tab-label flex items-center gap-2"
         x-bind:class="{ 'active': tab === 'fields' }"
         @click.prevent="tab = 'fields'"
         phx-click="set_tab"
         phx-value-tab="fields"
       >
+        <svg class="w-4 h-4 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
         {gettext("Fields")}
       </a>
-
       <a
         href="#"
-        class="tab-label"
+        class="tab-label flex items-center gap-2"
         x-bind:class="{ 'active': tab === 'style' }"
         @click.prevent="tab = 'style'"
         phx-click="set_tab"
         phx-value-tab="style"
       >
+        <svg class="w-4 h-4 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>
         {gettext("Style")}
       </a>
       <a
         href="#"
-        class="tab-label"
+        class="tab-label flex items-center gap-2"
         x-bind:class="{ 'active': tab === 'double-opt-in' }"
         @click.prevent="tab = 'double-opt-in'"
         phx-click="set_tab"
         phx-value-tab="double-opt-in"
       >
+        <svg class="w-4 h-4 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
         {gettext("Double Opt-in")}
       </a>
       <a
         href="#"
-        class="tab-label"
+        class="tab-label flex items-center gap-2"
         x-bind:class="{ 'active': tab === 'welcome-email' }"
         @click.prevent="tab = 'welcome-email'"
         phx-click="set_tab"
         phx-value-tab="welcome-email"
       >
+        <svg class="w-4 h-4 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
         {gettext("Welcome Email")}
       </a>
     </div>
 
+    <!-- SETTINGS TAB -->
     <div class="flex flex-col gap-4 tab-content bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-b-xl" x-show="tab === 'settings'">
       <%= inputs_for(f, :settings, fn fs -> %>
         <div class="flex flex-col">
-          {label(f, :name, gettext("Name"), class: "text-sm font-medium text-gray-300 mb-1")}
+          {label(f, :name, gettext("Form name"), class: "text-sm font-medium text-gray-300 mb-1.5")}
           <%= with_validation(f, :name) do %>
-            {text_input(f, :name, class: "w-full rounded-lg bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
+            {text_input(f, :name, class: "w-full rounded-xl bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", placeholder: gettext("e.g. Newsletter Signup"))}
           <% end %>
         </div>
         <div class="flex flex-col">
-          {label(fs, :submit_label, gettext("Button label"), class: "text-sm font-medium text-gray-300 mb-1")}
+          {label(fs, :submit_label, gettext("Button text"), class: "text-sm font-medium text-gray-300 mb-1.5")}
+          <p class="text-xs text-gray-500 mb-2">{gettext("Use action verbs like 'Get My Free Guide' or 'Join Now'")}</p>
           <%= with_validation(fs, :submit_label) do %>
-            {text_input(fs, :submit_label, class: "w-full rounded-lg bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
+            {text_input(fs, :submit_label, class: "w-full rounded-xl bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", placeholder: "Inscrever-se")}
           <% end %>
         </div>
         <div class="flex flex-col">
-          {label(fs, :intro_text, gettext("Intro text"), class: "text-sm font-medium text-gray-300 mb-1")}
+          {label(fs, :intro_text, gettext("Description"), class: "text-sm font-medium text-gray-300 mb-1.5")}
+          <p class="text-xs text-gray-500 mb-2">{gettext("Short text shown below the form title")}</p>
           <%= with_validation(fs, :intro_text) do %>
-            {text_input(fs, :intro_text, class: "w-full rounded-lg bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
+            {text_input(fs, :intro_text, class: "w-full rounded-xl bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", placeholder: gettext("Join 10,000+ subscribers"))}
           <% end %>
         </div>
         <div class="flex flex-col">
-          {label(fs, :fine_print, gettext("Fine print"), class: "text-sm font-medium text-gray-300 mb-1")}
+          {label(fs, :fine_print, gettext("Fine print"), class: "text-sm font-medium text-gray-300 mb-1.5")}
+          <p class="text-xs text-gray-500 mb-2">{gettext("Legal text, privacy notice, etc. Supports HTML.")}</p>
           <%= with_validation(fs, :fine_print) do %>
-            {textarea(fs, :fine_print, class: "w-full rounded-lg bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", rows: 3)}
+            {textarea(fs, :fine_print, class: "w-full rounded-xl bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", rows: 3)}
           <% end %>
         </div>
         <div class="flex items-center gap-3 py-2">
           <%= with_validation(fs, :captcha_required) do %>
-            <%= label(fs, :captcha_required, class: "flex items-center gap-2 cursor-pointer text-gray-300") do %>
-              {checkbox(fs, :captcha_required, class: "text-fluxo-500 rounded")}
-              {gettext("Require captcha")}
+            <%= label(fs, :captcha_required, class: "flex items-center gap-3 cursor-pointer text-gray-300") do %>
+              {checkbox(fs, :captcha_required, class: "text-fluxo-500 rounded-md w-5 h-5")}
+              <div>
+                <span class="text-sm font-medium">{gettext("Require captcha")}</span>
+                <span class="block text-xs text-gray-500">{gettext("Prevents bots from submitting the form")}</span>
+              </div>
             <% end %>
           <% end %>
         </div>
-        <div class="border-t border-gray-800/50 pt-4 mt-2">
-          <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">{gettext("Redirects")}</h3>
+
+        <div class="border-t border-gray-800/50 pt-5 mt-2">
+          <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">{gettext("After Submission")}</h3>
         </div>
         <div class="flex flex-col">
-          {label(fs, :success_text, gettext("Thank you message"), class: "text-sm font-medium text-gray-300 mb-1")}
+          {label(fs, :success_text, gettext("Thank you message"), class: "text-sm font-medium text-gray-300 mb-1.5")}
           <%= with_validation(fs, :success_text) do %>
-            {text_input(fs, :success_text, class: "w-full rounded-lg bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
+            {text_input(fs, :success_text, class: "w-full rounded-xl bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", placeholder: gettext("Thank you for subscribing!"))}
           <% end %>
         </div>
         <div class="flex flex-col">
-          {label(fs, :success_text, gettext("Thank you redirect URL"), class: "text-sm font-medium text-gray-300 mb-1")}
+          {label(fs, :success_text, gettext("Redirect URL (optional)"), class: "text-sm font-medium text-gray-300 mb-1.5")}
+          <p class="text-xs text-gray-500 mb-2">{gettext("Send subscribers to a custom page after signup")}</p>
           <%= with_validation(fs, :success_url) do %>
-            {url_input(fs, :success_url, class: "w-full rounded-lg bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", placeholder: "https://")}
+            {url_input(fs, :success_url, class: "w-full rounded-xl bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", placeholder: "https://yoursite.com/thank-you")}
           <% end %>
         </div>
-        <div class="border-t border-gray-800/50 pt-4 mt-2">
-          <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">{gettext("Advanced")}</h3>
+
+        <div class="border-t border-gray-800/50 pt-5 mt-2">
+          <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">{gettext("Embedding")}</h3>
         </div>
         <div class="flex items-center gap-3 py-2">
           <%= with_validation(fs, :csrf_disabled) do %>
-            <%= label(fs, :csrf_disabled, class: "flex items-center gap-2 cursor-pointer text-gray-300") do %>
-              {checkbox(fs, :csrf_disabled, class: "text-fluxo-500 rounded")}
-              {gettext("Allow embedding as HTML")}
+            <%= label(fs, :csrf_disabled, class: "flex items-center gap-3 cursor-pointer text-gray-300") do %>
+              {checkbox(fs, :csrf_disabled, class: "text-fluxo-500 rounded-md w-5 h-5")}
+              <div>
+                <span class="text-sm font-medium">{gettext("Allow embedding as HTML")}</span>
+                <span class="block text-xs text-gray-500">{gettext("Required to embed form on external websites")}</span>
+              </div>
             <% end %>
           <% end %>
         </div>
       <% end) %>
     </div>
 
+    <!-- FIELDS TAB -->
     <div class="flex flex-col gap-2 tab-content bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-b-xl" x-show="tab === 'fields'">
+      <p class="text-xs text-gray-500 mb-2">{gettext("Fewer fields = higher conversion. Only ask for what you need.")}</p>
+
       <.inputs_for :let={fs} field={f[:field_settings]} ) %>
         <div class="flex flex-col gap-2" x-data="{cast: $el.querySelector('input.cast').checked}">
           {hidden_input(fs, :field)}
@@ -176,46 +196,52 @@
 
           <%= case field do %>
             <% :email -> %>
-              <h3 class="font-semibold text-white">
+              <h3 class="font-semibold text-white flex items-center gap-2">
                 {checkbox(fs, :cast, x_model: "cast", class: "cast hidden")}
+                <svg class="w-4 h-4 text-fluxo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                 {gettext("Email")}
+                <span class="text-xs bg-fluxo-500/20 text-fluxo-300 px-2 py-0.5 rounded-full font-normal">{gettext("Required")}</span>
               </h3>
             <% :first_name -> %>
-              <h3 class="font-semibold text-white pt-4 border-t border-gray-700/50">
+              <h3 class="font-semibold text-white pt-4 border-t border-gray-700/50 flex items-center gap-2">
                 <%= label(fs, :cast, class: "flex items-center gap-2 cursor-pointer") do %>
-                  {checkbox(fs, :cast, x_model: "cast", class: "cast text-fluxo-500 rounded")}
+                  {checkbox(fs, :cast, x_model: "cast", class: "cast text-fluxo-500 rounded-md w-5 h-5")}
+                  <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                   {gettext("First name")}
                 <% end %>
               </h3>
             <% :last_name -> %>
-              <h3 class="font-semibold text-white pt-4 border-t border-gray-700/50">
+              <h3 class="font-semibold text-white pt-4 border-t border-gray-700/50 flex items-center gap-2">
                 <%= label(fs, :cast, class: "flex items-center gap-2 cursor-pointer") do %>
-                  {checkbox(fs, :cast, x_model: "cast", class: "cast text-fluxo-500 rounded")}
+                  {checkbox(fs, :cast, x_model: "cast", class: "cast text-fluxo-500 rounded-md w-5 h-5")}
+                  <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                   {gettext("Last name")}
                 <% end %>
               </h3>
             <% :data -> %>
-              <h3 class="font-semibold text-white pt-4 border-t border-gray-700/50">
+              <h3 class="font-semibold text-white pt-4 border-t border-gray-700/50 flex items-center gap-2">
                 <%= label(fs, :cast, class: "flex items-center gap-2 cursor-pointer") do %>
-                  {checkbox(fs, :cast, x_model: "cast", class: "cast text-fluxo-500 rounded")}
-                  {gettext("Custom field: data.%{key}", key: key)}
+                  {checkbox(fs, :cast, x_model: "cast", class: "cast text-fluxo-500 rounded-md w-5 h-5")}
+                  <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path></svg>
+                  {gettext("Custom: data.%{key}", key: key)}
                 <% end %>
               </h3>
           <% end %>
 
           <%= if field != :email do %>
-            <div class="flex flex-col ml-6" x-show="cast">
+            <div class="flex flex-col ml-8 mt-1" x-show="cast">
               <%= with_validation(fs, :required) do %>
                 <%= label(fs, :required, class: "flex items-center gap-2 cursor-pointer text-gray-300 text-sm") do %>
-                  {checkbox(fs, :required, class: "text-fluxo-500 rounded")}
-                  {gettext("Require")}
+                  {checkbox(fs, :required, class: "text-fluxo-500 rounded-md")}
+                  {gettext("Require this field")}
                 <% end %>
               <% end %>
             </div>
           <% end %>
 
           <%= if field == :data do %>
-            <div class="flex flex-col ml-6" x-show="cast">
+            <div class="flex flex-col ml-8 mt-1" x-show="cast">
+              <label class="text-xs font-medium text-gray-400 mb-1">{gettext("Field type")}</label>
               {select(
                 fs,
                 :type,
@@ -227,61 +253,60 @@
                   {gettext("Dropdown"), "enum"},
                   {gettext("Tags"), "tags"}
                 ],
-                class: "w-full rounded-lg bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all"
+                class: "w-full rounded-xl bg-gray-800/60 border border-gray-700/80 text-white px-4 py-2.5 text-sm focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all"
               )}
             </div>
-            <div class="flex flex-col ml-6" x-show="cast">
-              {label(fs, :key, gettext("Data Key"), class: "text-sm font-medium text-gray-300 mb-1")}
+            <div class="flex flex-col ml-8 mt-2" x-show="cast">
+              {label(fs, :key, gettext("Data key"), class: "text-xs font-medium text-gray-400 mb-1")}
               <%= with_validation(fs, :key) do %>
-                {text_input(fs, :key, class: "w-full rounded-lg bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", required: true)}
+                {text_input(fs, :key, class: "w-full rounded-xl bg-gray-800/60 border border-gray-700/80 text-white px-4 py-2.5 text-sm focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", required: true)}
               <% end %>
-              <div class="text-xs text-gray-400 mt-1">
+              <p class="text-xs text-gray-500 mt-1">
                 {gettext_md(
                   """
-                  You can use data from this field as
-                  `{{ contact.data.%{key} }}` in your emails or segments.
+                  Use as `{{ contact.data.%{key} }}` in emails/segments.
                   """,
                   key: key
                 )}
-              </div>
+              </p>
             </div>
           <% end %>
 
-          <div class="flex flex-col ml-6" x-show="cast">
-            {label(fs, :label, gettext("Label"), class: "text-sm font-medium text-gray-300 mb-1")}
+          <div class="flex flex-col ml-8 mt-1" x-show="cast">
+            {label(fs, :label, gettext("Label"), class: "text-xs font-medium text-gray-400 mb-1")}
             <%= with_validation(fs, :label) do %>
-              {text_input(fs, :label, class: "w-full rounded-lg bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
+              {text_input(fs, :label, class: "w-full rounded-xl bg-gray-800/60 border border-gray-700/80 text-white px-4 py-2.5 text-sm focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
             <% end %>
           </div>
 
           <%= case Ecto.Changeset.get_field(fs.source, :type) do %>
             <% type when type in [:string, :email, nil] -> %>
-              <div class="flex flex-col ml-6" x-show="cast">
-                {label(fs, :placeholder, gettext("Placeholder"), class: "text-sm font-medium text-gray-300 mb-1")}
+              <div class="flex flex-col ml-8 mt-1" x-show="cast">
+                {label(fs, :placeholder, gettext("Placeholder"), class: "text-xs font-medium text-gray-400 mb-1")}
                 <%= with_validation(fs, :placeholder) do %>
-                  {text_input(fs, :placeholder, class: "w-full rounded-lg bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
+                  {text_input(fs, :placeholder, class: "w-full rounded-xl bg-gray-800/60 border border-gray-700/80 text-white px-4 py-2.5 text-sm focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
                 <% end %>
               </div>
             <% type when type in [:enum, :tags] -> %>
-              <div class="flex flex-col mt-2 ml-6" x-show="cast">
-                {label(fs, :allowed_values, gettext("Options"), class: "text-sm font-medium text-gray-300 mb-2")}
+              <div class="flex flex-col mt-2 ml-8" x-show="cast">
+                {label(fs, :allowed_values, gettext("Options"), class: "text-xs font-medium text-gray-400 mb-2")}
                 <table class="w-full">
                   <tr>
-                    <th class="text-xs font-semibold text-gray-400 uppercase tracking-wider text-left pb-2">Value</th>
-                    <th class="text-xs font-semibold text-gray-400 uppercase tracking-wider text-left pb-2">Label</th>
+                    <th class="text-xs font-semibold text-gray-500 text-left pb-2">{gettext("Value")}</th>
+                    <th class="text-xs font-semibold text-gray-500 text-left pb-2">{gettext("Label")}</th>
                     <th></th>
                   </tr>
                   <%= inputs_for(fs, :allowed_values, fn fo -> %>
                     <tr>
                       <td class="pr-2 py-1">
-                        {text_input(fo, :value, class: "w-full bg-gray-800/60 border border-gray-700/80 text-white rounded-lg px-3 py-2")}
+                        {text_input(fo, :value, class: "w-full bg-gray-800/60 border border-gray-700/80 text-white rounded-lg px-3 py-2 text-sm")}
                       </td>
                       <td class="pr-2 py-1">
-                        {text_input(fo, :label, class: "w-full bg-gray-800/60 border border-gray-700/80 text-white rounded-lg px-3 py-2")}
+                        {text_input(fo, :label, class: "w-full bg-gray-800/60 border border-gray-700/80 text-white rounded-lg px-3 py-2 text-sm")}
                       </td>
                       <td class="py-1">
                         <button
-                          class="button button--text text-gray-400 hover:text-red-400"
+                          class="button button--text text-gray-500 hover:text-red-400 transition-colors"
                           type="button"
                           phx-click="remove_allowed_value"
                           phx-value-fs-id={Ecto.Changeset.get_field(fs.source, :id)}
@@ -306,9 +331,9 @@
           <% end %>
 
           <%= if field == :data do %>
-            <div class="ml-6 mt-2">
+            <div class="ml-8 mt-2">
               <button
-                class="button button--text text-gray-400 hover:text-red-400 text-sm"
+                class="button button--text text-gray-500 hover:text-red-400 text-sm transition-colors"
                 type="button"
                 phx-click="remove_custom_field"
                 phx-value-fs-id={Ecto.Changeset.get_field(fs.source, :id)}
@@ -321,43 +346,134 @@
         </div>
       </.inputs_for>
       <div class="mt-4 pt-4 border-t border-gray-700/50">
-        <button type="button" class="button button--cta" phx-click="add_custom_field">
+        <button type="button" class="button button--cta inline-flex items-center gap-2" phx-click="add_custom_field">
           {render_icon(:plus)} {gettext("Add custom field")}
         </button>
       </div>
     </div>
 
+    <!-- STYLE TAB -->
+    <div class="flex flex-col gap-5 tab-content bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-b-xl" x-show="tab === 'style'">
+      <p class="text-xs text-gray-500">{gettext("Customize colors to match your brand. Changes appear in the live preview.")}</p>
+      <%= inputs_for(f, :settings, [skip_hidden: true], fn fs -> %>
+        <div>
+          <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">{gettext("Page")}</h3>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="flex flex-col">
+              {label(fs, :body_bg_color, gettext("Background"), class: "text-xs font-medium text-gray-400 mb-1")}
+              <div class="flex items-center gap-2">
+                <%= with_validation(fs, :body_bg_color) do %>
+                  {text_input(fs, :body_bg_color, class: "w-12 h-10 rounded-lg bg-gray-800/60 border border-gray-700/80 cursor-pointer p-1", type: "color")}
+                <% end %>
+                <span class="text-xs text-gray-500 font-mono" x-text="$el.previousElementSibling?.querySelector('input')?.value || ''"></span>
+              </div>
+            </div>
+            <div class="flex flex-col">
+              {label(fs, :form_bg_color, gettext("Card"), class: "text-xs font-medium text-gray-400 mb-1")}
+              <div class="flex items-center gap-2">
+                <%= with_validation(fs, :form_bg_color) do %>
+                  {text_input(fs, :form_bg_color, class: "w-12 h-10 rounded-lg bg-gray-800/60 border border-gray-700/80 cursor-pointer p-1", type: "color")}
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">{gettext("Text & Inputs")}</h3>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="flex flex-col">
+              {label(fs, :text_color, gettext("Text"), class: "text-xs font-medium text-gray-400 mb-1")}
+              <div class="flex items-center gap-2">
+                <%= with_validation(fs, :text_color) do %>
+                  {text_input(fs, :text_color, class: "w-12 h-10 rounded-lg bg-gray-800/60 border border-gray-700/80 cursor-pointer p-1", type: "color")}
+                <% end %>
+              </div>
+            </div>
+            <div class="flex flex-col">
+              {label(fs, :input_bg_color, gettext("Input fill"), class: "text-xs font-medium text-gray-400 mb-1")}
+              <div class="flex items-center gap-2">
+                <%= with_validation(fs, :input_bg_color) do %>
+                  {text_input(fs, :input_bg_color, class: "w-12 h-10 rounded-lg bg-gray-800/60 border border-gray-700/80 cursor-pointer p-1", type: "color")}
+                <% end %>
+              </div>
+            </div>
+            <div class="flex flex-col">
+              {label(fs, :input_text_color, gettext("Input text"), class: "text-xs font-medium text-gray-400 mb-1")}
+              <div class="flex items-center gap-2">
+                <%= with_validation(fs, :input_text_color) do %>
+                  {text_input(fs, :input_text_color, class: "w-12 h-10 rounded-lg bg-gray-800/60 border border-gray-700/80 cursor-pointer p-1", type: "color")}
+                <% end %>
+              </div>
+            </div>
+            <div class="flex flex-col">
+              {label(fs, :input_border_color, gettext("Input border"), class: "text-xs font-medium text-gray-400 mb-1")}
+              <div class="flex items-center gap-2">
+                <%= with_validation(fs, :input_border_color) do %>
+                  {text_input(fs, :input_border_color, class: "w-12 h-10 rounded-lg bg-gray-800/60 border border-gray-700/80 cursor-pointer p-1", type: "color")}
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">{gettext("Button")}</h3>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="flex flex-col">
+              {label(fs, :submit_bg_color, gettext("Background"), class: "text-xs font-medium text-gray-400 mb-1")}
+              <div class="flex items-center gap-2">
+                <%= with_validation(fs, :submit_bg_color) do %>
+                  {text_input(fs, :submit_bg_color, class: "w-12 h-10 rounded-lg bg-gray-800/60 border border-gray-700/80 cursor-pointer p-1", type: "color")}
+                <% end %>
+              </div>
+            </div>
+            <div class="flex flex-col">
+              {label(fs, :submit_text_color, gettext("Text"), class: "text-xs font-medium text-gray-400 mb-1")}
+              <div class="flex items-center gap-2">
+                <%= with_validation(fs, :submit_text_color) do %>
+                  {text_input(fs, :submit_text_color, class: "w-12 h-10 rounded-lg bg-gray-800/60 border border-gray-700/80 cursor-pointer p-1", type: "color")}
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end) %>
+    </div>
+
+    <!-- DOUBLE OPT-IN TAB -->
     <div class="tab-content bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-b-xl" x-show="tab === 'double-opt-in'">
       <%= if @double_opt_in_available do %>
         <div
           class="flex flex-col gap-4"
           x-data="{enable: $el.querySelector('input[type=checkbox]').checked}"
         >
-          <p class="text-sm text-gray-400">
-            {gettext(
-              "When enabled, a confirmation email will be sent to new contacts after they submit the form. The contact is only added to your contact list after they open the confirmation link."
-            )}
-          </p>
+          <div class="flex items-start gap-3 p-3.5 bg-fluxo-500/5 border border-fluxo-500/10 rounded-xl">
+            <svg class="w-5 h-5 text-fluxo-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <p class="text-sm text-gray-400">
+              {gettext("Contacts must confirm their email before being added. Reduces spam and improves list quality.")}
+            </p>
+          </div>
 
           <%= inputs_for(f, :settings, [skip_hidden: true], fn fs -> %>
-            <div class="flex items-center gap-3 py-2">
+            <div class="flex items-center gap-3 py-1">
               <%= with_validation(fs, :double_opt_in_required) do %>
-                <%= label(fs, :double_opt_in_required, class: "flex items-center gap-2 cursor-pointer text-gray-300") do %>
+                <%= label(fs, :double_opt_in_required, class: "flex items-center gap-3 cursor-pointer text-gray-300") do %>
                   {checkbox(fs, :double_opt_in_required,
-                    class: "text-fluxo-500 rounded",
+                    class: "text-fluxo-500 rounded-md w-5 h-5",
                     x_model: "enable"
                   )}
-                  {gettext("Require double opt-in")}
+                  <span class="text-sm font-medium">{gettext("Enable double opt-in")}</span>
                 <% end %>
               <% end %>
             </div>
 
             <template x-if="enable">
               <div class="form-row">
-                {label(fs, :double_opt_in_subject, gettext("Custom email subject"), class: "text-sm font-medium text-gray-300 mb-1")}
+                {label(fs, :double_opt_in_subject, gettext("Email subject"), class: "text-sm font-medium text-gray-300 mb-1.5")}
                 <%= with_validation(fs, :double_opt_in_subject) do %>
                   {text_input(fs, :double_opt_in_subject,
-                    class: "w-full rounded-lg bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
+                    class: "w-full rounded-xl bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
                     placeholder: Keila.Mailings.DoubleOptInEmailBuilder.default_subject()
                   )}
                 <% end %>
@@ -366,7 +482,7 @@
 
             <template x-if="enable">
               <div class="form-row">
-                {label(f, :sender_id, gettext("Sender"), class: "text-sm font-medium text-gray-300 mb-1")}
+                {label(f, :sender_id, gettext("Sender"), class: "text-sm font-medium text-gray-300 mb-1.5")}
                 <%= if Enum.any?(@senders) do %>
                   <%= with_validation(f, :sender_id) do %>
                     {select(
@@ -379,7 +495,7 @@
                         ),
                       id: "form_settings_double_opt_in_sender_id",
                       name: "form_settings_double_opt_in_sender_id",
-                      class: "w-full rounded-lg bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
+                      class: "w-full rounded-xl bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
                       x_ref: "double_opt_in_sender_id",
                       phx_update: "ignore",
                       "x-on:input.stop":
@@ -390,20 +506,18 @@
                     )}
                   <% end %>
                 <% else %>
-                  <div class="flex flex-row gap-4 items-center p-4 bg-red-500/10 border border-red-500/20 rounded-xl">
-                    <span class="text-red-400 flex w-8">
+                  <div class="flex flex-row gap-3 items-center p-4 bg-red-500/10 border border-red-500/20 rounded-xl">
+                    <span class="text-red-400 flex w-6">
                       {render_icon(:exclamation_triangle)}
                     </span>
                     <div>
-                      {gettext_md(
-                        "**Important:** You must create and select a sender to send emails."
-                      )}
-                      <br />
+                      <p class="text-sm text-red-300 font-medium">{gettext("Sender required")}</p>
+                      <p class="text-xs text-gray-400 mt-1">{gettext("Create a sender to enable email sending.")}</p>
                       <a
                         href={Routes.sender_path(@socket, :new, @current_project.id)}
-                        class="button button--cta button--small mt-2"
+                        class="button button--cta button--small mt-2 inline-flex"
                       >
-                        {gettext("Create your first sender")}
+                        {gettext("Create sender")}
                       </a>
                     </div>
                   </div>
@@ -413,7 +527,7 @@
 
             <template x-if="enable">
               <div class="form-row">
-                {label(f, :template_id, gettext("Template"), class: "text-sm font-medium text-gray-300 mb-1")}
+                {label(f, :template_id, gettext("Template"), class: "text-sm font-medium text-gray-300 mb-1.5")}
                 <%= with_validation(f, :template_id) do %>
                   {select(
                     f,
@@ -421,7 +535,7 @@
                     [{gettext("Default"), nil} | Enum.map(@templates, &{&1.name, &1.id})],
                     id: "form_settings_double_opt_in_template_id",
                     name: "form_settings_double_opt_in_template_id",
-                    class: "w-full rounded-lg bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
+                    class: "w-full rounded-xl bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
                     x_ref: "double_opt_in_template_id",
                     phx_update: "ignore",
                     "x-on:input.stop":
@@ -436,18 +550,14 @@
 
             <template x-if="enable">
               <div class="form-row">
-                {label(fs, :double_opt_in_markdown_body, gettext("Custom email text"), class: "text-sm font-medium text-gray-300 mb-1")}
-                <div class="text-xs text-gray-400 mb-2">
-                  {gettext_md("""
-                  You may use Liquid and Markdown in the email body.
-
-                  Use `[Confirm]({{ double_opt_in_link }})` to include the opt-in link.
-                  """)}
-                </div>
+                {label(fs, :double_opt_in_markdown_body, gettext("Email body"), class: "text-sm font-medium text-gray-300 mb-1.5")}
+                <p class="text-xs text-gray-500 mb-2">
+                  {gettext_md("Supports Liquid + Markdown. Use `[Confirm]({{ double_opt_in_link }})` for the opt-in link.")}
+                </p>
                 <%= with_validation(fs, :double_opt_in_markdown_body) do %>
                   {textarea(fs, :double_opt_in_markdown_body,
-                    class: "w-full rounded-lg bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all font-mono text-sm",
-                    rows: 8,
+                    class: "w-full rounded-xl bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all font-mono text-sm",
+                    rows: 6,
                     placeholder: Keila.Mailings.DoubleOptInEmailBuilder.default_markdown_body()
                   )}
                 <% end %>
@@ -456,119 +566,92 @@
 
             <template x-if="enable">
               <div class="form-row">
-                {label(fs, :double_opt_in_message, gettext("Double Opt-in Info Message"), class: "text-sm font-medium text-gray-300 mb-1")}
-                <div class="text-xs text-gray-400 mb-2">
-                  {gettext_md("""
-                  Custom message that is shown when a user submits the form and double opt-in
-                  is required.
-                  """)}
-                </div>
+                {label(fs, :double_opt_in_message, gettext("Confirmation info message"), class: "text-sm font-medium text-gray-300 mb-1.5")}
+                <p class="text-xs text-gray-500 mb-2">{gettext("Shown after form submission when double opt-in is on")}</p>
                 <%= with_validation(fs, :double_opt_in_message) do %>
-                  {text_input(fs, :double_opt_in_message, class: "w-full rounded-lg bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
+                  {text_input(fs, :double_opt_in_message, class: "w-full rounded-xl bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
                 <% end %>
               </div>
             </template>
 
             <template x-if="enable">
               <div class="form-row">
-                {label(fs, :success_text, gettext("Double Opt-in Info Redirect URL"), class: "text-sm font-medium text-gray-300 mb-1")}
-                <div class="text-xs text-gray-400 mb-2">
-                  {gettext_md("""
-                  Custom URL to which users are redirected when they submit the form and double opt-in
-                  is required.
-                  """)}
-                </div>
+                {label(fs, :success_text, gettext("Redirect URL after opt-in"), class: "text-sm font-medium text-gray-300 mb-1.5")}
                 <%= with_validation(fs, :double_opt_in_url) do %>
-                  {url_input(fs, :double_opt_in_url, class: "w-full rounded-lg bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", placeholder: "https://")}
+                  {url_input(fs, :double_opt_in_url, class: "w-full rounded-xl bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", placeholder: "https://")}
                 <% end %>
               </div>
             </template>
 
             <template x-if="enable">
               <div class="form-row">
-                {label(fs, :failure_text, gettext("Double Opt-in Failure Message"), class: "text-sm font-medium text-gray-300 mb-1")}
-                <div class="text-xs text-gray-400 mb-2">
-                  {gettext_md("""
-                  Custom message that is shown when a double opt-in link has expired or
-                  has already been used.
-                  """)}
-                </div>
+                {label(fs, :failure_text, gettext("Expired link message"), class: "text-sm font-medium text-gray-300 mb-1.5")}
+                <p class="text-xs text-gray-500 mb-2">{gettext("Shown when a confirmation link is expired or already used")}</p>
                 <%= with_validation(fs, :failure_text) do %>
-                  {text_input(fs, :failure_text, class: "w-full rounded-lg bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
+                  {text_input(fs, :failure_text, class: "w-full rounded-xl bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
                 <% end %>
               </div>
             </template>
 
             <template x-if="enable">
               <div class="form-row">
-                {label(fs, :failure_url, gettext("Double Opt-in Failure Redirect URL"), class: "text-sm font-medium text-gray-300 mb-1")}
-                <div class="text-xs text-gray-400 mb-2">
-                  {gettext_md("""
-                  Custom URL to which users are redirected when a double opt-in link
-                  has expired or has already been used.
-                  """)}
-                </div>
+                {label(fs, :failure_url, gettext("Expired link redirect URL"), class: "text-sm font-medium text-gray-300 mb-1.5")}
                 <%= with_validation(fs, :failure_url) do %>
-                  {url_input(fs, :failure_url, class: "w-full rounded-lg bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", placeholder: "https://")}
+                  {url_input(fs, :failure_url, class: "w-full rounded-xl bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", placeholder: "https://")}
                 <% end %>
               </div>
             </template>
           <% end) %>
         </div>
       <% else %>
-        <div class="flex gap-4 items-center">
-          <span class="inline-flex h-12 w-12 flex-shrink-0 text-fluxo-400">
+        <div class="flex flex-col items-center gap-3 py-6 text-center">
+          <span class="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-fluxo-500/10 text-fluxo-400">
             {render_icon(:paper_airplane)}
           </span>
-          <p class="text-xl text-white">
-            {gettext("Obrigado por usar o Fluxo Email MKT!")}
+          <p class="text-lg font-semibold text-white">{gettext("Upgrade to unlock")}</p>
+          <p class="text-sm text-gray-400 max-w-sm">
+            {dgettext("cloud", "Double opt-in is available with a subscription. Protect your list from spam.")}
           </p>
-        </div>
-        <p class="text-gray-400">
-          {dgettext(
-            "cloud",
-            "To prevent abuse by spammers, the double opt-in feature is currently only available if you have a subscription. Sorry for the inconvenience!"
-          )}
-        </p>
-        <p>
-          <a href={Routes.account_path(@socket, :edit)} class="button button--large button--cta">
-            {dgettext("cloud", "Start your subscription now")}
+          <a href={Routes.account_path(@socket, :edit)} class="button button--cta mt-2">
+            {dgettext("cloud", "View plans")}
           </a>
-        </p>
+        </div>
       <% end %>
     </div>
 
+    <!-- WELCOME EMAIL TAB -->
     <div class="tab-content bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-b-xl" x-show="tab === 'welcome-email'">
       <%= if @welcome_email_available do %>
         <div
           class="flex flex-col gap-4"
           x-data="{enable: $el.querySelector('input[type=checkbox]').checked}"
         >
-          <p class="text-sm text-gray-400">
-            {gettext(
-              "When enabled, a welcome email will be sent to new contacts after they subscribe. If double opt-in is enabled, the email will be sent after the contact confirms their email."
-            )}
-          </p>
+          <div class="flex items-start gap-3 p-3.5 bg-fluxo-500/5 border border-fluxo-500/10 rounded-xl">
+            <svg class="w-5 h-5 text-fluxo-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <p class="text-sm text-gray-400">
+              {gettext("Send an automatic email when someone subscribes. Great for delivering lead magnets or onboarding.")}
+            </p>
+          </div>
 
           <%= inputs_for(f, :settings, [skip_hidden: true], fn fs -> %>
-            <div class="flex items-center gap-3 py-2">
+            <div class="flex items-center gap-3 py-1">
               <%= with_validation(fs, :welcome_enabled) do %>
-                <%= label(fs, :welcome_enabled, class: "flex items-center gap-2 cursor-pointer text-gray-300") do %>
+                <%= label(fs, :welcome_enabled, class: "flex items-center gap-3 cursor-pointer text-gray-300") do %>
                   {checkbox(fs, :welcome_enabled,
-                    class: "text-fluxo-500 rounded",
+                    class: "text-fluxo-500 rounded-md w-5 h-5",
                     x_model: "enable"
                   )}
-                  {gettext("Send welcome email")}
+                  <span class="text-sm font-medium">{gettext("Send welcome email")}</span>
                 <% end %>
               <% end %>
             </div>
 
             <template x-if="enable">
               <div class="form-row">
-                {label(fs, :welcome_subject, gettext("Email subject"), class: "text-sm font-medium text-gray-300 mb-1")}
+                {label(fs, :welcome_subject, gettext("Email subject"), class: "text-sm font-medium text-gray-300 mb-1.5")}
                 <%= with_validation(fs, :welcome_subject) do %>
                   {text_input(fs, :welcome_subject,
-                    class: "w-full rounded-lg bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
+                    class: "w-full rounded-xl bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
                     placeholder: Keila.Mailings.WelcomeEmailBuilder.default_subject()
                   )}
                 <% end %>
@@ -577,7 +660,7 @@
 
             <template x-if="enable">
               <div class="form-row">
-                {label(f, :sender_id, gettext("Sender"), class: "text-sm font-medium text-gray-300 mb-1")}
+                {label(f, :sender_id, gettext("Sender"), class: "text-sm font-medium text-gray-300 mb-1.5")}
                 <%= if Enum.any?(@senders) do %>
                   <%= with_validation(f, :sender_id) do %>
                     {select(
@@ -590,7 +673,7 @@
                         ),
                       id: "form_settings_welcome_sender_id",
                       name: "form_settings_welcome_sender_id",
-                      class: "w-full rounded-lg bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
+                      class: "w-full rounded-xl bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
                       x_ref: "welcome_sender_id",
                       phx_update: "ignore",
                       "x-on:input.stop":
@@ -601,20 +684,18 @@
                     )}
                   <% end %>
                 <% else %>
-                  <div class="flex flex-row gap-4 items-center p-4 bg-red-500/10 border border-red-500/20 rounded-xl">
-                    <span class="text-red-400 flex w-8">
+                  <div class="flex flex-row gap-3 items-center p-4 bg-red-500/10 border border-red-500/20 rounded-xl">
+                    <span class="text-red-400 flex w-6">
                       {render_icon(:exclamation_triangle)}
                     </span>
                     <div>
-                      {gettext_md(
-                        "**Important:** You must create and select a sender to send emails."
-                      )}
-                      <br />
+                      <p class="text-sm text-red-300 font-medium">{gettext("Sender required")}</p>
+                      <p class="text-xs text-gray-400 mt-1">{gettext("Create a sender to enable email sending.")}</p>
                       <a
                         href={Routes.sender_path(@socket, :new, @current_project.id)}
-                        class="button button--cta button--small mt-2"
+                        class="button button--cta button--small mt-2 inline-flex"
                       >
-                        {gettext("Create your first sender")}
+                        {gettext("Create sender")}
                       </a>
                     </div>
                   </div>
@@ -624,7 +705,7 @@
 
             <template x-if="enable">
               <div class="form-row">
-                {label(f, :template_id, gettext("Template"), class: "text-sm font-medium text-gray-300 mb-1")}
+                {label(f, :template_id, gettext("Template"), class: "text-sm font-medium text-gray-300 mb-1.5")}
                 <%= with_validation(f, :template_id) do %>
                   {select(
                     f,
@@ -632,7 +713,7 @@
                     [{gettext("Default"), nil} | Enum.map(@templates, &{&1.name, &1.id})],
                     id: "form_settings_welcome_template_id",
                     name: "form_settings_welcome_template_id",
-                    class: "w-full rounded-lg bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
+                    class: "w-full rounded-xl bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
                     x_ref: "welcome_template_id",
                     phx_update: "ignore",
                     "x-on:input.stop":
@@ -647,18 +728,14 @@
 
             <template x-if="enable">
               <div class="form-row">
-                {label(fs, :welcome_markdown_body, gettext("Email text"), class: "text-sm font-medium text-gray-300 mb-1")}
-                <div class="text-xs text-gray-400 mb-2">
-                  {gettext_md("""
-                  You may use Liquid and Markdown in the email body.
-
-                  Available variables: `{{ contact.email }}`, `{{ contact.first_name }}`, `{{ contact.last_name }}`, `{{ contact.data.* }}`
-                  """)}
-                </div>
+                {label(fs, :welcome_markdown_body, gettext("Email body"), class: "text-sm font-medium text-gray-300 mb-1.5")}
+                <p class="text-xs text-gray-500 mb-2">
+                  {gettext_md("Supports Liquid + Markdown. Variables: `{{ contact.email }}`, `{{ contact.first_name }}`, `{{ contact.data.* }}`")}
+                </p>
                 <%= with_validation(fs, :welcome_markdown_body) do %>
                   {textarea(fs, :welcome_markdown_body,
-                    class: "w-full rounded-lg bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all font-mono text-sm",
-                    rows: 8,
+                    class: "w-full rounded-xl bg-gray-800/60 border border-gray-700/80 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all font-mono text-sm",
+                    rows: 6,
                     placeholder: Keila.Mailings.WelcomeEmailBuilder.default_markdown_body()
                   )}
                 <% end %>
@@ -667,82 +744,19 @@
           <% end) %>
         </div>
       <% else %>
-        <div class="flex gap-4 items-center">
-          <span class="inline-flex h-12 w-12 flex-shrink-0 text-fluxo-400">
+        <div class="flex flex-col items-center gap-3 py-6 text-center">
+          <span class="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-fluxo-500/10 text-fluxo-400">
             {render_icon(:paper_airplane)}
           </span>
-          <p class="text-xl text-white">
-            {gettext("Obrigado por usar o Fluxo Email MKT!")}
+          <p class="text-lg font-semibold text-white">{gettext("Upgrade to unlock")}</p>
+          <p class="text-sm text-gray-400 max-w-sm">
+            {dgettext("cloud", "Welcome emails are available with a subscription. Engage subscribers from day one.")}
           </p>
-        </div>
-        <p class="text-gray-400">
-          {dgettext(
-            "cloud",
-            "To prevent abuse by spammers, the welcome email feature is currently only available if you have a subscription. Sorry for the inconvenience!"
-          )}
-        </p>
-        <p>
-          <a href={Routes.account_path(@socket, :edit)} class="button button--large button--cta">
-            {dgettext("cloud", "Start your subscription now")}
+          <a href={Routes.account_path(@socket, :edit)} class="button button--cta mt-2">
+            {dgettext("cloud", "View plans")}
           </a>
-        </p>
-      <% end %>
-    </div>
-
-    <div class="flex flex-col gap-4 tab-content bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-b-xl" x-show="tab === 'style'">
-      <p class="text-sm text-gray-400 mb-2">{gettext("Customize the appearance of your public form.")}</p>
-      <%= inputs_for(f, :settings, [skip_hidden: true], fn fs -> %>
-        <div class="grid grid-cols-2 gap-4">
-          <div class="flex flex-col">
-            {label(fs, :body_bg_color, gettext("Body background"), class: "text-sm font-medium text-gray-300 mb-1")}
-            <%= with_validation(fs, :body_bg_color) do %>
-              {text_input(fs, :body_bg_color, class: "w-full h-12 rounded-lg bg-gray-800/60 border border-gray-700/80 cursor-pointer", type: "color")}
-            <% end %>
-          </div>
-          <div class="flex flex-col">
-            {label(fs, :form_bg_color, gettext("Form background"), class: "text-sm font-medium text-gray-300 mb-1")}
-            <%= with_validation(fs, :form_bg_color) do %>
-              {text_input(fs, :form_bg_color, class: "w-full h-12 rounded-lg bg-gray-800/60 border border-gray-700/80 cursor-pointer", type: "color")}
-            <% end %>
-          </div>
-          <div class="flex flex-col">
-            {label(fs, :text_color, gettext("Form text color"), class: "text-sm font-medium text-gray-300 mb-1")}
-            <%= with_validation(fs, :text_color) do %>
-              {text_input(fs, :text_color, class: "w-full h-12 rounded-lg bg-gray-800/60 border border-gray-700/80 cursor-pointer", type: "color")}
-            <% end %>
-          </div>
-          <div class="flex flex-col">
-            {label(fs, :input_bg_color, gettext("Input background"), class: "text-sm font-medium text-gray-300 mb-1")}
-            <%= with_validation(fs, :input_bg_color) do %>
-              {text_input(fs, :input_bg_color, class: "w-full h-12 rounded-lg bg-gray-800/60 border border-gray-700/80 cursor-pointer", type: "color")}
-            <% end %>
-          </div>
-          <div class="flex flex-col">
-            {label(fs, :input_text_color, gettext("Input text color"), class: "text-sm font-medium text-gray-300 mb-1")}
-            <%= with_validation(fs, :input_text_color) do %>
-              {text_input(fs, :input_text_color, class: "w-full h-12 rounded-lg bg-gray-800/60 border border-gray-700/80 cursor-pointer", type: "color")}
-            <% end %>
-          </div>
-          <div class="flex flex-col">
-            {label(fs, :input_border_color, gettext("Input border color"), class: "text-sm font-medium text-gray-300 mb-1")}
-            <%= with_validation(fs, :input_border_color) do %>
-              {text_input(fs, :input_border_color, class: "w-full h-12 rounded-lg bg-gray-800/60 border border-gray-700/80 cursor-pointer", type: "color")}
-            <% end %>
-          </div>
-          <div class="flex flex-col">
-            {label(fs, :submit_bg_color, gettext("Submit button background"), class: "text-sm font-medium text-gray-300 mb-1")}
-            <%= with_validation(fs, :submit_bg_color) do %>
-              {text_input(fs, :submit_bg_color, class: "w-full h-12 rounded-lg bg-gray-800/60 border border-gray-700/80 cursor-pointer", type: "color")}
-            <% end %>
-          </div>
-          <div class="flex flex-col">
-            {label(fs, :submit_text_color, gettext("Submit text color"), class: "text-sm font-medium text-gray-300 mb-1")}
-            <%= with_validation(fs, :submit_text_color) do %>
-              {text_input(fs, :submit_text_color, class: "w-full h-12 rounded-lg bg-gray-800/60 border border-gray-700/80 cursor-pointer", type: "color")}
-            <% end %>
-          </div>
         </div>
-      <% end) %>
+      <% end %>
     </div>
 
     {hidden_input(f, :sender_id,
@@ -758,97 +772,136 @@
     )}
   </.form>
 
-  <div class="col-span-2">
-    <%= cond do %>
-      <% @current_tab == "welcome-email" && @welcome_email_preview -> %>
-        <div class="bg-white w-full rounded-xl overflow-hidden shadow-lg">
-          <iframe
-            id="welcome-email-preview"
-            src="about:blank"
-            class="w-full bg-gray-100"
-            style="height: 60vh"
-          >
-          </iframe>
-          <div
-            id="welcome-email-preview-data"
-            phx-hook="HtmlPreview"
-            class="hidden"
-            data-iframe="#welcome-email-preview"
-          >
-            {@welcome_email_preview}
+  <!-- PREVIEW PANEL -->
+  <div class="col-span-1 lg:col-span-2">
+    <div class="sticky top-4">
+      <%= cond do %>
+        <% @current_tab == "welcome-email" && @welcome_email_preview -> %>
+          <div class="bg-white w-full rounded-2xl overflow-hidden shadow-lg">
+            <div class="bg-gray-100 px-4 py-2.5 flex items-center gap-2 border-b border-gray-200">
+              <div class="flex gap-1.5">
+                <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                <div class="w-3 h-3 rounded-full bg-green-400"></div>
+              </div>
+              <span class="text-xs text-gray-500 ml-2">{gettext("Welcome Email Preview")}</span>
+            </div>
+            <iframe
+              id="welcome-email-preview"
+              src="about:blank"
+              class="w-full bg-white"
+              style="height: 55vh"
+            >
+            </iframe>
+            <div
+              id="welcome-email-preview-data"
+              phx-hook="HtmlPreview"
+              class="hidden"
+              data-iframe="#welcome-email-preview"
+            >
+              {@welcome_email_preview}
+            </div>
           </div>
-        </div>
-      <% @current_tab == "double-opt-in" && @double_opt_in_preview -> %>
-        <div class="bg-white rounded-xl overflow-hidden shadow-lg">
-          <iframe
-            id="double-opt-in-preview"
-            src="about:blank"
-            class="w-full bg-gray-100"
-            style="height: 60vh"
-          >
-          </iframe>
-          <div
-            id="double-opt-in-preview-data"
-            phx-hook="HtmlPreview"
-            class="hidden"
-            data-iframe="#double-opt-in-preview"
-          >
-            {@double_opt_in_preview}
+        <% @current_tab == "double-opt-in" && @double_opt_in_preview -> %>
+          <div class="bg-white rounded-2xl overflow-hidden shadow-lg">
+            <div class="bg-gray-100 px-4 py-2.5 flex items-center gap-2 border-b border-gray-200">
+              <div class="flex gap-1.5">
+                <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                <div class="w-3 h-3 rounded-full bg-green-400"></div>
+              </div>
+              <span class="text-xs text-gray-500 ml-2">{gettext("Double Opt-in Email Preview")}</span>
+            </div>
+            <iframe
+              id="double-opt-in-preview"
+              src="about:blank"
+              class="w-full bg-white"
+              style="height: 55vh"
+            >
+            </iframe>
+            <div
+              id="double-opt-in-preview-data"
+              phx-hook="HtmlPreview"
+              class="hidden"
+              data-iframe="#double-opt-in-preview"
+            >
+              {@double_opt_in_preview}
+            </div>
           </div>
-        </div>
-      <% true -> %>
-        <div
-          class="form-main p-4 md:p-8 rounded-xl"
-          style={build_styles(%{"background-color" => @form_preview.settings.body_bg_color})}
-        >
-          {KeilaWeb.PublicFormView.render("show.html",
-            form: @form_preview,
-            mode: :preview,
-            changeset: Keila.Contacts.Contact.changeset_from_form(%{}, @form_preview)
-          )}
-        </div>
-    <% end %>
-    <br />
-    <div class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-xl p-5">
-      <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">{gettext("Link to this form")}</h2>
-      <div class="flex items-start gap-3">
-        <input
-          type="text"
-          class="w-full bg-gray-800/60 border border-gray-700/80 text-white rounded-lg px-4 py-2.5 text-sm"
-          readonly
-          x-ref="form-link"
-          value={Routes.public_form_url(@socket, :show, @form.id)}
-        />
-        <button
-          class="button button--cta button--small flex-shrink-0"
-          @click.prevent="$refs['form-link'].select(); document.execCommand('copy'); showClipboardMessage = true; setTimeout(() => showClipboardMessage = false, 1000)"
-        >
-          {gettext("Copy")}
-        </button>
-      </div>
-    </div>
-    <%= if @form_preview.settings.csrf_disabled do %>
+        <% true -> %>
+          <div class="rounded-2xl overflow-hidden shadow-lg">
+            <div class="bg-gray-800 px-4 py-2.5 flex items-center gap-2 border-b border-gray-700">
+              <div class="flex gap-1.5">
+                <div class="w-3 h-3 rounded-full bg-red-400/70"></div>
+                <div class="w-3 h-3 rounded-full bg-yellow-400/70"></div>
+                <div class="w-3 h-3 rounded-full bg-green-400/70"></div>
+              </div>
+              <span class="text-xs text-gray-400 ml-2">{gettext("Live Preview")}</span>
+            </div>
+            <div
+              class="form-main p-6 md:p-10"
+              style={build_styles(%{"background-color" => @form_preview.settings.body_bg_color})}
+            >
+              {KeilaWeb.PublicFormView.render("show.html",
+                form: @form_preview,
+                mode: :preview,
+                changeset: Keila.Contacts.Contact.changeset_from_form(%{}, @form_preview)
+              )}
+            </div>
+          </div>
+      <% end %>
+
+      <!-- SHARE SECTION -->
       <div class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-xl p-5 mt-4">
-        <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">{gettext("Form HTML")}</h2>
-        <div class="flex items-start gap-3">
-          <textarea class="w-full bg-gray-800/60 border border-gray-700/80 text-white rounded-lg px-4 py-2.5 text-sm font-mono" rows="5" x-ref="form-html"><%= @embed %></textarea>
+        <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+          {gettext("Share link")}
+        </h2>
+        <div class="flex items-center gap-2">
+          <input
+            type="text"
+            class="w-full bg-gray-800/60 border border-gray-700/80 text-white rounded-xl px-4 py-2.5 text-sm font-mono"
+            readonly
+            x-ref="form-link"
+            value={Routes.public_form_url(@socket, :show, @form.id)}
+          />
           <button
-            class="button button--cta button--small flex-shrink-0"
-            @click.prevent="$refs['form-html'].select(); document.execCommand('copy'); showClipboardMessage = true; setTimeout(() => showClipboardMessage = false, 1000)"
+            class="button button--cta button--small flex-shrink-0 rounded-xl"
+            @click.prevent="$refs['form-link'].select(); document.execCommand('copy'); showClipboardMessage = true; setTimeout(() => showClipboardMessage = false, 2000)"
           >
             {gettext("Copy")}
           </button>
         </div>
       </div>
-    <% end %>
+
+      <%= if @form_preview.settings.csrf_disabled do %>
+        <div class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-xl p-5 mt-3">
+          <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+            {gettext("Embed HTML")}
+          </h2>
+          <div class="flex items-start gap-2">
+            <textarea class="w-full bg-gray-800/60 border border-gray-700/80 text-white rounded-xl px-4 py-2.5 text-sm font-mono" rows="4" x-ref="form-html"><%= @embed %></textarea>
+            <button
+              class="button button--cta button--small flex-shrink-0 rounded-xl"
+              @click.prevent="$refs['form-html'].select(); document.execCommand('copy'); showClipboardMessage = true; setTimeout(() => showClipboardMessage = false, 2000)"
+            >
+              {gettext("Copy")}
+            </button>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
     <div
       id="copy-success"
       x-ref="copy-success"
       phx-update="ignore"
-      class="fixed bg-fluxo-600 text-white shadow-lg text-sm p-4 rounded-xl bottom-4 right-4"
+      class="fixed bg-fluxo-600 text-white shadow-2xl text-sm px-5 py-3 rounded-2xl bottom-6 right-6 flex items-center gap-2"
       x-show.transition="showClipboardMessage"
     >
-      {gettext("Code copied to clipboard.")}
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+      {gettext("Copied!")}
     </div>
   </div>
 </div>

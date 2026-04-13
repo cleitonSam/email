@@ -34,13 +34,57 @@
       button, .button {
         <%= build_styles(%{"background-color" => @form.settings.submit_bg_color, "color" => @form.settings.submit_text_color}) %>;
       }
+
+      /* Modern form enhancements */
+      .contact-form {
+        animation: formSlideUp 0.4s ease-out;
+      }
+
+      @keyframes formSlideUp {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .contact-form input[type="text"]:focus,
+      .contact-form input[type="email"]:focus,
+      .contact-form input[type="number"]:focus,
+      .contact-form select:focus,
+      .contact-form textarea:focus {
+        border-color: <%= @form.settings.submit_bg_color || "#0066FF" %> !important;
+        box-shadow: 0 0 0 3px <%= @form.settings.submit_bg_color || "#0066FF" %>1a !important;
+      }
+
+      .contact-form button[type]:hover {
+        filter: brightness(1.08);
+      }
+
+      .contact-form button[type]:active {
+        filter: brightness(0.95);
+      }
+
+      @keyframes ping {
+        75%, 100% {
+          transform: scale(1.4);
+          opacity: 0;
+        }
+      }
+
+      .animate-ping {
+        animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+      }
     </style>
   </head>
   <body
-    class="flex flex-col min-h-screen p-4 md:p-8"
+    class="flex flex-col items-center justify-center min-h-screen p-4 md:p-8"
     style={build_styles(%{"background-color" => @form.settings.body_bg_color})}
   >
-    <main>
+    <main class="w-full">
       {@inner_content}
     </main>
   </body>

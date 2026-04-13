@@ -5,7 +5,7 @@ defmodule KeilaWeb.PublicFormView do
 
   import KeilaWeb.PublicFormLayoutView, only: [build_styles: 1]
 
-  @form_classes "contact-form container max-w-lg mx-auto bg-white rounded-2xl py-6 pb-10 px-6 md:py-10 md:px-10 flex flex-col gap-5 shadow-xl"
+  @form_classes "contact-form container max-w-md mx-auto bg-white rounded-3xl py-8 pb-10 px-7 md:py-10 md:px-10 flex flex-col gap-6 shadow-2xl"
 
   defp input_styles(form) do
     build_styles(%{
@@ -63,12 +63,12 @@ defmodule KeilaWeb.PublicFormView do
   end
 
   defp render_h1(form) do
-    content_tag(:h1, form.name, class: "text-3xl font-bold my-2 leading-tight")
+    content_tag(:h1, form.name, class: "text-2xl md:text-3xl font-extrabold leading-tight tracking-tight")
   end
 
   defp render_intro(form) do
     if form.settings.intro_text do
-      content_tag(:div, form.settings.intro_text, class: "text-lg opacity-80 leading-relaxed")
+      content_tag(:p, form.settings.intro_text, class: "text-base opacity-70 leading-relaxed -mt-2")
     else
       []
     end
@@ -90,12 +90,11 @@ defmodule KeilaWeb.PublicFormView do
   defp render_captcha(form, mode, f) do
     cond do
       form.settings.captcha_required and mode == :preview ->
-        content_tag(:div, class: "p-4 shadow-sm bg-gray-50 text-sm rounded-lg border border-gray-200 w-2/3") do
-          content_tag(:label, class: "flex items-center gap-2 cursor-pointer") do
+        content_tag(:div, class: "p-3.5 bg-gray-50 text-sm rounded-xl border border-gray-200/80 w-auto inline-flex") do
+          content_tag(:label, class: "flex items-center gap-2.5 cursor-pointer select-none") do
             [
-              content_tag(:input, nil, type: "checkbox", class: "text-xl rounded"),
-              " ",
-              gettext("I am human.")
+              content_tag(:input, nil, type: "checkbox", class: "w-5 h-5 rounded-md border-2 border-gray-300"),
+              content_tag(:span, gettext("I am human."), class: "text-gray-600")
             ]
           end
         end
@@ -113,16 +112,24 @@ defmodule KeilaWeb.PublicFormView do
   end
 
   defp render_submit(form, _f) do
-    content_tag(:div, class: "flex justify-start mt-2") do
+    submit_bg = form.settings.submit_bg_color || "#0066FF"
+
+    content_tag(:div, class: "flex flex-col gap-3 mt-1") do
       [
         content_tag(:button, form.settings.submit_label || gettext("Submit"),
-          class: "px-8 py-3 rounded-xl font-semibold text-base shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 cursor-pointer",
+          class: "w-full py-3.5 rounded-xl font-bold text-base tracking-wide shadow-lg hover:shadow-xl transform hover:translate-y-[-1px] active:translate-y-[0px] transition-all duration-200 cursor-pointer",
           style:
             build_styles(%{
-              "background-color" => form.settings.submit_bg_color,
+              "background-color" => submit_bg,
               "color" => form.settings.submit_text_color
             })
-        )
+        ),
+        content_tag(:p, class: "flex items-center justify-center gap-1.5 text-xs opacity-40") do
+          [
+            {:safe, "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"11\" width=\"18\" height=\"11\" rx=\"2\" ry=\"2\"></rect><path d=\"M7 11V7a5 5 0 0 1 10 0v4\"></path></svg>"},
+            gettext("Your data is safe. We never share your information.")
+          ]
+        end
       ]
     end
   end
@@ -132,7 +139,7 @@ defmodule KeilaWeb.PublicFormView do
       content_tag(
         :div,
         raw(Keila.Templates.Html.restrict(form.settings.fine_print, :limited)),
-        class: "text-xs opacity-60 mt-2 leading-relaxed"
+        class: "text-xs opacity-50 leading-relaxed"
       )
     else
       []
@@ -163,13 +170,13 @@ defmodule KeilaWeb.PublicFormView do
     id = form_input_id(f, field_settings)
     input_styles = input_styles(form)
 
-    input_class = "w-full px-4 py-3 rounded-lg border text-base transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-opacity-50"
+    input_class = "w-full px-4 py-3.5 rounded-xl border-2 text-base transition-all duration-200 focus:outline-none focus:ring-0 placeholder-gray-400/60"
 
     [
-      label(f, field, for: id, class: "font-medium text-sm") do
+      label(f, field, for: id, class: "font-semibold text-sm tracking-wide") do
         [
           field_settings.label || to_string(field),
-          if(field_settings.required, do: "", else: [" ", content_tag(:span, gettext("(optional)"), class: "opacity-50 font-normal")])
+          if(field_settings.required, do: "", else: [" ", content_tag(:span, gettext("(optional)"), class: "opacity-40 font-normal text-xs")])
         ]
       end,
       with_validation(f, field) do
@@ -210,15 +217,15 @@ defmodule KeilaWeb.PublicFormView do
     name = form_input_name(f, field_settings)
     id = form_input_id(f, field_settings)
 
-    label(f, field, for: id, class: "flex items-center gap-3 cursor-pointer py-1") do
+    label(f, field, for: id, class: "flex items-center gap-3 cursor-pointer py-1.5 group") do
       with_validation(f, field) do
         [
-          checkbox(f, field, class: "rounded", name: name, id: id),
+          checkbox(f, field, class: "w-5 h-5 rounded-md border-2 border-gray-300 text-blue-600 transition-colors", name: name, id: id),
           " ",
-          content_tag(:span, class: "text-sm") do
+          content_tag(:span, class: "text-sm select-none group-hover:opacity-80 transition-opacity") do
             [
               field_settings.label || "",
-              if(field_settings.required, do: "", else: [" ", content_tag(:span, gettext("(optional)"), class: "opacity-50")])
+              if(field_settings.required, do: "", else: [" ", content_tag(:span, gettext("(optional)"), class: "opacity-40 text-xs")])
             ]
           end
         ]
@@ -231,16 +238,16 @@ defmodule KeilaWeb.PublicFormView do
     id = form_input_id(f, field_settings)
     input_styles = input_styles(form)
 
-    input_class = "w-full px-4 py-3 rounded-lg border text-base transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-opacity-50"
+    input_class = "w-full px-4 py-3.5 rounded-xl border-2 text-base transition-all duration-200 focus:outline-none focus:ring-0 appearance-none"
 
     options =
       for %{label: label, value: value} <- field_settings.allowed_values, do: {label, value}
 
     [
-      label(f, field, for: id, class: "font-medium text-sm") do
+      label(f, field, for: id, class: "font-semibold text-sm tracking-wide") do
         [
           field_settings.label || to_string(field),
-          if(field_settings.required, do: "", else: [" ", content_tag(:span, gettext("(optional)"), class: "opacity-50 font-normal")])
+          if(field_settings.required, do: "", else: [" ", content_tag(:span, gettext("(optional)"), class: "opacity-40 font-normal text-xs")])
         ]
       end,
       with_validation(f, field) do
@@ -260,20 +267,20 @@ defmodule KeilaWeb.PublicFormView do
     values = Ecto.Changeset.get_field(f.source, field, [])
 
     [
-      content_tag(:label, field_settings.label, class: "font-medium text-sm"),
+      content_tag(:label, field_settings.label, class: "font-semibold text-sm tracking-wide"),
       with_validation(f, field) do
-        content_tag(:div, class: "flex gap-3 flex-wrap") do
+        content_tag(:div, class: "flex gap-2 flex-wrap") do
           for %{label: label, value: value} <- field_settings.allowed_values do
             checked? = value in values
 
-            content_tag(:label, class: "flex items-center gap-2 cursor-pointer text-sm") do
+            content_tag(:label, class: "inline-flex items-center gap-2 cursor-pointer text-sm px-3 py-2 rounded-xl border-2 border-gray-200 hover:border-gray-300 transition-colors select-none") do
               [
                 tag(:input,
                   name: name,
                   value: value,
                   type: "checkbox",
                   checked: checked?,
-                  class: "rounded"
+                  class: "w-4 h-4 rounded border-gray-300"
                 ),
                 label || ""
               ]
@@ -287,8 +294,22 @@ defmodule KeilaWeb.PublicFormView do
   def render_form_success(form) do
     content_tag(:div, class: @form_classes, style: build_form_styles(form)) do
       [
-        render_h1(form),
-        render_success(form),
+        content_tag(:div, class: "flex flex-col items-center gap-4 py-6") do
+          [
+            content_tag(:div, class: "relative") do
+              [
+                content_tag(:div, "",
+                  class: "w-20 h-20 rounded-full bg-green-100 animate-ping absolute inset-0 opacity-20"
+                ),
+                content_tag(:div, class: "w-20 h-20 rounded-full bg-green-100 flex items-center justify-center relative") do
+                  {:safe, "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"36\" height=\"36\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#16a34a\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"></polyline></svg>"}
+                end
+              ]
+            end,
+            content_tag(:h2, form.settings.success_text || gettext("Thank you!"), class: "text-2xl font-bold text-center mt-2"),
+            content_tag(:p, gettext("You have been successfully subscribed."), class: "text-base opacity-60 text-center")
+          ]
+        end,
         render_fine_print(form)
       ]
     end
@@ -297,46 +318,36 @@ defmodule KeilaWeb.PublicFormView do
   def render_form_double_opt_in_required(form, email) do
     content_tag(:div, class: @form_classes, style: build_form_styles(form)) do
       [
-        render_h1(form),
-        render_double_opt_in_required(form, email),
+        content_tag(:div, class: "flex flex-col items-center gap-4 py-6") do
+          case form.settings.double_opt_in_message do
+            message when message not in [nil, ""] ->
+              [
+                content_tag(:div, class: "w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center") do
+                  {:safe, "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"36\" height=\"36\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#2563eb\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z\"></path><polyline points=\"22,6 12,13 2,6\"></polyline></svg>"}
+                end,
+                content_tag(:p, message, class: "text-lg text-center")
+              ]
+
+            _other ->
+              [
+                content_tag(:div, class: "w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center") do
+                  {:safe, "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"36\" height=\"36\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#2563eb\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z\"></path><polyline points=\"22,6 12,13 2,6\"></polyline></svg>"}
+                end,
+                content_tag(:h2, gettext("Check your inbox"), class: "text-2xl font-bold text-center mt-2"),
+                content_tag(:p, class: "text-base opacity-60 text-center leading-relaxed max-w-sm") do
+                  gettext(
+                    "We sent a confirmation email to %{email}. Click the link to complete your subscription.",
+                    email: email
+                  )
+                end,
+                content_tag(:p, class: "text-sm opacity-40 text-center mt-1") do
+                  gettext("Didn't receive it? Check your spam folder.")
+                end
+              ]
+          end
+        end,
         render_fine_print(form)
       ]
-    end
-  end
-
-  defp render_success(form) do
-    content_tag(:div, class: "flex flex-col items-center gap-3 py-4") do
-      [
-        content_tag(:div, "✓",
-          class: "w-16 h-16 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-3xl font-bold"
-        ),
-        content_tag(:p, form.settings.success_text || gettext("Thank you!"), class: "text-xl font-medium text-center")
-      ]
-    end
-  end
-
-  defp render_double_opt_in_required(form, email) do
-    case form.settings.double_opt_in_message do
-      message when message not in [nil, ""] ->
-        content_tag(:p, message, class: "text-lg")
-
-      _other ->
-        [
-          content_tag(:div, class: "flex flex-col items-center gap-3 py-4") do
-            [
-              content_tag(:div, "✉",
-                class: "w-16 h-16 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-3xl"
-              ),
-              content_tag(:h2, gettext("Please confirm your email"), class: "text-xl font-semibold text-center"),
-              content_tag(:p, class: "text-center opacity-80") do
-                gettext(
-                  "We've just sent an email to %{email}. Please click the link in that email to confirm your subscription.",
-                  email: email
-                )
-              end
-            ]
-          end
-        ]
     end
   end
 
@@ -344,12 +355,13 @@ defmodule KeilaWeb.PublicFormView do
     form_styles = build_form_styles(form)
 
     content_tag(:div, class: @form_classes, style: form_styles) do
-      content_tag(:div, class: "flex flex-col items-center gap-3 py-4") do
+      content_tag(:div, class: "flex flex-col items-center gap-4 py-6") do
         [
-          content_tag(:div, "👋",
-            class: "w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-3xl"
-          ),
-          content_tag(:p, gettext("You have been unsubscribed from this list."), class: "text-lg text-center")
+          content_tag(:div, class: "w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center") do
+            {:safe, "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"36\" height=\"36\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#6b7280\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M18 6L6 18\"></path><path d=\"M6 6l12 12\"></path></svg>"}
+          end,
+          content_tag(:h2, gettext("You've been unsubscribed"), class: "text-2xl font-bold text-center"),
+          content_tag(:p, gettext("You will no longer receive emails from this list."), class: "text-base opacity-60 text-center")
         ]
       end
     end

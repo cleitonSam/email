@@ -31,52 +31,199 @@
     >
     </script>
     <style>
+      :root {
+        --fluxo-accent: <%= @form.settings.submit_bg_color || "#0066FF" %>;
+      }
+
       button, .button {
         <%= build_styles(%{"background-color" => @form.settings.submit_bg_color, "color" => @form.settings.submit_text_color}) %>;
       }
 
-      /* Modern form enhancements */
+      /* ── Form card ───────────────────────────── */
       .contact-form {
-        animation: formSlideUp 0.4s ease-out;
+        animation: formAppear 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow:
+          0 4px 6px -1px rgba(0,0,0,0.05),
+          0 25px 50px -12px rgba(0,0,0,0.12);
       }
 
-      @keyframes formSlideUp {
-        from {
-          opacity: 0;
-          transform: translateY(16px);
+      @keyframes formAppear {
+        from { opacity: 0; transform: translateY(20px) scale(0.98); }
+        to   { opacity: 1; transform: translateY(0) scale(1); }
+      }
+
+      /* ── Input focus ─────────────────────────── */
+      .fluxo-input:focus {
+        border-color: var(--fluxo-accent) !important;
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--fluxo-accent) 12%, transparent) !important;
+        transform: translateY(-1px);
+      }
+
+      .fluxo-input {
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      /* ── Validation shake ────────────────────── */
+      .fluxo-input:invalid:not(:placeholder-shown) {
+        animation: inputShake 0.4s ease;
+      }
+
+      @keyframes inputShake {
+        0%, 100% { transform: translateX(0); }
+        20% { transform: translateX(-4px); }
+        40% { transform: translateX(4px); }
+        60% { transform: translateX(-3px); }
+        80% { transform: translateX(2px); }
+      }
+
+      /* ── Submit button ───────────────────────── */
+      .fluxo-submit-btn {
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 14px color-mix(in srgb, var(--fluxo-accent) 35%, transparent);
+      }
+
+      .fluxo-submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px color-mix(in srgb, var(--fluxo-accent) 40%, transparent);
+        filter: brightness(1.06);
+      }
+
+      .fluxo-submit-btn:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 8px color-mix(in srgb, var(--fluxo-accent) 25%, transparent);
+      }
+
+      /* Loading state */
+      .fluxo-submit-btn.is-loading .btn-text { opacity: 0; }
+      .fluxo-submit-btn.is-loading .btn-loader { display: inline-block; }
+      .fluxo-submit-btn.is-loading { pointer-events: none; }
+
+      .btn-loader {
+        width: 20px;
+        height: 20px;
+        border: 2.5px solid rgba(255,255,255,0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: btnSpin 0.6s linear infinite;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: -10px 0 0 -10px;
+      }
+
+      @keyframes btnSpin {
+        to { transform: rotate(360deg); }
+      }
+
+      /* ── Tag chips ───────────────────────────── */
+      .fluxo-tag:has(input:checked) {
+        border-color: var(--fluxo-accent) !important;
+        background: color-mix(in srgb, var(--fluxo-accent) 8%, transparent);
+        font-weight: 600;
+      }
+
+      .fluxo-tag {
+        transition: all 0.15s ease;
+      }
+
+      .fluxo-tag:hover {
+        border-color: color-mix(in srgb, var(--fluxo-accent) 50%, transparent);
+      }
+
+      /* ── Success animations ──────────────────── */
+      @keyframes successRing {
+        0% { transform: scale(0.8); opacity: 0.6; }
+        50% { transform: scale(1.3); opacity: 0; }
+        100% { transform: scale(1.3); opacity: 0; }
+      }
+
+      .animate-success-ring {
+        animation: successRing 1.5s ease-out;
+        animation-fill-mode: forwards;
+      }
+
+      @keyframes successCheck {
+        0% { stroke-dashoffset: 30; opacity: 0; }
+        50% { opacity: 1; }
+        100% { stroke-dashoffset: 0; opacity: 1; }
+      }
+
+      .animate-success-check {
+        stroke-dasharray: 30;
+        stroke-dashoffset: 30;
+        animation: successCheck 0.6s ease 0.3s forwards;
+      }
+
+      /* ── Float animation for icons ─────────── */
+      @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-6px); }
+      }
+
+      .animate-float {
+        animation: float 3s ease-in-out infinite;
+      }
+
+      /* ── Confetti ────────────────────────────── */
+      .confetti-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 50;
+        overflow: hidden;
+      }
+
+      .confetti-piece {
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        top: -10px;
+        border-radius: 2px;
+        animation: confettiFall 2.5s ease-in forwards;
+      }
+
+      @keyframes confettiFall {
+        0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+        100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+      }
+
+      /* ── Field stagger animation ─────────────── */
+      .fluxo-field {
+        animation: fieldReveal 0.4s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+      }
+
+      .fluxo-field:nth-child(1) { animation-delay: 0.1s; }
+      .fluxo-field:nth-child(2) { animation-delay: 0.15s; }
+      .fluxo-field:nth-child(3) { animation-delay: 0.2s; }
+      .fluxo-field:nth-child(4) { animation-delay: 0.25s; }
+      .fluxo-field:nth-child(5) { animation-delay: 0.3s; }
+
+      @keyframes fieldReveal {
+        from { opacity: 0; transform: translateY(8px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── Reduced motion ──────────────────────── */
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
         }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
       }
 
-      .contact-form input[type="text"]:focus,
-      .contact-form input[type="email"]:focus,
-      .contact-form input[type="number"]:focus,
-      .contact-form select:focus,
-      .contact-form textarea:focus {
-        border-color: <%= @form.settings.submit_bg_color || "#0066FF" %> !important;
-        box-shadow: 0 0 0 3px <%= @form.settings.submit_bg_color || "#0066FF" %>1a !important;
+      /* ── Checkbox styling ────────────────────── */
+      .fluxo-checkbox input[type="checkbox"]:checked {
+        background-color: var(--fluxo-accent);
+        border-color: var(--fluxo-accent);
       }
 
-      .contact-form button[type]:hover {
-        filter: brightness(1.08);
-      }
-
-      .contact-form button[type]:active {
-        filter: brightness(0.95);
-      }
-
-      @keyframes ping {
-        75%, 100% {
-          transform: scale(1.4);
-          opacity: 0;
-        }
-      }
-
-      .animate-ping {
-        animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+      /* ── Selection color ─────────────────────── */
+      ::selection {
+        background: color-mix(in srgb, var(--fluxo-accent) 25%, transparent);
       }
     </style>
   </head>
@@ -87,5 +234,28 @@
     <main class="w-full">
       {@inner_content}
     </main>
+
+    <script>
+      // Confetti on success page
+      document.addEventListener('DOMContentLoaded', function() {
+        var container = document.querySelector('.confetti-container');
+        if (!container) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        var colors = ['#0066FF', '#00F2FE', '#FF6B6B', '#FBBF24', '#34D399', '#A78BFA'];
+        for (var i = 0; i < 40; i++) {
+          var piece = document.createElement('div');
+          piece.className = 'confetti-piece';
+          piece.style.left = Math.random() * 100 + '%';
+          piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+          piece.style.animationDelay = Math.random() * 1.5 + 's';
+          piece.style.animationDuration = (2 + Math.random() * 1.5) + 's';
+          piece.style.width = (5 + Math.random() * 6) + 'px';
+          piece.style.height = (5 + Math.random() * 6) + 'px';
+          piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+          container.appendChild(piece);
+        }
+      });
+    </script>
   </body>
 </html>

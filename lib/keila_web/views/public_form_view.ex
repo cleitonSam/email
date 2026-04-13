@@ -5,30 +5,8 @@ defmodule KeilaWeb.PublicFormView do
 
   import KeilaWeb.PublicFormLayoutView, only: [build_styles: 1]
 
-  @form_classes "contact-form container bg-white rounded py-4 pb-8 md:py-8 flex flex-col gap-4"
+  @form_classes "contact-form container max-w-lg mx-auto bg-white rounded-2xl py-6 pb-10 px-6 md:py-10 md:px-10 flex flex-col gap-5 shadow-xl"
 
-  # defp keila_form(form, changeset \\ Ecto.Changeset.change(%Contact{}), mode, content) do
-  #   assigns = %{
-  #     form: form,
-  #     class_attr: form_class_attr(form),
-  #     style_attr: form_style_attr(form),
-  #     csrf_token: form_csrf_token(form, mode)
-  #   }
-
-  #   ~H"""
-  #   <.form for={@form} class class={@class_attr} style={@style_attr} csrf_token={@csrf_token}>
-  #     <%= content %>
-  #   </.form>
-  #   """
-  # end
-
-  # defp form_class_attr(_form) do
-  #   @form_classes
-  # end
-
-  # defp form_style_attr(form) do
-  #   build_form_styles(form)
-  # end
   defp input_styles(form) do
     build_styles(%{
       "background-color" => form.settings.input_bg_color,
@@ -36,12 +14,6 @@ defmodule KeilaWeb.PublicFormView do
       "border-color" => form.settings.input_border_color
     })
   end
-
-  # def form_csrf_token(form, mode) do
-  #   csrf_disabled? = mode == :embed or form.settings.csrf_disabled
-
-  #   if csrf_disabled?, do: false, else: Phoenix.Controller.get_csrf_token()
-  # end
 
   def render_form(form, changeset \\ Ecto.Changeset.change(%Contact{}), mode) do
     form_opts =
@@ -91,12 +63,12 @@ defmodule KeilaWeb.PublicFormView do
   end
 
   defp render_h1(form) do
-    content_tag(:h1, form.name, class: "text-4xl my-4")
+    content_tag(:h1, form.name, class: "text-3xl font-bold my-2 leading-tight")
   end
 
   defp render_intro(form) do
     if form.settings.intro_text do
-      content_tag(:div, form.settings.intro_text, class: "text-xl")
+      content_tag(:div, form.settings.intro_text, class: "text-lg opacity-80 leading-relaxed")
     else
       []
     end
@@ -118,10 +90,10 @@ defmodule KeilaWeb.PublicFormView do
   defp render_captcha(form, mode, f) do
     cond do
       form.settings.captcha_required and mode == :preview ->
-        content_tag(:div, class: "p-5 h-15 shadow bg-gray-50 text-sm rounded w-1/3") do
-          content_tag(:label) do
+        content_tag(:div, class: "p-4 shadow-sm bg-gray-50 text-sm rounded-lg border border-gray-200 w-2/3") do
+          content_tag(:label, class: "flex items-center gap-2 cursor-pointer") do
             [
-              content_tag(:input, nil, type: "checkbox", class: "text-xl"),
+              content_tag(:input, nil, type: "checkbox", class: "text-xl rounded"),
               " ",
               gettext("I am human.")
             ]
@@ -141,10 +113,10 @@ defmodule KeilaWeb.PublicFormView do
   end
 
   defp render_submit(form, _f) do
-    content_tag(:div, class: "flex justify-start") do
+    content_tag(:div, class: "flex justify-start mt-2") do
       [
         content_tag(:button, form.settings.submit_label || gettext("Submit"),
-          class: "button button--cta button--large",
+          class: "px-8 py-3 rounded-xl font-semibold text-base shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 cursor-pointer",
           style:
             build_styles(%{
               "background-color" => form.settings.submit_bg_color,
@@ -160,7 +132,7 @@ defmodule KeilaWeb.PublicFormView do
       content_tag(
         :div,
         raw(Keila.Templates.Html.restrict(form.settings.fine_print, :limited)),
-        class: "text-xs"
+        class: "text-xs opacity-60 mt-2 leading-relaxed"
       )
     else
       []
@@ -174,7 +146,7 @@ defmodule KeilaWeb.PublicFormView do
     form.field_settings
     |> Enum.filter(& &1.cast)
     |> Enum.map(fn field_settings ->
-      content_tag(:div, class: "flex flex-col") do
+      content_tag(:div, class: "flex flex-col gap-1.5") do
         if field_settings.field == :data do
           atom_key = find_mapping_atom_key(field_mapping, field_settings.key)
           render_field(form, data_inputs, atom_key, field_settings)
@@ -191,19 +163,22 @@ defmodule KeilaWeb.PublicFormView do
     id = form_input_id(f, field_settings)
     input_styles = input_styles(form)
 
+    input_class = "w-full px-4 py-3 rounded-lg border text-base transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-opacity-50"
+
     [
-      label(f, field, for: id) do
+      label(f, field, for: id, class: "font-medium text-sm") do
         [
           field_settings.label || to_string(field),
-          if(field_settings.required, do: "", else: [" ", gettext("(optional)")])
+          if(field_settings.required, do: "", else: [" ", content_tag(:span, gettext("(optional)"), class: "opacity-50 font-normal")])
         ]
       end,
       with_validation(f, field) do
         cond do
           field == :email or type == :email ->
             email_input(f, field,
-              placeholder: field_settings.placeholder,
+              placeholder: field_settings.placeholder || "seu@email.com",
               style: input_styles,
+              class: input_class,
               name: name,
               id: id
             )
@@ -212,6 +187,7 @@ defmodule KeilaWeb.PublicFormView do
             number_input(f, field,
               placeholder: field_settings.placeholder,
               style: input_styles,
+              class: input_class,
               step: "1",
               name: name,
               id: id
@@ -221,6 +197,7 @@ defmodule KeilaWeb.PublicFormView do
             text_input(f, field,
               placeholder: field_settings.placeholder,
               style: input_styles,
+              class: input_class,
               name: name,
               id: id
             )
@@ -233,13 +210,17 @@ defmodule KeilaWeb.PublicFormView do
     name = form_input_name(f, field_settings)
     id = form_input_id(f, field_settings)
 
-    label(f, field, for: id) do
+    label(f, field, for: id, class: "flex items-center gap-3 cursor-pointer py-1") do
       with_validation(f, field) do
         [
-          checkbox(f, field, style: "mr-4", name: name, id: id),
+          checkbox(f, field, class: "rounded", name: name, id: id),
           " ",
-          field_settings.label || "",
-          if(field_settings.required, do: "", else: [" ", gettext("(optional)")])
+          content_tag(:span, class: "text-sm") do
+            [
+              field_settings.label || "",
+              if(field_settings.required, do: "", else: [" ", content_tag(:span, gettext("(optional)"), class: "opacity-50")])
+            ]
+          end
         ]
       end
     end
@@ -250,20 +231,23 @@ defmodule KeilaWeb.PublicFormView do
     id = form_input_id(f, field_settings)
     input_styles = input_styles(form)
 
+    input_class = "w-full px-4 py-3 rounded-lg border text-base transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-opacity-50"
+
     options =
       for %{label: label, value: value} <- field_settings.allowed_values, do: {label, value}
 
     [
-      label(f, field, for: id) do
+      label(f, field, for: id, class: "font-medium text-sm") do
         [
           field_settings.label || to_string(field),
-          if(field_settings.required, do: "", else: [" ", gettext("(optional)")])
+          if(field_settings.required, do: "", else: [" ", content_tag(:span, gettext("(optional)"), class: "opacity-50 font-normal")])
         ]
       end,
       with_validation(f, field) do
         select(f, field, options,
           placeholder: field_settings.placeholder,
           style: input_styles,
+          class: input_class,
           name: name,
           id: id
         )
@@ -276,20 +260,20 @@ defmodule KeilaWeb.PublicFormView do
     values = Ecto.Changeset.get_field(f.source, field, [])
 
     [
-      content_tag(:label, field_settings.label),
+      content_tag(:label, field_settings.label, class: "font-medium text-sm"),
       with_validation(f, field) do
-        content_tag(:div, class: "flex gap-4 flex-wrap") do
+        content_tag(:div, class: "flex gap-3 flex-wrap") do
           for %{label: label, value: value} <- field_settings.allowed_values do
             checked? = value in values
 
-            content_tag(:label) do
+            content_tag(:label, class: "flex items-center gap-2 cursor-pointer text-sm") do
               [
                 tag(:input,
                   name: name,
                   value: value,
                   type: "checkbox",
                   checked: checked?,
-                  class: "mr-1"
+                  class: "rounded"
                 ),
                 label || ""
               ]
@@ -321,24 +305,36 @@ defmodule KeilaWeb.PublicFormView do
   end
 
   defp render_success(form) do
-    content_tag(:div, form.settings.success_text || gettext("Thank you!"), class: "text-xl")
+    content_tag(:div, class: "flex flex-col items-center gap-3 py-4") do
+      [
+        content_tag(:div, "✓",
+          class: "w-16 h-16 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-3xl font-bold"
+        ),
+        content_tag(:p, form.settings.success_text || gettext("Thank you!"), class: "text-xl font-medium text-center")
+      ]
+    end
   end
 
   defp render_double_opt_in_required(form, email) do
     case form.settings.double_opt_in_message do
       message when message not in [nil, ""] ->
-        content_tag(:p, message)
+        content_tag(:p, message, class: "text-lg")
 
       _other ->
         [
-          content_tag(:h2, class: "text-xl") do
-            gettext("Please confirm your email")
-          end,
-          content_tag(:p) do
-            gettext(
-              "We’ve just sent an email to %{email}. Please click the link in that email to confirm your subscription.",
-              email: email
-            )
+          content_tag(:div, class: "flex flex-col items-center gap-3 py-4") do
+            [
+              content_tag(:div, "✉",
+                class: "w-16 h-16 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-3xl"
+              ),
+              content_tag(:h2, gettext("Please confirm your email"), class: "text-xl font-semibold text-center"),
+              content_tag(:p, class: "text-center opacity-80") do
+                gettext(
+                  "We've just sent an email to %{email}. Please click the link in that email to confirm your subscription.",
+                  email: email
+                )
+              end
+            ]
           end
         ]
     end
@@ -348,7 +344,14 @@ defmodule KeilaWeb.PublicFormView do
     form_styles = build_form_styles(form)
 
     content_tag(:div, class: @form_classes, style: form_styles) do
-      gettext("You have been unsubscribed from this list.")
+      content_tag(:div, class: "flex flex-col items-center gap-3 py-4") do
+        [
+          content_tag(:div, "👋",
+            class: "w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-3xl"
+          ),
+          content_tag(:p, gettext("You have been unsubscribed from this list."), class: "text-lg text-center")
+        ]
+      end
     end
   end
 

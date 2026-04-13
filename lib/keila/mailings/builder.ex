@@ -65,6 +65,8 @@ defmodule Keila.Mailings.Builder do
     |> put_recipient(contact)
     |> put_body(campaign, assigns)
     |> put_unsubscribe_header(unsubscribe_link)
+    |> put_message_id(campaign, recipient)
+    |> put_anti_spam_headers(campaign)
     |> maybe_put_precedence_header()
     |> maybe_put_tracking(campaign, recipient)
   end
@@ -293,6 +295,36 @@ defmodule Keila.Mailings.Builder do
     email
     |> header("List-Unsubscribe", "<#{unsubscribe_link}>")
     |> header("List-Unsubscribe-Post", "List-Unsubscribe=One-Click")
+  end
+
+  defp put_message_id(email, campaign, recipient) do
+    url_host =
+      Application.get_env(:keila, KeilaWeb.Endpoint, [])
+      |> Keyword.get(:url, [])
+      |> Keyword.get(:host, "localhost")
+
+    unique_id = :crypto.hash(:sha256, "#{campaign.id}-#{recipient.id}-#{System.system_time(:nanosecond)}")
+      |> Base.encode16(case: :lower)
+      |> binary_part(0, 32)
+
+    message_id = "<#{unique_id}@#{url_host}>"
+
+    email
+    |> header("Message-ID", message_id)
+  end
+
+  defp put_anti_spam_headers(email, campaign) do
+    url_host =
+      Application.get_env(:keila, KeilaWeb.Endpoint, [])
+      |> Keyword.get(:url, [])
+      |> Keyword.get(:host, "localhost")
+
+    email
+    |> header("X-Mailer", "FluxoEmailMKT/1.0")
+    |> header("X-Auto-Response-Suppress", "OOF, AutoReply")
+    |> header("Auto-Submitted", "auto-generated")
+    |> header("Feedback-ID", "#{campaign.id}:#{campaign.project_id}:fluxo:#{url_host}")
+    |> header("MIME-Version", "1.0")
   end
 
   defp maybe_put_precedence_header(email) do

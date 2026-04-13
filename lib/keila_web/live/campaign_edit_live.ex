@@ -1,6 +1,7 @@
 defmodule KeilaWeb.CampaignEditLive do
   use KeilaWeb, :live_view
   require Keila
+  require Logger
 
   alias Keila.Accounts
   alias Keila.Mailings
@@ -272,9 +273,10 @@ defmodule KeilaWeb.CampaignEditLive do
   defp send_previews(socket, contacts, campaign, sender) do
     template = Enum.find(socket.assigns.templates, &(&1.id == campaign.template_id))
     subject = gettext("[Preview] %{subject}", subject: campaign.subject)
+    lv_pid = self()
 
     for contact <- contacts do
-      Task.async(fn ->
+      Task.start(fn ->
         campaign = %Mailings.Campaign{
           campaign
           | subject: subject,
@@ -284,13 +286,26 @@ defmodule KeilaWeb.CampaignEditLive do
 
         email = Mailings.Builder.build(campaign, contact, %{})
 
-        # TODO: Once campaign sending has been refactored, enqueue these messages to ensure
-        # rate limits are respected
+        case Keila.Mailer.deliver_with_sender(email, sender) do
+          {:ok, _} ->
+            Logger.info("[Preview] Sent to #{contact.email}")
 
-        Keila.Mailer.deliver_with_sender(email, sender)
+          {:error, reason} ->
+            Logger.error("[Preview] Failed for #{contact.email}: #{inspect(reason)}")
+            send(lv_pid, {:preview_send_error, contact.email, reason})
+        end
       end)
     end
   end
+
+  @impl true
+  def handle_info({:preview_send_error, email, reason}, socket) do
+    Logger.error("[Preview] Delivery failed for #{email}: #{inspect(reason)}")
+    message = gettext("Failed to send preview to %{email}.", email: email)
+    {:noreply, assign(socket, :send_preview_error, message)}
+  end
+
+  def handle_info(_msg, socket), do: {:noreply, socket}
 
   defp merged_changeset(socket, params) do
     params = maybe_parse_json_body(params)

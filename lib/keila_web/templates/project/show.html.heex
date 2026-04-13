@@ -1,20 +1,106 @@
-<div class="container flex py-8 sm:py-11 mb-4">
-  <div class="flex-grow gap-4 flex flex-col sm:flex-row sm:items-center">
-    <h1 class="text-2xl md:text-3xl font-bold text-white">
-      {@current_project.name}
-    </h1>
-    <div class="flex-grow flex flex-row-reverse justify-end gap-4 sm:flex-row">
-      <a href={Routes.project_path(@conn, :edit, @current_project.id)} class="button">
-        {render_icon(:cog)}
-        {gettext("Settings")}
-      </a>
+<!-- HEADER SECTION -->
+<div class="container flex py-8 sm:py-11 mb-8">
+  <div class="flex-grow gap-4 flex flex-col sm:flex-row sm:items-center justify-between">
+    <div class="flex-grow">
+      <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">
+        {@current_project.name}
+      </h1>
+      <p class="text-sm text-gray-400">{gettext("Welcome to your email marketing hub")}</p>
+    </div>
+    <a href={Routes.project_path(@conn, :edit, @current_project.id)} class="button button--text inline-flex items-center gap-2 self-start sm:self-auto">
+      {render_icon(:cog)}
+      <span>{gettext("Settings")}</span>
+    </a>
+  </div>
+</div>
+
+<!-- KPI STRIP -->
+<div class="container mb-8">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+    <!-- Contacts KPI -->
+    <div class="group bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6 hover:bg-gray-900/80 hover:border-gray-700/50 transition-all duration-300 cursor-default">
+      <div class="flex items-center justify-between mb-4">
+        <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-cyan-600 to-blue-500 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+          <span class="inline-flex h-5 w-5 text-white">{render_icon(:user_group)}</span>
+        </div>
+        <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">{gettext("Total")}</span>
+      </div>
+      <p class="text-3xl font-bold text-white mb-1">{@contacts_count}</p>
+      <p class="text-sm text-gray-400">{gettext("Contacts")}</p>
+    </div>
+
+    <!-- Campaigns KPI -->
+    <div class="group bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6 hover:bg-gray-900/80 hover:border-gray-700/50 transition-all duration-300 cursor-default">
+      <div class="flex items-center justify-between mb-4">
+        <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-purple-600 to-pink-500 flex items-center justify-center shadow-lg shadow-purple-500/20">
+          <span class="inline-flex h-5 w-5 text-white">{render_icon(:paper_airplane)}</span>
+        </div>
+        <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">{gettext("Active")}</span>
+      </div>
+      <p class="text-3xl font-bold text-white mb-1">{@campaigns_count}</p>
+      <p class="text-sm text-gray-400">{gettext("Campaigns")}</p>
+    </div>
+
+    <!-- Senders KPI -->
+    <div class="group bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6 hover:bg-gray-900/80 hover:border-gray-700/50 transition-all duration-300 cursor-default">
+      <div class="flex items-center justify-between mb-4">
+        <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-amber-600 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-500/20">
+          <span class="inline-flex h-5 w-5 text-white">{render_icon(:at_symbol)}</span>
+        </div>
+        <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">{gettext("Config")}</span>
+      </div>
+      <p class="text-3xl font-bold text-white mb-1">{@senders_count}</p>
+      <p class="text-sm text-gray-400">{gettext("Senders")}</p>
+    </div>
+
+    <!-- Forms KPI -->
+    <div class="group bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6 hover:bg-gray-900/80 hover:border-gray-700/50 transition-all duration-300 cursor-default">
+      <div class="flex items-center justify-between mb-4">
+        <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+          <span class="inline-flex h-5 w-5 text-white">{render_icon(:document_add)}</span>
+        </div>
+        <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">{gettext("Collect")}</span>
+      </div>
+      <p class="text-3xl font-bold text-white mb-1">{@forms_count}</p>
+      <p class="text-sm text-gray-400">{gettext("Forms")}</p>
+    </div>
+
+    <!-- Templates KPI -->
+    <div class="group bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6 hover:bg-gray-900/80 hover:border-gray-700/50 transition-all duration-300 cursor-default">
+      <div class="flex items-center justify-between mb-4">
+        <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-rose-600 to-red-500 flex items-center justify-center shadow-lg shadow-rose-500/20">
+          <span class="inline-flex h-5 w-5 text-white">{render_icon(:pencil_alt)}</span>
+        </div>
+        <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">{gettext("Design")}</span>
+      </div>
+      <p class="text-3xl font-bold text-white mb-1">{@templates_count}</p>
+      <p class="text-sm text-gray-400">{gettext("Templates")}</p>
     </div>
   </div>
 </div>
 
+<!-- QUICK ACTIONS -->
+<div class="container mb-8">
+  <div class="flex flex-col sm:flex-row gap-3">
+    <a href={Routes.campaign_path(@conn, :new, @current_project.id)} class="button button--cta inline-flex items-center justify-center gap-2 flex-1 sm:flex-none px-6">
+      {render_icon(:paper_airplane)}
+      <span>{gettext("New Campaign")}</span>
+    </a>
+    <a href={Routes.contact_path(@conn, :index, @current_project.id)} class="button inline-flex items-center justify-center gap-2 flex-1 sm:flex-none px-6">
+      {render_icon(:user_group)}
+      <span>{gettext("Import Contacts")}</span>
+    </a>
+    <a href={Routes.form_path(@conn, :new, @current_project.id)} class="button inline-flex items-center justify-center gap-2 flex-1 sm:flex-none px-6">
+      {render_icon(:document_add)}
+      <span>{gettext("Create Form")}</span>
+    </a>
+  </div>
+</div>
+
+<!-- ONBOARDING HINTS -->
 <%= if @senders_count == 0 || @contacts_count == 0 || @campaigns_count == 0 do %>
   <div class="container mb-8">
-    <div class="flex gap-4 p-4 sm:p-8 bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm border border-gray-700/50 rounded-2xl shadow-xl">
+    <div class="space-y-4">
       <%= cond do %>
         <% @senders_count == 0 -> %>
           {render("_empty_state_senders.html", assigns)}
@@ -29,71 +115,132 @@
   </div>
 <% end %>
 
+<!-- NAVIGATION CARDS GRID -->
 <div class="container grid gap-4 md:grid-cols-2 lg:grid-cols-3 md:gap-6">
-  <a href={Routes.campaign_path(@conn, :index, @current_project.id)} class="group card bg-gray-900/60 hover:bg-gray-900/80 flex items-start gap-4">
-    <div class="flex-shrink-0 h-12 w-12 bg-gradient-to-br from-fluxo-600 to-fluxo-400 rounded-xl flex items-center justify-center shadow-lg shadow-fluxo-500/20">
-      <span class="inline-flex h-6 w-6 text-white">{render_icon(:at_symbol)}</span>
+  <!-- Campaigns Card -->
+  <a href={Routes.campaign_path(@conn, :index, @current_project.id)} class="group card bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 hover:bg-gray-900/80 hover:border-gray-700/50 hover:scale-[1.02] transition-all duration-300 flex flex-col p-6">
+    <div class="flex items-start justify-between mb-4">
+      <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-purple-600 via-fluxo-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-purple-500/20 flex-shrink-0">
+        <span class="inline-flex h-6 w-6 text-white">{render_icon(:paper_airplane)}</span>
+      </div>
+      <div class="text-gray-400 group-hover:text-gray-300 transition-colors">
+        {render_icon(:cursor_click)}
+      </div>
     </div>
-    <div>
-      <h2 class="font-semibold text-lg text-white group-hover:text-fluxo-300 transition-colors">
-        {gettext("Campaigns")}
-      </h2>
-      <p class="text-sm text-gray-400 mt-1">{gettext("Manage Campaigns")}</p>
-    </div>
-  </a>
-  <a href={Routes.contact_path(@conn, :index, @current_project.id)} class="group card bg-gray-900/60 hover:bg-gray-900/80 flex items-start gap-4">
-    <div class="flex-shrink-0 h-12 w-12 bg-gradient-to-br from-cyan-500 to-cyan-400 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/20">
-      <span class="inline-flex h-6 w-6 text-white">{render_icon(:user_group)}</span>
-    </div>
-    <div>
-      <h2 class="font-semibold text-lg text-white group-hover:text-cyan-300 transition-colors">
-        {gettext("Contacts")}
-      </h2>
-      <p class="text-sm text-gray-400 mt-1">{gettext("Manage Contacts")}</p>
+    <h2 class="font-semibold text-lg text-white group-hover:text-purple-300 transition-colors mb-1">
+      {gettext("Campaigns")}
+    </h2>
+    <p class="text-sm text-gray-500 mb-4 flex-grow">{gettext("Create and manage email campaigns")}</p>
+    <div class="flex items-center text-sm font-semibold text-purple-400 group-hover:text-purple-300">
+      <span class="inline-flex h-7 px-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+        {@campaigns_count}
+      </span>
     </div>
   </a>
-  <a href={Routes.segment_path(@conn, :index, @current_project.id)} class="group card bg-gray-900/60 hover:bg-gray-900/80 flex items-start gap-4">
-    <div class="flex-shrink-0 h-12 w-12 bg-gradient-to-br from-purple-500 to-purple-400 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20">
-      <span class="inline-flex h-6 w-6 text-white">{render_icon(:filter)}</span>
+
+  <!-- Contacts Card -->
+  <a href={Routes.contact_path(@conn, :index, @current_project.id)} class="group card bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 hover:bg-gray-900/80 hover:border-gray-700/50 hover:scale-[1.02] transition-all duration-300 flex flex-col p-6">
+    <div class="flex items-start justify-between mb-4">
+      <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-emerald-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-emerald-500/20 flex-shrink-0">
+        <span class="inline-flex h-6 w-6 text-white">{render_icon(:user_group)}</span>
+      </div>
+      <div class="text-gray-400 group-hover:text-gray-300 transition-colors">
+        {render_icon(:cursor_click)}
+      </div>
     </div>
-    <div>
-      <h2 class="font-semibold text-lg text-white group-hover:text-purple-300 transition-colors">
-        {gettext("Segments")}
-      </h2>
-      <p class="text-sm text-gray-400 mt-1">{gettext("Manage Segments")}</p>
-    </div>
-  </a>
-  <a href={Routes.form_path(@conn, :index, @current_project.id)} class="group card bg-gray-900/60 hover:bg-gray-900/80 flex items-start gap-4">
-    <div class="flex-shrink-0 h-12 w-12 bg-gradient-to-br from-amber-500 to-amber-400 rounded-xl flex items-center justify-center shadow-lg shadow-amber-500/20">
-      <span class="inline-flex h-6 w-6 text-white">{render_icon(:template)}</span>
-    </div>
-    <div>
-      <h2 class="font-semibold text-lg text-white group-hover:text-amber-300 transition-colors">
-        {gettext("Forms")}
-      </h2>
-      <p class="text-sm text-gray-400 mt-1">{gettext("Manage Forms")}</p>
-    </div>
-  </a>
-  <a href={Routes.template_path(@conn, :index, @current_project.id)} class="group card bg-gray-900/60 hover:bg-gray-900/80 flex items-start gap-4">
-    <div class="flex-shrink-0 h-12 w-12 bg-gradient-to-br from-emerald-500 to-emerald-400 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20">
-      <span class="inline-flex h-6 w-6 text-white">{render_icon(:color_swatch)}</span>
-    </div>
-    <div>
-      <h2 class="font-semibold text-lg text-white group-hover:text-emerald-300 transition-colors">
-        {gettext("Templates")}
-      </h2>
-      <p class="text-sm text-gray-400 mt-1">{gettext("Manage Templates")}</p>
+    <h2 class="font-semibold text-lg text-white group-hover:text-emerald-300 transition-colors mb-1">
+      {gettext("Contacts")}
+    </h2>
+    <p class="text-sm text-gray-500 mb-4 flex-grow">{gettext("Manage your contact database")}</p>
+    <div class="flex items-center text-sm font-semibold text-emerald-400 group-hover:text-emerald-300">
+      <span class="inline-flex h-7 px-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+        {@contacts_count}
+      </span>
     </div>
   </a>
-  <a href={Routes.sender_path(@conn, :index, @current_project.id)} class="group card bg-gray-900/60 hover:bg-gray-900/80 flex items-start gap-4">
-    <div class="flex-shrink-0 h-12 w-12 bg-gradient-to-br from-rose-500 to-rose-400 rounded-xl flex items-center justify-center shadow-lg shadow-rose-500/20">
-      <span class="inline-flex h-6 w-6 text-white">{render_icon(:speakerphone)}</span>
+
+  <!-- Segments Card -->
+  <a href={Routes.segment_path(@conn, :index, @current_project.id)} class="group card bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 hover:bg-gray-900/80 hover:border-gray-700/50 hover:scale-[1.02] transition-all duration-300 flex flex-col p-6">
+    <div class="flex items-start justify-between mb-4">
+      <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-purple-600 to-fluxo-600 flex items-center justify-center shadow-lg shadow-purple-500/20 flex-shrink-0">
+        <span class="inline-flex h-6 w-6 text-white">{render_icon(:filter)}</span>
+      </div>
+      <div class="text-gray-400 group-hover:text-gray-300 transition-colors">
+        {render_icon(:cursor_click)}
+      </div>
     </div>
-    <div>
-      <h2 class="font-semibold text-lg text-white group-hover:text-rose-300 transition-colors">
-        {gettext("Senders")}
-      </h2>
-      <p class="text-sm text-gray-400 mt-1">{gettext("Manage Senders")}</p>
+    <h2 class="font-semibold text-lg text-white group-hover:text-purple-300 transition-colors mb-1">
+      {gettext("Segments")}
+    </h2>
+    <p class="text-sm text-gray-500 mb-4 flex-grow">{gettext("Create targeted audience segments")}</p>
+    <div class="flex items-center text-sm font-semibold text-purple-400 group-hover:text-purple-300">
+      <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 10l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+      </svg>
+      {gettext("Explore")}
+    </div>
+  </a>
+
+  <!-- Forms Card -->
+  <a href={Routes.form_path(@conn, :index, @current_project.id)} class="group card bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 hover:bg-gray-900/80 hover:border-gray-700/50 hover:scale-[1.02] transition-all duration-300 flex flex-col p-6">
+    <div class="flex items-start justify-between mb-4">
+      <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-amber-600 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-500/20 flex-shrink-0">
+        <span class="inline-flex h-6 w-6 text-white">{render_icon(:document_add)}</span>
+      </div>
+      <div class="text-gray-400 group-hover:text-gray-300 transition-colors">
+        {render_icon(:cursor_click)}
+      </div>
+    </div>
+    <h2 class="font-semibold text-lg text-white group-hover:text-amber-300 transition-colors mb-1">
+      {gettext("Forms")}
+    </h2>
+    <p class="text-sm text-gray-500 mb-4 flex-grow">{gettext("Design signup and opt-in forms")}</p>
+    <div class="flex items-center text-sm font-semibold text-amber-400 group-hover:text-amber-300">
+      <span class="inline-flex h-7 px-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
+        {@forms_count}
+      </span>
+    </div>
+  </a>
+
+  <!-- Templates Card -->
+  <a href={Routes.template_path(@conn, :index, @current_project.id)} class="group card bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 hover:bg-gray-900/80 hover:border-gray-700/50 hover:scale-[1.02] transition-all duration-300 flex flex-col p-6">
+    <div class="flex items-start justify-between mb-4">
+      <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-rose-600 to-pink-500 flex items-center justify-center shadow-lg shadow-rose-500/20 flex-shrink-0">
+        <span class="inline-flex h-6 w-6 text-white">{render_icon(:pencil_alt)}</span>
+      </div>
+      <div class="text-gray-400 group-hover:text-gray-300 transition-colors">
+        {render_icon(:cursor_click)}
+      </div>
+    </div>
+    <h2 class="font-semibold text-lg text-white group-hover:text-rose-300 transition-colors mb-1">
+      {gettext("Templates")}
+    </h2>
+    <p class="text-sm text-gray-500 mb-4 flex-grow">{gettext("Build and manage email templates")}</p>
+    <div class="flex items-center text-sm font-semibold text-rose-400 group-hover:text-rose-300">
+      <span class="inline-flex h-7 px-3 rounded-lg bg-rose-500/10 border border-rose-500/20">
+        {@templates_count}
+      </span>
+    </div>
+  </a>
+
+  <!-- Senders Card -->
+  <a href={Routes.sender_path(@conn, :index, @current_project.id)} class="group card bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 hover:bg-gray-900/80 hover:border-gray-700/50 hover:scale-[1.02] transition-all duration-300 flex flex-col p-6">
+    <div class="flex items-start justify-between mb-4">
+      <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-cyan-600 to-teal-500 flex items-center justify-center shadow-lg shadow-cyan-500/20 flex-shrink-0">
+        <span class="inline-flex h-6 w-6 text-white">{render_icon(:at_symbol)}</span>
+      </div>
+      <div class="text-gray-400 group-hover:text-gray-300 transition-colors">
+        {render_icon(:cursor_click)}
+      </div>
+    </div>
+    <h2 class="font-semibold text-lg text-white group-hover:text-cyan-300 transition-colors mb-1">
+      {gettext("Senders")}
+    </h2>
+    <p class="text-sm text-gray-500 mb-4 flex-grow">{gettext("Configure email sending addresses")}</p>
+    <div class="flex items-center text-sm font-semibold text-cyan-400 group-hover:text-cyan-300">
+      <span class="inline-flex h-7 px-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
+        {@senders_count}
+      </span>
     </div>
   </a>
 </div>

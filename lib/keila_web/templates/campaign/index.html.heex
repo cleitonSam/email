@@ -1,104 +1,247 @@
-<div class="container flex py-8 sm:py-11 mb-4">
-  <div class="flex-grow gap-4 flex flex-col sm:flex-row sm:items-center">
-    <div class="flex items-center gap-3">
-      <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-fluxo-400 to-cyan-400 flex items-center justify-center shadow-lg shadow-fluxo-500/20">
-        <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
+<div x-data="campaignFilter()" x-init="init()" class="min-h-screen">
+  <!-- Header Section -->
+  <div class="container flex py-8 sm:py-11 mb-8">
+    <div class="flex-grow gap-4 flex flex-col sm:flex-row sm:items-center">
+      <div class="flex items-center gap-4 flex-grow">
+        <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-fluxo-400 to-cyan-400 flex items-center justify-center shadow-lg shadow-fluxo-500/20">
+          <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-bold text-white">
+            {gettext("Campaigns")}
+          </h1>
+          <p class="text-sm text-gray-400 mt-1">
+            <span class="inline-flex items-center justify-center h-6 w-6 rounded-full bg-fluxo-500/20 text-fluxo-300 text-xs font-semibold">
+              {Enum.count(@campaigns)}
+            </span>
+          </p>
+        </div>
       </div>
-      <h1 class="text-2xl sm:text-3xl font-bold text-white">
-        {gettext("Campaigns")}
-      </h1>
-    </div>
-    <div class="flex-grow flex flex-row-reverse justify-end gap-4 sm:flex-row">
-      <a href={Routes.campaign_path(@conn, :new, @current_project.id)} class="button button--cta button--large">
-        {render_icon(:document_add)}
-        {gettext("Create new campaign")}
-      </a>
+      <div class="flex-grow flex flex-row-reverse justify-end gap-4 sm:flex-row">
+        <a href={Routes.campaign_path(@conn, :new, @current_project.id)} class="button button--cta button--large group">
+          <svg class="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+          {gettext("Create new campaign")}
+        </a>
+      </div>
     </div>
   </div>
-</div>
 
-<%= if Enum.empty?(@campaigns) do %>
-  {render("_empty_state.html", assigns)}
-<% end %>
+  <!-- Filter Tabs -->
+  <div class="container mb-8 border-b border-gray-800/50">
+    <div class="flex gap-6 overflow-x-auto -mb-px">
+      <button
+        @click="activeFilter = 'all'"
+        x-bind:class="activeFilter === 'all' ? 'border-fluxo-500 text-white' : 'border-transparent text-gray-400 hover:text-gray-300'"
+        class="px-1 py-3 border-b-2 font-medium text-sm transition-colors duration-200"
+      >
+        {gettext("All")}
+      </button>
+      <button
+        @click="activeFilter = 'sent'"
+        x-bind:class="activeFilter === 'sent' ? 'border-fluxo-500 text-white' : 'border-transparent text-gray-400 hover:text-gray-300'"
+        class="px-1 py-3 border-b-2 font-medium text-sm transition-colors duration-200 flex items-center gap-2"
+      >
+        <span class="inline-flex h-2 w-2 rounded-full bg-green-500"></span>
+        {gettext("Sent")}
+      </button>
+      <button
+        @click="activeFilter = 'scheduled'"
+        x-bind:class="activeFilter === 'scheduled' ? 'border-fluxo-500 text-white' : 'border-transparent text-gray-400 hover:text-gray-300'"
+        class="px-1 py-3 border-b-2 font-medium text-sm transition-colors duration-200 flex items-center gap-2"
+      >
+        <span class="inline-flex h-2 w-2 rounded-full bg-amber-500 animate-pulse-soft"></span>
+        {gettext("Scheduled")}
+      </button>
+      <button
+        @click="activeFilter = 'draft'"
+        x-bind:class="activeFilter === 'draft' ? 'border-fluxo-500 text-white' : 'border-transparent text-gray-400 hover:text-gray-300'"
+        class="px-1 py-3 border-b-2 font-medium text-sm transition-colors duration-200"
+      >
+        {gettext("Draft")}
+      </button>
+    </div>
+  </div>
 
-<div class="container grid gap-4 md:grid-cols-2 md:gap-6">
-  <%= for campaign <- @campaigns do %>
-    <div class="group bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6 hover:border-fluxo-500/30 hover:shadow-lg hover:shadow-fluxo-500/5 transition-all duration-300">
-      <div class="flex items-start justify-between gap-3 mb-3">
-        <h2 class="font-semibold text-xl text-white group-hover:text-fluxo-300 transition-colors line-clamp-2">
-          {campaign.subject}
-        </h2>
-        <%= cond do %>
-          <% campaign.sent_at -> %>
-            <span class="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-fluxo-500/10 text-fluxo-300 border border-fluxo-500/20">
-              <span class="inline-flex h-3.5 w-3.5">{render_icon(:check_circle)}</span>
-              {gettext("Sent")}
-            </span>
-          <% campaign.scheduled_for -> %>
-            <span class="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-300 border border-amber-500/20">
-              <span class="inline-flex h-3.5 w-3.5">{render_icon(:clock)}</span>
-              {gettext("Scheduled")}
-            </span>
-          <% true -> %>
-            <span class="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-gray-700/50 text-gray-400 border border-gray-600/30">
-              {gettext("draft")}
-            </span>
-        <% end %>
-      </div>
-      <p class="text-sm text-gray-400 flex items-center gap-2 mb-4">
-        {cond do
-          campaign.sent_at ->
-            [
-              content_tag(:span, render_icon(:cake), class: "inline-flex h-4 w-4 text-gray-500"),
-              gettext("Sent at:"),
-              " ",
-              local_datetime_tag(campaign.sent_at)
-            ]
-
-          campaign.scheduled_for ->
-            [
-              content_tag(:span, render_icon(:clock), class: "inline-flex h-4 w-4 text-gray-500"),
-              gettext("Scheduled for:"),
-              " ",
-              local_datetime_tag(campaign.scheduled_for)
-            ]
-
-          true ->
-            [
-              gettext("Updated at:"),
-              " ",
-              local_datetime_tag(campaign.updated_at)
-            ]
-        end}
-      </p>
-      <div class="flex flex-row gap-3 justify-end border-t border-gray-800/50 pt-4">
-        <a
-          href={Routes.campaign_path(@conn, :clone, @current_project.id, campaign.id)}
-          class="button button--text button--small"
-        >
-          {render_icon(:duplicate)}
-          {gettext("Clone")}
+  <!-- Empty State -->
+  <%= if Enum.empty?(@campaigns) do %>
+    <div class="container flex flex-col items-center justify-center py-20 animate-fade-in">
+      <div class="text-center">
+        <div class="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-gray-900/60 border border-gray-800/50 mb-6">
+          <svg class="w-8 h-8 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-white mb-2">
+          {gettext("No campaigns yet")}
+        </h3>
+        <p class="text-gray-400 mb-6 max-w-sm">
+          {gettext("Create your first email campaign and start connecting with your audience")}
+        </p>
+        <a href={Routes.campaign_path(@conn, :new, @current_project.id)} class="button button--cta">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+          {gettext("Create your first campaign")}
         </a>
-        <%= if is_nil(campaign.sent_at) do %>
-          <a
-            href={Routes.campaign_path(@conn, :edit, @current_project.id, campaign.id)}
-            class="button button--small"
-          >
-            {render_icon(:pencil_alt)}
-            {gettext("Edit")}
-          </a>
-        <% else %>
-          <a
-            href={Routes.campaign_path(@conn, :stats, @current_project.id, campaign.id)}
-            class="button button--cta button--small"
-          >
-            {render_icon(:chart_bar)}
-            {gettext("Stats")}
-          </a>
-        <% end %>
       </div>
+    </div>
+  <% else %>
+    <!-- Campaign Cards Grid -->
+    <div class="container grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-8">
+      <%= for campaign <- @campaigns do %>
+        <div
+          x-show="filterCampaign({
+            sent_at: <%= if campaign.sent_at, do: "true", else: "null" %>,
+            scheduled_for: <%= if campaign.scheduled_for, do: "true", else: "null" %>,
+            id: "<%= campaign.id %>"
+          })"
+          class="card-hover-effect bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6 animate-fade-in"
+        >
+          <!-- Status Indicator -->
+          <div class="flex items-start justify-between gap-3 mb-4">
+            <div class="flex items-start gap-3 flex-grow">
+              <div class="mt-1">
+                <%= cond do %>
+                  <% campaign.sent_at -> %>
+                    <div class="status-dot status-dot--active"></div>
+                  <% campaign.scheduled_for -> %>
+                    <div class="status-dot status-dot--pending"></div>
+                  <% true -> %>
+                    <div class="status-dot status-dot--inactive"></div>
+                <% end %>
+              </div>
+              <div class="flex-grow min-w-0">
+                <h2 class="font-semibold text-lg text-white line-clamp-2 mb-2">
+                  {campaign.subject}
+                </h2>
+                <!-- Status Badge -->
+                <%= cond do %>
+                  <% campaign.sent_at -> %>
+                    <span class="metric-badge metric-badge--good">
+                      <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                      </svg>
+                      {gettext("Sent")}
+                    </span>
+                  <% campaign.scheduled_for -> %>
+                    <span class="metric-badge metric-badge--warning">
+                      <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00-.293.707l-.707.707a1 1 0 101.414 1.414L9 9.414V6z" clip-rule="evenodd" />
+                      </svg>
+                      {gettext("Scheduled")}
+                    </span>
+                  <% true -> %>
+                    <span class="metric-badge">
+                      @apply bg-gray-700/50 text-gray-400 border-gray-600/30;
+                      {gettext("Draft")}
+                    </span>
+                <% end %>
+              </div>
+            </div>
+          </div>
+
+          <!-- Date Info -->
+          <p class="text-xs text-gray-500 mb-4">
+            <%= cond do
+              campaign.sent_at ->
+                [
+                  gettext("Sent:"),
+                  " ",
+                  local_datetime_tag(campaign.sent_at)
+                ]
+
+              campaign.scheduled_for ->
+                [
+                  gettext("Scheduled:"),
+                  " ",
+                  local_datetime_tag(campaign.scheduled_for)
+                ]
+
+              true ->
+                [
+                  gettext("Updated:"),
+                  " ",
+                  local_datetime_tag(campaign.updated_at)
+                ]
+            end %>
+          </p>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-row gap-2 justify-end border-t border-gray-800/50 pt-4">
+            <%= if is_nil(campaign.sent_at) do %>
+              <a
+                href={Routes.campaign_path(@conn, :clone, @current_project.id, campaign.id)}
+                class="button button--text button--small flex items-center gap-1"
+              >
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                {gettext("Clone")}
+              </a>
+              <a
+                href={Routes.campaign_path(@conn, :edit, @current_project.id, campaign.id)}
+                class="button button--small flex items-center gap-1"
+              >
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                {gettext("Edit")}
+              </a>
+            <% else %>
+              <a
+                href={Routes.campaign_path(@conn, :stats, @current_project.id, campaign.id)}
+                class="button button--cta button--small flex items-center gap-1 flex-grow justify-center"
+              >
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                {gettext("Stats")}
+              </a>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
     </div>
   <% end %>
 </div>
+
+<!-- Alpine.js Filter Logic -->
+<script>
+  function campaignFilter() {
+    return {
+      activeFilter: 'all',
+
+      init() {
+        // Initialize filter from URL params if available
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('filter')) {
+          this.activeFilter = params.get('filter');
+        }
+      },
+
+      filterCampaign(campaign) {
+        if (this.activeFilter === 'all') {
+          return true;
+        }
+
+        if (this.activeFilter === 'sent') {
+          return campaign.sent_at !== null;
+        }
+
+        if (this.activeFilter === 'scheduled') {
+          return campaign.scheduled_for !== null && campaign.sent_at === null;
+        }
+
+        if (this.activeFilter === 'draft') {
+          return campaign.scheduled_for === null && campaign.sent_at === null;
+        }
+
+        return true;
+      }
+    };
+  }
+</script>

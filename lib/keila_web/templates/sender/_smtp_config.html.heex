@@ -1,19 +1,20 @@
 <div
   x-data={"{ smtpAuthMethod: '#{input_value(@form, :smtp_auth_method) || "password"}', showPasswordField: false, port: '#{input_value(@form, :smtp_port) || "465"}' }"}
   x-init="$watch('showPasswordField', showPasswordField => { $nextTick(() => { if (showPasswordField) $refs.password.focus() }) })"
+  class="space-y-5"
 >
-  <div class="form-row">
-    {label(@form, :smtp_relay, gettext("Server"))}
+  <div class="space-y-2">
+    {label(@form, :smtp_relay, gettext("Server"), class: "text-sm font-medium text-gray-300")}
     <%= with_validation(@form, :smtp_relay) do %>
       {text_input(@form, :smtp_relay,
         placeholder: gettext("mail.example.org"),
-        class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all"
+        class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-500"
       )}
     <% end %>
   </div>
 
-  <div class="form-row">
-    {label(@form, :smtp_auth_method, gettext("Authentication"))}
+  <div class="space-y-2">
+    {label(@form, :smtp_auth_method, gettext("Authentication"), class: "text-sm font-medium text-gray-300")}
     <%= with_validation(@form, :smtp_auth_method) do %>
       {select(
         @form,
@@ -22,19 +23,19 @@
           {gettext("Password"), "password"},
           {gettext("None"), "none"}
         ],
-        class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
+        class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
         "x-model": "smtpAuthMethod"
       )}
     <% end %>
   </div>
 
-  <div class="form-row" x-show="smtpAuthMethod === 'password'" x-cloak>
-    {label(@form, :smtp_username, gettext("Username"))}
+  <div class="space-y-2" x-show="smtpAuthMethod === 'password'" x-cloak>
+    {label(@form, :smtp_username, gettext("Username"), class: "text-sm font-medium text-gray-300")}
     <%= with_validation(@form, :smtp_username) do %>
       {text_input(
         @form,
         :smtp_username,
-        class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
+        class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-500",
         "x-bind:disabled": "smtpAuthMethod !== 'password'"
       )}
     <% end %>
@@ -42,39 +43,40 @@
 
   <div x-show="smtpAuthMethod === 'password'" x-cloak>
     <%= if is_nil(@form.data.smtp_password) do %>
-      <div class="form-row">
-        {label(@form, :smtp_password, gettext("Password"))}
+      <div class="space-y-2">
+        {label(@form, :smtp_password, gettext("Password"), class: "text-sm font-medium text-gray-300")}
         <%= with_validation(@form, :smtp_password) do %>
           {password_input(
             @form,
             :smtp_password,
-            class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
+            class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-500",
             phx_update: "ignore"
           )}
         <% end %>
       </div>
     <% else %>
-      <div class="form-row mt-2">
-        <div class="flex gap-5">
-          {label(@form, :smtp_password, gettext("Password"))}
-          <label>
+      <div class="space-y-3 mt-2">
+        <div class="flex gap-4 items-center justify-between">
+          {label(@form, :smtp_password, gettext("Password"), class: "text-sm font-medium text-gray-300")}
+          <label class="flex gap-2 items-center cursor-pointer">
             <input
               id="show-password-checkbox"
               type="checkbox"
               x-model="showPasswordField"
+              class="w-4 h-4 rounded bg-gray-800/50 border border-gray-700/50 checked:bg-fluxo-500 cursor-pointer"
               phx-update="ignore"
             />
-            {gettext("Change")}
+            <span class="text-sm text-gray-400">{gettext("Change")}</span>
           </label>
         </div>
 
         <template x-if="showPasswordField">
           <%= with_validation(@form, :smtp_password) do %>
-            <div id="test" phx_update="ignore">
+            <div phx_update="ignore">
               {password_input(
                 @form,
                 :smtp_password,
-                class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
+                class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-500",
                 x_ref: "password",
                 phx_update: "ignore"
               )}
@@ -85,30 +87,29 @@
     <% end %>
   </div>
 
-  <div class="form-row mt-5">
-    {label(@form, :smtp_tls_mode, gettext("Connection security"))}
+  <div class="space-y-2 mt-6">
+    {label(@form, :smtp_tls_mode, gettext("Connection security"), class: "text-sm font-medium text-gray-300")}
     <%= with_validation(@form, :smtp_tls_mode) do %>
-      <%= label(@form, :smtp_tls_mode) do %>
-        {select(
-          @form,
-          :smtp_tls_mode,
-          [
-            {gettext("SSL/TLS"), "tls"},
-            {gettext("STARTTLS"), "starttls"},
-            {gettext("None"), "none"}
-          ],
-          "x-ref": "smtpTlsMode",
-          "x-on:change":
-            "switch ($refs.smtpTlsMode.value) {case 'tls': port = '465'; break; case 'starttls': port = '587'; break}"
-        )}
-      <% end %>
+      {select(
+        @form,
+        :smtp_tls_mode,
+        [
+          {gettext("SSL/TLS"), "tls"},
+          {gettext("STARTTLS"), "starttls"},
+          {gettext("None"), "none"}
+        ],
+        class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
+        "x-ref": "smtpTlsMode",
+        "x-on:change":
+          "switch ($refs.smtpTlsMode.value) {case 'tls': port = '465'; break; case 'starttls': port = '587'; break}"
+      )}
     <% end %>
 
-    <div class="form-row">
-      {label(@form, :smtp_port, gettext("Port"))}
+    <div class="space-y-2">
+      {label(@form, :smtp_port, gettext("Port"), class: "text-sm font-medium text-gray-300")}
       <%= with_validation(@form, :smtp_port) do %>
         {number_input(@form, :smtp_port,
-          class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
+          class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
           "x-model": "port",
           phx_update: "ignore"
         )}

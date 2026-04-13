@@ -1,60 +1,74 @@
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-950 via-fluxo-900/20 to-gray-950 px-4">
-  <.form
-    :let={f}
-    for={@changeset}
-    action={Routes.auth_path(@conn, :post_register)}
-    class="w-full max-w-md bg-gray-900/80 backdrop-blur-xl border border-gray-700/50 rounded-2xl shadow-2xl p-8 sm:p-10 flex flex-col gap-5 text-gray-50"
-  >
-    <div class="flex flex-col items-center gap-3 mb-2">
-      <span class="h-14 w-14 text-fluxo-400">
-        {render_icon(:logo)}
-      </span>
-      <h1 class="font-display text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-fluxo-400 to-cyan-400 text-center">
+<div class="min-h-[calc(100vh-5rem)] flex items-center justify-center px-4 py-12">
+  <div class="w-full max-w-md">
+    <!-- Logo + Heading -->
+    <div class="text-center mb-8">
+      <div class="inline-flex h-16 w-16 rounded-2xl bg-gradient-to-br from-green-400 to-cyan-400 items-center justify-center shadow-xl shadow-green-500/30 mb-5">
+        <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+        </svg>
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-bold text-white mb-2">
         {gettext("Start sending emails with Fluxo Email MKT now")}
       </h1>
-      <p class="text-gray-400 text-center text-sm">
-        {gettext(
-          "Register your Fluxo Email MKT account now and start your newsletter project within minutes."
-        )}
+      <p class="text-gray-500 text-sm">
+        {gettext("Register your Fluxo Email MKT account now and start your newsletter project within minutes.")}
       </p>
     </div>
-    <div class="flex flex-col gap-1.5">
-      {label(f, :email, gettext("Email"), class: "text-sm font-medium text-gray-300")}
-      <%= with_validation(f, :email) do %>
-        {text_input(f, :email,
-          placeholder: gettext("voce@suaempresa.com.br"),
-          class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-500",
-          autofocus: true
-        )}
+
+    <!-- Form Card -->
+    <.form
+      :let={f}
+      for={@changeset}
+      action={Routes.auth_path(@conn, :post_register)}
+      class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl shadow-2xl shadow-black/20 p-7 sm:p-8 flex flex-col gap-5"
+    >
+      <div class="flex flex-col gap-1.5">
+        {label(f, :email, gettext("Email"), class: "text-sm font-medium text-gray-300")}
+        <%= with_validation(f, :email) do %>
+          {text_input(f, :email,
+            placeholder: gettext("voce@suaempresa.com.br"),
+            class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-600",
+            autofocus: true
+          )}
+        <% end %>
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        {label(f, :password, gettext("Senha"), class: "text-sm font-medium text-gray-300")}
+        <p class="text-gray-600 text-xs">{gettext("Must have at least 10 characters.")}</p>
+        <%= with_validation(f, :password) do %>
+          {password_input(f, :password,
+            class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-600"
+          )}
+        <% end %>
+      </div>
+
+      <div class="flex flex-col">
+        <%= with_validation(f, :captcha) do %>
+          {captcha_tag()}
+        <% end %>
+      </div>
+
+      <%= Keila.if_cloud do %>
+        <.cloud_registration />
       <% end %>
-    </div>
-    <div class="flex flex-col gap-1.5">
-      {label(f, :password, gettext("Senha"), class: "text-sm font-medium text-gray-300")}
-      <p class="text-gray-500 text-xs">
-        {gettext("Must have at least 10 characters.")}
-      </p>
-      <%= with_validation(f, :password) do %>
-        {password_input(f, :password, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-500")}
-      <% end %>
-    </div>
-    <div class="flex flex-col">
-      <%= with_validation(f, :captcha) do %>
-        {captcha_tag()}
-      <% end %>
-    </div>
-    <%= Keila.if_cloud do %>
-      <.cloud_registration />
-    <% end %>
-    <div class="hidden">
-      {hidden_input(f, :locale, value: Gettext.get_locale())}
-    </div>
-    <button type="submit" class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-fluxo-600 to-fluxo-500 hover:from-fluxo-500 hover:to-fluxo-400 text-white font-semibold py-3 px-6 rounded-lg shadow-lg shadow-fluxo-500/25 hover:shadow-fluxo-500/40 transition-all duration-300 transform hover:scale-[1.02] mt-2">
-      {render_icon(:key)}
-      {gettext("Sign up now")}
-    </button>
-    <p class="text-center text-sm text-gray-400">
+
+      <div class="hidden">
+        {hidden_input(f, :locale, value: Gettext.get_locale())}
+      </div>
+
+      <button type="submit" class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-fluxo-500 to-fluxo-400 hover:from-fluxo-400 hover:to-cyan-500 text-white font-semibold py-3 px-6 rounded-xl shadow-lg shadow-fluxo-500/25 hover:shadow-fluxo-500/40 transition-all duration-300 transform hover:scale-[1.01] mt-1">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+        {gettext("Sign up now")}
+      </button>
+    </.form>
+
+    <!-- Footer Link -->
+    <p class="text-center text-sm text-gray-500 mt-6">
       {gettext("Already have an account?")}
       <a href={Routes.auth_path(@conn, :login)} class="text-fluxo-400 hover:text-cyan-400 font-medium transition-colors ml-1">{dgettext("auth", "Sign in.")}</a>
     </p>
-  </.form>
+  </div>
 </div>

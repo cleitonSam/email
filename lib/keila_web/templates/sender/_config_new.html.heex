@@ -13,61 +13,74 @@
     "{ tab: '#{tab}', senderType: $el.querySelector('#form_config_type,#shared_sender_config_type').value }" %>
 
   <div
-    class="tabs"
+    class="space-y-6"
     x-data={tab_data}
     x-init="$nextTick(() => { if (! $el.querySelector('button.tab-label.active')) {$el.querySelector('button.tab-label').click()} })"
   >
     {select(fc, :type, @sender_adapters, x_model: "senderType", class: "hidden")}
 
-    <%= for adapter <- @sender_adapters do %>
-      <% class = "{ 'active': tab === '#{adapter}' }"
-      prevent = "senderType = '#{adapter}'; tab = '#{adapter}'" %>
-      <button class="tab-label" x-bind:class={class} @click.prevent={prevent}>
-        {sender_adapter_name(adapter)}
-      </button>
-    <% end %>
-    <%= if assigns[:shared_senders] do %>
-      <%= for shared_sender <- @shared_senders do %>
-        <% class = "{ 'active': tab === 'shared_sender_#{shared_sender.id}' }"
-
-        prevent =
-          "tab = 'shared_sender_#{shared_sender.id}'; senderType = 'shared_#{shared_sender.config.type}'" %>
-        <button class="tab-label" x-bind:class={class} @click.prevent={prevent}>
-          {shared_sender.name}
+    <!-- Tab Navigation -->
+    <div class="flex flex-wrap gap-2 border-b border-gray-700/50 pb-4">
+      <%= for adapter <- @sender_adapters do %>
+        <% class = "{ 'border-b-2 border-fluxo-500 text-fluxo-400': tab === '#{adapter}', 'border-b-2 border-transparent text-gray-400 hover:text-gray-300': tab !== '#{adapter}' }"
+        prevent = "senderType = '#{adapter}'; tab = '#{adapter}'" %>
+        <button 
+          class="tab-label px-4 py-2 text-sm font-medium transition-colors"
+          x-bind:class={class} 
+          @click.prevent={prevent}
+        >
+          {sender_adapter_name(adapter)}
         </button>
       <% end %>
-    <% end %>
+      <%= if assigns[:shared_senders] do %>
+        <%= for shared_sender <- @shared_senders do %>
+          <% class = "{ 'border-b-2 border-fluxo-500 text-fluxo-400': tab === 'shared_sender_#{shared_sender.id}', 'border-b-2 border-transparent text-gray-400 hover:text-gray-300': tab !== 'shared_sender_#{shared_sender.id}' }"
 
+          prevent =
+            "tab = 'shared_sender_#{shared_sender.id}'; senderType = 'shared_#{shared_sender.config.type}'" %>
+          <button 
+            class="tab-label px-4 py-2 text-sm font-medium transition-colors"
+            x-bind:class={class} 
+            @click.prevent={prevent}
+          >
+            {shared_sender.name}
+          </button>
+        <% end %>
+      <% end %>
+    </div>
+
+    <!-- Tab Content -->
     <%= for adapter <- @sender_adapters do %>
       <% x_if = "tab === '#{adapter}'" %>
       <template x-if={x_if}>
-        <div class="tab-content">
+        <div class="tab-content space-y-5">
           {render_sender_adapter_form(fc, adapter)}
 
-          <div class="form-row mt-5">
+          <div class="space-y-2">
             <% id = "rate_limit_per_second_#{adapter}" %>
-            {label(fc, :rate_limit_per_second, gettext("Rate limit per second"), for: id)}
+            {label(fc, :rate_limit_per_second, gettext("Rate limit per second"), for: id, class: "text-sm font-medium text-gray-300")}
             <%= with_validation(fc, :rate_limit_per_second) do %>
-              {number_input(fc, :rate_limit_per_second, id: id, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", min: 0)}
+              {number_input(fc, :rate_limit_per_second, id: id, class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", min: 0)}
             <% end %>
           </div>
-          <div class="form-row">
+          <div class="space-y-2">
             <% id = "rate_limit_per_minute_#{adapter}" %>
-            {label(fc, :rate_limit_per_minute, gettext("Rate limit per minute"), for: id)}
+            {label(fc, :rate_limit_per_minute, gettext("Rate limit per minute"), for: id, class: "text-sm font-medium text-gray-300")}
             <%= with_validation(fc, :rate_limit_per_minute) do %>
-              {number_input(fc, :rate_limit_per_minute, id: id, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", min: 0)}
+              {number_input(fc, :rate_limit_per_minute, id: id, class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", min: 0)}
             <% end %>
           </div>
-          <div class="form-row">
+          <div class="space-y-2">
             <% id = "rate_limit_per_hour_#{adapter}" %>
-            {label(fc, :rate_limit_per_hour, gettext("Rate limit per hour"), for: id)}
+            {label(fc, :rate_limit_per_hour, gettext("Rate limit per hour"), for: id, class: "text-sm font-medium text-gray-300")}
             <%= with_validation(fc, :rate_limit_per_hour) do %>
-              {number_input(fc, :rate_limit_per_hour, id: id, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", min: 0)}
+              {number_input(fc, :rate_limit_per_hour, id: id, class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", min: 0)}
             <% end %>
           </div>
         </div>
       </template>
     <% end %>
+
     {hidden_input(@form, :shared_sender_id, value: nil)}
     <%= if assigns[:shared_senders] do %>
       <%= for shared_sender <- @shared_senders do %>

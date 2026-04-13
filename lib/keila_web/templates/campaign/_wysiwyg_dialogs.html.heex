@@ -7,10 +7,10 @@
   <div
     x-show.transition="activeDialog"
     style="display: none"
-    class="fixed z-10 inset-0 overflow-y-auto bg-black/90 flex items-center justify-center"
+    class="fixed z-10 inset-0 overflow-y-auto bg-gray-950/80 backdrop-blur-sm flex items-center justify-center"
   >
     <div
-      class="bg-gray-900 rounded-lg overflow-hidden shadow-xl transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+      class="bg-gray-900/95 backdrop-blur-xl border border-gray-700/50 rounded-2xl shadow-2xl shadow-black/40 overflow-hidden transition-all sm:my-8 sm:max-w-lg sm:w-full"
       role="dialog"
       aria-modal="true"
     >
@@ -23,38 +23,42 @@
         x-on:x-confirm="$dispatch('update-link', link)"
         x-on:x-cancel="$dispatch('update-link', { cancel: true} )"
         @keydown.enter.prevent="$dispatch('x-confirm')"
-        @keydown.esc.prevent="$dispatch('x-cancel')"
+        @keydown.escape.prevent="$dispatch('x-cancel')"
         @click.away="$dispatch('x-cancel')"
       >
-        <h2 class="text-3xl">{gettext("Insert Link")}</h2>
-        <br />
+        <div class="flex items-center gap-3 mb-6">
+          <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-fluxo-500 to-cyan-400 flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+            </svg>
+          </div>
+          <h2 class="text-2xl font-bold text-white">{gettext("Insert Link")}</h2>
+        </div>
         <div class="grid gap-4">
-          <div class="flex flex-col">
-            <label class="font-bold">{gettext("Link URL")}</label>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-sm font-medium text-gray-300">{gettext("Link URL")}</label>
             <input
               x-model="link.href"
               type="text"
-              class="bg-white hover:bg-fluxo-100 text-black"
+              class="w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-600"
               placeholder="https://fluxodigitaltech.com.br"
             />
           </div>
-
-          <div class="flex flex-col">
-            <label class="font-bold">{gettext("Link Title")}</label>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-sm font-medium text-gray-300">{gettext("Link Title")}</label>
             <input
               x-model="link.title"
               type="text"
-              class="bg-white hover:bg-fluxo-100 text-black"
+              class="w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-600"
               placeholder="Open Source Newsletters"
             />
           </div>
         </div>
-        <br />
-        <div class="flex justify-end gap-8">
-          <button class="button button--text button--large" @click.prevent="$dispatch('x-cancel')">
+        <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-800/50">
+          <button class="button button--text" @click.prevent="$dispatch('x-cancel')">
             {gettext("Cancel")}
           </button>
-          <button class="button button--cta button--large" @click.prevent="$dispatch('x-confirm')">
+          <button class="button button--cta" @click.prevent="$dispatch('x-confirm')">
             {gettext("Ok")}
           </button>
         </div>
@@ -70,28 +74,36 @@
         x-on:x-file-selected.stop="image.src = $event.detail.url; imageTab = 'url'"
         x-on:x-file-removed.stop="if (image.src == $event.detail.src) image = {}"
         @keydown.enter.prevent="$dispatch('x-confirm')"
-        @keydown.esc.prevent="$dispatch('x-cancel')"
+        @keydown.escape.prevent="$dispatch('x-cancel')"
         @click.away="$dispatch('x-cancel')"
       >
-        <h2 class="text-3xl">{gettext("Insert Image")}</h2>
-        <br />
+        <div class="flex items-center gap-3 mb-6">
+          <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-emerald-500 to-cyan-400 flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <h2 class="text-2xl font-bold text-white">{gettext("Insert Image")}</h2>
+        </div>
         <div class="tabs" id="tabs">
-          <a
-            href="#"
-            class="tab-label"
-            x-bind:class="{ 'active': imageTab === 'uploads' }"
-            @click.prevent="imageTab = 'uploads'"
-          >
-            {gettext("Uploads")}
-          </a>
-          <a
-            href="#"
-            class="tab-label"
-            x-bind:class="{ 'active': imageTab === 'url' }"
-            @click.prevent="imageTab = 'url'"
-          >
-            {gettext("URL")}
-          </a>
+          <div class="flex gap-1 p-1 bg-gray-800/50 rounded-xl mb-4">
+            <a
+              href="#"
+              class="flex-1 text-center py-2 px-4 rounded-lg text-sm font-medium transition-all"
+              x-bind:class="imageTab === 'uploads' ? 'bg-gray-700/80 text-white shadow-sm' : 'text-gray-400 hover:text-white'"
+              @click.prevent="imageTab = 'uploads'"
+            >
+              {gettext("Uploads")}
+            </a>
+            <a
+              href="#"
+              class="flex-1 text-center py-2 px-4 rounded-lg text-sm font-medium transition-all"
+              x-bind:class="imageTab === 'url' ? 'bg-gray-700/80 text-white shadow-sm' : 'text-gray-400 hover:text-white'"
+              @click.prevent="imageTab = 'url'"
+            >
+              {gettext("URL")}
+            </a>
+          </div>
           <div class="tab-content" data-tab="uploads" x-show="imageTab === 'uploads'">
             <.live_component
               module={KeilaWeb.FileManagerLiveComponent}
@@ -101,54 +113,52 @@
             />
           </div>
           <div class="tab-content" data-tab="url" x-show="imageTab === 'url'">
-            <div class="flex flex-col">
-              <label class="font-bold">{gettext("Image URL")}</label>
-              <p class="text-sm italic mb-2">
-                {gettext("For best results, choose an image that is 600px wide.")}
-              </p>
-              <input
-                x-model="image.src"
-                type="text"
-                class="bg-white hover:bg-fluxo-100 text-black"
-              />
-            </div>
-            <div class="flex flex-col">
-              <label class="font-bold">{gettext("Alt Text")}</label>
-              <input
-                x-model="image.alt"
-                type="text"
-                class="bg-white hover:bg-fluxo-100 text-black"
-              />
-            </div>
-            <div class="flex flex-col">
-              <label class="font-bold">{gettext("Title")}</label>
-              <input
-                x-model="image.title"
-                type="text"
-                class="bg-white hover:bg-fluxo-100 text-black"
-              />
-            </div>
-            <div class="flex flex-col">
-              <label class="font-bold">{gettext("Width")}</label>
-              <p class="text-sm italic mb-2">
-                {gettext("Width of the image in pixels (optional)")}
-              </p>
-              <input
-                x-model="image.width"
-                type="number"
-                min="1"
-                class="bg-white hover:bg-fluxo-100 text-black"
-                placeholder="600"
-              />
+            <div class="flex flex-col gap-4">
+              <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-medium text-gray-300">{gettext("Image URL")}</label>
+                <p class="text-xs text-gray-500">{gettext("For best results, choose an image that is 600px wide.")}</p>
+                <input
+                  x-model="image.src"
+                  type="text"
+                  class="w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-600"
+                />
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-medium text-gray-300">{gettext("Alt Text")}</label>
+                <input
+                  x-model="image.alt"
+                  type="text"
+                  class="w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-600"
+                />
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="flex flex-col gap-1.5">
+                  <label class="text-sm font-medium text-gray-300">{gettext("Title")}</label>
+                  <input
+                    x-model="image.title"
+                    type="text"
+                    class="w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-600"
+                  />
+                </div>
+                <div class="flex flex-col gap-1.5">
+                  <label class="text-sm font-medium text-gray-300">{gettext("Width")}</label>
+                  <input
+                    x-model="image.width"
+                    type="number"
+                    min="1"
+                    class="w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-600"
+                    placeholder="600"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <br />
-        <div class="flex justify-end gap-8">
-          <button class="button button--text button--large" @click.prevent="$dispatch('x-cancel')">
+        <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-800/50">
+          <button class="button button--text" @click.prevent="$dispatch('x-cancel')">
             {gettext("Cancel")}
           </button>
-          <button class="button button--cta button--large" @click.prevent="$dispatch('x-confirm')">
+          <button class="button button--cta" @click.prevent="$dispatch('x-confirm')">
             {gettext("Ok")}
           </button>
         </div>
@@ -162,35 +172,40 @@
         x-on:x-confirm="$dispatch('update-button', button)"
         x-on:x-cancel="$dispatch('update-button', { cancel: true} )"
         @keydown.enter.prevent="$dispatch('x-confirm')"
-        @keydown.esc.prevent="$dispatch('x-cancel')"
+        @keydown.escape.prevent="$dispatch('x-cancel')"
         @click.away="$dispatch('x-cancel')"
       >
-        <h2 class="text-3xl">{gettext("Insert Button")}</h2>
-        <br />
+        <div class="flex items-center gap-3 mb-6">
+          <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-purple-500 to-fluxo-400 flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+            </svg>
+          </div>
+          <h2 class="text-2xl font-bold text-white">{gettext("Insert Button")}</h2>
+        </div>
         <div class="grid gap-4">
-          <div class="flex flex-col">
-            <label class="font-bold">{gettext("Button URL")}</label>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-sm font-medium text-gray-300">{gettext("Button URL")}</label>
             <input
               x-model="button.href"
               type="text"
-              class="bg-white hover:bg-fluxo-100 text-black"
+              class="w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-600"
             />
           </div>
-          <div class="flex flex-col">
-            <label class="font-bold">{gettext("Button Text")}</label>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-sm font-medium text-gray-300">{gettext("Button Text")}</label>
             <input
               x-model="button.text"
               type="text"
-              class="bg-white hover:bg-fluxo-100 text-black"
+              class="w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-600"
             />
           </div>
         </div>
-        <br />
-        <div class="flex justify-end gap-8">
-          <button class="button button--text button--large" @click.prevent="$dispatch('x-cancel')">
+        <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-800/50">
+          <button class="button button--text" @click.prevent="$dispatch('x-cancel')">
             {gettext("Cancel")}
           </button>
-          <button class="button button--cta button--large" @click.prevent="$dispatch('x-confirm')">
+          <button class="button button--cta" @click.prevent="$dispatch('x-confirm')">
             {gettext("Ok")}
           </button>
         </div>
@@ -204,85 +219,81 @@
         x-on:x-confirm="$dispatch('update-liquid', liquid)"
         x-on:x-cancel="$dispatch('update-liquid', { cancel: true} )"
         @keydown.enter.prevent="$dispatch('x-confirm')"
-        @keydown.esc.prevent="$dispatch('x-cancel')"
+        @keydown.escape.prevent="$dispatch('x-cancel')"
         @click.away="$dispatch('x-cancel')"
       >
-        <h2 class="text-3xl">{gettext("Insert Code")}</h2>
-        <br />
+        <div class="flex items-center gap-3 mb-6">
+          <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-400 flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+            </svg>
+          </div>
+          <h2 class="text-2xl font-bold text-white">{gettext("Insert Code")}</h2>
+        </div>
         <div class="grid gap-4">
-          <div class="flex flex-col">
-            <label class="font-bold">{gettext("Code")}</label>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-sm font-medium text-gray-300">{gettext("Code")}</label>
             <input
               x-model="liquid.text"
               type="text"
-              class="bg-white hover:bg-fluxo-100 text-black"
+              class="w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white font-mono px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-600"
               placeholder="{{ contact.first_name }}"
             />
           </div>
         </div>
-        <br />
-        <div class="flex justify-end gap-8">
-          <button class="button button--text button--large" @click.prevent="$dispatch('x-cancel')">
+        <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-800/50">
+          <button class="button button--text" @click.prevent="$dispatch('x-cancel')">
             {gettext("Cancel")}
           </button>
-          <button class="button button--cta button--large" @click.prevent="$dispatch('x-confirm')">
+          <button class="button button--cta" @click.prevent="$dispatch('x-confirm')">
             {gettext("Ok")}
           </button>
         </div>
-        <br />
-        <div>
-          <h3 class="font-bold flex gap-2 flex-row">
+
+        <div class="mt-6 p-4 rounded-xl bg-gray-800/30 border border-gray-800/50">
+          <h3 class="font-semibold text-white flex gap-2 items-center text-sm mb-2">
             {gettext("How does this work?")}
           </h3>
-
-          <div class="markdown">
+          <div class="markdown text-sm text-gray-400">
             {gettext_md("""
             You can insert data from your contacts or your campaign
             using the [Liquid template language](https://shopify.github.io/liquid/basics/introduction/).
             """)}
           </div>
-          <br />
-          <div>
-            {gettext("You can get started by trying one of these examples:")}
-            <ul>
-              <li>
-                <button
-                  class="button button--text button-small"
-                  @click.stop="liquid.text = '{{ contact.first_name }}'"
-                >
-                  {render_icon(:cursor_click)} {gettext("Contact first name")}
-                </button>
-              </li>
-              <li>
-                <button
-                  class="button button--text button-small"
-                  @click.stop="liquid.text = '{{ contact.email }}'"
-                >
-                  {render_icon(:cursor_click)} {gettext("Contact email address")}
-                </button>
-              </li>
-              <li>
-                <button
-                  class="button button--text button-small"
-                  @click.stop="liquid.text = 'Hello {{ contact.first_name | default: &quot;there&quot; }}!'"
-                >
-                  {render_icon(:cursor_click)} {gettext("Greeting with first name")}
-                </button>
-              </li>
-            </ul>
+          <div class="mt-3">
+            <p class="text-xs text-gray-500 mb-2">{gettext("You can get started by trying one of these examples:")}</p>
+            <div class="flex flex-wrap gap-2">
+              <button
+                class="text-xs px-3 py-1.5 rounded-lg bg-gray-700/50 text-gray-300 hover:text-fluxo-400 hover:bg-fluxo-500/10 transition-colors"
+                @click.stop="liquid.text = '{{ contact.first_name }}'"
+              >
+                {gettext("Contact first name")}
+              </button>
+              <button
+                class="text-xs px-3 py-1.5 rounded-lg bg-gray-700/50 text-gray-300 hover:text-fluxo-400 hover:bg-fluxo-500/10 transition-colors"
+                @click.stop="liquid.text = '{{ contact.email }}'"
+              >
+                {gettext("Contact email address")}
+              </button>
+              <button
+                class="text-xs px-3 py-1.5 rounded-lg bg-gray-700/50 text-gray-300 hover:text-fluxo-400 hover:bg-fluxo-500/10 transition-colors"
+                @click.stop="liquid.text = 'Hello {{ contact.first_name | default: &quot;there&quot; }}!'"
+              >
+                {gettext("Greeting with first name")}
+              </button>
+            </div>
           </div>
 
-          <hr class="my-5" />
-
-          <div class="text-sm markdown">
-            {gettext_md("""
-            Read more about [como usar Liquid no Fluxo Email MKT](https://fluxodigitaltech.com.br)
-            or about [custom contact data](https://fluxodigitaltech.com.br).
-            """)}
+          <div class="mt-3 pt-3 border-t border-gray-700/30">
+            <div class="text-xs text-gray-500 markdown">
+              {gettext_md("""
+              Read more about [como usar Liquid no Fluxo Email MKT](https://fluxodigitaltech.com.br)
+              or about [custom contact data](https://fluxodigitaltech.com.br).
+              """)}
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-              

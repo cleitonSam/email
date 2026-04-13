@@ -96,7 +96,7 @@
   <div
     x-show="activeDialog == 'schedule'"
     class="flex items-center justify-center min-h-screen p-4"
-    @keydown.esc.prevent="$dispatch('x-cancel')"
+    @keydown.escape.prevent="$dispatch('x-cancel')"
     @click.away="$dispatch('x-cancel')"
     data-dialog-for="schedule"
   >
@@ -223,7 +223,7 @@
   <div
     x-show="activeDialog == 'preview'"
     class="flex items-center justify-center min-h-screen p-4"
-    @keydown.esc.prevent="$dispatch('x-cancel')"
+    @keydown.escape.prevent="$dispatch('x-cancel')"
     @click.away="$dispatch('x-cancel')"
     data-dialog-for="preview"
   >

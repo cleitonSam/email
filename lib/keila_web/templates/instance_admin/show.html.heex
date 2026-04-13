@@ -1,44 +1,69 @@
-<div class="container flex py-8 sm:py-11 mb-4">
-  <div class="flex-grow gap-4 flex flex-col sm:flex-row sm:items-center">
-    <h1 class="text-2xl sm:text-3xl font-bold text-white">
-      {dgettext("admin", "Fluxo Email MKT %{version} rodando em %{host}.",
-        version: @current_version,
-        host: @host
-      )}
-    </h1>
+<div class="container py-8 sm:py-11 mb-8">
+  <div class="flex items-center gap-6">
+    <div class="h-12 w-12 rounded-2xl bg-gradient-to-br from-fluxo-400 to-cyan-400 flex items-center justify-center shadow-lg shadow-fluxo-500/20">
+      {render_icon(:code)}
+    </div>
+    <div class="flex-grow">
+      <h1 class="text-2xl sm:text-3xl font-bold text-white">
+        {dgettext("admin", "Fluxo Email MKT %{version} rodando em %{host}.",
+          version: @current_version,
+          host: @host
+        )}
+      </h1>
+    </div>
   </div>
 </div>
 
-<div class="container mb-4">
+<div class="container">
   <%= if @update_checks_enabled? do %>
     <%= if Enum.any?(@available_updates) do %>
-      <div class="flex gap-4 items-center text-3xl max-w-xl">
-        <div class="flex size-16">
-          {render_icon(:newspaper)}
-        </div>
-        {dgettext("admin", "Existem atualizações disponíveis!")}
-      </div>
-      <br /><br />
-      <%= for release <- @available_updates do %>
-        <div class="mb-4 max-w-prose">
-          <p class="p-4 italic bg-gray-700">
-            {local_datetime_tag(release.published_at)}
-          </p>
-          <div class="bg-gray-900/60 border border-gray-800/50 rounded-xl p-4 prose prose-lg prose-invert">
-            {raw(Earmark.as_html!(release.changelog))}
+      <div class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-8 mb-8">
+        <div class="flex items-center gap-4 mb-6">
+          <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/20 flex-shrink-0">
+            {render_icon(:newspaper)}
           </div>
+          <h2 class="text-2xl font-bold text-white">
+            {dgettext("admin", "Existem atualizações disponíveis!")}
+          </h2>
         </div>
-      <% end %>
-    <% else %>
-      <div class="flex gap-4 items-center text-3xl max-w-xl">
-        <div class="flex size-16">
-          {render_icon(:check_circle)}
+
+        <div class="space-y-6">
+          <%= for release <- @available_updates do %>
+            <div class="bg-gray-800/30 border border-gray-800/50 rounded-xl overflow-hidden">
+              <div class="px-6 py-4 bg-gray-800/50 border-b border-gray-800/50">
+                <p class="text-sm font-medium text-gray-400">
+                  {local_datetime_tag(release.published_at)}
+                </p>
+              </div>
+              <div class="px-6 py-6 prose prose-lg prose-invert max-w-none">
+                {raw(Earmark.as_html!(release.changelog))}
+              </div>
+            </div>
+          <% end %>
         </div>
-        {dgettext("admin", "Você está rodando a versão mais recente!")}
       </div>
-      <br />
+    <% else %>
+      <div class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-8">
+        <div class="flex items-center gap-4">
+          <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center shadow-lg shadow-green-500/20 flex-shrink-0">
+            {render_icon(:check_circle)}
+          </div>
+          <h2 class="text-2xl font-bold text-white">
+            {dgettext("admin", "Você está rodando a versão mais recente!")}
+          </h2>
+        </div>
+      </div>
     <% end %>
   <% else %>
-    <p>{dgettext("admin", "Update checks are disabled.")}</p>
+    <div class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-8">
+      <div class="flex items-center gap-4">
+        <div class="h-12 w-12 rounded-xl bg-gray-700/50 flex items-center justify-center shadow-lg flex-shrink-0">
+          {render_icon(:information_circle)}
+        </div>
+        <p class="text-gray-300">
+          {dgettext("admin", "Update checks are disabled.")}
+        </p>
+      </div>
+    </div>
   <% end %>
 </div>

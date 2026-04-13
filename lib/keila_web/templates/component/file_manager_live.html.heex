@@ -1,12 +1,13 @@
 <div>
-  <h3 class="font-bold mb-4">
+  <h3 class="font-bold mb-6 text-lg text-gray-100">
     {gettext("Upload a new file")}
   </h3>
 
   <form phx-submit="upload" phx-change="validate-upload" phx-target={@myself}>
-    <% class =
-      "button flex gap-2 #{if Enum.empty?(@uploads.files.entries), do: "button--cta button--large"}" %>
-    <label class={class}>
+    <% upload_button_classes = 
+      "flex gap-3 items-center px-6 py-3 rounded-xl bg-gradient-to-r from-fluxo-500 to-fluxo-600 hover:from-fluxo-600 hover:to-fluxo-700 text-white font-medium transition-all duration-200 cursor-pointer shadow-lg hover:shadow-fluxo-500/25 #{if Enum.empty?(@uploads.files.entries), do: "w-full justify-center" else: ""}"
+    %>
+    <label class={upload_button_classes}>
       {render_icon(:upload)}
       <%= if Enum.empty?(@uploads.files.entries) do %>
         {gettext("Select a file")}
@@ -14,71 +15,76 @@
       <.live_file_input upload={@uploads.files} class="hidden" />
       <div class="flex flex-col gap-2">
         <%= for entry <- @uploads.files.entries do %>
-          <p class="text-sm font-italic text-ellipsis flex-grow max-w-8">
+          <p class="text-sm font-medium text-ellipsis flex-grow max-w-8">
             {entry.client_name}
           </p>
         <% end %>
       </div>
     </label>
     <%= if not Enum.empty?(@uploads.files.entries) do %>
-      <br />
-      <button class="button button--cta button--large mt-4" type="submit">
+      <button class="flex gap-2 items-center px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-medium transition-all duration-200 shadow-lg hover:shadow-emerald-500/25 mt-4" type="submit">
         {render_icon(:cursor_click)}
         {gettext("Start Upload")}
       </button>
     <% end %>
   </form>
 
-  <br />
-  <hr />
-  <br />
+  <div class="my-6 border-t border-gray-700/50"></div>
 
   <%= if Enum.empty?(@files.data) do %>
-    <div class="flex gap-4 p-4 sm:p-8 bg-onboarding">
-      <span class="hidden sm:flex h-24 w-24 grow-0 shrink-0">
+    <div class="flex gap-4 p-8 bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl">
+      <span class="hidden sm:flex h-24 w-24 grow-0 shrink-0 text-gray-500">
         {render_icon(:photograph)}
       </span>
       <div class="flex flex-col gap-4">
-        <h2 class="text-xl sm:text-2xl">
+        <h2 class="text-xl sm:text-2xl font-bold text-gray-100">
           {gettext("Wow, such empty!")}
         </h2>
-        {gettext_md("""
-        Use the upload form to upload your first image.
-        """)}
+        <p class="text-gray-300">
+          {gettext_md("""
+          Use the upload form to upload your first image.
+          """)}
+        </p>
       </div>
     </div>
   <% else %>
     <div
       id="file-container"
       phx-hook="FileManager"
-      class="overflow-y-scroll overflow-x-visible max-h-96 grid gap-4 grid-cols-2"
+      class="overflow-y-scroll overflow-x-visible max-h-96 grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4"
     >
       <%= for {file, url} <- Enum.zip(@files.data, @file_urls) do %>
         <div
           id={"file-container-#{file.uuid}"}
-          class="px-2"
+          class="group"
           phx-click={JS.dispatch("x-file-selected", detail: %{url: url, id: file.uuid})}
-          x-data="{ showDelete: false, showUsageWarning: false, campaigns: [] }"
+          x-data="{ showDelete: false }"
         >
-          <img id={"file-#{file.uuid}"} src={url} alt="" class="h-32 w-full object-cover" />
-          <div class="flex items-center justify-between text-xs mt-1 relative">
-            <p class="break-all">{file.filename}</p>
-            <button @click.stop="showDelete = true" class="button button--text button--small">
-              {render_icon(:trash)}
-              <span class="sr-only">title={gettext("Delete")}</span>
-            </button>
-            <button
-              x-show="showDelete"
-              @click.away.prevent.stop="showDelete = false"
-              phx-click="delete_upload"
-              phx-value-id={file.uuid}
-              phx-value-campaign-id={}
-              phx-target={@myself}
-              class="button button--small button--warn l-0 w-full absolute"
+          <div class="relative overflow-hidden rounded-xl bg-gray-900/60 border border-gray-800/50 backdrop-blur-sm aspect-square">
+            <img id={"file-#{file.uuid}"} src={url} alt="" class="h-full w-full object-cover transition-transform group-hover:scale-105" />
+            <button 
+              @click.stop="showDelete = true" 
+              class="absolute top-2 right-2 p-2 rounded-lg bg-gray-950/80 hover:bg-gray-950 text-gray-400 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
+              type="button"
             >
-              {gettext("Click to delete")}
+              {render_icon(:trash)}
+              <span class="sr-only">{gettext("Delete")}</span>
             </button>
           </div>
+          <p class="break-all text-xs text-gray-400 mt-2 group-hover:text-gray-300 transition-colors">
+            {file.filename}
+          </p>
+          <button
+            x-show="showDelete"
+            @click.away.prevent.stop="showDelete = false"
+            phx-click="delete_upload"
+            phx-value-id={file.uuid}
+            phx-value-campaign-id={}
+            phx-target={@myself}
+            class="mt-2 w-full px-3 py-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 text-xs font-medium transition-colors border border-red-500/50"
+          >
+            {gettext("Confirm delete")}
+          </button>
         </div>
       <% end %>
     </div>
@@ -91,32 +97,36 @@
   <div
     x-data="{show: false, id: null, campaigns: []}"
     x-show="show"
-    class="fixed inset-0 bg-black/90 flex items-center justify-center"
+    x-cloak
+    class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50"
     @x-file-in-use.window="show = true; campaigns = $event.detail.campaigns"
   >
-    <div class="bg-gray-900 p-4 rounded-lg max-w-lg" @click.away="show = false; id = null">
+    <div class="bg-gray-900/80 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6 max-w-lg shadow-2xl" @click.away="show = false; id = null">
       <div x-ref="i18n" data-draft={gettext("draft")} data-sent={gettext("sent")}></div>
-      <h3 class="text-lg font-bold mb-4">
+      <h3 class="text-lg font-bold mb-4 text-gray-100 flex gap-2 items-center">
+        {render_icon(:exclamation_circle)}
         {gettext(
-          "This file can’t be deleted because it’s already in use in the following campaigns:"
+          "This file can't be deleted because it's already in use in the following campaigns:"
         )}
       </h3>
-      <template x-for="campaign in campaigns">
-        <div class="flex justify-between items-center mb-2">
-          <span x-text="campaign.subject"></span>
-          <span
-            x-text="$refs.i18n.dataset[campaign.status]"
-            x-bind:class="{
-              'text-green-700': campaign.status === 'draft',
-              'text-red-600': campaign.status === 'sent'
+      <div class="space-y-2 mb-6">
+        <template x-for="campaign in campaigns">
+          <div class="flex justify-between items-center p-3 bg-gray-800/50 rounded-lg">
+            <span x-text="campaign.subject" class="text-gray-200 text-sm"></span>
+            <span
+              x-text="$refs.i18n.dataset[campaign.status]"
+              x-bind:class="{
+                'px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-400': campaign.status === 'draft',
+                'px-3 py-1 rounded-full text-xs font-medium bg-red-500/20 text-red-400': campaign.status === 'sent'
               }"
-          >
-          </span>
-        </div>
-      </template>
-      <div class="flex justify-end gap-8 mt-4">
-        <button @click="id = null; show = false" class="button button--cta">
-          {gettext("Ok")}
+            >
+            </span>
+          </div>
+        </template>
+      </div>
+      <div class="flex justify-end">
+        <button @click="id = null; show = false" class="px-4 py-2 rounded-lg bg-gradient-to-r from-fluxo-500 to-fluxo-600 hover:from-fluxo-600 hover:to-fluxo-700 text-white font-medium transition-all">
+          {gettext("OK")}
         </button>
       </div>
     </div>

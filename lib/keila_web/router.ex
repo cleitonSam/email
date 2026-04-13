@@ -156,6 +156,8 @@ defmodule KeilaWeb.Router do
 
     resources "/projects/:project_id/api_keys", ApiKeyController,
       only: [:index, :create, :new, :delete]
+
+    get "/projects/:project_id/evo", EvoController, :index
   end
 
   # Public Routes

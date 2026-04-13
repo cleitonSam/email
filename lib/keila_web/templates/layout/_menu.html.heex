@@ -144,6 +144,10 @@
             exact: true,
             icon: :code
           )}
+          {menu_link(@conn, :evo, :index, [@current_project.id], gettext("EVO Integration"),
+            exact: true,
+            icon: :lightning_bolt
+          )}
         <% end %>
         <div class="hidden sm:block sm:flex-grow"></div>
         <div class="border-t border-gray-800/50 my-2 mx-2"></div>

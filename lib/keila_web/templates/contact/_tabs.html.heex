@@ -20,4 +20,12 @@
   </a>
 
   <a
-    href={Routes.contact_path(@conn, :index_unreach
+    href={Routes.contact_path(@conn, :index_unreachable, @current_project.id)}
+    class={
+      "rounded-xl p-5 text-center flex flex-col gap-1 transition-all duration-300 border #{if @contacts_status == :unreachable, do: "bg-red-600/20 border-red-500/50 ring-1 ring-red-500/30", else: "bg-gray-900/60 border-gray-800/50 hover:border-gray-700/80 hover:bg-gray-800/40"}"
+    }
+  >
+    <span class="text-3xl font-bold text-white">{@contacts_stats.unreachable}</span>
+    <span class="text-sm text-gray-400">{gettext("unreachable contacts")}</span>
+  </a>
+</div>

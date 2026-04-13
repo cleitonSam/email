@@ -99,4 +99,43 @@
       <% end %>
       </tbody>
     </table>
-    <button class="button
+    <button class="button button--warn mt-4">
+      {render_icon(:trash)}
+      {gettext("Delete all selected contacts")}
+    </button>
+  </.form>
+
+  <%= for contact <- @contacts.data do %>
+    <.delete_form
+      struct={contact}
+      as={:contact}
+      route={~p"/projects/#{@current_project.id}/contacts"}
+      return={@contacts_status}
+    />
+  <% end %>
+
+  <%= if @contacts.page_count > 1 do %>
+    <div class="flex gap-3 justify-center py-8 text-gray-300">
+      <.pagination_nav
+        pagination={@contacts}
+        href={
+          fn n ->
+            query = %{
+              "page" => n + 1,
+              "sort_by" => @sort_by,
+              "sort_order" => @sort_order,
+              "search" => @search
+            }
+
+            Routes.contact_path(
+              @conn,
+              if(@contacts_status == :active, do: :index, else: :"index_#{@contacts_status}"),
+              @current_project.id,
+              query
+            )
+          end
+        }
+      />
+    </div>
+  <% end %>
+</div>

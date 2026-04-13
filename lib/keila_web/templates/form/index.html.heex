@@ -32,4 +32,14 @@
           class="button button--text text-gray-400 hover:text-fluxo-400"
           target="_blank"
         >
-          {render_icon(:external_
+          {render_icon(:external_link)}
+          {gettext("Open")}
+        </a>
+        <a href={Routes.form_path(@conn, :edit, @current_project.id, form.id)} class="button button--cta button--small">
+          {render_icon(:pencil_alt)}
+          {gettext("Edit")}
+        </a>
+      </div>
+    </div>
+  <% end %>
+</div>

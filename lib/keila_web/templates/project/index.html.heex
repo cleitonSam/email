@@ -43,4 +43,22 @@
 
   <div class="container grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 md:gap-6">
     <%= for project <- @projects do %>
-      <a class="group block p-6 bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl hover:border-fluxo-500/40 hover:shadow-lg hover:shadow-fluxo-500/10 transition-all duration-300 hover:-translate-y-0.5" href={Routes.project_path(@conn, :show, proje
+      <a class="group block p-6 bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl hover:border-fluxo-500/40 hover:shadow-lg hover:shadow-fluxo-500/10 transition-all duration-300 hover:-translate-y-0.5" href={Routes.project_path(@conn, :show, project.id)}>
+        <div class="flex items-start gap-4">
+          <div class="flex-shrink-0 h-12 w-12 bg-gradient-to-br from-fluxo-600 to-cyan-500 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-fluxo-500/20">
+            {String.first(project.name)}
+          </div>
+          <div class="flex-grow min-w-0">
+            <h3 class="text-lg font-semibold text-white group-hover:text-fluxo-300 transition-colors truncate">
+              {project.name}
+            </h3>
+            <p class="text-sm text-gray-400 mt-1">{gettext("Click to open project")}</p>
+          </div>
+          <span class="flex-shrink-0 h-5 w-5 text-gray-600 group-hover:text-fluxo-400 transition-colors mt-1">
+            {render_icon(:chevron_right)}
+          </span>
+        </div>
+      </a>
+    <% end %>
+  </div>
+<% end %>

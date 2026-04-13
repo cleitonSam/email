@@ -32,4 +32,15 @@
         >
           {render_icon(:duplicate)}
           {gettext("Clone")}
-       
+        </a>
+        <a
+          href={Routes.template_path(@conn, :edit, @current_project.id, template.id)}
+          class="button button--cta button--small"
+        >
+          {render_icon(:pencil_alt)}
+          {gettext("Edit")}
+        </a>
+      </div>
+    </div>
+  <% end %>
+</div>

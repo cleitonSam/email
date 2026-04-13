@@ -64,4 +64,36 @@
     </div>
   </a>
   <a href={Routes.form_path(@conn, :index, @current_project.id)} class="group card bg-gray-900/60 hover:bg-gray-900/80 flex items-start gap-4">
-    <div class="flex-shrink-0 h-12 w-12 bg-gradient-to-br from-amber-500 to-amber-400 rounded-xl flex items-center justify-center shadow-lg shadow
+    <div class="flex-shrink-0 h-12 w-12 bg-gradient-to-br from-amber-500 to-amber-400 rounded-xl flex items-center justify-center shadow-lg shadow-amber-500/20">
+      <span class="inline-flex h-6 w-6 text-white">{render_icon(:template)}</span>
+    </div>
+    <div>
+      <h2 class="font-semibold text-lg text-white group-hover:text-amber-300 transition-colors">
+        {gettext("Forms")}
+      </h2>
+      <p class="text-sm text-gray-400 mt-1">{gettext("Manage Forms")}</p>
+    </div>
+  </a>
+  <a href={Routes.template_path(@conn, :index, @current_project.id)} class="group card bg-gray-900/60 hover:bg-gray-900/80 flex items-start gap-4">
+    <div class="flex-shrink-0 h-12 w-12 bg-gradient-to-br from-emerald-500 to-emerald-400 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20">
+      <span class="inline-flex h-6 w-6 text-white">{render_icon(:color_swatch)}</span>
+    </div>
+    <div>
+      <h2 class="font-semibold text-lg text-white group-hover:text-emerald-300 transition-colors">
+        {gettext("Templates")}
+      </h2>
+      <p class="text-sm text-gray-400 mt-1">{gettext("Manage Templates")}</p>
+    </div>
+  </a>
+  <a href={Routes.sender_path(@conn, :index, @current_project.id)} class="group card bg-gray-900/60 hover:bg-gray-900/80 flex items-start gap-4">
+    <div class="flex-shrink-0 h-12 w-12 bg-gradient-to-br from-rose-500 to-rose-400 rounded-xl flex items-center justify-center shadow-lg shadow-rose-500/20">
+      <span class="inline-flex h-6 w-6 text-white">{render_icon(:speakerphone)}</span>
+    </div>
+    <div>
+      <h2 class="font-semibold text-lg text-white group-hover:text-rose-300 transition-colors">
+        {gettext("Senders")}
+      </h2>
+      <p class="text-sm text-gray-400 mt-1">{gettext("Manage Senders")}</p>
+    </div>
+  </a>
+</div>

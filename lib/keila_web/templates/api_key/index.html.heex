@@ -88,4 +88,14 @@
           as={:api_key}
         >
         </.delete_form>
-        <.delete
+        <.delete_button
+          struct={token}
+          class="button button--text button--large text-gray-400 hover:text-red-400"
+          icon={:trash}
+        >
+          {gettext("Revoke")}
+        </.delete_button>
+      </div>
+    </div>
+  <% end %>
+</div>

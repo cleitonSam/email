@@ -1,25 +1,37 @@
-<div class="container flex py-8 sm:py-11 mb-4">
-  <h1 class="text-2xl sm:text-3xl">
-    {gettext("Delete Sender %{sender}?", sender: @sender.name)}
-  </h1>
-</div>
+<div class="min-h-screen flex items-center justify-center px-4 py-8">
+  <div class="w-full max-w-md bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6 sm:p-8">
+    <!-- Warning Icon -->
+    <div class="flex justify-center mb-6">
+      <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-500/20">
+        <svg class="h-6 w-6 text-white stroke-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 9v6m0 6v.01M1 21h22a2 2 0 0 0 1.73-3l-11-19a2 2 0 0 0-3.46 0l-11 19a2 2 0 0 0 1.73 3z" stroke="currentColor"/>
+        </svg>
+      </div>
+    </div>
 
-<div class="container">
-  <div class="p-4 bg-red-900/20 border border-red-800/50 rounded-xl">
-    <p class="text-lg text-gray-200">
+    <!-- Heading -->
+    <h1 class="text-2xl sm:text-3xl font-bold text-white text-center mb-3">
+      {gettext("Delete Sender %{sender}?", sender: @sender.name)}
+    </h1>
+
+    <!-- Description -->
+    <p class="text-gray-400 text-center mb-4">
       {gettext("Campaigns associated with this sender will not be deleted.")}
     </p>
-    <p class="text-lg text-gray-200 font-bold">
+
+    <!-- Warning Message -->
+    <p class="text-amber-200/80 text-sm font-semibold text-center mb-6">
       {gettext("Deleting a sender cannot be undone.")}
     </p>
-    <br />
+
+    <!-- Form with Actions -->
     <.form
       :let={f}
       for={@changeset}
       id="form"
       action={Routes.sender_path(@conn, :delete, @current_project.id, @sender.id)}
       method="delete"
-      class="max-w-md flex flex-col gap-4"
+      class="space-y-4"
     >
       <div class="form-row">
         {label(
@@ -31,14 +43,15 @@
           {text_input(f, :delete_confirmation, placeholder: @sender.name, class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
         <% end %>
       </div>
-      <div class="flex gap-4 mt-4">
+
+      <div class="flex gap-3 pt-2">
         <a
-          class="button button--text button--large"
+          class="flex-1 button button--text button--large text-center"
           href={Routes.sender_path(@conn, :edit, @current_project.id, @sender.id)}
         >
           {gettext("Cancel")}
         </a>
-        <button class="button button--warn button--large">
+        <button class="flex-1 button button--cta button--large bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600">
           {gettext("Delete")}
         </button>
       </div>

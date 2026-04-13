@@ -1,10 +1,17 @@
 <div class="container flex py-8 sm:py-11 mb-4">
   <div class="flex-grow gap-4 flex flex-col sm:flex-row sm:items-center">
-    <h1 class="text-2xl sm:text-3xl font-bold text-white">
-      {gettext("Campaigns")}
-    </h1>
+    <div class="flex items-center gap-3">
+      <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-fluxo-400 to-cyan-400 flex items-center justify-center shadow-lg shadow-fluxo-500/20">
+        <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        </svg>
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-bold text-white">
+        {gettext("Campaigns")}
+      </h1>
+    </div>
     <div class="flex-grow flex flex-row-reverse justify-end gap-4 sm:flex-row">
-      <a href={Routes.campaign_path(@conn, :new, @current_project.id)} class="button button--cta">
+      <a href={Routes.campaign_path(@conn, :new, @current_project.id)} class="button button--cta button--large">
         {render_icon(:document_add)}
         {gettext("Create new campaign")}
       </a>

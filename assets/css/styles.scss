@@ -28,54 +28,61 @@ html {
 }
 
 .button {
-    @apply rounded-lg inline-flex flex-nowrap whitespace-nowrap px-2 py-1 gap-2 outline-none items-center focus:outline-none cursor-pointer disabled:cursor-default transition-all duration-200;
+    @apply rounded-xl inline-flex flex-nowrap whitespace-nowrap px-3 py-2 gap-2 outline-none items-center focus:outline-none cursor-pointer disabled:cursor-default transition-all duration-200 text-sm font-medium;
 
     svg {
-        @apply w-6 flex-grow-0;
+        @apply w-5 flex-grow-0;
     }
 
     &:not(.button--cta):not(.button--warn):not(.button--text):not(.button--muted):not(.button--white-frame):not(.button--white) {
-        @apply ring-2 ring-fluxo-500
-            hover:ring-fluxo-700;
-        focus: ring-fluxo-700;
-        active: ring-fluxo-900;
+        @apply border border-gray-700/50 text-gray-300 bg-gray-800/40
+            hover:bg-gray-700/60 hover:text-white hover:border-gray-600/60
+            focus:ring-2 focus:ring-fluxo-500/30
+            active:bg-gray-700/80;
     }
 
     &.button--cta {
-        @apply bg-gradient-to-r from-fluxo-500 to-fluxo-600 text-white outline-none transform
-            hover:ring-2 hover:ring-fluxo-400 hover:scale-[1.02] hover:shadow-lg hover:shadow-fluxo-500/30
-            focus:ring-2 focus:ring-fluxo-400
-            active:bg-fluxo-700 active:scale-[0.98]
-            disabled:bg-gray-700 disabled:text-gray-500
-            disabled:ring-gray-600 disabled:hover:ring-gray-600 disabled:transform-none disabled:scale-100;
+        @apply bg-gradient-to-r from-fluxo-500 to-fluxo-400 text-white font-semibold outline-none transform shadow-lg shadow-fluxo-500/20
+            hover:from-fluxo-400 hover:to-cyan-500 hover:shadow-fluxo-500/40 hover:scale-[1.02]
+            focus:ring-2 focus:ring-fluxo-400/50 focus:ring-offset-2 focus:ring-offset-gray-900
+            active:scale-[0.98]
+            disabled:bg-gray-700 disabled:from-gray-700 disabled:to-gray-700 disabled:text-gray-500
+            disabled:shadow-none disabled:transform-none disabled:scale-100;
     }
 
     &.button--muted {
-        @apply ring-2 ring-gray-500
-        hover:ring-gray-700;
+        @apply border border-gray-700/40 text-gray-500 bg-transparent
+            hover:text-gray-300 hover:border-gray-600/50 hover:bg-gray-800/30;
     }
 
     &.button--white {
-        @apply bg-white text-fluxo-600 border border-gray-200 hover:bg-gray-50 hover:ring-fluxo-400 focus:ring-fluxo-400 active:bg-gray-200 active:text-fluxo-600;
+        @apply bg-white text-gray-900 font-semibold border border-white/20 shadow-sm
+            hover:bg-gray-100 hover:shadow-md
+            focus:ring-2 focus:ring-white/30
+            active:bg-gray-200;
     }
 
     &.button--white-frame {
-        @apply bg-transparent text-white ring-2 ring-white hover:bg-white/20 focus:bg-white/80 active:bg-white/90 active:text-black disabled:bg-gray-300/50 disabled:text-gray-400;
+        @apply bg-transparent text-white border border-white/30
+            hover:bg-white/10 hover:border-white/50
+            focus:ring-2 focus:ring-white/20
+            active:bg-white/20
+            disabled:border-gray-600/50 disabled:text-gray-500;
     }
 
     &.button--warn {
-        @apply bg-red-700 text-white outline-none
-            hover:ring-2 hover:ring-red-400
-            focus:ring-2 focus:ring-red-400
-            active:bg-red-800;
+        @apply bg-gradient-to-r from-red-600 to-red-500 text-white font-semibold outline-none shadow-lg shadow-red-500/20
+            hover:from-red-500 hover:to-red-400 hover:shadow-red-500/40 hover:scale-[1.02]
+            focus:ring-2 focus:ring-red-400/50 focus:ring-offset-2 focus:ring-offset-gray-900
+            active:scale-[0.98];
     }
 
     &.button--large {
-        @apply px-4 py-2;
+        @apply px-5 py-2.5 text-sm;
     }
 
     &.button--small {
-        @apply py-1 px-1 text-sm min-h-7;
+        @apply py-1.5 px-2.5 text-xs min-h-7 rounded-lg;
 
         svg {
             @apply w-4;
@@ -83,9 +90,9 @@ html {
     }
 
     &.button--text {
-        @apply px-0
-            hover:underline
-            focus:ring-2;
+        @apply px-2 py-1.5 text-gray-400 bg-transparent border-none
+            hover:text-fluxo-400 hover:bg-fluxo-500/5
+            focus:ring-2 focus:ring-fluxo-500/20;
     }
 }
 
@@ -158,23 +165,35 @@ input[disabled] {
 }
 
 .form-row {
-    @apply flex flex-col gap-1;
+    @apply flex flex-col gap-1.5;
 
     & + .form-row {
-        @apply mt-2;
+        @apply mt-3;
+    }
+
+    label {
+        @apply text-sm font-medium text-gray-300;
+    }
+
+    p.text-xs {
+        @apply text-gray-500 mt-1;
     }
 }
 
 .form-row-checkbox {
-    @apply flex-row items-center gap-2;
+    @apply flex-row items-center gap-3;
+
+    label {
+        @apply text-sm text-gray-400 cursor-pointer select-none;
+    }
 }
 
 .inline-form-row {
-    @apply flex flex-col gap-1;
+    @apply flex flex-col gap-1.5;
 }
 
 .bg-onboarding {
-    @apply bg-fluxo-gradient-dark;
+    @apply bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl;
 }
 
 /* Table Styles */

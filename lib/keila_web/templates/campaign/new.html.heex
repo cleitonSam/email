@@ -1,8 +1,13 @@
 <div class="container flex py-8 sm:py-11 sm:mb-4">
-  <div class="flex-grow gap-4 flex flex-col-reverse sm:flex-row sm:items-center max-w-xl">
-    <h1 class="text-2xl md:text-3xl font-bold text-white">
-      {gettext("New Campaign")}
-    </h1>
+  <div class="flex-grow gap-4 flex flex-col-reverse sm:flex-row sm:items-center max-w-4xl">
+    <div class="flex items-center gap-4">
+      <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-fluxo-400 to-cyan-400 flex items-center justify-center shadow-lg shadow-fluxo-500/20">
+        {render_icon(:megaphone)}
+      </div>
+      <h1 class="text-2xl md:text-3xl font-bold text-white">
+        {gettext("New Campaign")}
+      </h1>
+    </div>
   </div>
 </div>
 
@@ -12,7 +17,7 @@
     for={@changeset}
     id="form"
     action={Routes.campaign_path(@conn, :post_new, @current_project.id)}
-    class="max-w-xl flex flex-col gap-4"
+    class="max-w-4xl flex flex-col gap-4"
     x-data="{type: null}"
     x-init="type = $el.querySelector('[name=\'campaign[settings][type]\'][checked]').value"
   >
@@ -25,7 +30,7 @@
             f,
             :sender_id,
             Enum.map(@senders, &{"#{&1.name} (#{&1.from_name} <#{&1.from_email}>)", &1.id}),
-            class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all"
+            class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-500"
           )}
         <% end %>
       <% else %>
@@ -48,7 +53,7 @@
           f,
           :segment_id,
           [{gettext("All Contacts"), nil}] ++ Enum.map(@segments, &{&1.name, &1.id}),
-          class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all"
+          class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-500"
         )}
       <% end %>
     </div>
@@ -58,7 +63,7 @@
       <%= with_validation(f, :subject) do %>
         {text_input(f, :subject,
           placeholder: gettext("My Campaign Subject"),
-          class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
+          class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-500",
           autofocus: true
         )}
       <% end %>
@@ -68,7 +73,7 @@
 
     <div class="form-row">
       <%= inputs_for(f, :settings, fn fs -> %>
-        <label class="text-lg font-semibold text-gray-200 mb-3">{gettext("Choose Your Editor")}</label>
+        <label class="text-lg font-semibold text-gray-300 mb-4 block">{gettext("Choose Your Editor")}</label>
         <div class="grid grid-cols-2 gap-4">
           {radio_button(fs, :type, "text", class: "hidden", x_model: "type")}
           <label
@@ -76,7 +81,7 @@
             class="group bg-gray-900/60 border-2 border-gray-700/50 rounded-2xl p-5 hover:border-fluxo-500/40 hover:bg-gray-800/60 transition-all duration-300 cursor-pointer flex flex-col items-center text-center"
             x-bind:class="type == 'text' && 'border-fluxo-500 bg-fluxo-500/10 shadow-lg shadow-fluxo-500/10'"
           >
-            <div class="flex w-14 h-14 bg-gradient-to-br from-fluxo-600 to-fluxo-400 rounded-xl text-white p-3 mb-3 group-hover:scale-110 transition-transform duration-300">
+            <div class="h-14 w-14 bg-gradient-to-br from-fluxo-400 to-cyan-400 rounded-xl text-white flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-fluxo-500/20">
               {render_icon(:plain_text)}
             </div>
             <h3 class="font-bold text-base text-white mb-1">{gettext("Plain Text")}</h3>
@@ -93,7 +98,7 @@
             class="group bg-gray-900/60 border-2 border-gray-700/50 rounded-2xl p-5 hover:border-fluxo-500/40 hover:bg-gray-800/60 transition-all duration-300 cursor-pointer flex flex-col items-center text-center"
             x-bind:class="type == 'markdown' && 'border-fluxo-500 bg-fluxo-500/10 shadow-lg shadow-fluxo-500/10'"
           >
-            <div class="flex w-14 h-14 bg-gradient-to-br from-cyan-500 to-fluxo-500 rounded-xl text-white p-3 mb-3 group-hover:scale-110 transition-transform duration-300">
+            <div class="h-14 w-14 bg-gradient-to-br from-cyan-500 to-fluxo-500 rounded-xl text-white flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-cyan-500/20">
               {render_icon(:markdown)}
             </div>
             <h3 class="font-bold text-base text-white mb-1">{gettext("Markdown")}</h3>
@@ -109,7 +114,7 @@
             x-bind:class="type == 'block' && 'border-fluxo-500 bg-fluxo-500/10 shadow-lg shadow-fluxo-500/10'"
           >
             <span class="absolute top-2 right-2 bg-fluxo-500 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">beta</span>
-            <div class="flex w-14 h-14 bg-gradient-to-br from-purple-500 to-fluxo-500 rounded-xl text-white p-3 mb-3 group-hover:scale-110 transition-transform duration-300">
+            <div class="h-14 w-14 bg-gradient-to-br from-purple-500 to-fluxo-500 rounded-xl text-white flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-purple-500/20">
               {render_icon(:block)}
             </div>
             <h3 class="font-bold text-base text-white mb-1">{gettext("Block")}</h3>
@@ -124,7 +129,7 @@
             class="group bg-gray-900/60 border-2 border-gray-700/50 rounded-2xl p-5 hover:border-fluxo-500/40 hover:bg-gray-800/60 transition-all duration-300 cursor-pointer flex flex-col items-center text-center"
             x-bind:class="type == 'mjml' && 'border-fluxo-500 bg-fluxo-500/10 shadow-lg shadow-fluxo-500/10'"
           >
-            <div class="flex w-14 h-14 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl text-white p-3 mb-3 group-hover:scale-110 transition-transform duration-300">
+            <div class="h-14 w-14 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl text-white flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-orange-500/20">
               {render_icon(:mjml)}
             </div>
             <h3 class="font-bold text-base text-white mb-1">{gettext("MJML")}</h3>
@@ -153,7 +158,7 @@
             f,
             :template_id,
             [{gettext("Default"), nil} | Enum.map(@templates, &{&1.name, &1.id})],
-            class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all"
+            class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-500"
           )}
         <% end %>
       </div>
@@ -162,17 +167,19 @@
     <template x-if="type === 'markdown' || type === 'block' || type === 'mjml'">
       <div class="flex flex-col">
         <%= label(f, :preview_text) do %>
-          {gettext("Preview Text")}<br />
-          <span class="text-sm">
-            {gettext(
-              "Users see this preview before they open your email. Use up to 50 characters."
-            )}
-          </span>
+          <div class="flex flex-col gap-1">
+            <span class="text-sm font-medium text-gray-300">{gettext("Preview Text")}</span>
+            <span class="text-xs text-gray-400">
+              {gettext(
+                "Users see this preview before they open your email. Use up to 50 characters."
+              )}
+            </span>
+          </div>
         <% end %>
         <%= with_validation(f, :preview_text) do %>
           {textarea(f, :preview_text,
             placeholder: gettext("Can you summarize your campaign in 50 characters?"),
-            class: "w-full rounded-lg bg-gray-800/50 border border-gray-700 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
+            class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-500",
             autofocus: true
           )}
         <% end %>
@@ -193,7 +200,7 @@
     <div class="form-row-checkbox">
       {checkbox(f, :public_link_enabled)}
       {label(f, :public_link_enabled, gettext("Enable public link"))}
-      <span class="block text-sm">
+      <span class="block text-sm text-gray-400">
         {gettext(
           "This will allow anyone who has the public link to access your campaign after it's been sent."
         )}
@@ -204,7 +211,7 @@
 
     <div class="form-row md:col-span-full">
       {label(f, :segment_id, gettext("Campaign data"))}
-      <span class="block text-sm mb-2">
+      <span class="block text-sm text-gray-400 mb-2">
         {gettext("You can add any JSON object as custom data to your campaign.")}
       </span>
       <%= with_validation(f, :data) do %>
@@ -212,11 +219,11 @@
           <% data when is_map(data) -> %>
             {textarea(f, :data,
               value: Jason.encode!(data),
-              class: "text-white bg-gray-900",
+              class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-500",
               rows: 5
             )}
           <% _other -> %>
-            {textarea(f, :data, class: "text-white bg-gray-900", rows: 5)}
+            {textarea(f, :data, class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-500", rows: 5)}
         <% end %>
       <% end %>
     </div>

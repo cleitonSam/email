@@ -34,21 +34,23 @@
   </div>
 </div>
 <div class="container">
-  <form method="post" class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6 pb-8" x-data="{showClipboardMessage: false}">
+  <form method="post" class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-8" x-data="{showClipboardMessage: false}">
     <div class="prose prose-invert">
       <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
       <%= if @campaign.public_link_enabled do %>
-        <p>{gettext("Use the following link to share your campaign with other people:")}</p>
-        <div class="flex flex-row">
+        <p class="text-gray-300">
+          {gettext("Use the following link to share your campaign with other people:")}
+        </p>
+        <div class="flex flex-row gap-2">
           <input
             type="text"
-            class="w-full bg-gray-800"
+            class="flex-grow rounded-l-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3"
             readonly
             x-ref="campaign-link"
             value={Keila.Mailings.get_public_campaign_link(@campaign.id)}
           />
           <button
-            class="button"
+            class="button rounded-l-none"
             @click.prevent="$refs['campaign-link'].select(); document.execCommand('copy'); showClipboardMessage = true; setTimeout(() => showClipboardMessage = false, 3000)"
           >
             {gettext("Copy")}
@@ -57,15 +59,17 @@
 
         <br />
 
-        <button type="submit" name="enable" value="false" class="button">
+        <button type="submit" name="enable" value="false" class="button button--text">
           {gettext("Disable public link")}
         </button>
       <% else %>
-        {gettext_md("""
-        You can enable a public link to share your campaign with others. Your campaign will be accessible to anyone who has the link.
+        <div class="text-gray-300">
+          {gettext_md("""
+          You can enable a public link to share your campaign with others. Your campaign will be accessible to anyone who has the link.
 
-        You can disable the public link later if you want.
-        """)}
+          You can disable the public link later if you want.
+          """)}
+        </div>
         <button type="submit" name="enable" value="true" class="button button--cta">
           {gettext("Enable public link")}
         </button>
@@ -75,7 +79,7 @@
         id="copy-success"
         x-ref="copy-success"
         style="display: none;"
-        class="fixed bg-gray-50 text-gray-900 shadow text-sm p-4 bottom-4 right-4"
+        class="fixed bg-fluxo-600 text-white shadow text-sm p-4 bottom-4 right-4 rounded-xl"
         x-show.transition="showClipboardMessage"
       >
         {gettext("Address copied to clipboard.")}

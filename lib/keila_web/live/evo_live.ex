@@ -1,6 +1,7 @@
 defmodule KeilaWeb.EvoLive do
   use KeilaWeb, :live_view
   alias Keila.Contacts
+  alias Keila.Projects
   alias Keila.Integrations.Evo
 
   @impl true
@@ -8,9 +9,15 @@ defmodule KeilaWeb.EvoLive do
     Gettext.put_locale(session["locale"])
     project = session["current_project"]
 
+    # Reload project to get data field
+    project = Projects.get_project(project.id)
+
     today = Date.utc_today()
     first_day = %{today | day: 1}
     last_day = Date.end_of_month(today)
+
+    evo_dns = get_evo_config(project, "evo_dns")
+    evo_secret = get_evo_config(project, "evo_secret_key")
 
     socket =
       socket
@@ -27,7 +34,11 @@ defmodule KeilaWeb.EvoLive do
       |> assign(:date_start, Date.to_iso8601(first_day))
       |> assign(:date_end, Date.to_iso8601(last_day))
       |> assign(:search, "")
-      |> assign(:config_ok, check_config())
+      |> assign(:evo_dns, evo_dns || "")
+      |> assign(:evo_secret, evo_secret || "")
+      |> assign(:config_ok, evo_dns != nil and evo_secret != nil)
+      |> assign(:show_settings, evo_dns == nil or evo_secret == nil)
+      |> assign(:settings_saved, false)
 
     {:ok, socket}
   end
@@ -38,6 +49,34 @@ defmodule KeilaWeb.EvoLive do
   end
 
   @impl true
+  def handle_event("save-settings", %{"evo_dns" => dns, "evo_secret_key" => secret}, socket) do
+    project = socket.assigns.current_project
+
+    case Projects.update_project_data(project.id, %{
+           "evo_dns" => String.trim(dns),
+           "evo_secret_key" => String.trim(secret)
+         }) do
+      {:ok, updated_project} ->
+        socket =
+          socket
+          |> assign(:current_project, updated_project)
+          |> assign(:evo_dns, String.trim(dns))
+          |> assign(:evo_secret, String.trim(secret))
+          |> assign(:config_ok, String.trim(dns) != "" and String.trim(secret) != "")
+          |> assign(:settings_saved, true)
+          |> assign(:show_settings, false)
+
+        {:noreply, socket}
+
+      {:error, _} ->
+        {:noreply, assign(socket, :error, "Failed to save settings")}
+    end
+  end
+
+  def handle_event("toggle-settings", _params, socket) do
+    {:noreply, assign(socket, :show_settings, !socket.assigns.show_settings)}
+  end
+
   def handle_event("fetch-prospects", %{"date_start" => date_start, "date_end" => date_end}, socket) do
     socket =
       socket
@@ -49,6 +88,7 @@ defmodule KeilaWeb.EvoLive do
       |> assign(:imported_count, 0)
       |> assign(:date_start, date_start)
       |> assign(:date_end, date_end)
+      |> assign(:settings_saved, false)
 
     send(self(), :do_fetch)
     {:noreply, socket}
@@ -93,9 +133,13 @@ defmodule KeilaWeb.EvoLive do
 
   @impl true
   def handle_info(:do_fetch, socket) do
+    project = socket.assigns.current_project
+
     opts = [
       register_date_start: socket.assigns.date_start,
-      register_date_end: socket.assigns.date_end
+      register_date_end: socket.assigns.date_end,
+      evo_dns: get_evo_config(project, "evo_dns"),
+      evo_secret_key: get_evo_config(project, "evo_secret_key")
     ]
 
     socket =
@@ -142,9 +186,7 @@ defmodule KeilaWeb.EvoLive do
 
         case Contacts.create_contact(project_id, params) do
           {:ok, _contact} -> count + 1
-          {:error, _changeset} ->
-            # Likely duplicate email - try to skip
-            count
+          {:error, _changeset} -> count
         end
       end)
 
@@ -159,6 +201,8 @@ defmodule KeilaWeb.EvoLive do
 
     {:noreply, socket}
   end
+
+  def handle_info(_msg, socket), do: {:noreply, socket}
 
   defp ensure_evo_segment(project_id) do
     segments = Contacts.get_project_segments(project_id)
@@ -176,6 +220,7 @@ defmodule KeilaWeb.EvoLive do
   end
 
   defp filter_by_search(prospects, ""), do: prospects
+
   defp filter_by_search(prospects, search) do
     search = String.downcase(search)
 
@@ -186,7 +231,11 @@ defmodule KeilaWeb.EvoLive do
     end)
   end
 
-  defp check_config do
-    System.get_env("EVO_DNS") != nil and System.get_env("EVO_SECRET_KEY") != nil
+  defp get_evo_config(project, key) do
+    case (project.data || %{}) |> Map.get(key) do
+      nil -> nil
+      "" -> nil
+      val -> val
+    end
   end
 end

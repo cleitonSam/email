@@ -52,6 +52,34 @@ defmodule Keila.Projects do
   end
 
   @doc """
+  Updates the data map of a Project, merging new values with existing ones.
+  """
+  @spec update_project_data(Project.id(), map()) ::
+          {:ok, Project.t()} | {:error, Changeset.t(Project.t())}
+  def update_project_data(id, new_data) when is_binary(id) or is_integer(id) do
+    project = get_project(id)
+
+    if project do
+      current_data = project.data || %{}
+      merged_data = Map.merge(current_data, new_data)
+
+      project
+      |> Project.update_changeset(%{"data" => merged_data})
+      |> Repo.update()
+    else
+      {:error, :not_found}
+    end
+  end
+
+  @doc """
+  Gets a specific key from the project's data map.
+  """
+  def get_project_data(project, key) when is_binary(key) do
+    (project.data || %{})
+    |> Map.get(key)
+  end
+
+  @doc """
   Deletes Project with given `id`.
 
   This function is idempotent and always returns `:ok`.

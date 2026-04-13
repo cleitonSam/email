@@ -16,10 +16,12 @@ defmodule Keila.Integrations.Evo do
   ## Options
   - `:register_date_start` - Start date (format: "YYYY-MM-DD"). Defaults to first day of current month.
   - `:register_date_end` - End date (format: "YYYY-MM-DD"). Defaults to last day of current month.
+  - `:evo_dns` - EVO DNS identifier (per-project config).
+  - `:evo_secret_key` - EVO secret key (per-project config).
   """
   def fetch_prospects(opts \\ []) do
-    with {:ok, dns} <- get_config(:evo_dns),
-         {:ok, secret} <- get_config(:evo_secret_key) do
+    with {:ok, dns} <- get_config(:evo_dns, opts),
+         {:ok, secret} <- get_config(:evo_secret_key, opts) do
       {start_date, end_date} = date_range(opts)
       auth = Base.encode64("#{dns}:#{secret}")
 
@@ -128,17 +130,35 @@ defmodule Keila.Integrations.Evo do
     end
   end
 
-  defp get_config(:evo_dns) do
-    case System.get_env("EVO_DNS") do
-      nil -> {:error, "EVO_DNS not configured"}
-      val -> {:ok, val}
+  defp get_config(:evo_dns, opts) do
+    case Keyword.get(opts, :evo_dns) do
+      nil ->
+        case System.get_env("EVO_DNS") do
+          nil -> {:error, "EVO_DNS not configured. Configure in project settings."}
+          val -> {:ok, val}
+        end
+
+      val when is_binary(val) and val != "" ->
+        {:ok, val}
+
+      _ ->
+        {:error, "EVO_DNS not configured. Configure in project settings."}
     end
   end
 
-  defp get_config(:evo_secret_key) do
-    case System.get_env("EVO_SECRET_KEY") do
-      nil -> {:error, "EVO_SECRET_KEY not configured"}
-      val -> {:ok, val}
+  defp get_config(:evo_secret_key, opts) do
+    case Keyword.get(opts, :evo_secret_key) do
+      nil ->
+        case System.get_env("EVO_SECRET_KEY") do
+          nil -> {:error, "EVO_SECRET_KEY not configured. Configure in project settings."}
+          val -> {:ok, val}
+        end
+
+      val when is_binary(val) and val != "" ->
+        {:ok, val}
+
+      _ ->
+        {:error, "EVO_SECRET_KEY not configured. Configure in project settings."}
     end
   end
 end

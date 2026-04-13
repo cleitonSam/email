@@ -11,10 +11,77 @@
           <p class="text-sm text-gray-400 mt-1">{gettext("Import prospects from EVO platform")}</p>
         </div>
       </div>
+      <div class="flex items-center gap-3">
+        <button
+          phx-click="toggle-settings"
+          class={"px-4 py-2.5 rounded-xl border text-sm font-medium transition-all flex items-center gap-2 #{if @show_settings, do: "bg-emerald-500/20 border-emerald-500/30 text-emerald-300", else: "bg-gray-800/80 border-gray-700/50 text-gray-300 hover:text-white hover:bg-gray-700/80"}"}
+        >
+          <span class="inline-flex h-4 w-4">{render_icon(:cog)}</span>
+          {gettext("Settings")}
+        </button>
+      </div>
     </div>
   </div>
 
-  <%= if not @config_ok do %>
+  <!-- Settings Panel -->
+  <%= if @show_settings do %>
+    <div class="container mb-8 animate-fade-in">
+      <div class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="h-8 w-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+            <span class="inline-flex h-4 w-4 text-emerald-400">{render_icon(:key)}</span>
+          </div>
+          <div>
+            <h3 class="font-semibold text-white">{gettext("EVO API Configuration")}</h3>
+            <p class="text-xs text-gray-400">{gettext("Configure the EVO credentials for this project")}</p>
+          </div>
+        </div>
+        <form phx-submit="save-settings">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-2">{gettext("EVO DNS")}</label>
+              <input
+                type="text"
+                name="evo_dns"
+                value={@evo_dns}
+                placeholder="your-gym.evo.com.br"
+                class="w-full rounded-xl bg-gray-800/80 border border-gray-700/50 text-gray-200 px-4 py-3 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all text-sm"
+              />
+              <p class="text-xs text-gray-500 mt-1">{gettext("Your EVO platform identifier")}</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-2">{gettext("EVO Secret Key")}</label>
+              <input
+                type="password"
+                name="evo_secret_key"
+                value={@evo_secret}
+                placeholder="••••••••••••"
+                class="w-full rounded-xl bg-gray-800/80 border border-gray-700/50 text-gray-200 px-4 py-3 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all text-sm"
+              />
+              <p class="text-xs text-gray-500 mt-1">{gettext("Your EVO API secret key")}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-4">
+            <button
+              type="submit"
+              class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-medium transition-all shadow-lg hover:shadow-emerald-500/25 text-sm flex items-center gap-2"
+            >
+              <span class="inline-flex h-4 w-4">{render_icon(:check)}</span>
+              {gettext("Save Configuration")}
+            </button>
+            <%= if @settings_saved do %>
+              <span class="text-sm text-emerald-400 flex items-center gap-1 animate-fade-in">
+                <span class="inline-flex h-4 w-4">{render_icon(:check_circle)}</span>
+                {gettext("Saved!")}
+              </span>
+            <% end %>
+          </div>
+        </form>
+      </div>
+    </div>
+  <% end %>
+
+  <%= if not @config_ok and not @show_settings do %>
     <!-- Config Warning -->
     <div class="container mb-8">
       <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-6 flex gap-4 items-start animate-fade-in">
@@ -24,12 +91,14 @@
         <div>
           <h3 class="font-semibold text-amber-300 mb-1">{gettext("Configuration Required")}</h3>
           <p class="text-sm text-amber-200/70">
-            {gettext("Add EVO_DNS and EVO_SECRET_KEY environment variables to your server configuration (EasyPanel) to enable this integration.")}
+            {gettext("Click the Settings button above to configure your EVO DNS and Secret Key for this project.")}
           </p>
         </div>
       </div>
     </div>
-  <% else %>
+  <% end %>
+
+  <%= if @config_ok do %>
     <!-- Date Filter Form -->
     <div class="container mb-6">
       <form phx-submit="fetch-prospects" class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6 animate-fade-in">
@@ -99,7 +168,6 @@
       <!-- KPI Strip -->
       <div class="container mb-6">
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 animate-fade-in">
-          <!-- Total Fetched -->
           <div class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-xl p-4">
             <div class="flex items-center gap-3 mb-2">
               <div class="h-8 w-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
@@ -109,7 +177,6 @@
             </div>
             <p class="text-2xl font-bold text-white">{@total_fetched}</p>
           </div>
-          <!-- With Email -->
           <div class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-xl p-4">
             <div class="flex items-center gap-3 mb-2">
               <div class="h-8 w-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
@@ -119,7 +186,6 @@
             </div>
             <p class="text-2xl font-bold text-white">{@total_with_email}</p>
           </div>
-          <!-- Selected -->
           <div class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-xl p-4">
             <div class="flex items-center gap-3 mb-2">
               <div class="h-8 w-8 rounded-lg bg-cyan-500/20 flex items-center justify-center">
@@ -129,7 +195,6 @@
             </div>
             <p class="text-2xl font-bold text-white">{MapSet.size(@selected)}</p>
           </div>
-          <!-- Conversion Rate -->
           <div class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-xl p-4">
             <div class="flex items-center gap-3 mb-2">
               <div class="h-8 w-8 rounded-lg bg-amber-500/20 flex items-center justify-center">
@@ -262,7 +327,7 @@
       </div>
     <% end %>
 
-    <!-- Empty State (after first load) -->
+    <!-- Empty State -->
     <%= if length(@prospects) == 0 and not @loading and @error == nil do %>
       <div class="container flex flex-col items-center justify-center py-20 animate-fade-in">
         <div class="text-center">

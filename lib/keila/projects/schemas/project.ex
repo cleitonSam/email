@@ -3,6 +3,7 @@ defmodule Keila.Projects.Project do
 
   schema "projects" do
     field(:name, :string)
+    field(:data, :map, default: %{})
     belongs_to(:group, Keila.Auth.Group, type: Keila.Auth.Group.Id)
     timestamps()
   end
@@ -10,14 +11,14 @@ defmodule Keila.Projects.Project do
   @spec creation_changeset(t() | Ecto.Changeset.data()) :: Ecto.Changeset.t(t)
   def creation_changeset(struct \\ %__MODULE__{}, params) do
     struct
-    |> cast(params, [:name, :group_id])
+    |> cast(params, [:name, :group_id, :data])
     |> validate_required([:name, :group_id])
   end
 
   @spec update_changeset(t() | Ecto.Changeset.data()) :: Ecto.Changeset.t(t)
   def update_changeset(struct \\ %__MODULE__{}, params) do
     struct
-    |> cast(params, [:name])
+    |> cast(params, [:name, :data])
     |> validate_required([:name])
   end
 end

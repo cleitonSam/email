@@ -1,0 +1,109 @@
+<div class="container py-8 sm:py-11 mb-8">
+  <div class="flex items-center gap-6 mb-6">
+    <div class="h-12 w-12 rounded-2xl bg-gradient-to-br from-fluxo-400 to-cyan-500 flex items-center justify-center shadow-lg shadow-fluxo-500/20">
+      {render_icon(:collection)}
+    </div>
+    <div class="flex-grow">
+      <h1 class="text-3xl sm:text-4xl font-bold text-white">
+        {dgettext("admin", "Manage Projects")}
+      </h1>
+      <p class="text-gray-400 text-sm mt-1">{dgettext("admin", "Create and configure projects for all users")}</p>
+    </div>
+    <a href={Routes.project_admin_path(@conn, :new)} class="button button--cta button--large">
+      {render_icon(:plus)} {dgettext("admin", "Create Project")}
+    </a>
+  </div>
+</div>
+
+<%= if @projects.page_count > 0 do %>
+  <div class="container">
+    <div class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl overflow-hidden">
+      <table class="w-full">
+        <thead>
+          <tr class="text-left border-b border-gray-800/30 bg-gray-800/20">
+            <th class="px-6 py-4 text-sm font-semibold text-gray-300">{dgettext("admin", "Project")}</th>
+            <th class="px-6 py-4 text-sm font-semibold text-gray-300">{dgettext("admin", "Owner")}</th>
+            <th class="px-6 py-4 text-sm font-semibold text-gray-300 hidden md:table-cell">{dgettext("admin", "EVO")}</th>
+            <th class="px-6 py-4 text-sm font-semibold text-gray-300 hidden sm:table-cell">{dgettext("admin", "Created")}</th>
+            <th class="px-6 py-4 text-sm font-semibold text-gray-300 w-32"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-800/30">
+          <%= for project <- @projects.data do %>
+            <tr class="hover:bg-gray-800/30 transition-colors">
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="h-9 w-9 rounded-xl bg-gradient-to-br from-fluxo-400/20 to-cyan-400/20 flex items-center justify-center text-fluxo-400 text-sm font-bold shrink-0">
+                    {String.first(project.name)}
+                  </div>
+                  <div>
+                    <span class="text-gray-100 font-medium">{project.name}</span>
+                    <span class="block text-xs text-gray-500">{project.id}</span>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4">
+                <%= if @project_owners[project.id] do %>
+                  <span class="text-gray-300 text-sm">{@project_owners[project.id].email}</span>
+                <% else %>
+                  <span class="text-gray-500 text-sm italic">{dgettext("admin", "No owner")}</span>
+                <% end %>
+              </td>
+              <td class="px-6 py-4 hidden md:table-cell">
+                <%= if has_evo_config?(project) do %>
+                  <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/20">
+                    {dgettext("admin", "Configured")}
+                  </span>
+                <% else %>
+                  <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-gray-700/50 text-gray-400">
+                    {dgettext("admin", "Not set")}
+                  </span>
+                <% end %>
+              </td>
+              <td class="px-6 py-4 text-gray-400 text-sm hidden sm:table-cell">
+                {format_date(project.inserted_at)}
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex gap-2">
+                  <a
+                    href={Routes.project_admin_path(@conn, :edit, project.id)}
+                    title={dgettext("admin", "Edit project")}
+                    class="button button--text button--sm"
+                  >
+                    {render_icon(:pencil)}
+                  </a>
+                  <a
+                    href={Routes.project_path(@conn, :show, project.id)}
+                    title={dgettext("admin", "Open project")}
+                    class="button button--text button--sm"
+                  >
+                    {render_icon(:external_link)}
+                  </a>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+      <%= if @projects.page_count > 1 do %>
+        <div class="flex gap-3 justify-center py-8 px-6 border-t border-gray-800/30 bg-gray-800/10">
+          <.pagination_nav pagination={@projects} href={&~p"/admin/projects?page=#{&1 + 1}"} />
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <div class="flex flex-col items-center justify-center py-20 bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl">
+      <div class="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-gray-800/50 mb-4">
+        <span class="inline-flex h-8 w-8 text-gray-500">{render_icon(:collection)}</span>
+      </div>
+      <h3 class="text-lg font-semibold text-white mb-1">{dgettext("admin", "No projects yet")}</h3>
+      <p class="text-gray-400 text-sm mb-6">{dgettext("admin", "Create the first project for your clients")}</p>
+      <a href={Routes.project_admin_path(@conn, :new)} class="button button--cta">
+        {render_icon(:plus)} {dgettext("admin", "Create Project")}
+      </a>
+    </div>
+  </div>
+<% end %>

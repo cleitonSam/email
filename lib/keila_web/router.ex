@@ -88,6 +88,12 @@ defmodule KeilaWeb.Router do
       post "/admin/users/:id/status", CloudAdminController, :update_user_account_status
     end
 
+    get "/admin/projects", ProjectAdminController, :index
+    get "/admin/projects/new", ProjectAdminController, :new
+    post "/admin/projects", ProjectAdminController, :create
+    get "/admin/projects/:id/edit", ProjectAdminController, :edit
+    put "/admin/projects/:id", ProjectAdminController, :update
+
     resources "/admin/shared-senders", SharedSenderAdminController
     get "/admin/shared-senders/:id/delete", SharedSenderAdminController, :delete_confirmation
 

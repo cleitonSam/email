@@ -506,9 +506,9 @@ Hover helper to bridge the gap between the Plus button and the toolbox
     pointer-events: none;
 }
 
-/* Fix for Safari SVG display issues */
-svg {
-    flex: auto;
+/* Fix for Safari SVG display issues — scoped to avoid stretching SVGs inside flex containers */
+svg:not(.no-flex-auto) {
+    flex-shrink: 0;
 }
 
 /* Utility Classes for Modern Design */

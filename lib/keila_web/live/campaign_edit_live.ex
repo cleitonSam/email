@@ -113,15 +113,22 @@ defmodule KeilaWeb.CampaignEditLive do
   def handle_event("send", _, socket) do
     params = socket.assigns.changeset.params || %{}
 
-    Mailings.update_campaign(socket.assigns.campaign.id, params, true)
-    |> case do
-      {:ok, campaign} ->
-        Mailings.deliver_campaign_async(campaign.id)
+    with {:ok, campaign} <- Mailings.update_campaign(socket.assigns.campaign.id, params, true),
+         false <- is_nil(campaign.sender_id) do
+      Mailings.deliver_campaign_async(campaign.id)
 
-        {:noreply,
-         redirect(socket,
-           to: Routes.campaign_path(socket, :stats, campaign.project_id, campaign.id)
-         )}
+      {:noreply,
+       redirect(socket,
+         to: Routes.campaign_path(socket, :stats, campaign.project_id, campaign.id)
+       )}
+    else
+      true ->
+        changeset =
+          socket.assigns.changeset
+          |> Ecto.Changeset.add_error(:sender_id, gettext("You must select a sender before sending."))
+          |> Map.put(:action, :update)
+
+        {:noreply, put_changesets(socket, changeset)}
 
       {:error, changeset} ->
         {:noreply, put_changesets(socket, changeset)}

@@ -34,7 +34,7 @@
           </div>
           <h2 class="text-2xl font-bold text-white">{gettext("Ready to send your campaign?")}</h2>
         </div>
-        <p class="text-gray-400 text-sm mb-2">
+        <p class="text-gray-400 text-sm mb-3">
           {raw(
             gettext(
               "Are you ready to send your campaign <em class='text-white font-medium'>%{subject}</em> to <span class='text-fluxo-400 font-semibold'>%{count}</span> contacts?",
@@ -43,6 +43,16 @@
             )
           )}
         </p>
+        <% sender_id = Ecto.Changeset.get_field(@changeset, :sender_id) %>
+        <% dlg_sender = Enum.find(@senders, &(&1.id == sender_id)) %>
+        <%= if dlg_sender do %>
+          <div class="flex items-center gap-2 text-sm bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-3 py-2.5 text-emerald-300">
+            <svg class="w-4 h-4 flex-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            <span>{gettext("Sender:")} <span class="font-semibold text-white">{Keila.Mailings.sender_from_line(dlg_sender)}</span></span>
+          </div>
+        <% end %>
         <%= if get_field(@changeset, :scheduled_for) do %>
           <div class="flex items-center gap-2 text-sm text-amber-400/80 bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-2 mt-3">
             <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

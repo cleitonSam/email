@@ -181,7 +181,7 @@
           <div class="flex flex-row gap-2 justify-end border-t border-gray-800/50 pt-4">
             <%= if is_nil(campaign.sent_at) do %>
               <a
-                href={Routes.campaign_path(@conn, :delete, @current_project.id, campaign.id)}
+                href={"#{Routes.campaign_path(@conn, :delete, @current_project.id)}?campaign[id]=#{campaign.id}"}
                 data-method="delete"
                 data-confirm={gettext("Delete this campaign?")}
                 class="button button--text button--small flex items-center gap-1 text-red-400/70 hover:text-red-400"

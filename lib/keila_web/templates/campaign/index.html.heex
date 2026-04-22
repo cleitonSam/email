@@ -32,36 +32,48 @@
 
   <!-- Filter Tabs -->
   <div class="container mb-8 border-b border-gray-800/50">
-    <div class="flex gap-6 overflow-x-auto -mb-px">
+    <div class="flex gap-1 overflow-x-auto -mb-px">
       <button
         @click="activeFilter = 'all'"
-        x-bind:class="activeFilter === 'all' ? 'border-fluxo-500 text-white' : 'border-transparent text-gray-400 hover:text-gray-300'"
-        class="px-1 py-3 border-b-2 font-medium text-sm transition-colors duration-200"
+        x-bind:class="activeFilter === 'all' ? 'border-fluxo-500 text-white bg-fluxo-500/5' : 'border-transparent text-gray-400 hover:text-gray-300 hover:bg-gray-800/30'"
+        class="px-3 py-3 border-b-2 font-medium text-sm transition-all duration-200 rounded-t-lg flex items-center gap-2"
       >
         {gettext("All")}
+        <span class="inline-flex items-center justify-center h-5 min-w-5 px-1 rounded-full bg-gray-700/60 text-gray-300 text-xs font-semibold">
+          {Enum.count(@campaigns)}
+        </span>
       </button>
       <button
         @click="activeFilter = 'sent'"
-        x-bind:class="activeFilter === 'sent' ? 'border-fluxo-500 text-white' : 'border-transparent text-gray-400 hover:text-gray-300'"
-        class="px-1 py-3 border-b-2 font-medium text-sm transition-colors duration-200 flex items-center gap-2"
+        x-bind:class="activeFilter === 'sent' ? 'border-fluxo-500 text-white bg-fluxo-500/5' : 'border-transparent text-gray-400 hover:text-gray-300 hover:bg-gray-800/30'"
+        class="px-3 py-3 border-b-2 font-medium text-sm transition-all duration-200 rounded-t-lg flex items-center gap-2"
       >
         <span class="inline-flex h-2 w-2 rounded-full bg-green-500"></span>
         {gettext("Sent")}
+        <span class="inline-flex items-center justify-center h-5 min-w-5 px-1 rounded-full bg-gray-700/60 text-gray-300 text-xs font-semibold">
+          {Enum.count(@campaigns, & &1.sent_at)}
+        </span>
       </button>
       <button
         @click="activeFilter = 'scheduled'"
-        x-bind:class="activeFilter === 'scheduled' ? 'border-fluxo-500 text-white' : 'border-transparent text-gray-400 hover:text-gray-300'"
-        class="px-1 py-3 border-b-2 font-medium text-sm transition-colors duration-200 flex items-center gap-2"
+        x-bind:class="activeFilter === 'scheduled' ? 'border-fluxo-500 text-white bg-fluxo-500/5' : 'border-transparent text-gray-400 hover:text-gray-300 hover:bg-gray-800/30'"
+        class="px-3 py-3 border-b-2 font-medium text-sm transition-all duration-200 rounded-t-lg flex items-center gap-2"
       >
         <span class="inline-flex h-2 w-2 rounded-full bg-amber-500 animate-pulse-soft"></span>
         {gettext("Scheduled")}
+        <span class="inline-flex items-center justify-center h-5 min-w-5 px-1 rounded-full bg-gray-700/60 text-gray-300 text-xs font-semibold">
+          {Enum.count(@campaigns, &(&1.scheduled_for && !&1.sent_at))}
+        </span>
       </button>
       <button
         @click="activeFilter = 'draft'"
-        x-bind:class="activeFilter === 'draft' ? 'border-fluxo-500 text-white' : 'border-transparent text-gray-400 hover:text-gray-300'"
-        class="px-1 py-3 border-b-2 font-medium text-sm transition-colors duration-200"
+        x-bind:class="activeFilter === 'draft' ? 'border-fluxo-500 text-white bg-fluxo-500/5' : 'border-transparent text-gray-400 hover:text-gray-300 hover:bg-gray-800/30'"
+        class="px-3 py-3 border-b-2 font-medium text-sm transition-all duration-200 rounded-t-lg flex items-center gap-2"
       >
         {gettext("Draft")}
+        <span class="inline-flex items-center justify-center h-5 min-w-5 px-1 rounded-full bg-gray-700/60 text-gray-300 text-xs font-semibold">
+          {Enum.count(@campaigns, &(!&1.scheduled_for && !&1.sent_at))}
+        </span>
       </button>
     </div>
   </div>
@@ -169,6 +181,16 @@
           <div class="flex flex-row gap-2 justify-end border-t border-gray-800/50 pt-4">
             <%= if is_nil(campaign.sent_at) do %>
               <a
+                href={Routes.campaign_path(@conn, :delete, @current_project.id, campaign.id)}
+                data-method="delete"
+                data-confirm={gettext("Delete this campaign?")}
+                class="button button--text button--small flex items-center gap-1 text-red-400/70 hover:text-red-400"
+              >
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </a>
+              <a
                 href={Routes.campaign_path(@conn, :clone, @current_project.id, campaign.id)}
                 class="button button--text button--small flex items-center gap-1"
               >
@@ -188,8 +210,17 @@
               </a>
             <% else %>
               <a
+                href={Routes.campaign_path(@conn, :clone, @current_project.id, campaign.id)}
+                class="button button--text button--small flex items-center gap-1"
+              >
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                {gettext("Clone")}
+              </a>
+              <a
                 href={Routes.campaign_path(@conn, :stats, @current_project.id, campaign.id)}
-                class="button button--cta button--small flex items-center gap-1 flex-grow justify-center"
+                class="button button--cta button--small flex items-center gap-1"
               >
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />

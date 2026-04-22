@@ -39,9 +39,9 @@
         <% else %>
           <a
             href={Routes.project_path(@conn, :index)}
-            class="flex items-center gap-2 text-xs text-gray-400 my-2 px-2 hover:text-fluxo-400 transition-colors"
+            class="flex items-center gap-2 text-xs text-gray-500 my-2 px-2 hover:text-fluxo-400 transition-colors group"
           >
-            <span class="inline-flex h-3 w-3">{render_icon(:chevron_left)}</span>
+            <span class="inline-flex h-3 w-3 group-hover:-translate-x-0.5 transition-transform">{render_icon(:chevron_left)}</span>
             {gettext("Back to projects overview")}
           </a>
           {menu_link(@conn, :project, :show, [@current_project.id], @current_project.name,
@@ -65,7 +65,8 @@
               indent: 1
             )}
           <% end %>
-          <div class="border-t border-gray-800/50 my-2 mx-2"></div>
+
+          <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-600 px-3 pt-4 pb-1">{gettext("Audience")}</p>
           {menu_link(@conn, :contact, :index, [@current_project.id], gettext("Contacts"),
             icon: :user_group,
             exclude: [
@@ -94,7 +95,8 @@
             icon: :filter,
             exclude: [{:form, :new, [@current_project.id]}]
           )}
-          <div class="border-t border-gray-800/50 my-2 mx-2"></div>
+
+          <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-600 px-3 pt-4 pb-1">{gettext("Content")}</p>
           {menu_link(@conn, :form, :index, [@current_project.id], gettext("Forms"),
             icon: :template,
             exclude: [{:form, :new, [@current_project.id]}]
@@ -122,7 +124,8 @@
               indent: 1
             )}
           <% end %>
-          <div class="border-t border-gray-800/50 my-2 mx-2"></div>
+
+          <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-600 px-3 pt-4 pb-1">{gettext("Campaigns")}</p>
           {menu_link(@conn, :campaign, :index, [@current_project.id], gettext("Campaigns"),
             icon: :at_symbol,
             exclude: [{:campaign, :new, [@current_project.id]}]
@@ -139,7 +142,8 @@
               indent: 1
             )}
           <% end %>
-          <div class="border-t border-gray-800/50 my-2 mx-2"></div>
+
+          <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-600 px-3 pt-4 pb-1">{gettext("Integrations")}</p>
           {menu_link(@conn, :api_key, :index, [@current_project.id], gettext("API Keys"),
             exact: true,
             icon: :code
@@ -150,9 +154,9 @@
           )}
         <% end %>
         <div class="hidden sm:block sm:flex-grow"></div>
-        <div class="border-t border-gray-800/50 my-2 mx-2"></div>
-        {menu_link(@conn, Routes.account_path(@conn, :edit), gettext("Account"), icon: :user)}
+        <div class="border-t border-gray-800/50 mt-3 mx-2"></div>
         <%= if assigns[:is_admin?] do %>
+          <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-600 px-3 pt-3 pb-1">{dgettext("admin", "Admin")}</p>
           {menu_link(@conn, Routes.project_admin_path(@conn, :index), dgettext("admin", "Projects"),
             icon: :collection
           )}
@@ -166,7 +170,17 @@
             dgettext("admin", "System Info"),
             icon: :information_circle
           )}
+          <div class="border-t border-gray-800/50 my-2 mx-2"></div>
         <% end %>
+        <div class="px-3 py-2 mb-1">
+          <div class="flex items-center gap-2 text-xs text-gray-500">
+            <span class="inline-flex h-6 w-6 rounded-full bg-fluxo-600/30 border border-fluxo-500/30 items-center justify-center text-fluxo-300 font-semibold shrink-0">
+              {String.upcase(String.slice(@current_user.email, 0, 1))}
+            </span>
+            <span class="truncate">{@current_user.email}</span>
+          </div>
+        </div>
+        {menu_link(@conn, Routes.account_path(@conn, :edit), gettext("Account"), icon: :user)}
         {menu_link(@conn, Routes.auth_path(@conn, :logout), gettext("Sign out"), icon: :logout)}
       </nav>
     </div>

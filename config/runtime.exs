@@ -84,6 +84,14 @@ if config_env() == :prod do
           starttls? =
             System.get_env("MAILER_ENABLE_STARTTLS", "FALSE") in [1, "1", "true", "TRUE"]
 
+          if ssl? and starttls? do
+            Logger.warning("""
+            Both MAILER_ENABLE_SSL and MAILER_ENABLE_STARTTLS are set to true.
+            These are mutually exclusive. SSL (port 465) will be used.
+            Set MAILER_ENABLE_STARTTLS=false to suppress this warning.
+            """)
+          end
+
           [
             adapter: Swoosh.Adapters.SMTP,
             relay: host,
@@ -93,24 +101,22 @@ if config_env() == :prod do
           ]
           |> put_if_not_empty.(:port, port)
           |> then(fn config ->
-            if ssl? do
-              config
-              |> Keyword.put(:ssl, true)
-              |> Keyword.put(:sockopts, :tls_certificate_check.options(host))
-            else
-              config
-            end
-          end)
-          |> then(fn config ->
-            if starttls? do
-              config
-              |> Keyword.put(:tls, :always)
-              |> Keyword.put(
-                :tls_options,
-                :tls_certificate_check.options(host) ++ [versions: [:"tlsv1.2"]]
-              )
-            else
-              config
+            cond do
+              ssl? ->
+                config
+                |> Keyword.put(:ssl, true)
+                |> Keyword.put(:sockopts, :tls_certificate_check.options(host))
+
+              starttls? ->
+                config
+                |> Keyword.put(:tls, :always)
+                |> Keyword.put(
+                  :tls_options,
+                  :tls_certificate_check.options(host) ++ [versions: [:"tlsv1.2"]]
+                )
+
+              true ->
+                config
             end
           end)
       end

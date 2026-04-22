@@ -95,5 +95,5 @@ config :phoenix, :plug_init_mode, :runtime
 # Configure Swoosh
 config :keila, Keila.Mailer, adapter: Swoosh.Adapters.Local
 
-# Enable sending quotas in dev
-config :keila, Keila.Accounts, credits_enabled: true
+# Disable sending quotas in dev so preview emails work on fresh installs
+config :keila, Keila.Accounts, credits_enabled: false

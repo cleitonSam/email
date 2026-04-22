@@ -272,27 +272,39 @@ defmodule KeilaWeb.CampaignEditLive do
 
   defp send_previews(socket, contacts, campaign, sender) do
     template = Enum.find(socket.assigns.templates, &(&1.id == campaign.template_id))
-    subject = gettext("[Preview] %{subject}", subject: campaign.subject)
+    subject = gettext("[Preview] %{subject}", subject: campaign.subject || gettext("(no subject)"))
     lv_pid = self()
 
     for contact <- contacts do
       Task.start(fn ->
-        campaign = %Mailings.Campaign{
-          campaign
-          | subject: subject,
-            sender: sender,
-            template: template
-        }
+        try do
+          preview_campaign = %Mailings.Campaign{
+            campaign
+            | subject: subject,
+              sender: sender,
+              template: template
+          }
 
-        email = Mailings.Builder.build(campaign, contact, %{})
+          email = Mailings.Builder.build(preview_campaign, contact, %{})
 
-        case Keila.Mailer.deliver_with_sender(email, sender) do
-          {:ok, _} ->
-            Logger.info("[Preview] Sent to #{contact.email}")
+          if rendering_error = Enum.find(email.headers, fn {name, _} -> name == "X-Keila-Invalid" end) do
+            {_, error_detail} = rendering_error
+            Logger.error("[Preview] Rendering error for #{contact.email}: #{error_detail}")
+            send(lv_pid, {:preview_send_error, contact.email, {:rendering_error, error_detail}})
+          else
+            case Keila.Mailer.deliver_with_sender(email, sender) do
+              {:ok, _} ->
+                Logger.info("[Preview] Sent to #{contact.email}")
 
-          {:error, reason} ->
-            Logger.error("[Preview] Failed for #{contact.email}: #{inspect(reason)}")
-            send(lv_pid, {:preview_send_error, contact.email, reason})
+              {:error, reason} ->
+                Logger.error("[Preview] Failed for #{contact.email}: #{inspect(reason)}")
+                send(lv_pid, {:preview_send_error, contact.email, reason})
+            end
+          end
+        rescue
+          e ->
+            Logger.error("[Preview] Exception for #{contact.email}: #{Exception.message(e)}")
+            send(lv_pid, {:preview_send_error, contact.email, {:exception, Exception.message(e)}})
         end
       end)
     end
@@ -301,7 +313,32 @@ defmodule KeilaWeb.CampaignEditLive do
   @impl true
   def handle_info({:preview_send_error, email, reason}, socket) do
     Logger.error("[Preview] Delivery failed for #{email}: #{inspect(reason)}")
-    message = gettext("Failed to send preview to %{email}.", email: email)
+
+    detail =
+      case reason do
+        {:rendering_error, msg} ->
+          gettext("Email rendering error: %{msg}", msg: msg)
+
+        {:exception, msg} ->
+          gettext("Unexpected error: %{msg}", msg: msg)
+
+        :invalid_email ->
+          gettext("The email address %{email} is invalid.", email: email)
+
+        {:tls_alert, _} ->
+          gettext("SMTP TLS error. Check your sender's SSL/TLS configuration.")
+
+        {:error, {:bad_credentials, _}} ->
+          gettext("SMTP authentication failed. Check your sender credentials.")
+
+        {:error, {:network_failure, _}} ->
+          gettext("Could not connect to SMTP server. Check host and port settings.")
+
+        _ ->
+          gettext("SMTP delivery error. Check your sender configuration and credentials.")
+      end
+
+    message = gettext("Failed to send preview to %{email}. %{detail}", email: email, detail: detail)
     {:noreply, assign(socket, :send_preview_error, message)}
   end
 

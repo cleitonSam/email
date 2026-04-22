@@ -13,6 +13,8 @@ defmodule Keila.Mailings.Builder do
   import Swoosh.Email
   import __MODULE__.LiquidRenderer
 
+  @placeholder_recipient_id "00000000-0000-4000-0000-000000000000"
+
   @default_contact %Keila.Contacts.Contact{
     id: "c_id",
     first_name: "Jane",
@@ -20,8 +22,6 @@ defmodule Keila.Mailings.Builder do
     email: "jane.doe@example.com",
     data: %{"tags" => ["rocket-scientist"]}
   }
-
-  @placeholder_recipient_id "00000000-0000-4000-0000-000000000000"
 
   @doc """
   Builds a `Swoosh.Email` struct from a Campaign, Contact, and assigns.
@@ -71,7 +71,7 @@ defmodule Keila.Mailings.Builder do
     |> maybe_put_tracking(campaign, recipient)
   end
 
-  @default_contact %Keila.Contacts.Contact{
+  @default_preview_contact %Keila.Contacts.Contact{
     id: "c_id",
     email: "keila@example.com",
     data: %{}
@@ -88,7 +88,7 @@ defmodule Keila.Mailings.Builder do
   Injects a default sender and contact. The contact can be overridden by passing it as the second argument.
   """
   @spec build_preview(campaign :: Campaign.t(), contact :: Contact.t()) :: Email.t()
-  def build_preview(campaign, contact \\ @default_contact) do
+  def build_preview(campaign, contact \\ @default_preview_contact) do
     %{campaign | sender: @default_sender}
     |> build(contact, %{"unsubscribe_link" => "#unsubscribe-preview-link"})
   end

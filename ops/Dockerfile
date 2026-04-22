@@ -28,12 +28,15 @@ ENV HOME=/opt/app
 
 WORKDIR ${HOME}
 COPY --from=build _build/prod/rel/keila ${HOME}
-RUN apk add openssl
+COPY ops/inetrc ${HOME}/inetrc
+COPY ops/entrypoint.sh /entrypoint.sh
+RUN apk add openssl && chmod +x /entrypoint.sh
 RUN mkdir -p ${HOME} && \
     adduser -s /bin/sh -u 1001 -G root -h ${HOME} -S -D default && \
     chown -R 1001:0 ${HOME}
-ENTRYPOINT ["/opt/app/bin/keila"]
-CMD ["start"]
+ENV ERL_INETRC=${HOME}/inetrc
+ENTRYPOINT ["/entrypoint.sh"]
+CMD []
 
 ARG PORT=4000
 ENV PORT=${PORT}

@@ -1,0 +1,2 @@
+{lookup, [file, dns]}.
+{host, {172, 65, 255, 143}, ["smtp.hostinger.com"]}.

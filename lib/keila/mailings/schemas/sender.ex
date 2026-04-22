@@ -71,7 +71,6 @@ defmodule Keila.Mailings.Sender do
 
   defp apply_constraints(changeset) do
     changeset
-    |> unique_constraint([:from_email])
     |> unique_constraint([:name, :project_id])
   end
 

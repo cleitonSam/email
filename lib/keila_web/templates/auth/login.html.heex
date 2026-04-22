@@ -1,89 +1,49 @@
-<div class="min-h-screen flex">
+<!-- Aurora background -->
+<div class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-950">
 
-  <!-- Left Panel — Branding -->
-  <div class="hidden lg:flex lg:w-1/2 xl:w-3/5 relative overflow-hidden bg-gradient-to-br from-gray-950 via-[#0A1F3D] to-gray-950 flex-col items-center justify-center p-12">
-
-    <!-- Background mesh -->
-    <div class="absolute inset-0 pointer-events-none">
-      <div class="absolute top-0 left-1/4 w-96 h-96 bg-fluxo-600/20 rounded-full blur-3xl"></div>
-      <div class="absolute bottom-1/4 right-0 w-80 h-80 bg-cyan-600/15 rounded-full blur-3xl"></div>
-      <div class="absolute top-1/2 left-0 w-64 h-64 bg-fluxo-800/20 rounded-full blur-2xl"></div>
-    </div>
-
-    <!-- Grid overlay -->
-    <div class="absolute inset-0 opacity-[0.03]" style="background-image: linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px); background-size: 40px 40px;"></div>
-
-    <div class="relative z-10 max-w-md">
-      <!-- Logo -->
-      <div class="flex items-center gap-3 mb-16">
-        <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-fluxo-400 to-cyan-400 flex items-center justify-center shadow-lg shadow-fluxo-500/30">
-          <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-          </svg>
-        </div>
-        <span class="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-fluxo-400 to-cyan-400">Fluxo Email MKT</span>
-      </div>
-
-      <!-- Headline -->
-      <h2 class="text-4xl xl:text-5xl font-bold text-white leading-tight mb-6">
-        Email marketing<br/>
-        <span class="bg-clip-text text-transparent bg-gradient-to-r from-fluxo-400 to-cyan-400">profissional</span><br/>
-        para o seu negócio.
-      </h2>
-      <p class="text-gray-400 text-lg mb-12 leading-relaxed">
-        Crie campanhas, gerencie contatos e acompanhe resultados em tempo real.
-      </p>
-
-      <!-- Features -->
-      <div class="flex flex-col gap-4">
-        <div class="flex items-center gap-3 text-sm text-gray-300">
-          <div class="h-8 w-8 rounded-lg bg-fluxo-500/15 border border-fluxo-500/20 flex items-center justify-center shrink-0">
-            <svg class="w-4 h-4 text-fluxo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-          </div>
-          Disparo em massa com alta entregabilidade
-        </div>
-        <div class="flex items-center gap-3 text-sm text-gray-300">
-          <div class="h-8 w-8 rounded-lg bg-cyan-500/15 border border-cyan-500/20 flex items-center justify-center shrink-0">
-            <svg class="w-4 h-4 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
-          </div>
-          Métricas de abertura, cliques e conversão
-        </div>
-        <div class="flex items-center gap-3 text-sm text-gray-300">
-          <div class="h-8 w-8 rounded-lg bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center shrink-0">
-            <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-          </div>
-          Segmentação avançada de contatos
-        </div>
-      </div>
-    </div>
+  <!-- Animated gradient blobs -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-fluxo-600/20 blur-[120px] animate-float"></div>
+    <div class="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-cyan-600/15 blur-[100px] animate-float-delayed"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-fluxo-800/20 blur-[80px] animate-aurora"></div>
   </div>
 
-  <!-- Right Panel — Form -->
-  <div class="w-full lg:w-1/2 xl:w-2/5 flex items-center justify-center px-6 py-12 bg-gray-950">
-    <div class="w-full max-w-sm">
+  <!-- Subtle grid -->
+  <div class="absolute inset-0 opacity-[0.025] pointer-events-none" style="background-image: linear-gradient(rgba(255,255,255,.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.6) 1px, transparent 1px); background-size: 48px 48px;"></div>
 
-      <!-- Mobile logo -->
-      <div class="flex items-center justify-center gap-2 mb-10 lg:hidden">
-        <div class="h-9 w-9 rounded-xl bg-gradient-to-br from-fluxo-400 to-cyan-400 flex items-center justify-center shadow-lg shadow-fluxo-500/30">
-          <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-          </svg>
+  <!-- Noise texture overlay -->
+  <div class="absolute inset-0 opacity-[0.015] pointer-events-none" style="background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22300%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22/></filter><rect width=%22300%22 height=%22300%22 filter=%22url(%23n)%22 opacity=%221%22/></svg>');"></div>
+
+  <!-- Card -->
+  <div class="relative z-10 w-full max-w-[420px] mx-4 animate-fade-in-scale">
+
+    <!-- Glow ring behind card -->
+    <div class="absolute -inset-px rounded-2xl bg-gradient-to-br from-fluxo-500/30 via-transparent to-cyan-500/20 blur-sm"></div>
+
+    <div class="relative bg-gray-900/80 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl shadow-black/50 px-8 py-9">
+
+      <!-- Logo -->
+      <div class="flex flex-col items-center gap-3 mb-8">
+        <div class="relative">
+          <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-fluxo-400 to-cyan-400 blur-md opacity-50 animate-glow"></div>
+          <div class="relative h-14 w-14 rounded-2xl bg-gradient-to-br from-fluxo-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-fluxo-500/40">
+            <svg class="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
         </div>
-        <span class="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-fluxo-400 to-cyan-400">Fluxo Email MKT</span>
+        <div class="text-center">
+          <span class="block text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-fluxo-300 to-cyan-300">Fluxo Email MKT</span>
+          <span class="text-xs text-gray-500">by Fluxo Digital Tech</span>
+        </div>
       </div>
 
       <!-- Heading -->
-      <div class="mb-8">
-        <h1 class="text-2xl font-bold text-white mb-1">
+      <div class="mb-6">
+        <h1 class="text-xl font-bold text-white text-center">
           {dgettext("auth", "Sign in.")}
         </h1>
-        <p class="text-gray-500 text-sm">
+        <p class="text-gray-500 text-xs text-center mt-1">
           {dgettext("auth", "Sign in with your email address and password here.")}
         </p>
       </div>
@@ -94,19 +54,28 @@
         for={@changeset}
         action={Routes.auth_path(@conn, :post_login)}
         method="post"
-        class="flex flex-col gap-5"
+        class="flex flex-col gap-4"
       >
+        <!-- Email field -->
         <div class="flex flex-col gap-1.5">
           {label(f, :email, gettext("Email"), class: "text-xs font-semibold uppercase tracking-wider text-gray-400")}
           <%= with_validation(f, :email) do %>
-            {text_input(f, :email,
-              placeholder: gettext("voce@suaempresa.com.br"),
-              autofocus: true,
-              class: "w-full rounded-xl bg-gray-900 border border-gray-800 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-700 text-sm"
-            )}
+            <div class="relative">
+              <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                <svg class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                </svg>
+              </div>
+              {text_input(f, :email,
+                placeholder: "voce@empresa.com.br",
+                autofocus: true,
+                class: "w-full rounded-xl bg-gray-800/60 border border-gray-700/70 text-white pl-10 pr-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/25 focus:bg-gray-800/80 transition-all placeholder-gray-600 text-sm"
+              )}
+            </div>
           <% end %>
         </div>
 
+        <!-- Password field -->
         <div class="flex flex-col gap-1.5">
           <div class="flex items-center justify-between">
             {label(f, :password, gettext("Senha"), class: "text-xs font-semibold uppercase tracking-wider text-gray-400")}
@@ -115,22 +84,33 @@
             </a>
           </div>
           <%= with_validation(f, :password) do %>
-            {password_input(f, :password,
-              class: "w-full rounded-xl bg-gray-900 border border-gray-800 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-700 text-sm"
-            )}
+            <div class="relative">
+              <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                <svg class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              {password_input(f, :password,
+                class: "w-full rounded-xl bg-gray-800/60 border border-gray-700/70 text-white pl-10 pr-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/25 focus:bg-gray-800/80 transition-all placeholder-gray-600 text-sm"
+              )}
+            </div>
           <% end %>
         </div>
 
-        <button type="submit" class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-fluxo-600 to-fluxo-500 hover:from-fluxo-500 hover:to-cyan-500 text-white font-semibold py-3 px-6 rounded-xl shadow-lg shadow-fluxo-600/20 hover:shadow-fluxo-500/30 transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] mt-1 text-sm">
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-          </svg>
-          {dgettext("auth", "Sign in")}
+        <!-- Submit -->
+        <button type="submit" class="relative w-full group mt-1 overflow-hidden rounded-xl bg-gradient-to-r from-fluxo-600 to-fluxo-500 hover:from-fluxo-500 hover:to-cyan-500 text-white font-semibold py-3 px-6 shadow-lg shadow-fluxo-600/30 hover:shadow-fluxo-500/50 transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] text-sm">
+          <span class="relative flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+            </svg>
+            {dgettext("auth", "Sign in")}
+          </span>
+          <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
         </button>
       </.form>
 
       <!-- Divider -->
-      <div class="flex items-center gap-3 my-6">
+      <div class="flex items-center gap-3 my-5">
         <div class="flex-grow border-t border-gray-800/80"></div>
         <span class="text-xs text-gray-700">ou</span>
         <div class="flex-grow border-t border-gray-800/80"></div>
@@ -139,15 +119,15 @@
       <!-- Register link -->
       <p class="text-center text-sm text-gray-600">
         {dgettext("auth", "Don't have an account?")}
-        <a href={Routes.auth_path(@conn, :register)} class="text-fluxo-400 hover:text-cyan-400 font-medium transition-colors ml-1">
+        <a href={Routes.auth_path(@conn, :register)} class="text-fluxo-400 hover:text-cyan-400 font-semibold transition-colors ml-1">
           {dgettext("auth", "Sign up.")}
         </a>
       </p>
-
-      <!-- Footer -->
-      <p class="text-center text-xs text-gray-800 mt-12">
-        © 2026 Fluxo Digital Tech
-      </p>
     </div>
   </div>
+
+  <!-- Footer -->
+  <p class="absolute bottom-4 left-0 right-0 text-center text-xs text-gray-800">
+    © 2026 Fluxo Digital Tech
+  </p>
 </div>

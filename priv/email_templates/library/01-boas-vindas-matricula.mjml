@@ -1,0 +1,118 @@
+<mjml>
+  <mj-head>
+    <mj-title>Bem-vindo(a) à {{ unidade }}, {{ first_name }}!</mj-title>
+    <mj-preview>O primeiro passo já foi dado. Agora vem a parte boa.</mj-preview>
+    <mj-attributes>
+      <mj-all font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" />
+      <mj-text color="#0F172A" font-size="16px" line-height="1.6" />
+      <mj-button background-color="{{ brand.color_primary | default: '#F97316' }}" color="#FFFFFF" font-size="16px" font-weight="600" padding="16px 32px" border-radius="6px" inner-padding="16px 32px" />
+      <mj-section padding="0" />
+    </mj-attributes>
+    <mj-style>
+      .hero-overline { letter-spacing: 4px; text-transform: uppercase; font-size: 12px; font-weight: 600; }
+      .signature { font-style: italic; color: #64748B; }
+      a.unstyled { color: inherit; text-decoration: none; }
+      @media only screen and (max-width: 480px) {
+        .mobile-padding { padding: 24px !important; }
+      }
+    </mj-style>
+  </mj-head>
+
+  <mj-body background-color="#F8FAFC" width="640px">
+
+    <!-- HEADER -->
+    <mj-section background-color="#FFFFFF" padding="32px 40px 24px">
+      <mj-column>
+        <mj-image src="{{ brand.logo_url | default: 'https://emailmkt.fluxodigitaltech.com.br/static/logo-default.png' }}" alt="{{ brand.name }}" width="120px" align="left" padding="0" />
+      </mj-column>
+    </mj-section>
+
+    <!-- HERO -->
+    <mj-section background-color="{{ brand.color_dark | default: '#0C4A6E' }}" padding="64px 40px 56px">
+      <mj-column>
+        <mj-text css-class="hero-overline" color="{{ brand.color_primary | default: '#F97316' }}" padding="0 0 16px">
+          BEM-VINDO À {{ unidade | upcase }}
+        </mj-text>
+        <mj-text color="#FFFFFF" font-size="42px" font-weight="700" line-height="1.15" padding="0 0 20px">
+          {{ first_name }}, sua jornada começa agora.
+        </mj-text>
+        <mj-text color="#CBD5E1" font-size="17px" line-height="1.6" padding="0">
+          A gente fica feliz de ter você com a gente. Nas próximas semanas você vai receber tudo que precisa para começar com o pé direito — sem complicação, sem ansiedade, no seu ritmo.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- WELCOME BLOCK -->
+    <mj-section background-color="#FFFFFF" padding="56px 40px 24px">
+      <mj-column>
+        <mj-text font-size="14px" color="#64748B" font-weight="600" letter-spacing="2px" padding="0 0 16px">
+          O QUE ESPERAR
+        </mj-text>
+        <mj-text font-size="22px" font-weight="700" line-height="1.3" color="#0F172A" padding="0 0 24px">
+          Três coisas que vão fazer diferença logo de cara
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- BENEFITS GRID -->
+    <mj-section background-color="#FFFFFF" padding="0 40px">
+      <mj-column width="33%" padding="0 8px 0 0">
+        <mj-text font-size="32px" font-weight="800" color="{{ brand.color_primary | default: '#F97316' }}" padding="0 0 8px">01</mj-text>
+        <mj-text font-size="15px" font-weight="600" color="#0F172A" padding="0 0 6px">Avaliação física</mj-text>
+        <mj-text font-size="13px" color="#64748B" line-height="1.5" padding="0">Mapeamos seu ponto de partida para montar um plano que funciona pra você.</mj-text>
+      </mj-column>
+      <mj-column width="33%" padding="0 4px">
+        <mj-text font-size="32px" font-weight="800" color="{{ brand.color_primary | default: '#F97316' }}" padding="0 0 8px">02</mj-text>
+        <mj-text font-size="15px" font-weight="600" color="#0F172A" padding="0 0 6px">Acompanhamento</mj-text>
+        <mj-text font-size="13px" color="#64748B" line-height="1.5" padding="0">Time presente nos primeiros treinos. Você nunca está sozinho(a) na ficha.</mj-text>
+      </mj-column>
+      <mj-column width="33%" padding="0 0 0 8px">
+        <mj-text font-size="32px" font-weight="800" color="{{ brand.color_primary | default: '#F97316' }}" padding="0 0 8px">03</mj-text>
+        <mj-text font-size="15px" font-weight="600" color="#0F172A" padding="0 0 6px">Comunidade</mj-text>
+        <mj-text font-size="13px" color="#64748B" line-height="1.5" padding="0">Aulas em grupo, eventos, grupo de WhatsApp. Treinar fica menos solitário.</mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- CTA -->
+    <mj-section background-color="#FFFFFF" padding="48px 40px 56px">
+      <mj-column>
+        <mj-text font-size="17px" color="#0F172A" line-height="1.6" padding="0 0 28px" align="center">
+          Já podemos agendar sua primeira avaliação física? <strong>É grátis</strong> e leva 30 minutos.
+        </mj-text>
+        <mj-button href="{{ link_agendamento }}" align="center">
+          Agendar minha avaliação
+        </mj-button>
+        <mj-text font-size="13px" color="#94A3B8" align="center" padding="20px 0 0">
+          Ou se preferir, fala com a gente no <a href="{{ brand.whatsapp_url }}" style="color: {{ brand.color_primary | default: '#F97316' }}; text-decoration: none; font-weight: 500;">WhatsApp</a>.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- SIGNATURE -->
+    <mj-section background-color="#FFFFFF" padding="0 40px 48px">
+      <mj-column>
+        <mj-divider border-color="#E2E8F0" border-width="1px" padding="0 0 32px" />
+        <mj-text css-class="signature" font-size="15px" line-height="1.6" padding="0">
+          Bem-vindo(a) ao time, {{ first_name }}.<br/>
+          <strong style="color: #0F172A; font-style: normal;">Equipe {{ brand.name | default: 'Fluxo' }} — {{ unidade }}</strong>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- FOOTER -->
+    <mj-section background-color="#0F172A" padding="40px 40px 32px">
+      <mj-column>
+        <mj-text color="#94A3B8" font-size="12px" line-height="1.6" padding="0 0 12px">
+          {{ brand.name }} · {{ unidade }}<br/>
+          {{ brand.address }}<br/>
+          CNPJ {{ brand.cnpj }}
+        </mj-text>
+        <mj-text color="#64748B" font-size="11px" line-height="1.6" padding="0">
+          Você recebeu este e-mail porque se cadastrou na {{ unidade }}.<br/>
+          <a href="{{ link_unsubscribe }}" style="color: #94A3B8; text-decoration: underline;">Descadastrar</a> · <a href="{{ brand.privacy_url }}" style="color: #94A3B8; text-decoration: underline;">Política de privacidade</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+  </mj-body>
+</mjml>

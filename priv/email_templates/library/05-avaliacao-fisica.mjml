@@ -1,0 +1,123 @@
+<mjml>
+  <mj-head>
+    <mj-title>{{ first_name }}, vamos descobrir seu ponto de partida?</mj-title>
+    <mj-preview>Avaliação física gratuita — agenda em 30 segundos.</mj-preview>
+    <mj-attributes>
+      <mj-all font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" />
+      <mj-text color="#0F172A" font-size="16px" line-height="1.65" />
+      <mj-button background-color="#0EA5E9" color="#FFFFFF" font-size="16px" font-weight="700" padding="18px 36px" border-radius="6px" />
+      <mj-section padding="0" />
+    </mj-attributes>
+    <mj-style>
+      .stat-num { font-size: 56px; font-weight: 900; line-height: 1; letter-spacing: -2px; }
+      .pillar-icon { width: 48px; height: 48px; background: #E0F2FE; border-radius: 12px; line-height: 48px; text-align: center; font-size: 22px; font-weight: 800; color: #0C4A6E; }
+    </mj-style>
+  </mj-head>
+
+  <mj-body background-color="#F0F9FF" width="640px">
+
+    <!-- HEADER -->
+    <mj-section background-color="#FFFFFF" padding="32px 40px">
+      <mj-column>
+        <mj-image src="{{ brand.logo_url }}" alt="{{ brand.name }}" width="120px" align="left" padding="0" />
+      </mj-column>
+    </mj-section>
+
+    <!-- HERO -->
+    <mj-section background-color="#FFFFFF" padding="0 40px 56px">
+      <mj-column>
+        <mj-text font-size="13px" color="#0EA5E9" font-weight="700" letter-spacing="3px" padding="0 0 20px">
+          AVALIAÇÃO FÍSICA · GRÁTIS · 30 MIN
+        </mj-text>
+        <mj-text font-size="42px" font-weight="800" line-height="1.1" color="#0F172A" padding="0 0 24px">
+          {{ first_name }}, antes do treino vem a estratégia.
+        </mj-text>
+        <mj-text font-size="18px" color="#475569" line-height="1.6" padding="0">
+          Treinar sem saber de onde você está partindo é como dirigir sem GPS. A avaliação física é onde a gente descobre seus números reais — e desenha um plano que faz sentido pra você.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- 3 PILLARS -->
+    <mj-section background-color="#FFFFFF" padding="40px 40px 8px" border-top="1px solid #E2E8F0">
+      <mj-column>
+        <mj-text font-size="13px" color="#64748B" font-weight="700" letter-spacing="3px" padding="0 0 32px">
+          O QUE A GENTE MEDE
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#FFFFFF" padding="0 40px 16px">
+      <mj-column width="50%" padding="0 8px 24px 0">
+        <mj-text padding="0 0 16px" font-family="Georgia, serif" font-size="28px" font-weight="700" color="#0EA5E9" line-height="1">01</mj-text>
+        <mj-text font-size="17px" font-weight="700" color="#0F172A" padding="0 0 8px">Composição corporal</mj-text>
+        <mj-text font-size="14px" color="#64748B" line-height="1.6" padding="0">Massa magra, gordura, hidratação. Tudo que o espelho não mostra.</mj-text>
+      </mj-column>
+      <mj-column width="50%" padding="0 0 24px 8px">
+        <mj-text padding="0 0 16px" font-family="Georgia, serif" font-size="28px" font-weight="700" color="#0EA5E9" line-height="1">02</mj-text>
+        <mj-text font-size="17px" font-weight="700" color="#0F172A" padding="0 0 8px">Capacidade cardiovascular</mj-text>
+        <mj-text font-size="14px" color="#64748B" line-height="1.6" padding="0">Frequência cardíaca em esforço, recuperação, zona ideal de treino.</mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#FFFFFF" padding="0 40px 40px">
+      <mj-column width="50%" padding="0 8px 0 0">
+        <mj-text padding="0 0 16px" font-family="Georgia, serif" font-size="28px" font-weight="700" color="#0EA5E9" line-height="1">03</mj-text>
+        <mj-text font-size="17px" font-weight="700" color="#0F172A" padding="0 0 8px">Mobilidade e força</mj-text>
+        <mj-text font-size="14px" color="#64748B" line-height="1.6" padding="0">Onde tem limitação, onde tem potencial, onde precisa cuidado.</mj-text>
+      </mj-column>
+      <mj-column width="50%" padding="0 0 0 8px">
+        <mj-text padding="0 0 16px" font-family="Georgia, serif" font-size="28px" font-weight="700" color="#0EA5E9" line-height="1">04</mj-text>
+        <mj-text font-size="17px" font-weight="700" color="#0F172A" padding="0 0 8px">Seu objetivo real</mj-text>
+        <mj-text font-size="14px" color="#64748B" line-height="1.6" padding="0">Conversa franca sobre o que você quer e em quanto tempo é viável.</mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- SOCIAL PROOF -->
+    <mj-section background-color="#0C4A6E" padding="48px 40px">
+      <mj-column width="40%">
+        <mj-text css-class="stat-num" color="#FFFFFF" padding="0 0 8px">87%</mj-text>
+        <mj-text font-size="14px" color="#7DD3FC" line-height="1.5" padding="0">dos alunos que fazem avaliação completa atingem o objetivo nos primeiros 90 dias.</mj-text>
+      </mj-column>
+      <mj-column width="60%">
+        <mj-text font-size="20px" font-style="italic" line-height="1.5" color="#FFFFFF" font-family="Georgia, serif" padding="0 0 16px">
+          "Achei que ia perder tempo. Saí da avaliação com um plano que finalmente fazia sentido pra minha rotina."
+        </mj-text>
+        <mj-text font-size="13px" color="#7DD3FC" font-weight="600" padding="0">
+          — Renata, aluna há 8 meses
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- CTA -->
+    <mj-section background-color="#FFFFFF" padding="56px 40px">
+      <mj-column>
+        <mj-text font-size="22px" font-weight="700" color="#0F172A" align="center" line-height="1.4" padding="0 0 16px">
+          30 minutos. Zero compromisso.
+        </mj-text>
+        <mj-text font-size="15px" color="#64748B" align="center" padding="0 0 32px">
+          Você sai com um relatório completo e clareza do que fazer a seguir.
+        </mj-text>
+        <mj-button href="{{ link_agendamento }}" align="center">
+          Agendar minha avaliação
+        </mj-button>
+        <mj-text font-size="13px" color="#94A3B8" align="center" padding="20px 0 0">
+          Prefere falar antes? <a href="{{ brand.whatsapp_url }}" style="color: #0EA5E9; text-decoration: none; font-weight: 600;">Manda no WhatsApp</a>.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- FOOTER -->
+    <mj-section background-color="#0F172A" padding="32px 40px">
+      <mj-column>
+        <mj-text color="#94A3B8" font-size="11px" line-height="1.6" align="center" padding="0 0 8px">
+          {{ brand.name }} · {{ unidade }} · {{ brand.address }} · CNPJ {{ brand.cnpj }}
+        </mj-text>
+        <mj-text color="#64748B" font-size="11px" align="center" padding="0">
+          <a href="{{ link_unsubscribe }}" style="color: #94A3B8; text-decoration: underline;">Descadastrar</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+  </mj-body>
+</mjml>

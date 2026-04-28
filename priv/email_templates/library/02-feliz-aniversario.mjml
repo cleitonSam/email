@@ -1,0 +1,119 @@
+<mjml>
+  <mj-head>
+    <mj-title>Feliz aniversário, {{ first_name }}!</mj-title>
+    <mj-preview>Tem um presente esperando você lá dentro.</mj-preview>
+    <mj-attributes>
+      <mj-all font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" />
+      <mj-text color="#0F172A" font-size="16px" line-height="1.6" />
+      <mj-button background-color="#FFFFFF" color="#EC4899" font-size="16px" font-weight="700" padding="18px 36px" border-radius="999px" inner-padding="18px 36px" />
+      <mj-section padding="0" />
+    </mj-attributes>
+    <mj-style>
+      .confetti { font-size: 12px; letter-spacing: 6px; font-weight: 700; }
+      .gift-number { font-size: 88px; font-weight: 900; line-height: 1; letter-spacing: -3px; }
+    </mj-style>
+  </mj-head>
+
+  <mj-body background-color="#FBEAF0" width="640px">
+
+    <!-- HEADER -->
+    <mj-section background-color="#FFFFFF" padding="28px 40px">
+      <mj-column>
+        <mj-image src="{{ brand.logo_url }}" alt="{{ brand.name }}" width="110px" align="left" padding="0" />
+      </mj-column>
+    </mj-section>
+
+    <!-- HERO ROSA -->
+    <mj-section background-color="#EC4899" padding="72px 40px 48px">
+      <mj-column>
+        <mj-text css-class="confetti" color="#FBEAF0" align="center" padding="0 0 24px">
+          • • •  HOJE É SEU DIA  • • •
+        </mj-text>
+        <mj-text color="#FFFFFF" font-size="56px" font-weight="800" line-height="1.05" align="center" padding="0 0 16px">
+          Feliz aniversário,<br/>{{ first_name }}!
+        </mj-text>
+        <mj-text color="#FBEAF0" font-size="18px" line-height="1.5" align="center" padding="0 16px">
+          A gente preparou uma coisa especial pra esse mês ser ainda melhor. Olha só.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- GIFT -->
+    <mj-section background-color="#FFFFFF" padding="56px 40px 24px">
+      <mj-column>
+        <mj-text font-size="13px" color="#64748B" font-weight="600" letter-spacing="3px" align="center" padding="0 0 8px">
+          SEU PRESENTE
+        </mj-text>
+        <mj-text css-class="gift-number" color="#EC4899" align="center" padding="0">
+          30%
+        </mj-text>
+        <mj-text font-size="22px" font-weight="600" color="#0F172A" align="center" padding="12px 0 8px">
+          de desconto na próxima mensalidade
+        </mj-text>
+        <mj-text font-size="14px" color="#64748B" align="center" padding="0">
+          Válido até o último dia do mês do seu aniversário.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- COUPON CODE -->
+    <mj-section background-color="#FFFFFF" padding="32px 40px 0">
+      <mj-column>
+        <mj-text align="center" padding="0 0 12px" font-size="12px" color="#94A3B8" font-weight="600" letter-spacing="2px">
+          CUPOM
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#FFFFFF" padding="0 40px">
+      <mj-column>
+        <mj-table>
+          <tr>
+            <td style="border: 2px dashed #EC4899; padding: 18px; text-align: center; border-radius: 8px;">
+              <span style="font-family: 'Courier New', monospace; font-size: 22px; font-weight: 700; color: #0F172A; letter-spacing: 4px;">ANIVERSARIO{{ id_evo | slice: -3, 3 | default: '030' }}</span>
+            </td>
+          </tr>
+        </mj-table>
+      </mj-column>
+    </mj-section>
+
+    <!-- CTA -->
+    <mj-section background-color="#EC4899" padding="48px 40px 56px" border-radius="0">
+      <mj-column>
+        <mj-text color="#FFFFFF" font-size="20px" font-weight="600" align="center" line-height="1.4" padding="0 0 28px">
+          Resgatar o presente é só clicar:
+        </mj-text>
+        <mj-button href="{{ link_oferta }}" align="center">
+          Quero resgatar agora →
+        </mj-button>
+        <mj-text color="#FBEAF0" font-size="13px" align="center" padding="24px 0 0">
+          Ou fala com a gente no <a href="{{ brand.whatsapp_url }}" style="color: #FFFFFF; text-decoration: underline; font-weight: 600;">WhatsApp</a>.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- MESSAGE -->
+    <mj-section background-color="#FFFFFF" padding="48px 40px">
+      <mj-column>
+        <mj-text font-size="17px" line-height="1.7" color="#334155" align="center">
+          Que esse novo ciclo seja cheio de saúde, treino consistente e vitórias — pequenas e grandes.
+        </mj-text>
+        <mj-text font-size="15px" font-style="italic" color="#64748B" align="center" padding="20px 0 0">
+          — Equipe {{ brand.name }}, {{ unidade }}
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- FOOTER -->
+    <mj-section background-color="#0F172A" padding="32px 40px">
+      <mj-column>
+        <mj-text color="#94A3B8" font-size="11px" line-height="1.6" align="center" padding="0 0 12px">
+          {{ brand.name }} · {{ unidade }} · {{ brand.address }} · CNPJ {{ brand.cnpj }}
+        </mj-text>
+        <mj-text color="#64748B" font-size="11px" align="center" padding="0">
+          <a href="{{ link_unsubscribe }}" style="color: #94A3B8; text-decoration: underline;">Descadastrar</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+  </mj-body>
+</mjml>

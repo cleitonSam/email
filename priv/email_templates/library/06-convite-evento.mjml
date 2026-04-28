@@ -1,0 +1,124 @@
+<mjml>
+  <mj-head>
+    <mj-title>Você está convidado(a): {{ evento_nome }}</mj-title>
+    <mj-preview>{{ data_evento }} · {{ horario_evento }} · {{ local_evento }}</mj-preview>
+    <mj-attributes>
+      <mj-all font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" />
+      <mj-text color="#0F172A" font-size="16px" line-height="1.65" />
+      <mj-button background-color="#7C3AED" color="#FFFFFF" font-size="16px" font-weight="700" padding="18px 40px" border-radius="6px" />
+      <mj-section padding="0" />
+    </mj-attributes>
+    <mj-style>
+      .ticket-corner { font-family: 'Courier New', monospace; font-size: 11px; color: #94A3B8; letter-spacing: 2px; }
+      .date-block-day { font-family: Georgia, serif; font-size: 64px; font-weight: 800; line-height: 1; }
+    </mj-style>
+  </mj-head>
+
+  <mj-body background-color="#F5F3FF" width="640px">
+
+    <!-- HEADER -->
+    <mj-section background-color="#FFFFFF" padding="28px 40px">
+      <mj-column>
+        <mj-image src="{{ brand.logo_url }}" alt="{{ brand.name }}" width="110px" align="left" padding="0" />
+      </mj-column>
+    </mj-section>
+
+    <!-- TICKET TOP -->
+    <mj-section background-color="#7C3AED" padding="56px 40px 40px">
+      <mj-column>
+        <mj-text color="#DDD6FE" font-size="12px" font-weight="700" letter-spacing="4px" align="center" padding="0 0 24px">
+          ◆ CONVITE EXCLUSIVO ◆
+        </mj-text>
+        <mj-text color="#FFFFFF" font-family="Georgia, serif" font-size="48px" font-weight="700" line-height="1.1" align="center" padding="0 0 16px">
+          {{ evento_nome }}
+        </mj-text>
+        <mj-text color="#DDD6FE" font-size="17px" line-height="1.6" align="center" padding="0">
+          {{ evento_subtitulo }}
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- DATE/TIME/PLACE -->
+    <mj-section background-color="#FFFFFF" padding="48px 40px 32px">
+      <mj-column width="33%">
+        <mj-text font-size="11px" color="#7C3AED" font-weight="700" letter-spacing="3px" align="center" padding="0 0 12px">DATA</mj-text>
+        <mj-text css-class="date-block-day" color="#0F172A" align="center" padding="0">{{ data_dia }}</mj-text>
+        <mj-text font-size="14px" color="#64748B" font-weight="600" align="center" padding="8px 0 0">{{ data_mes_extenso }}</mj-text>
+      </mj-column>
+      <mj-column width="33%">
+        <mj-text font-size="11px" color="#7C3AED" font-weight="700" letter-spacing="3px" align="center" padding="0 0 12px">HORÁRIO</mj-text>
+        <mj-text font-size="32px" font-weight="800" color="#0F172A" align="center" line-height="1" padding="14px 0 0">{{ horario_evento }}</mj-text>
+        <mj-text font-size="14px" color="#64748B" font-weight="600" align="center" padding="20px 0 0">{{ duracao }}</mj-text>
+      </mj-column>
+      <mj-column width="33%">
+        <mj-text font-size="11px" color="#7C3AED" font-weight="700" letter-spacing="3px" align="center" padding="0 0 12px">ONDE</mj-text>
+        <mj-text font-size="18px" font-weight="700" color="#0F172A" align="center" line-height="1.3" padding="20px 0 0">{{ local_evento }}</mj-text>
+        <mj-text font-size="14px" color="#64748B" align="center" padding="8px 0 0">{{ local_endereco }}</mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- DASHED DIVIDER -->
+    <mj-section background-color="#FFFFFF" padding="0 40px">
+      <mj-column>
+        <mj-divider border-style="dashed" border-color="#DDD6FE" border-width="2px" padding="0" />
+      </mj-column>
+    </mj-section>
+
+    <!-- DESCRIPTION -->
+    <mj-section background-color="#FFFFFF" padding="40px 40px">
+      <mj-column>
+        <mj-text font-size="13px" color="#7C3AED" font-weight="700" letter-spacing="3px" padding="0 0 16px">
+          O QUE É
+        </mj-text>
+        <mj-text font-size="17px" color="#334155" line-height="1.7" padding="0 0 24px">
+          {{ evento_descricao }}
+        </mj-text>
+        <mj-text font-size="13px" color="#7C3AED" font-weight="700" letter-spacing="3px" padding="0 0 16px">
+          PRA QUEM
+        </mj-text>
+        <mj-text font-size="17px" color="#334155" line-height="1.7" padding="0">
+          {{ evento_publico }}
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- CTA -->
+    <mj-section background-color="#FFFFFF" padding="32px 40px 48px">
+      <mj-column>
+        <mj-text font-size="14px" color="#64748B" align="center" padding="0 0 20px">
+          Vagas limitadas. Confirme em até 24h.
+        </mj-text>
+        <mj-button href="{{ link_evento }}" align="center">
+          Confirmar minha presença
+        </mj-button>
+      </mj-column>
+    </mj-section>
+
+    <!-- TICKET BOTTOM -->
+    <mj-section background-color="#7C3AED" padding="20px 40px">
+      <mj-column width="50%">
+        <mj-text css-class="ticket-corner" color="#DDD6FE" align="left" padding="0">
+          # {{ id_evo }}
+        </mj-text>
+      </mj-column>
+      <mj-column width="50%">
+        <mj-text css-class="ticket-corner" color="#DDD6FE" align="right" padding="0">
+          {{ first_name | upcase }}
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- FOOTER -->
+    <mj-section background-color="#0F172A" padding="32px 40px">
+      <mj-column>
+        <mj-text color="#94A3B8" font-size="11px" line-height="1.6" align="center" padding="0 0 8px">
+          {{ brand.name }} · {{ unidade }} · {{ brand.address }} · CNPJ {{ brand.cnpj }}
+        </mj-text>
+        <mj-text color="#64748B" font-size="11px" align="center" padding="0">
+          <a href="{{ link_unsubscribe }}" style="color: #94A3B8; text-decoration: underline;">Descadastrar</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+  </mj-body>
+</mjml>

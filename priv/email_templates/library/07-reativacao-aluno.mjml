@@ -1,0 +1,125 @@
+<mjml>
+  <mj-head>
+    <mj-title>{{ first_name }}, faz tempo. Tudo bem por aí?</mj-title>
+    <mj-preview>A gente sente sua falta — e tem novidades pra te contar.</mj-preview>
+    <mj-attributes>
+      <mj-all font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" />
+      <mj-text color="#0F172A" font-size="16px" line-height="1.7" />
+      <mj-button background-color="#10B981" color="#FFFFFF" font-size="16px" font-weight="700" padding="18px 36px" border-radius="6px" />
+      <mj-section padding="0" />
+    </mj-attributes>
+    <mj-style>
+      .em-dash { color: #10B981; font-weight: 700; }
+      .quiet-headline { font-family: Georgia, serif; font-weight: 400; line-height: 1.2; }
+    </mj-style>
+  </mj-head>
+
+  <mj-body background-color="#F0FDF4" width="640px">
+
+    <!-- HEADER -->
+    <mj-section background-color="#FFFFFF" padding="32px 40px">
+      <mj-column>
+        <mj-image src="{{ brand.logo_url }}" alt="{{ brand.name }}" width="120px" align="left" padding="0" />
+      </mj-column>
+    </mj-section>
+
+    <!-- LETTER STYLE -->
+    <mj-section background-color="#FFFFFF" padding="56px 40px 32px">
+      <mj-column>
+        <mj-text font-size="14px" color="#10B981" font-weight="600" padding="0 0 32px">
+          {{ data_atual }}
+        </mj-text>
+        <mj-text css-class="quiet-headline" font-size="40px" color="#0F172A" font-weight="700" font-family="Georgia, serif" padding="0 0 32px">
+          Olá, {{ first_name }}.
+        </mj-text>
+        <mj-text font-size="18px" color="#334155" line-height="1.7" padding="0 0 20px">
+          Vi aqui que você não dá as caras na {{ unidade }} desde {{ ultima_visita | default: "faz um tempinho" }}. Quis escrever sem agenda, só pra dizer que <span class="em-dash">a gente lembra de você</span> — e sente sua falta no rolê.
+        </mj-text>
+        <mj-text font-size="18px" color="#334155" line-height="1.7" padding="0 0 20px">
+          Não vou te perguntar o porquê, porque a vida é assim mesmo: bagunça às vezes. Trabalho aperta, cabeça aperta, agenda aperta.
+        </mj-text>
+        <mj-text font-size="18px" color="#334155" line-height="1.7" padding="0">
+          Mas se em algum momento bater aquela vontade de voltar, queria que você soubesse que <strong>a porta tá aberta</strong> — e que tem coisa nova por aqui que talvez te interesse.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- WHATS NEW -->
+    <mj-section background-color="#FFFFFF" padding="32px 40px">
+      <mj-column>
+        <mj-divider border-color="#D1FAE5" border-width="1px" padding="0 0 32px" />
+        <mj-text font-size="13px" color="#059669" font-weight="700" letter-spacing="3px" padding="0 0 24px">
+          O QUE MUDOU DESDE A ÚLTIMA VEZ
+        </mj-text>
+        <mj-table>
+          <tr>
+            <td style="padding: 12px 0; font-size: 16px; color: #0F172A; line-height: 1.6;">
+              <span style="color: #10B981; font-weight: 700; margin-right: 12px;">→</span> {{ novidade1 }}
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 12px 0; font-size: 16px; color: #0F172A; line-height: 1.6;">
+              <span style="color: #10B981; font-weight: 700; margin-right: 12px;">→</span> {{ novidade2 }}
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 12px 0; font-size: 16px; color: #0F172A; line-height: 1.6;">
+              <span style="color: #10B981; font-weight: 700; margin-right: 12px;">→</span> {{ novidade3 }}
+            </td>
+          </tr>
+        </mj-table>
+      </mj-column>
+    </mj-section>
+
+    <!-- OFFER -->
+    <mj-section background-color="#ECFDF5" padding="40px 40px">
+      <mj-column>
+        <mj-text font-size="13px" color="#059669" font-weight="700" letter-spacing="3px" padding="0 0 12px">
+          E COMO INCENTIVO
+        </mj-text>
+        <mj-text font-size="28px" font-weight="700" color="#0F172A" line-height="1.3" padding="0 0 12px">
+          Primeira semana grátis pra você experimentar de novo.
+        </mj-text>
+        <mj-text font-size="15px" color="#64748B" line-height="1.6" padding="0">
+          Sem mensalidade, sem pegadinha. Você vem, treina, e decide se vale a pena. Simples assim.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- CTA -->
+    <mj-section background-color="#FFFFFF" padding="48px 40px">
+      <mj-column>
+        <mj-button href="{{ link_agendamento }}" align="center">
+          Quero voltar a treinar
+        </mj-button>
+        <mj-text font-size="14px" color="#64748B" align="center" padding="20px 0 0">
+          Ou se quiser desabafar primeiro, <a href="{{ brand.whatsapp_url }}" style="color: #10B981; text-decoration: none; font-weight: 600;">manda no WhatsApp</a>. Sem julgamento.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- SIGNATURE -->
+    <mj-section background-color="#FFFFFF" padding="0 40px 56px">
+      <mj-column>
+        <mj-divider border-color="#D1FAE5" border-width="1px" padding="0 0 32px" />
+        <mj-text font-size="16px" font-style="italic" color="#475569" line-height="1.6" padding="0">
+          Te esperando,<br/>
+          <strong style="color: #0F172A; font-style: normal;">Equipe {{ brand.name }} — {{ unidade }}</strong>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- FOOTER -->
+    <mj-section background-color="#0F172A" padding="32px 40px">
+      <mj-column>
+        <mj-text color="#94A3B8" font-size="11px" line-height="1.6" align="center" padding="0 0 8px">
+          {{ brand.name }} · {{ unidade }} · {{ brand.address }} · CNPJ {{ brand.cnpj }}
+        </mj-text>
+        <mj-text color="#64748B" font-size="11px" align="center" padding="0">
+          <a href="{{ link_unsubscribe }}" style="color: #94A3B8; text-decoration: underline;">Descadastrar</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+  </mj-body>
+</mjml>

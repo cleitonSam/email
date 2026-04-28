@@ -1,0 +1,143 @@
+<mjml>
+  <mj-head>
+    <mj-title>{{ unidade }} em {{ mes_atual }} — o que rolou e o que vem aí</mj-title>
+    <mj-preview>3 destaques do mês, agenda nova e dicas do time.</mj-preview>
+    <mj-attributes>
+      <mj-all font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" />
+      <mj-text color="#0F172A" font-size="16px" line-height="1.6" />
+      <mj-button background-color="#0F172A" color="#FFFFFF" font-size="14px" font-weight="600" padding="12px 24px" border-radius="4px" />
+      <mj-section padding="0" />
+    </mj-attributes>
+    <mj-style>
+      .issue-num { font-family: 'Georgia', serif; font-size: 13px; letter-spacing: 4px; }
+      .lead-headline { font-family: 'Georgia', serif; font-size: 38px; line-height: 1.15; letter-spacing: -0.5px; }
+      .section-label { font-size: 11px; font-weight: 700; letter-spacing: 3px; }
+    </mj-style>
+  </mj-head>
+
+  <mj-body background-color="#F8FAFC" width="640px">
+
+    <!-- MASTHEAD -->
+    <mj-section background-color="#FFFFFF" padding="32px 40px 16px" border-bottom="1px solid #0F172A">
+      <mj-column width="50%">
+        <mj-image src="{{ brand.logo_url }}" alt="{{ brand.name }}" width="100px" align="left" padding="0" />
+      </mj-column>
+      <mj-column width="50%">
+        <mj-text css-class="issue-num" color="#64748B" align="right" padding="6px 0 0">
+          ED. {{ edicao_num }} · {{ mes_atual | upcase }}
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#FFFFFF" padding="0 40px">
+      <mj-column>
+        <mj-divider border-color="#0F172A" border-width="2px" padding="0" />
+      </mj-column>
+    </mj-section>
+
+    <!-- LEAD STORY -->
+    <mj-section background-color="#FFFFFF" padding="40px 40px 32px">
+      <mj-column>
+        <mj-text css-class="section-label" color="#F97316" padding="0 0 16px">
+          DESTAQUE DO MÊS
+        </mj-text>
+        <mj-text css-class="lead-headline" color="#0F172A" font-weight="700" padding="0 0 20px">
+          {{ destaque_titulo }}
+        </mj-text>
+        <mj-text font-size="17px" line-height="1.7" color="#334155" padding="0 0 24px">
+          {{ destaque_subtitulo }}
+        </mj-text>
+        <mj-button href="{{ destaque_link }}" align="left">
+          Ler mais →
+        </mj-button>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#FFFFFF" padding="0 40px">
+      <mj-column>
+        <mj-divider border-color="#E2E8F0" border-width="1px" padding="0" />
+      </mj-column>
+    </mj-section>
+
+    <!-- 3-COL HIGHLIGHTS -->
+    <mj-section background-color="#FFFFFF" padding="40px 40px 16px">
+      <mj-column>
+        <mj-text css-class="section-label" color="#F97316" padding="0 0 24px">
+          TRÊS COISAS QUE VOCÊ PRECISA SABER
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#FFFFFF" padding="0 40px 40px">
+      <mj-column width="33%" padding="0 8px 0 0">
+        <mj-text font-family="Georgia, serif" font-size="48px" font-weight="700" color="#F97316" line-height="1" padding="0 0 12px">01</mj-text>
+        <mj-text font-size="16px" font-weight="700" color="#0F172A" padding="0 0 8px">{{ destaque1_titulo }}</mj-text>
+        <mj-text font-size="13px" color="#64748B" line-height="1.6" padding="0">{{ destaque1_texto }}</mj-text>
+      </mj-column>
+      <mj-column width="33%" padding="0 4px">
+        <mj-text font-family="Georgia, serif" font-size="48px" font-weight="700" color="#0EA5E9" line-height="1" padding="0 0 12px">02</mj-text>
+        <mj-text font-size="16px" font-weight="700" color="#0F172A" padding="0 0 8px">{{ destaque2_titulo }}</mj-text>
+        <mj-text font-size="13px" color="#64748B" line-height="1.6" padding="0">{{ destaque2_texto }}</mj-text>
+      </mj-column>
+      <mj-column width="33%" padding="0 0 0 8px">
+        <mj-text font-family="Georgia, serif" font-size="48px" font-weight="700" color="#10B981" line-height="1" padding="0 0 12px">03</mj-text>
+        <mj-text font-size="16px" font-weight="700" color="#0F172A" padding="0 0 8px">{{ destaque3_titulo }}</mj-text>
+        <mj-text font-size="13px" color="#64748B" line-height="1.6" padding="0">{{ destaque3_texto }}</mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- AGENDA -->
+    <mj-section background-color="#0F172A" padding="48px 40px">
+      <mj-column>
+        <mj-text css-class="section-label" color="#F97316" padding="0 0 16px">
+          AGENDA DE {{ mes_proximo | upcase }}
+        </mj-text>
+        <mj-text font-family="Georgia, serif" font-size="32px" font-weight="700" color="#FFFFFF" line-height="1.2" padding="0 0 24px">
+          O que vem por aí
+        </mj-text>
+        <mj-table>
+          <tr style="border-bottom: 1px solid #334155;">
+            <td style="padding: 14px 0; font-size: 14px; color: #94A3B8; width: 100px;">{{ evento1_data }}</td>
+            <td style="padding: 14px 0; font-size: 15px; color: #FFFFFF; font-weight: 600;">{{ evento1_titulo }}</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #334155;">
+            <td style="padding: 14px 0; font-size: 14px; color: #94A3B8;">{{ evento2_data }}</td>
+            <td style="padding: 14px 0; font-size: 15px; color: #FFFFFF; font-weight: 600;">{{ evento2_titulo }}</td>
+          </tr>
+          <tr>
+            <td style="padding: 14px 0; font-size: 14px; color: #94A3B8;">{{ evento3_data }}</td>
+            <td style="padding: 14px 0; font-size: 15px; color: #FFFFFF; font-weight: 600;">{{ evento3_titulo }}</td>
+          </tr>
+        </mj-table>
+      </mj-column>
+    </mj-section>
+
+    <!-- TIP FROM TEAM -->
+    <mj-section background-color="#FEF3C7" padding="40px 40px">
+      <mj-column>
+        <mj-text css-class="section-label" color="#854F0B" padding="0 0 12px">
+          DICA DO TIME
+        </mj-text>
+        <mj-text font-family="Georgia, serif" font-size="22px" font-style="italic" line-height="1.5" color="#412402" padding="0 0 16px">
+          "{{ dica_texto }}"
+        </mj-text>
+        <mj-text font-size="13px" color="#854F0B" font-weight="600" padding="0">
+          — {{ dica_autor }}, {{ dica_cargo }}
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- FOOTER -->
+    <mj-section background-color="#FFFFFF" padding="32px 40px">
+      <mj-column>
+        <mj-text color="#64748B" font-size="12px" line-height="1.6" align="center" padding="0 0 8px">
+          {{ brand.name }} · {{ unidade }} · {{ brand.address }}<br/>
+          CNPJ {{ brand.cnpj }}
+        </mj-text>
+        <mj-text color="#94A3B8" font-size="11px" align="center" padding="0">
+          <a href="{{ link_unsubscribe }}" style="color: #64748B; text-decoration: underline;">Descadastrar</a> · <a href="{{ brand.privacy_url }}" style="color: #64748B; text-decoration: underline;">Privacidade</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+  </mj-body>
+</mjml>

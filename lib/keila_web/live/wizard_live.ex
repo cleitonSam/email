@@ -91,56 +91,82 @@ defmodule KeilaWeb.WizardLive do
     end
   end
 
-  # Step 2: Upload logo (auto-uploaded, just process)
+  # Step 2: Upload logo (assíncrono pra evitar timeout do socket LiveView)
   def handle_event("validate-logo", _params, socket), do: {:noreply, socket}
 
   def handle_event("submit-logo", _params, socket) do
     project_id = socket.assigns.current_project.id
     user_id = socket.assigns.current_user && socket.assigns.current_user.id
 
-    results =
+    # Consome entries SINCRONAMENTE (lê arquivos do disco rapidinho — só I/O local)
+    upload_data =
       consume_uploaded_entries(socket, :logo, fn meta, entry ->
-        upload = %{
-          path: meta.path,
-          filename: entry.client_name,
-          content_type: entry.client_type
-        }
+        case File.read(meta.path) do
+          {:ok, bytes} ->
+            {:ok, %{bytes: bytes, filename: entry.client_name, content_type: entry.client_type}}
 
-        case Media.upload_and_create(project_id, upload,
-               folder: "logos",
-               uploaded_by_user_id: user_id
-             ) do
-          {:ok, asset} -> {:ok, asset}
-          {:error, reason} -> {:postpone, reason}
+          _ ->
+            {:postpone, :read_failed}
         end
       end)
 
-    case results do
-      [%{url: url} | _] ->
-        case Brand.update(project_id, %{"logo_url" => url}) do
-          {:ok, project} ->
-            socket =
-              socket
-              |> assign(:brand, Brand.get(project))
-              |> assign(:current_project, project)
-              |> assign(:step, 3)
-              |> put_flash(:info, "Logo enviado! Agora deixa a IA extrair as cores...")
+    case upload_data do
+      [%{bytes: _} = data | _] ->
+        # Dispara upload pro ImageKit em background (pode levar 5-30s)
+        live_view_pid = self()
 
-            {:noreply, socket}
+        Task.start(fn ->
+          result =
+            Media.upload_and_create(project_id, data,
+              folder: "logos",
+              uploaded_by_user_id: user_id
+            )
 
-          _ ->
-            {:noreply, put_flash(socket, :error, "Logo subiu mas falhou ao salvar URL.")}
-        end
+          send(live_view_pid, {:logo_upload_done, result})
+        end)
+
+        {:noreply,
+         socket
+         |> assign(:saving, true)
+         |> put_flash(:info, "📤 Enviando logo... (pode levar uns segundos)")}
+
+      _ ->
+        {:noreply, put_flash(socket, :error, "Selecione um arquivo válido.")}
+    end
+  end
+
+  @impl true
+  def handle_info({:logo_upload_done, {:ok, asset}}, socket) do
+    project_id = socket.assigns.current_project.id
+
+    case Brand.update(project_id, %{"logo_url" => asset.url}) do
+      {:ok, project} ->
+        socket =
+          socket
+          |> assign(:brand, Brand.get(project))
+          |> assign(:current_project, project)
+          |> assign(:step, 3)
+          |> assign(:saving, false)
+          |> put_flash(:info, "✓ Logo enviado! Extraindo cores...")
+
+        {:noreply, socket}
 
       _ ->
         {:noreply,
-         put_flash(
-           socket,
-           :error,
-           "Falha no upload. Tenta uma imagem PNG/JPG menor que 5MB."
-         )}
+         socket
+         |> assign(:saving, false)
+         |> put_flash(:error, "Logo subiu mas falhou ao salvar URL.")}
     end
   end
+
+  def handle_info({:logo_upload_done, {:error, reason}}, socket) do
+    {:noreply,
+     socket
+     |> assign(:saving, false)
+     |> put_flash(:error, "Falha no upload: #{reason}")}
+  end
+
+  def handle_info(_msg, socket), do: {:noreply, socket}
 
   # Step 3: Cores extraídas via Color Thief — recebe via JS hook
   def handle_event(

@@ -71,12 +71,21 @@ defmodule Keila.Media do
   defp do_upload_and_create(project_id, upload, opts) do
     folder = Keyword.get(opts, :folder, "geral")
 
-    path = get_upload_field(upload, :path)
     filename = get_upload_field(upload, :filename) || "imagem"
     content_type = get_upload_field(upload, :content_type)
 
-    with :ok <- validate_upload(upload),
-         {:ok, file_data} <- File.read(path),
+    # Aceita 2 formatos:
+    # 1) %{path: ...} → lê do disco (uso clássico)
+    # 2) %{bytes: <binary>} → bytes já em memória (uso async no wizard)
+    file_data_result =
+      case upload do
+        %{bytes: bytes} when is_binary(bytes) -> {:ok, bytes}
+        %{path: path} when is_binary(path) -> File.read(path)
+        _ -> {:error, "Upload sem path nem bytes"}
+      end
+
+    with :ok <- validate_upload_size_and_type(upload, content_type),
+         {:ok, file_data} <- file_data_result,
          {:ok, imagekit_resp} <-
            ImageKit.upload_file(file_data, filename,
              folder: "/projects/#{project_id}/#{folder}",
@@ -146,31 +155,56 @@ defmodule Keila.Media do
   end
 
   defp validate_upload(upload) do
-    path = get_upload_field(upload, :path)
-    ct = get_upload_field(upload, :content_type)
-
     cond do
-      not is_binary(path) ->
-        {:error, "Arquivo inválido (sem path)"}
+      is_map(upload) and is_binary(Map.get(upload, :bytes)) ->
+        validate_upload_size_and_type(upload, Map.get(upload, :content_type))
 
-      not File.exists?(path) ->
-        {:error, "Arquivo temporário não encontrado"}
+      is_map(upload) and is_binary(Map.get(upload, :path)) ->
+        path = Map.get(upload, :path)
+        ct = Map.get(upload, :content_type)
 
-      is_binary(ct) and ct not in @allowed_mime_types ->
-        {:error,
-         "Tipo não suportado. Aceitamos: PNG, JPG, WebP, GIF, SVG (esse arquivo é #{ct})"}
+        cond do
+          not File.exists?(path) ->
+            {:error, "Arquivo temporário não encontrado"}
 
-      File.stat!(path).size > @max_file_size ->
-        size_mb = Float.round(File.stat!(path).size / 1024 / 1024, 1)
+          is_binary(ct) and ct not in @allowed_mime_types ->
+            {:error,
+             "Tipo não suportado. Aceitamos: PNG, JPG, WebP, GIF, SVG (esse arquivo é #{ct})"}
+
+          File.stat!(path).size > @max_file_size ->
+            size_mb = Float.round(File.stat!(path).size / 1024 / 1024, 1)
+            {:error, "Arquivo grande demais (#{size_mb}MB) — limite é 10MB"}
+
+          File.stat!(path).size == 0 ->
+            {:error, "Arquivo vazio"}
+
+          true ->
+            :ok
+        end
+
+      true ->
+        {:error, "Arquivo inválido"}
+    end
+  end
+
+  defp validate_upload_size_and_type(%{bytes: bytes}, content_type) do
+    cond do
+      is_binary(content_type) and content_type not in @allowed_mime_types ->
+        {:error, "Tipo não suportado: #{content_type}"}
+
+      byte_size(bytes) > @max_file_size ->
+        size_mb = Float.round(byte_size(bytes) / 1024 / 1024, 1)
         {:error, "Arquivo grande demais (#{size_mb}MB) — limite é 10MB"}
 
-      File.stat!(path).size == 0 ->
+      byte_size(bytes) == 0 ->
         {:error, "Arquivo vazio"}
 
       true ->
         :ok
     end
   end
+
+  defp validate_upload_size_and_type(_, _), do: :ok
 
   defp get_upload_field(%Plug.Upload{} = u, :path), do: u.path
   defp get_upload_field(%Plug.Upload{} = u, :content_type), do: u.content_type

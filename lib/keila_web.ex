@@ -131,7 +131,7 @@ defmodule KeilaWeb do
   end
 
   def static_paths,
-    do: ~w(css fonts images js social-icons favicon.ico robots.txt downloads api vendor)
+    do: ~w(css fonts images js social-icons favicon.ico robots.txt downloads api vendor email-previews)
 
   @doc """
   When used, dispatch to the appropriate controller/view/etc.

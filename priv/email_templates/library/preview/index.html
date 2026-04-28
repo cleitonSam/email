@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Galeria de Modelos — Fluxo Email MKT</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#F1F5F9;color:#0F172A;line-height:1.5}
+  header{background:#0C4A6E;color:#fff;padding:32px 40px;border-bottom:4px solid #F97316}
+  header h1{font-size:28px;font-weight:800}
+  header p{margin-top:8px;font-size:15px;color:#CBD5E1}
+  header .badge{display:inline-block;background:#F97316;color:#fff;padding:4px 10px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
+  .container{max-width:1400px;margin:0 auto;padding:32px 40px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:24px}
+  .card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(15,23,42,.08);transition:transform .15s,box-shadow .15s;display:flex;flex-direction:column}
+  .card:hover{transform:translateY(-4px);box-shadow:0 12px 24px rgba(15,23,42,.12)}
+  .card-iframe-wrap{position:relative;width:100%;height:380px;overflow:hidden;background:#F8FAFC;border-bottom:1px solid #E2E8F0}
+  .card-iframe-wrap iframe{position:absolute;top:0;left:0;width:200%;height:200%;transform:scale(.5);transform-origin:0 0;border:0;pointer-events:none}
+  .card-body{padding:20px}
+  .card-tag{font-size:11px;font-weight:700;color:#F97316;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+  .card-title{font-size:18px;font-weight:700;color:#0F172A;margin-bottom:6px}
+  .card-desc{font-size:13px;color:#64748B;margin-bottom:16px}
+  .card-actions{display:flex;gap:8px}
+  .btn{flex:1;padding:10px 14px;border-radius:6px;text-align:center;font-size:13px;font-weight:600;text-decoration:none;border:0;cursor:pointer;transition:opacity .15s}
+  .btn-primary{background:#F97316;color:#fff}
+  .btn-secondary{background:#F1F5F9;color:#475569}
+  .btn:hover{opacity:.85}
+  footer{padding:32px 40px;text-align:center;color:#64748B;font-size:13px;margin-top:24px;border-top:1px solid #E2E8F0;background:#fff}
+</style>
+</head>
+<body>
+<header>
+  <span class="badge">Modelos prontos</span>
+  <h1>Galeria de Modelos de Email</h1>
+  <p>8 modelos prontos pra academia. Clique em <strong>"Ver completo"</strong> pra abrir o email em tela cheia.</p>
+</header>
+
+<main class="container">
+  <div class="grid" id="grid"></div>
+</main>
+
+<footer>
+  Fluxo Email MKT &middot; Fluxo Digital Tech
+</footer>
+
+<script>
+const templates = [
+  {file:"01-boas-vindas-matricula.html",tag:"Lead novo",title:"Boas-vindas matrícula",desc:"Para novos alunos que acabaram de fechar plano. Acolhe e convida pra avaliação física."},
+  {file:"02-feliz-aniversario.html",tag:"Retenção",title:"Feliz aniversário",desc:"Mensagem afetiva no aniversário. Reforça vínculo e oferece presente da academia."},
+  {file:"03-oferta-limitada.html",tag:"Conversão",title:"Oferta limitada",desc:"Promoção com prazo. Senso de urgência sem ser apelativo. Bom pra leads frios."},
+  {file:"04-newsletter-mes.html",tag:"Comunidade",title:"Newsletter do mês",desc:"Resumo mensal: aulas novas, eventos, dicas. Mantém base aquecida."},
+  {file:"05-avaliacao-fisica.html",tag:"Engajamento",title:"Avaliação física",desc:"Convida o aluno pra fazer (ou refazer) avaliação. Reativa quem sumiu."},
+  {file:"06-convite-evento.html",tag:"Engajamento",title:"Convite evento",desc:"Aula aberta, workshop, desafio. Aumenta presença e fortalece comunidade."},
+  {file:"07-reativacao-aluno.html",tag:"Win-back",title:"Reativação aluno",desc:"Pra alunos sumidos há semanas. Tom acolhedor, sem culpa, com porta aberta."},
+  {file:"08-indicacao-amigo.html",tag:"Crescimento",title:"Indicação amigo",desc:"Programa de indicação. Aluno indica amigo e ambos ganham. Vira viral local."}
+];
+
+const grid = document.getElementById('grid');
+templates.forEach(t => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <div class="card-iframe-wrap">
+      <iframe src="${t.file}" loading="lazy" sandbox="allow-same-origin"></iframe>
+    </div>
+    <div class="card-body">
+      <div class="card-tag">${t.tag}</div>
+      <h3 class="card-title">${t.title}</h3>
+      <p class="card-desc">${t.desc}</p>
+      <div class="card-actions">
+        <a class="btn btn-primary" href="${t.file}" target="_blank">Ver completo</a>
+        <button class="btn btn-secondary" onclick="alert('Em breve: este botão vai criar uma campanha já com este modelo carregado.')">Usar este</button>
+      </div>
+    </div>
+  `;
+  grid.appendChild(card);
+});
+</script>
+</body>
+</html>

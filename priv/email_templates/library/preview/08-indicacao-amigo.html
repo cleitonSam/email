@@ -1,7 +1,8 @@
+<!-- FILE: undefined -->
 <!doctype html>
 <html lang="und" dir="auto" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
   <head>
-    <title>{{ first_name }}, indica um amigo e ganha um mês grátis</title>
+    <title>Carlos, indica um amigo e ganhem juntos</title>
     <!--[if !mso]><!-->
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <!--<![endif]-->
@@ -52,6 +53,13 @@
     </style>
     <![endif]-->
 
+    <!--[if !mso]><!-->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+    @import url(https://fonts.googleapis.com/css?family=Roboto:300,400,500,700);
+    </style>
+    <!--<![endif]-->
+
     <style type="text/css">
     @media only screen and (min-width: 480px) {
       .mj-column-per-100 {
@@ -87,25 +95,54 @@
     </style>
 
     <style type="text/css">
-    .duo {
-      display: inline-block;
-    }
     .pill {
-      background: #fef3c7;
-      color: #854f0b;
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: #c4ff00;
       font-size: 11px;
       font-weight: 700;
+      color: #0a0e27;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .reward-box {
+      border-radius: 12px;
+      padding: 32px;
+      text-align: center;
+    }
+    .reward-number {
+      font-size: 56px;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .reward-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #8b92a8;
       letter-spacing: 2px;
-      padding: 6px 12px;
-      border-radius: 999px;
+      text-transform: uppercase;
+    }
+    @media only screen and (max-width: 600px) {
+      .display-mobile {
+        font-size: 38px !important;
+        line-height: 1.1 !important;
+      }
+      .h2-mobile {
+        font-size: 24px !important;
+      }
+      .reward-number {
+        font-size: 42px !important;
+      }
     }
     </style>
   </head>
 
-  <body style="word-spacing:normal;background-color:#FFFBEB;">
-    <div style="display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;">Treinar acompanhado é melhor — e dá desconto pros dois.</div>
+  <body style="word-spacing:normal;background-color:#F4EFEA;">
+    <div style="display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;">Treinar com quem você ama. E ganhar prêmio nos dois lados.</div>
 
-    <div aria-label="{{ first_name }}, indica um amigo e ganha um mês grátis" aria-roledescription="email" role="article" lang="und" dir="auto" style="word-spacing:normal;background-color:#FFFBEB;">
+    <div aria-label="Carlos, indica um amigo e ganhem juntos" aria-roledescription="email" role="article" lang="und" dir="auto" style="word-spacing:normal;background-color:#F4EFEA;">
       <!-- HEADER -->
 
       <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:640px;" width="640" bgcolor="#FFFFFF" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
@@ -114,7 +151,7 @@
         <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#FFFFFF;background-color:#FFFFFF;width:100%;">
           <tbody>
             <tr>
-              <td style="direction:ltr;font-size:0px;padding:32px 40px;text-align:center;">
+              <td style="direction:ltr;font-size:0px;padding:28px 40px;text-align:center;">
                 <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:560px;" ><![endif]-->
 
                 <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
@@ -125,8 +162,14 @@
                           <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:collapse;border-spacing:0px;">
                             <tbody>
                               <tr>
-                                <td style="width:120px;">
-                                  <img alt="{{ brand.name }}" src="{{ brand.logo_url }}" style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;" width="120" height="auto" />
+                                <td style="width:140px;">
+                                  <img
+                                    alt="Academia Movimento"
+                                    src="https://placehold.co/240x80/0C4A6E/FFFFFF/png?text=ACADEMIA+MOVIMENTO"
+                                    style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;"
+                                    width="140"
+                                    height="auto"
+                                  />
                                 </td>
                               </tr>
                             </tbody>
@@ -146,37 +189,98 @@
 
       <!--[if mso | IE]></td></tr></table><![endif]-->
 
-      <!-- HERO -->
+      <!-- HERO IMAGE FULL-BLEED -->
 
-      <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:640px;" width="640" bgcolor="#FFFFFF" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+      <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:640px;" width="640" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><v:rect style="width:640px;" xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false"><v:fill origin="0.5, 0.5" position="0.5, 0.5" src="https://images.unsplash.com/photo-1551818255-e6e10975bc17?w=1280&q=85" type="tile" size="1,1" aspect="atleast" /><v:textbox style="mso-fit-shape-to-text:true" inset="0,0,0,0"><![endif]-->
 
-      <div style="background:#FFFFFF;background-color:#FFFFFF;margin:0px auto;max-width:640px;">
-        <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#FFFFFF;background-color:#FFFFFF;width:100%;">
+      <div
+        style="background:url('https://images.unsplash.com/photo-1551818255-e6e10975bc17?w=1280&q=85') center center / cover repeat;background-position:center center;background-repeat:repeat;background-size:cover;margin:0px auto;max-width:640px;"
+      >
+        <div style="line-height:0;font-size:0;">
+          <table
+            align="center"
+            background="https://images.unsplash.com/photo-1551818255-e6e10975bc17?w=1280&q=85"
+            border="0"
+            cellpadding="0"
+            cellspacing="0"
+            role="presentation"
+            style="background:url('https://images.unsplash.com/photo-1551818255-e6e10975bc17?w=1280&q=85') center center / cover repeat;background-position:center center;background-repeat:repeat;background-size:cover;width:100%;"
+          >
+            <tbody>
+              <tr>
+                <td style="direction:ltr;font-size:0px;padding:0;text-align:center;">
+                  <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:640px;" ><![endif]-->
+
+                  <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                    <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
+                      <tbody>
+                        <tr>
+                          <td style="font-size:0px;word-break:break-word;">
+                            <div style="height:80px;line-height:80px;">&#8202;</div>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td style="font-size:0px;word-break:break-word;">
+                            <div style="height:80px;line-height:80px;">&#8202;</div>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td style="font-size:0px;word-break:break-word;">
+                            <div style="height:80px;line-height:80px;">&#8202;</div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <!--[if mso | IE]></td></tr></table><![endif]-->
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!--[if mso | IE]></v:textbox></v:rect></td></tr></table><![endif]-->
+
+      <!-- HERO TEXT SECTION -->
+
+      <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:640px;" width="640" bgcolor="#0A0E27" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+
+      <div style="background:#0A0E27;background-color:#0A0E27;margin:0px auto;max-width:640px;">
+        <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#0A0E27;background-color:#0A0E27;width:100%;">
           <tbody>
             <tr>
-              <td style="direction:ltr;font-size:0px;padding:48px 40px 40px;text-align:center;">
+              <td style="direction:ltr;font-size:0px;padding:56px 40px 64px;text-align:center;">
                 <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:560px;" ><![endif]-->
 
                 <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
                   <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
                     <tbody>
                       <tr>
-                        <td align="left" style="font-size:0px;padding:0 0 24px;word-break:break-word;">
-                          <div style="font-family:Inter, -apple-system, 'Helvetica Neue', sans-serif;font-size:16px;line-height:1.7;text-align:left;color:#0F172A;"><span class="pill">PROGRAMA DE INDICAÇÃO</span></div>
+                        <td align="left" style="font-size:0px;padding:0 0 20px;word-break:break-word;">
+                          <div
+                            style="font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;font-size:11px;font-weight:700;letter-spacing:2.5px;line-height:1.65;text-align:left;text-transform:uppercase;color:#F97316;"
+                          >
+                            ▸ Programa de indicação
+                          </div>
                         </td>
                       </tr>
 
                       <tr>
-                        <td align="left" style="font-size:0px;padding:0 0 24px;word-break:break-word;">
-                          <div style="font-family:Inter, -apple-system, 'Helvetica Neue', sans-serif;font-size:48px;font-weight:800;line-height:1.1;text-align:left;color:#0F172A;">Quem treina junto, treina mais.</div>
+                        <td align="left" class="display-mobile" style="font-size:0px;padding:0 0 24px;word-break:break-word;">
+                          <div style="font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;font-size:56px;font-weight:800;letter-spacing:-1.5px;line-height:1.05;text-align:left;color:#FFFFFF;">
+                            Treina com quem você ama.
+                          </div>
                         </td>
                       </tr>
 
                       <tr>
                         <td align="left" style="font-size:0px;padding:0;word-break:break-word;">
-                          <div style="font-family:Inter, -apple-system, 'Helvetica Neue', sans-serif;font-size:18px;line-height:1.65;text-align:left;color:#475569;">
-                            {{ first_name }}
-                            , a gente reparou que você tá firme aí — disciplinado(a), aparecendo, evoluindo. Que tal trazer alguém pra essa jornada com você? Tem prêmio pros dois lados.
+                          <div style="font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;font-size:18px;line-height:1.65;text-align:left;color:#C8CCDB;">
+                            Carlos, a gente quer que você traga seu time pro treino. Vocês dois ganham. Sem pressa, sem stress.
                           </div>
                         </td>
                       </tr>
@@ -193,15 +297,55 @@
 
       <!--[if mso | IE]></td></tr></table><![endif]-->
 
-      <!-- DUO REWARD -->
+      <!-- DUAL REWARD SECTION -->
 
-      <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:640px;" width="640" bgcolor="#FEF3C7" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+      <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:640px;" width="640" bgcolor="#F4EFEA" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
 
-      <div style="background:#FEF3C7;background-color:#FEF3C7;margin:0px auto;max-width:640px;">
-        <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#FEF3C7;background-color:#FEF3C7;width:100%;">
+      <div style="background:#F4EFEA;background-color:#F4EFEA;margin:0px auto;max-width:640px;">
+        <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#F4EFEA;background-color:#F4EFEA;width:100%;">
           <tbody>
             <tr>
-              <td style="direction:ltr;font-size:0px;padding:48px 40px;text-align:center;">
+              <td style="direction:ltr;font-size:0px;padding:80px 40px 64px;text-align:center;">
+                <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:560px;" ><![endif]-->
+
+                <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                  <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
+                    <tbody>
+                      <tr>
+                        <td align="left" style="font-size:0px;padding:0 0 16px;word-break:break-word;">
+                          <div
+                            style="font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;font-size:11px;font-weight:700;letter-spacing:2.5px;line-height:1.65;text-align:left;text-transform:uppercase;color:#F97316;"
+                          >
+                            Prêmio pro casal
+                          </div>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td align="left" class="h2-mobile" style="font-size:0px;padding:0 0 48px;word-break:break-word;">
+                          <div style="font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;font-size:32px;font-weight:700;letter-spacing:-0.5px;line-height:1.2;text-align:left;color:#0A0E27;">
+                            Vocês ganham nos dois lados.
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <!--[if mso | IE]></td></tr></table><![endif]-->
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:640px;" width="640" bgcolor="#F4EFEA" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+
+      <div style="background:#F4EFEA;background-color:#F4EFEA;margin:0px auto;max-width:640px;">
+        <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#F4EFEA;background-color:#F4EFEA;width:100%;">
+          <tbody>
+            <tr>
+              <td style="direction:ltr;font-size:0px;padding:0 40px 64px;text-align:center;">
                 <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:280px;" ><![endif]-->
 
                 <div class="mj-column-per-50 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
@@ -212,28 +356,23 @@
                           <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="" width="100%">
                             <tbody>
                               <tr>
-                                <td align="left" style="font-size:0px;padding:0 0 12px;word-break:break-word;">
-                                  <div style="font-family:Inter, -apple-system, 'Helvetica Neue', sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;line-height:1.7;text-align:left;color:#854F0B;">PRA VOCÊ</div>
-                                </td>
-                              </tr>
-
-                              <tr>
-                                <td align="left" style="font-size:0px;padding:0 0 12px;word-break:break-word;">
-                                  <div style="font-family:Inter, -apple-system, 'Helvetica Neue', sans-serif;font-size:42px;font-weight:900;line-height:1;text-align:left;color:#0F172A;">1 mês</div>
-                                </td>
-                              </tr>
-
-                              <tr>
-                                <td align="left" style="font-size:0px;padding:0 0 12px;word-break:break-word;">
-                                  <div style="font-family:Inter, -apple-system, 'Helvetica Neue', sans-serif;font-size:20px;font-weight:700;line-height:1.3;text-align:left;color:#0F172A;">grátis</div>
-                                </td>
-                              </tr>
-
-                              <tr>
-                                <td align="left" style="font-size:0px;padding:0;word-break:break-word;">
-                                  <div style="font-family:Inter, -apple-system, 'Helvetica Neue', sans-serif;font-size:14px;line-height:1.5;text-align:left;color:#854F0B;">
-                                    Cada amigo que matricular vira um mês grátis na sua mensalidade. Sem teto.
-                                  </div>
+                                <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                                  <table
+                                    cellpadding="0"
+                                    cellspacing="0"
+                                    width="100%"
+                                    border="0"
+                                    style="color:#000000;font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;font-size:13px;line-height:22px;table-layout:auto;width:100%;border:none;"
+                                  >
+                                    <tr>
+                                      <td style="background:#FFF8F0;border-radius:12px;padding:32px;text-align:center;border-bottom:4px solid #F97316">
+                                        <div style="font-size:13px;font-weight:700;color:#8B92A8;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px">Você ganha</div>
+                                        <div style="font-size:56px;font-weight:800;line-height:1;color:#F97316;margin-bottom:4px">1 mês</div>
+                                        <div style="font-size:18px;font-weight:700;color:#0A0E27;margin-bottom:16px">grátis</div>
+                                        <div style="font-size:13px;color:#4A5167;line-height:1.55">Cada amigo que matricular = 1 mês grátis na sua mensalidade. Sem limite.</div>
+                                      </td>
+                                    </tr>
+                                  </table>
                                 </td>
                               </tr>
                             </tbody>
@@ -254,28 +393,23 @@
                           <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="" width="100%">
                             <tbody>
                               <tr>
-                                <td align="left" style="font-size:0px;padding:0 0 12px;word-break:break-word;">
-                                  <div style="font-family:Inter, -apple-system, 'Helvetica Neue', sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;line-height:1.7;text-align:left;color:#854F0B;">PRA SEU AMIGO</div>
-                                </td>
-                              </tr>
-
-                              <tr>
-                                <td align="left" style="font-size:0px;padding:0 0 12px;word-break:break-word;">
-                                  <div style="font-family:Inter, -apple-system, 'Helvetica Neue', sans-serif;font-size:42px;font-weight:900;line-height:1;text-align:left;color:#0F172A;">50% off</div>
-                                </td>
-                              </tr>
-
-                              <tr>
-                                <td align="left" style="font-size:0px;padding:0 0 12px;word-break:break-word;">
-                                  <div style="font-family:Inter, -apple-system, 'Helvetica Neue', sans-serif;font-size:20px;font-weight:700;line-height:1.3;text-align:left;color:#0F172A;">na 1ª mensalidade</div>
-                                </td>
-                              </tr>
-
-                              <tr>
-                                <td align="left" style="font-size:0px;padding:0;word-break:break-word;">
-                                  <div style="font-family:Inter, -apple-system, 'Helvetica Neue', sans-serif;font-size:14px;line-height:1.5;text-align:left;color:#854F0B;">
-                                    Quem você indica recebe meia matrícula no primeiro mês. Bom pra começar.
-                                  </div>
+                                <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                                  <table
+                                    cellpadding="0"
+                                    cellspacing="0"
+                                    width="100%"
+                                    border="0"
+                                    style="color:#000000;font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;font-size:13px;line-height:22px;table-layout:auto;width:100%;border:none;"
+                                  >
+                                    <tr>
+                                      <td style="background:#FFF8F0;border-radius:12px;padding:32px;text-align:center;border-bottom:4px solid #C4FF00">
+                                        <div style="font-size:13px;font-weight:700;color:#8B92A8;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px">Seu amigo ganha</div>
+                                        <div style="font-size:56px;font-weight:800;line-height:1;color:#C4FF00;margin-bottom:4px">50%</div>
+                                        <div style="font-size:18px;font-weight:700;color:#0A0E27;margin-bottom:16px">off matrícula</div>
+                                        <div style="font-size:13px;color:#4A5167;line-height:1.55">Desconto no primeiro mês. Depois entra na mensalidade normal.</div>
+                                      </td>
+                                    </tr>
+                                  </table>
                                 </td>
                               </tr>
                             </tbody>
@@ -303,7 +437,7 @@
         <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#FFFFFF;background-color:#FFFFFF;width:100%;">
           <tbody>
             <tr>
-              <td style="direction:ltr;font-size:0px;padding:56px 40px 32px;text-align:center;">
+              <td style="direction:ltr;font-size:0px;padding:80px 40px 64px;text-align:center;">
                 <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:560px;" ><![endif]-->
 
                 <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
@@ -311,13 +445,25 @@
                     <tbody>
                       <tr>
                         <td align="left" style="font-size:0px;padding:0 0 16px;word-break:break-word;">
-                          <div style="font-family:Inter, -apple-system, 'Helvetica Neue', sans-serif;font-size:13px;font-weight:700;letter-spacing:3px;line-height:1.7;text-align:left;color:#F59E0B;">COMO FUNCIONA</div>
+                          <div
+                            style="font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;font-size:11px;font-weight:700;letter-spacing:2.5px;line-height:1.65;text-align:left;text-transform:uppercase;color:#F97316;"
+                          >
+                            Como funciona
+                          </div>
                         </td>
                       </tr>
 
                       <tr>
-                        <td align="left" style="font-size:0px;padding:0 0 32px;word-break:break-word;">
-                          <div style="font-family:Inter, -apple-system, 'Helvetica Neue', sans-serif;font-size:32px;font-weight:800;line-height:1.2;text-align:left;color:#0F172A;">Três passos. Tudo no WhatsApp.</div>
+                        <td align="left" class="h2-mobile" style="font-size:0px;padding:0 0 12px;word-break:break-word;">
+                          <div style="font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;font-size:32px;font-weight:700;letter-spacing:-0.5px;line-height:1.2;text-align:left;color:#0A0E27;">
+                            Três passos bem simples.
+                          </div>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td align="left" style="font-size:0px;padding:0 0 48px;word-break:break-word;">
+                          <div style="font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;font-size:18px;line-height:1.6;text-align:left;color:#4A5167;">A gente cuida da burocracia. Você só indica.</div>
                         </td>
                       </tr>
                     </tbody>
@@ -337,7 +483,7 @@
         <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#FFFFFF;background-color:#FFFFFF;width:100%;">
           <tbody>
             <tr>
-              <td style="direction:ltr;font-size:0px;padding:0 40px 16px;text-align:center;">
+              <td style="direction:ltr;font-size:0px;padding:0 40px 64px;text-align:center;">
                 <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:560px;" ><![endif]-->
 
                 <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
@@ -350,168 +496,8 @@
                             cellspacing="0"
                             width="100%"
                             border="0"
-                            style="color:#000000;font-family:Inter, -apple-system, 'Helvetica Neue', sans-serif;font-size:13px;line-height:22px;table-layout:auto;width:100%;border:none;"
-                          >
-                            <tr>
-                              <td style="padding: 16px 0; vertical-align: top; width: 56px;">
-                                <div style="width: 40px; height: 40px; background: #0F172A; color: #FFFFFF; border-radius: 50%; line-height: 40px; text-align: center; font-weight: 800; font-size: 16px;">1</div>
-                              </td>
-                              <td style="padding: 16px 0;">
-                                <div style="font-size: 17px; font-weight: 700; color: #0F172A; margin-bottom: 4px;">Você nos manda o contato</div>
-                                <div style="font-size: 14px; color: #64748B; line-height: 1.6;">Nome e WhatsApp do(a) amigo(a). É só isso.</div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td style="padding: 16px 0; vertical-align: top;">
-                                <div style="width: 40px; height: 40px; background: #0F172A; color: #FFFFFF; border-radius: 50%; line-height: 40px; text-align: center; font-weight: 800; font-size: 16px;">2</div>
-                              </td>
-                              <td style="padding: 16px 0;">
-                                <div style="font-size: 17px; font-weight: 700; color: #0F172A; margin-bottom: 4px;">A gente faz o convite</div>
-                                <div style="font-size: 14px; color: #64748B; line-height: 1.6;">Mandamos uma mensagem dizendo que veio de você, com o cupom já aplicado.</div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td style="padding: 16px 0; vertical-align: top;">
-                                <div style="width: 40px; height: 40px; background: #F59E0B; color: #FFFFFF; border-radius: 50%; line-height: 40px; text-align: center; font-weight: 800; font-size: 16px;">3</div>
-                              </td>
-                              <td style="padding: 16px 0;">
-                                <div style="font-size: 17px; font-weight: 700; color: #0F172A; margin-bottom: 4px;">Vocês dois ganham</div>
-                                <div style="font-size: 14px; color: #64748B; line-height: 1.6;">Quando ele(a) matricula, seu mês grátis cai na sua próxima fatura. Automático.</div>
-                              </td>
-                            </tr>
-                          </table>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-
-                <!--[if mso | IE]></td></tr></table><![endif]-->
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!--[if mso | IE]></td></tr></table><![endif]-->
-
-      <!-- CTA -->
-
-      <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:640px;" width="640" bgcolor="#FFFFFF" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
-
-      <div style="background:#FFFFFF;background-color:#FFFFFF;margin:0px auto;max-width:640px;">
-        <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#FFFFFF;background-color:#FFFFFF;width:100%;">
-          <tbody>
-            <tr>
-              <td style="direction:ltr;font-size:0px;padding:32px 40px 48px;text-align:center;">
-                <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:560px;" ><![endif]-->
-
-                <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
-                  <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
-                    <tbody>
-                      <tr>
-                        <td align="center" style="font-size:0px;padding:18px 36px;word-break:break-word;">
-                          <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;line-height:100%;">
-                            <tbody>
-                              <tr>
-                                <td align="center" bgcolor="#10B981" role="presentation" style="border:none;border-radius:6px;cursor:auto;mso-padding-alt:10px 25px;background:#10B981;" valign="middle">
-                                  <a
-                                    href="{{ brand.whatsapp_url }}"
-                                    style="display:inline-block;background:#10B981;color:#FFFFFF;font-family:Inter, -apple-system, 'Helvetica Neue', sans-serif;font-size:16px;font-weight:700;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:6px;"
-                                    target="_blank"
-                                  >
-                                    Indicar pelo WhatsApp
-                                  </a>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </td>
-                      </tr>
-
-                      <tr>
-                        <td align="center" style="font-size:0px;padding:20px 0 0;word-break:break-word;">
-                          <div style="font-family:Inter, -apple-system, 'Helvetica Neue', sans-serif;font-size:13px;line-height:1.7;text-align:center;color:#94A3B8;">
-                            Ou prefere indicar por aqui? <a href="{{ link_indicacao }}" style="color: #F59E0B; font-weight: 600; text-decoration: none;">Formulário rápido</a>
-                            .
-                          </div>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-
-                <!--[if mso | IE]></td></tr></table><![endif]-->
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!--[if mso | IE]></td></tr></table><![endif]-->
-
-      <!-- TERMS -->
-
-      <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:640px;" width="640" bgcolor="#FAFAF9" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
-
-      <div style="background:#FAFAF9;background-color:#FAFAF9;margin:0px auto;max-width:640px;">
-        <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#FAFAF9;background-color:#FAFAF9;width:100%;">
-          <tbody>
-            <tr>
-              <td style="direction:ltr;font-size:0px;padding:24px 40px;text-align:center;">
-                <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:560px;" ><![endif]-->
-
-                <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
-                  <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
-                    <tbody>
-                      <tr>
-                        <td align="left" style="font-size:0px;padding:0;word-break:break-word;">
-                          <div style="font-family:Inter, -apple-system, 'Helvetica Neue', sans-serif;font-size:12px;line-height:1.6;text-align:left;color:#64748B;">
-                            <strong style="color: #0F172A;">Regras:</strong> Indicação válida apenas para novos alunos da {{ unidade }}
-                            . O bônus é creditado na fatura do mês seguinte à matrícula do indicado. Cada CPF só pode ser indicado uma vez.
-                          </div>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-
-                <!--[if mso | IE]></td></tr></table><![endif]-->
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!--[if mso | IE]></td></tr></table><![endif]-->
-
-      <!-- FOOTER -->
-
-      <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:640px;" width="640" bgcolor="#0F172A" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
-
-      <div style="background:#0F172A;background-color:#0F172A;margin:0px auto;max-width:640px;">
-        <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#0F172A;background-color:#0F172A;width:100%;">
-          <tbody>
-            <tr>
-              <td style="direction:ltr;font-size:0px;padding:32px 40px;text-align:center;">
-                <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:560px;" ><![endif]-->
-
-                <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
-                  <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
-                    <tbody>
-                      <tr>
-                        <td align="center" style="font-size:0px;padding:0 0 8px;word-break:break-word;">
-                          <div style="font-family:Inter, -apple-system, 'Helvetica Neue', sans-serif;font-size:11px;line-height:1.6;text-align:center;color:#94A3B8;">
-                            {{ brand.name }} · {{ unidade }} · {{ brand.address }} · CNPJ {{ brand.cnpj }}
-                          </div>
-                        </td>
-                      </tr>
-
-                      <tr>
-                        <td align="center" style="font-size:0px;padding:0;word-break:break-word;">
-                          <div style="font-family:Inter, -apple-system, 'Helvetica Neue', sans-serif;font-size:11px;line-height:1.7;text-align:center;color:#64748B;">
-                            <a href="{{ link_unsubscribe }}" style="color: #94A3B8; text-decoration: underline;">Descadastrar</a>
-                          </div>
+                            style="color:#000000;font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;font-size:13px;line-height:22px;table-layout:auto;width:100%;border:none;"
+                          ></table>
                         </td>
                       </tr>
                     </tbody>
@@ -529,3 +515,4 @@
     </div>
   </body>
 </html>
+

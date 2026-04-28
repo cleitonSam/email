@@ -40,6 +40,81 @@ defmodule Keila.Integrations.Evo do
     end
   end
 
+  @doc """
+  Faz fetch de prospects de uma LISTA de unidades EVO em paralelo.
+
+  Cada prospect retornado vem marcado com `:evo_unit_id` e `:evo_unit_name`
+  pra rastrear de qual academia veio.
+
+  ## Argumentos
+  - `units` — lista de `%Keila.Integrations.Evo.Unit{}`
+  - `opts` — mesmas opções de `fetch_prospects/1` (register_date_start, register_date_end)
+
+  ## Retorno
+  ```
+  {:ok, %{
+    prospects: [%{...}, ...],   # prospects normalizados de TODAS unidades
+    per_unit: %{unit_id => {:ok, count} | {:error, reason}},
+    total_fetched: integer,
+    total_with_email: integer
+  }}
+  ```
+  """
+  @spec fetch_prospects_multi([Keila.Integrations.Evo.Unit.t()], keyword()) ::
+          {:ok, map()}
+  def fetch_prospects_multi(units, opts \\ []) when is_list(units) do
+    # Roda em paralelo com timeout por unidade
+    results =
+      units
+      |> Task.async_stream(
+        fn unit ->
+          unit_opts =
+            Keyword.merge(opts,
+              evo_dns: unit.evo_dns,
+              evo_secret_key: unit.evo_secret_key
+            )
+
+          {unit, fetch_prospects(unit_opts)}
+        end,
+        max_concurrency: 5,
+        timeout: 30_000,
+        on_timeout: :kill_task
+      )
+      |> Enum.to_list()
+
+    {all_prospects, per_unit, total_fetched} =
+      Enum.reduce(results, {[], %{}, 0}, fn
+        {:ok, {unit, {:ok, prospects, total}}}, {acc, status, sum} ->
+          tagged =
+            Enum.map(prospects, fn p ->
+              p
+              |> Map.put(:evo_unit_id, unit.id)
+              |> Map.put(:evo_unit_name, unit.name)
+            end)
+
+          {acc ++ tagged, Map.put(status, unit.id, {:ok, length(tagged)}), sum + total}
+
+        {:ok, {unit, {:error, reason}}}, {acc, status, sum} ->
+          Logger.warning(
+            "[EVO Multi] Unidade #{unit.name} (#{unit.id}) falhou: #{inspect(reason)}"
+          )
+
+          {acc, Map.put(status, unit.id, {:error, reason}), sum}
+
+        {:exit, reason}, {acc, status, sum} ->
+          Logger.error("[EVO Multi] Task crashed: #{inspect(reason)}")
+          {acc, status, sum}
+      end)
+
+    {:ok,
+     %{
+       prospects: all_prospects,
+       per_unit: per_unit,
+       total_fetched: total_fetched,
+       total_with_email: length(all_prospects)
+     }}
+  end
+
   defp fetch_all_pages(start_date, end_date, auth) do
     fetch_all_pages(start_date, end_date, auth, 0, [])
   end

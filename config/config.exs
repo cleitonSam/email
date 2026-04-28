@@ -94,7 +94,8 @@ config :keila, Oban,
   queues: [
     mailer: 50,
     mailer_scheduler: 1,
-    updater: 1
+    updater: 1,
+    default: 10
   ],
   repo: Keila.Repo,
   plugins: [
@@ -103,7 +104,13 @@ config :keila, Oban,
      crontab: [
        {"* * * * *", Keila.Mailings.DeliverScheduledCampaignsWorker},
        {"* * * * *", Keila.Mailings.ScheduleWorker},
-       {"0 0 * * *", Keila.Instance.UpdateCronWorker}
+       {"0 0 * * *", Keila.Instance.UpdateCronWorker},
+       # Sync EVO + processa automações
+       {"*/15 * * * *", Keila.Automations.Workers.SyncWorker,
+        args: %{"task" => "sync_all"}},
+       # Processa runs vencidas a cada 5 min (sem fazer fetch EVO)
+       {"*/5 * * * *", Keila.Automations.Workers.SyncWorker,
+        args: %{"task" => "process_runs"}}
      ]}
   ]
 

@@ -1,12 +1,14 @@
 <div id="mjml-editor-toolbar" class="w-full sticky top-0 z-10" phx-update="ignore">
   <div class="wysiwyg--menu bg-gray-800 relative shadow-lg z-10 flex overflow-x-auto mt-4 rounded-t-xl border border-gray-700/50">
-    <button
-      title={gettext("Insert image")}
-      class="flex w-10 h-10 p-2 items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors"
-      @click.prevent="$dispatch('x-show-image-dialog')"
+    <a
+      title={gettext("Abrir biblioteca de imagens")}
+      href={"/projects/" <> @current_project.id <> "/media"}
+      target="_blank"
+      class="flex items-center gap-1.5 px-3 h-10 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors text-xs font-medium"
     >
       {render_icon(:photograph)}
-    </button>
+      <span>Biblioteca</span>
+    </a>
     <button
       title={gettext("Expand editor")}
       class="flex w-10 h-10 p-2 items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors"

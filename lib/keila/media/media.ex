@@ -1,0 +1,176 @@
+defmodule Keila.Media do
+  @moduledoc """
+  Context da biblioteca de mídia (imagens) por projeto.
+
+  Cada projeto (academia/cliente) tem sua própria biblioteca isolada, hospedada
+  no ImageKit. Esta camada coordena upload (via ImageKit), persistência da
+  metadata local, listagem e exclusão.
+  """
+
+  import Ecto.Query
+  alias Keila.Repo
+  alias Keila.Media.Asset
+  alias Keila.Integrations.ImageKit
+
+  @max_file_size 10 * 1024 * 1024
+  @allowed_mime_types ~w(image/png image/jpeg image/jpg image/webp image/gif image/svg+xml)
+
+  @spec list_assets(binary(), keyword()) :: [Asset.t()]
+  def list_assets(project_id, opts \\ []) do
+    folder = Keyword.get(opts, :folder)
+
+    Asset
+    |> where([a], a.project_id == ^project_id)
+    |> maybe_filter_folder(folder)
+    |> order_by([a], desc: a.inserted_at)
+    |> Repo.all()
+  end
+
+  defp maybe_filter_folder(query, nil), do: query
+
+  defp maybe_filter_folder(query, folder),
+    do: where(query, [a], a.folder == ^folder)
+
+  @spec count_by_folder(binary()) :: %{String.t() => non_neg_integer()}
+  def count_by_folder(project_id) do
+    Asset
+    |> where([a], a.project_id == ^project_id)
+    |> group_by([a], a.folder)
+    |> select([a], {a.folder, count(a.id)})
+    |> Repo.all()
+    |> Map.new()
+  end
+
+  @spec get_asset(binary()) :: Asset.t() | nil
+  def get_asset(asset_id), do: Repo.get(Asset, asset_id)
+
+  @doc """
+  Faz upload de um arquivo pro ImageKit e cria o registro local.
+
+  ## Argumentos
+  - `project_id` — projeto dono da imagem
+  - `upload` — `%Plug.Upload{}` ou map com :path, :filename, :content_type
+  - `opts` — `:folder`, `:tags`, `:alt_text`, `:uploaded_by_user_id`
+  """
+  @spec upload_and_create(binary(), Plug.Upload.t() | map(), keyword()) ::
+          {:ok, Asset.t()} | {:error, term()}
+  def upload_and_create(project_id, upload, opts \\ []) do
+    cond do
+      not ImageKit.configured?() ->
+        {:error,
+         "ImageKit não está configurado. Configure as variáveis IMAGEKIT_PUBLIC_KEY, IMAGEKIT_PRIVATE_KEY e IMAGEKIT_URL_ENDPOINT no .env e reinicie o servidor."}
+
+      is_nil(project_id) ->
+        {:error, "Projeto não identificado"}
+
+      true ->
+        do_upload_and_create(project_id, upload, opts)
+    end
+  end
+
+  defp do_upload_and_create(project_id, upload, opts) do
+    folder = Keyword.get(opts, :folder, "geral")
+
+    path = get_upload_field(upload, :path)
+    filename = get_upload_field(upload, :filename) || "imagem"
+    content_type = get_upload_field(upload, :content_type)
+
+    with :ok <- validate_upload(upload),
+         {:ok, file_data} <- File.read(path),
+         {:ok, imagekit_resp} <-
+           ImageKit.upload_file(file_data, filename,
+             folder: "/projects/#{project_id}/#{folder}",
+             content_type: content_type
+           ) do
+      params = %{
+        project_id: project_id,
+        imagekit_file_id: imagekit_resp["fileId"],
+        url: imagekit_resp["url"],
+        thumbnail_url: imagekit_resp["thumbnailUrl"] || imagekit_resp["url"],
+        filename: filename,
+        mime_type: content_type || imagekit_resp["fileType"] || "application/octet-stream",
+        size_bytes: imagekit_resp["size"],
+        width: imagekit_resp["width"],
+        height: imagekit_resp["height"],
+        folder: folder,
+        tags: Keyword.get(opts, :tags, []),
+        alt_text: Keyword.get(opts, :alt_text),
+        uploaded_by_user_id: Keyword.get(opts, :uploaded_by_user_id)
+      }
+
+      case params |> Asset.creation_changeset() |> Repo.insert() do
+        {:ok, asset} ->
+          {:ok, asset}
+
+        {:error, changeset} ->
+          # Se falhar no banco, deleta a imagem do ImageKit pra não deixar lixo
+          _ = ImageKit.delete_file(imagekit_resp["fileId"])
+          {:error, changeset_errors(changeset)}
+      end
+    end
+  end
+
+  defp changeset_errors(%Ecto.Changeset{errors: errors}) do
+    errors
+    |> Enum.map(fn {field, {msg, _}} -> "#{field}: #{msg}" end)
+    |> Enum.join(", ")
+  end
+
+  defp changeset_errors(other), do: inspect(other)
+
+  @doc """
+  Remove uma imagem (do ImageKit + do banco).
+  """
+  @spec delete_asset(Asset.t()) :: {:ok, Asset.t()} | {:error, term()}
+  def delete_asset(%Asset{} = asset) do
+    # Best-effort no ImageKit — se o arquivo não existe lá, deletar local mesmo assim
+    _ = ImageKit.delete_file(asset.imagekit_file_id)
+    Repo.delete(asset)
+  end
+
+  @spec update_asset(Asset.t(), map()) :: {:ok, Asset.t()} | {:error, Ecto.Changeset.t()}
+  def update_asset(%Asset{} = asset, params) do
+    asset
+    |> Asset.update_changeset(params)
+    |> Repo.update()
+  end
+
+  defp validate_upload(upload) do
+    path = get_upload_field(upload, :path)
+    ct = get_upload_field(upload, :content_type)
+
+    cond do
+      not is_binary(path) ->
+        {:error, "Arquivo inválido (sem path)"}
+
+      not File.exists?(path) ->
+        {:error, "Arquivo temporário não encontrado"}
+
+      is_binary(ct) and ct not in @allowed_mime_types ->
+        {:error,
+         "Tipo não suportado. Aceitamos: PNG, JPG, WebP, GIF, SVG (esse arquivo é #{ct})"}
+
+      File.stat!(path).size > @max_file_size ->
+        size_mb = Float.round(File.stat!(path).size / 1024 / 1024, 1)
+        {:error, "Arquivo grande demais (#{size_mb}MB) — limite é 10MB"}
+
+      File.stat!(path).size == 0 ->
+        {:error, "Arquivo vazio"}
+
+      true ->
+        :ok
+    end
+  end
+
+  defp get_upload_field(%Plug.Upload{} = u, :path), do: u.path
+  defp get_upload_field(%Plug.Upload{} = u, :content_type), do: u.content_type
+  defp get_upload_field(%Plug.Upload{} = u, :filename), do: u.filename
+  defp get_upload_field(map, key) when is_map(map), do: Map.get(map, key)
+  defp get_upload_field(_, _), do: nil
+
+  @spec max_file_size() :: integer()
+  def max_file_size, do: @max_file_size
+
+  @spec allowed_mime_types() :: [String.t()]
+  def allowed_mime_types, do: @allowed_mime_types
+end

@@ -346,6 +346,15 @@ if config_env() == :prod do
   end
 end
 
+# --- ImageKit (biblioteca de imagens por projeto) ---
+# Public key e URL endpoint podem ir pro frontend (são públicos por design).
+# Private key NUNCA é exposta — usada só pra autenticar uploads server-side.
+# Pra rotacionar, gere uma nova no painel do ImageKit > Developer > API Keys.
+config :keila, :imagekit,
+  public_key: System.get_env("IMAGEKIT_PUBLIC_KEY"),
+  private_key: System.get_env("IMAGEKIT_PRIVATE_KEY"),
+  url_endpoint: System.get_env("IMAGEKIT_URL_ENDPOINT")
+
 if config_env() == :test do
   db_url = System.get_env("DB_URL")
 

@@ -51,3 +51,7 @@ ops/dkim
 *.iml
 
 worktrees/*
+
+# Compilador local de previews MJML (não vai pro repo)
+/priv/email_templates/library/node_modules/
+/priv/email_templates/library/package-lock.json

@@ -1,122 +1,209 @@
 <mjml>
   <mj-head>
-    <mj-title>{{ first_name }}, faz tempo. Tudo bem por aí?</mj-title>
-    <mj-preview>A gente sente sua falta — e tem novidades pra te contar.</mj-preview>
+    <mj-title>{{ first_name }}, faz {{ dias_inativo | default: 'um tempo' }} dias. Tudo bem?</mj-title>
+    <mj-preview>A gente sente sua falta. Quer voltar com tudo sem culpa?</mj-preview>
     <mj-attributes>
-      <mj-all font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" />
-      <mj-text color="#0F172A" font-size="16px" line-height="1.7" />
-      <mj-button background-color="#10B981" color="#FFFFFF" font-size="16px" font-weight="700" padding="18px 36px" border-radius="6px" />
+      <mj-all font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" />
+      <mj-text color="#0A0E27" font-size="16px" line-height="1.65" />
+      <mj-button background-color="{{ brand.color_primary | default: '#FF5A1F' }}" color="#FFFFFF" font-size="15px" font-weight="700" padding="0" inner-padding="18px 36px" border-radius="999px" />
       <mj-section padding="0" />
+      <mj-class name="eyebrow" font-size="11px" font-weight="700" letter-spacing="2.5px" text-transform="uppercase" />
+      <mj-class name="display" font-size="56px" font-weight="800" line-height="1.05" letter-spacing="-1.5px" />
+      <mj-class name="h2" font-size="32px" font-weight="700" line-height="1.2" letter-spacing="-0.5px" />
+      <mj-class name="lead" font-size="18px" line-height="1.6" color="#4A5167" />
+      <mj-class name="caption" font-size="13px" color="#8B92A8" line-height="1.5" />
     </mj-attributes>
     <mj-style>
-      .em-dash { color: #10B981; font-weight: 700; }
-      .quiet-headline { font-family: Georgia, serif; font-weight: 400; line-height: 1.2; }
+      .reason-card { background: #FFF8F0; border-radius: 12px; padding: 24px; border-left: 4px solid {{ brand.color_primary | default: '#FF5A1F' }}; }
+      .reason-icon { display: inline-block; width: 40px; height: 40px; line-height: 40px; text-align: center; border-radius: 50%; background: {{ brand.color_primary | default: '#FF5A1F' }}; color: #FFFFFF; font-size: 18px; margin-right: 12px; }
+      @media only screen and (max-width: 600px) {
+        .display-mobile { font-size: 38px !important; line-height: 1.1 !important; }
+        .h2-mobile { font-size: 24px !important; }
+      }
     </mj-style>
   </mj-head>
 
-  <mj-body background-color="#F0FDF4" width="640px">
+  <mj-body background-color="#F4EFEA" width="640px">
 
     <!-- HEADER -->
-    <mj-section background-color="#FFFFFF" padding="32px 40px">
-      <mj-column>
-        <mj-image src="{{ brand.logo_url }}" alt="{{ brand.name }}" width="120px" align="left" padding="0" />
+    <mj-section background-color="#FFFFFF" padding="28px 40px">
+      <mj-column width="100%">
+        <mj-image src="{{ brand.logo_url | default: 'https://placehold.co/140x44/0A0E27/FFFFFF/png?text=ACADEMIA' }}" alt="{{ brand.name }}" width="140px" align="left" padding="0" />
       </mj-column>
     </mj-section>
 
-    <!-- LETTER STYLE -->
-    <mj-section background-color="#FFFFFF" padding="56px 40px 32px">
+    <!-- HERO IMAGE FULL-BLEED -->
+    <mj-section background-url="{{ hero_image | default: 'https://images.unsplash.com/photo-1518310383802-640c2de311b2?w=1280&q=85' }}" background-size="cover" background-position="center" padding="0">
       <mj-column>
-        <mj-text font-size="14px" color="#10B981" font-weight="600" padding="0 0 32px">
-          {{ data_atual }}
+        <mj-spacer height="80px" />
+        <mj-spacer height="80px" />
+        <mj-spacer height="80px" />
+      </mj-column>
+    </mj-section>
+
+    <!-- WARM WELCOME SECTION -->
+    <mj-section background-color="#0A0E27" padding="56px 40px 64px">
+      <mj-column>
+        <mj-text mj-class="eyebrow" color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="0 0 20px">
+          ▸ Ei, não sumiu não
         </mj-text>
-        <mj-text css-class="quiet-headline" font-size="40px" color="#0F172A" font-weight="700" font-family="Georgia, serif" padding="0 0 32px">
-          Olá, {{ first_name }}.
+        <mj-text mj-class="display" css-class="display-mobile" color="#FFFFFF" padding="0 0 24px">
+          Faz {{ dias_inativo | default: 'um tempo' }} dias.
         </mj-text>
-        <mj-text font-size="18px" color="#334155" line-height="1.7" padding="0 0 20px">
-          Vi aqui que você não dá as caras na {{ unidade }} desde {{ ultima_visita | default: "faz um tempinho" }}. Quis escrever sem agenda, só pra dizer que <span class="em-dash">a gente lembra de você</span> — e sente sua falta no rolê.
-        </mj-text>
-        <mj-text font-size="18px" color="#334155" line-height="1.7" padding="0 0 20px">
-          Não vou te perguntar o porquê, porque a vida é assim mesmo: bagunça às vezes. Trabalho aperta, cabeça aperta, agenda aperta.
-        </mj-text>
-        <mj-text font-size="18px" color="#334155" line-height="1.7" padding="0">
-          Mas se em algum momento bater aquela vontade de voltar, queria que você soubesse que <strong>a porta tá aberta</strong> — e que tem coisa nova por aqui que talvez te interesse.
+        <mj-text font-size="18px" color="#C8CCDB" line-height="1.65" padding="0">
+          A gente sente sua falta. Sem culpa, sem cobrança. Só falta mesmo.
         </mj-text>
       </mj-column>
     </mj-section>
 
-    <!-- WHATS NEW -->
-    <mj-section background-color="#FFFFFF" padding="32px 40px">
+    <!-- REASONS SECTION -->
+    <mj-section background-color="#F4EFEA" padding="80px 40px 64px">
       <mj-column>
-        <mj-divider border-color="#D1FAE5" border-width="1px" padding="0 0 32px" />
-        <mj-text font-size="13px" color="#059669" font-weight="700" letter-spacing="3px" padding="0 0 24px">
-          O QUE MUDOU DESDE A ÚLTIMA VEZ
+        <mj-text mj-class="eyebrow" color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="0 0 16px">
+          Entendemos
         </mj-text>
-        <mj-table>
-          <tr>
-            <td style="padding: 12px 0; font-size: 16px; color: #0F172A; line-height: 1.6;">
-              <span style="color: #10B981; font-weight: 700; margin-right: 12px;">→</span> {{ novidade1 }}
+        <mj-text mj-class="h2" css-class="h2-mobile" padding="0 0 12px">
+          Às vezes a vida aperta.
+        </mj-text>
+        <mj-text mj-class="lead" padding="0 0 48px">
+          Treino sem ritmo. Rotina que mudou. Perdeu o pique. Reconhecemos?
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#F4EFEA" padding="0 40px 24px">
+      <mj-column width="50%" padding="0 12px 24px 0">
+        <mj-text style="background:#FFF8F0;border-radius:12px;padding:24px;border-left:4px solid {{ brand.color_primary | default: '#FF5A1F' }}">
+          <div style="margin-bottom:12px">
+            <span style="display:inline-block;width:40px;height:40px;line-height:40px;text-align:center;border-radius:50%;background:{{ brand.color_primary | default: '#FF5A1F' }};color:#FFFFFF;font-size:18px;margin-right:12px">🎯</span>
+            <span style="font-size:16px;font-weight:700;color:#0A0E27;vertical-align:middle">Treino sem ritmo</span>
+          </div>
+          <div style="font-size:14px;color:#4A5167;line-height:1.55">
+            A gente volta do zero juntos. Sem pressa, sem exigência.
+          </div>
+        </mj-text>
+      </mj-column>
+      <mj-column width="50%" padding="0 0 24px 12px">
+        <mj-text style="background:#FFF8F0;border-radius:12px;padding:24px;border-left:4px solid #C4FF00">
+          <div style="margin-bottom:12px">
+            <span style="display:inline-block;width:40px;height:40px;line-height:40px;text-align:center;border-radius:50%;background:#C4FF00;color:#0A0E27;font-size:18px;margin-right:12px">📅</span>
+            <span style="font-size:16px;font-weight:700;color:#0A0E27;vertical-align:middle">Rotina mudou</span>
+          </div>
+          <div style="font-size:14px;color:#4A5167;line-height:1.55">
+            Remarcamos teu horário. Novo turno? Dia? Combina com a gente.
+          </div>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#F4EFEA" padding="0 40px 64px">
+      <mj-column width="50%" padding="0 12px 0 0">
+        <mj-text style="background:#FFF8F0;border-radius:12px;padding:24px;border-left:4px solid #8B92A8">
+          <div style="margin-bottom:12px">
+            <span style="display:inline-block;width:40px;height:40px;line-height:40px;text-align:center;border-radius:50%;background:#8B92A8;color:#FFFFFF;font-size:18px;margin-right:12px">💪</span>
+            <span style="font-size:16px;font-weight:700;color:#0A0E27;vertical-align:middle">Perdeu o pique</span>
+          </div>
+          <div style="font-size:14px;color:#4A5167;line-height:1.55">
+            Personal te reorienta. Começa leve, sobe quando você tiver pronto.
+          </div>
+        </mj-text>
+      </mj-column>
+      <mj-column width="50%" padding="0 0 0 12px">
+        <mj-text style="background:#FFF8F0;border-radius:12px;padding:24px;border-left:4px solid #1E2749">
+          <div style="margin-bottom:12px">
+            <span style="display:inline-block;width:40px;height:40px;line-height:40px;text-align:center;border-radius:50%;background:#1E2749;color:#FFFFFF;font-size:18px;margin-right:12px">🚪</span>
+            <span style="font-size:16px;font-weight:700;color:#0A0E27;vertical-align:middle">Só quer voltar calmo</span>
+          </div>
+          <div style="font-size:14px;color:#4A5167;line-height:1.55">
+            Primeira aula com profissional perto. Sem julgamento, sem aperto.
+          </div>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- OFFER SECTION -->
+    <mj-section background-color="#0A0E27" padding="64px 40px">
+      <mj-column>
+        <mj-text mj-class="eyebrow" color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="0 0 16px">
+          ▸ O que a gente prepara pra você
+        </mj-text>
+        <mj-text font-size="28px" font-weight="700" color="#FFFFFF" line-height="1.3" padding="0 0 32px">
+          Volta com tudo, mas sem pressa.
+        </mj-text>
+        <mj-table width="100%">
+          <tr style="border-bottom:1px solid #1E2749">
+            <td style="padding:16px 0;vertical-align:top;color:#FFFFFF">
+              <div style="font-size:15px;font-weight:700;margin-bottom:4px">✓ Sessão de volta com personal</div>
+              <div style="font-size:13px;color:#8B92A8">30 minutos só pra você, conversando o que mudou</div>
+            </td>
+          </tr>
+          <tr style="border-bottom:1px solid #1E2749">
+            <td style="padding:16px 0;vertical-align:top;color:#FFFFFF">
+              <div style="font-size:15px;font-weight:700;margin-bottom:4px">✓ Primeira semana orientada</div>
+              <div style="font-size:13px;color:#8B92A8">Profissional do seu lado nas primeiras aulas</div>
+            </td>
+          </tr>
+          <tr style="border-bottom:1px solid #1E2749">
+            <td style="padding:16px 0;vertical-align:top;color:#FFFFFF">
+              <div style="font-size:15px;font-weight:700;margin-bottom:4px">✓ Novo plano ajustado</div>
+              <div style="font-size:13px;color:#8B92A8">Ficha feita pra onde você tá agora, não onde tava</div>
             </td>
           </tr>
           <tr>
-            <td style="padding: 12px 0; font-size: 16px; color: #0F172A; line-height: 1.6;">
-              <span style="color: #10B981; font-weight: 700; margin-right: 12px;">→</span> {{ novidade2 }}
-            </td>
-          </tr>
-          <tr>
-            <td style="padding: 12px 0; font-size: 16px; color: #0F172A; line-height: 1.6;">
-              <span style="color: #10B981; font-weight: 700; margin-right: 12px;">→</span> {{ novidade3 }}
+            <td style="padding:16px 0;vertical-align:top;color:#FFFFFF">
+              <div style="font-size:15px;font-weight:700;margin-bottom:4px">✓ Sem taxa de retorno</div>
+              <div style="font-size:13px;color:#8B92A8">Volta como aluno novo — mesmos benefícios</div>
             </td>
           </tr>
         </mj-table>
       </mj-column>
     </mj-section>
 
-    <!-- OFFER -->
-    <mj-section background-color="#ECFDF5" padding="40px 40px">
+    <!-- CTA SECTION -->
+    <mj-section background-color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="64px 40px">
       <mj-column>
-        <mj-text font-size="13px" color="#059669" font-weight="700" letter-spacing="3px" padding="0 0 12px">
-          E COMO INCENTIVO
+        <mj-text mj-class="eyebrow" color="#FFFFFF" padding="0 0 16px">
+          Próximo passo
         </mj-text>
-        <mj-text font-size="28px" font-weight="700" color="#0F172A" line-height="1.3" padding="0 0 12px">
-          Primeira semana grátis pra você experimentar de novo.
+        <mj-text font-size="38px" font-weight="800" color="#FFFFFF" line-height="1.1" letter-spacing="-1px" padding="0 0 24px">
+          Bora marcar uma volta calma?
         </mj-text>
-        <mj-text font-size="15px" color="#64748B" line-height="1.6" padding="0">
-          Sem mensalidade, sem pegadinha. Você vem, treina, e decide se vale a pena. Simples assim.
+        <mj-text font-size="16px" color="#FFFFFF" line-height="1.6" padding="0 0 32px">
+          Avaliação rápida, plano novo em mãos, primeira aula essa semana.
         </mj-text>
-      </mj-column>
-    </mj-section>
-
-    <!-- CTA -->
-    <mj-section background-color="#FFFFFF" padding="48px 40px">
-      <mj-column>
-        <mj-button href="{{ link_agendamento }}" align="center">
-          Quero voltar a treinar
+        <mj-button href="{{ link_agendamento }}" align="left" background-color="#0A0E27" color="#FFFFFF">
+          Quero marcar meu retorno →
         </mj-button>
-        <mj-text font-size="14px" color="#64748B" align="center" padding="20px 0 0">
-          Ou se quiser desabafar primeiro, <a href="{{ brand.whatsapp_url }}" style="color: #10B981; text-decoration: none; font-weight: 600;">manda no WhatsApp</a>. Sem julgamento.
+        <mj-text font-size="13px" color="#FFE5D6" padding="20px 0 0">
+          Ou quer conversar antes? <a href="{{ brand.whatsapp_url }}" style="color:#FFFFFF;text-decoration:underline;font-weight:600">manda um áudio</a>
         </mj-text>
       </mj-column>
     </mj-section>
 
-    <!-- SIGNATURE -->
-    <mj-section background-color="#FFFFFF" padding="0 40px 56px">
+    <!-- CLOSING -->
+    <mj-section background-color="#0A0E27" padding="32px 40px 48px">
       <mj-column>
-        <mj-divider border-color="#D1FAE5" border-width="1px" padding="0 0 32px" />
-        <mj-text font-size="16px" font-style="italic" color="#475569" line-height="1.6" padding="0">
-          Te esperando,<br/>
-          <strong style="color: #0F172A; font-style: normal;">Equipe {{ brand.name }} — {{ unidade }}</strong>
+        <mj-divider border-color="#1E2749" border-width="1px" padding="0 0 24px" />
+        <mj-text font-size="16px" color="#C8CCDB" line-height="1.65" padding="0">
+          Esperando por você,<br/>
+          <strong style="color:#{{ brand.color_primary | default: '#FF5A1F' }}">Equipe {{ brand.name }}</strong> — {{ unidade }}
         </mj-text>
       </mj-column>
     </mj-section>
 
     <!-- FOOTER -->
-    <mj-section background-color="#0F172A" padding="32px 40px">
+    <mj-section background-color="#1E2749" padding="40px 40px 32px">
       <mj-column>
-        <mj-text color="#94A3B8" font-size="11px" line-height="1.6" align="center" padding="0 0 8px">
-          {{ brand.name }} · {{ unidade }} · {{ brand.address }} · CNPJ {{ brand.cnpj }}
+        <mj-image src="{{ brand.logo_url_white | default: 'https://placehold.co/140x44/0A0E27/FFFFFF/png?text=ACADEMIA' }}" alt="{{ brand.name }}" width="120px" align="left" padding="0 0 20px" />
+        <mj-text color="#8B92A8" font-size="13px" line-height="1.65" padding="0 0 16px">
+          <strong style="color:#FFFFFF">{{ brand.name }}</strong> — {{ unidade }}<br/>
+          {{ brand.address }}<br/>
+          CNPJ {{ brand.cnpj }}
         </mj-text>
-        <mj-text color="#64748B" font-size="11px" align="center" padding="0">
-          <a href="{{ link_unsubscribe }}" style="color: #94A3B8; text-decoration: underline;">Descadastrar</a>
+        <mj-divider border-color="#1E2749" border-width="1px" padding="8px 0 16px" />
+        <mj-text color="#5A6378" font-size="11px" line-height="1.6" padding="0">
+          Você recebeu este email porque foi aluno(a) de {{ unidade }}.<br/>
+          <a href="{{ link_unsubscribe }}" style="color:#8B92A8;text-decoration:underline">Descadastrar</a> · <a href="{{ brand.privacy_url }}" style="color:#8B92A8;text-decoration:underline">Privacidade</a>
         </mj-text>
       </mj-column>
     </mj-section>

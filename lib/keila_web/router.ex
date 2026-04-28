@@ -149,6 +149,8 @@ defmodule KeilaWeb.Router do
     delete "/projects/:project_id/segments", SegmentController, :delete
 
     get "/projects/:project_id/campaigns", CampaignController, :index
+    get "/projects/:project_id/campaigns/library", CampaignController, :library
+    post "/projects/:project_id/campaigns/library/:slug", CampaignController, :from_template
     get "/projects/:project_id/campaigns/new", CampaignController, :new
     post "/projects/:project_id/campaigns/new", CampaignController, :post_new
     get "/projects/:project_id/campaigns/:id", CampaignController, :edit
@@ -164,6 +166,9 @@ defmodule KeilaWeb.Router do
       only: [:index, :create, :new, :delete]
 
     get "/projects/:project_id/evo", EvoController, :index
+    get "/projects/:project_id/academias", UnitsController, :index
+    get "/projects/:project_id/media", MediaController, :index
+    get "/projects/:project_id/automacoes", AutomationsController, :index
   end
 
   # Public Routes

@@ -148,9 +148,21 @@
             exact: true,
             icon: :code
           )}
-          {menu_link(@conn, :evo, :index, [@current_project.id], gettext("EVO Integration"),
+          {menu_link(@conn, :units, :index, [@current_project.id], gettext("Minhas Academias"),
+            exact: true,
+            icon: :office_building
+          )}
+          {menu_link(@conn, :evo, :index, [@current_project.id], gettext("Importar EVO"),
             exact: true,
             icon: :lightning_bolt
+          )}
+          {menu_link(@conn, :automations, :index, [@current_project.id], gettext("Automações"),
+            exact: true,
+            icon: :sparkles
+          )}
+          {menu_link(@conn, :media, :index, [@current_project.id], gettext("Imagens"),
+            exact: true,
+            icon: :photograph
           )}
         <% end %>
         <div class="hidden sm:block sm:flex-grow"></div>

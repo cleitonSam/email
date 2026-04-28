@@ -1,10 +1,11 @@
 defmodule KeilaWeb.CampaignController do
   use KeilaWeb, :controller
   alias Keila.{Contacts, Mailings, Templates}
+  alias Keila.Templates.Library
   import Ecto.Changeset
   import Phoenix.LiveView.Controller
 
-  plug :authorize when action not in [:index, :new, :post_new, :delete]
+  plug :authorize when action not in [:index, :new, :post_new, :library, :from_template, :delete]
 
   @default_text_body File.read!("priv/email_templates/default-text-content.txt")
   @default_markdown_body File.read!("priv/email_templates/default-markdown-content.md")
@@ -87,6 +88,61 @@ defmodule KeilaWeb.CampaignController do
       "markdown" -> Map.put(params, "text_body", @default_markdown_body)
       "mjml" -> Map.put(params, "mjml_body", @default_mjml_body)
       _ -> Map.put(params, "text_body", @default_text_body)
+    end
+  end
+
+  @doc """
+  Galeria visual de modelos prontos.
+
+  Lista os 8 modelos da `Keila.Templates.Library` em cards com preview iframe.
+  Cada card tem botão "Usar este modelo" que dispara `from_template/2`.
+  """
+  @spec library(Plug.Conn.t(), map()) :: Plug.Conn.t()
+  def library(conn, _params) do
+    conn
+    |> assign(:models, Library.list_models())
+    |> put_meta(:title, gettext("Modelos de Email"))
+    |> render("library.html")
+  end
+
+  @doc """
+  Cria uma nova campanha pré-carregada com o MJML de um modelo da biblioteca.
+  Redireciona pro editor com tudo pronto pra editar.
+  """
+  @spec from_template(Plug.Conn.t(), map()) :: Plug.Conn.t()
+  def from_template(conn, %{"slug" => slug}) do
+    project = current_project(conn)
+
+    with {:ok, model} <- Library.get_model(slug),
+         {:ok, mjml} <- Library.load_mjml(slug) do
+      params = %{
+        "subject" => Library.default_subject(slug),
+        "mjml_body" => mjml,
+        "settings" => %{"type" => "mjml"},
+        "data" => %{"library_slug" => model.slug, "library_title" => model.title}
+      }
+
+      case Mailings.create_campaign(project.id, params) do
+        {:ok, campaign} ->
+          conn
+          |> put_flash(:info, gettext("Modelo \"%{title}\" carregado. Edite à vontade!", title: model.title))
+          |> redirect(to: Routes.campaign_path(conn, :edit, project.id, campaign.id))
+
+        {:error, _changeset} ->
+          conn
+          |> put_flash(:error, gettext("Não foi possível criar a campanha a partir do modelo."))
+          |> redirect(to: Routes.campaign_path(conn, :library, project.id))
+      end
+    else
+      {:error, :not_found} ->
+        conn
+        |> put_flash(:error, gettext("Modelo não encontrado."))
+        |> redirect(to: Routes.campaign_path(conn, :library, project.id))
+
+      {:error, _reason} ->
+        conn
+        |> put_flash(:error, gettext("Erro ao carregar o modelo."))
+        |> redirect(to: Routes.campaign_path(conn, :library, project.id))
     end
   end
 

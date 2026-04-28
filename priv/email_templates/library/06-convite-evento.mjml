@@ -56,34 +56,15 @@
       </mj-column>
     </mj-section>
 
-    <!-- EVENT INFO BOXES -->
-    <mj-section background-color="#F4EFEA" padding="80px 40px 64px">
-      <mj-column width="33%" padding="0 12px 0 0">
-        <mj-table width="100%">
+    <!-- EVENT INFO (uma caixa só — evita colunas estreitas que quebram o texto) -->
+    <mj-section background-color="#F4EFEA" padding="32px 24px">
+      <mj-column>
+        <mj-table width="100%" cellpadding="0" cellspacing="0">
           <tr>
-            <td style="background:#FFF8F0;border-radius:12px;padding:32px;text-align:center;border-bottom:4px solid {{ brand.color_primary | default: '#FF5A1F' }}">
-              <div style="font-size:14px;font-weight:700;color:#8B92A8;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px">Data</div>
-              <div style="font-size:42px;font-weight:800;color:#0A0E27;line-height:1">{{ data_evento | default: '28/04' }}</div>
-            </td>
-          </tr>
-        </mj-table>
-      </mj-column>
-      <mj-column width="33%" padding="0 12px">
-        <mj-table width="100%">
-          <tr>
-            <td style="background:#FFF8F0;border-radius:12px;padding:32px;text-align:center;border-bottom:4px solid #C4FF00">
-              <div style="font-size:14px;font-weight:700;color:#8B92A8;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px">Horário</div>
-              <div style="font-size:42px;font-weight:800;color:#0A0E27;line-height:1">{{ horario_evento | default: '18h' }}</div>
-            </td>
-          </tr>
-        </mj-table>
-      </mj-column>
-      <mj-column width="33%" padding="0 0 0 12px">
-        <mj-table width="100%">
-          <tr>
-            <td style="background:#FFF8F0;border-radius:12px;padding:32px;text-align:center;border-bottom:4px solid #8B92A8">
-              <div style="font-size:14px;font-weight:700;color:#8B92A8;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px">Duração</div>
-              <div style="font-size:42px;font-weight:800;color:#0A0E27;line-height:1">{{ duracao | default: '90min' }}</div>
+            <td style="background:#FFF8F0;border-radius:12px;padding:28px 24px;text-align:center;border-left:4px solid {{ brand.color_primary | default: '#FF5A1F' }}">
+              <div style="font-size:11px;font-weight:700;color:#8B92A8;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Quando</div>
+              <div style="font-size:22px;font-weight:800;color:#0A0E27;line-height:1.3;word-wrap:break-word">{{ data_evento | default: '28/04 (sábado)' }}</div>
+              <div style="font-size:14px;font-weight:600;color:#4A5167;margin-top:8px">{{ horario_evento | default: '18h' }} · {{ duracao | default: '90 min' }}</div>
             </td>
           </tr>
         </mj-table>

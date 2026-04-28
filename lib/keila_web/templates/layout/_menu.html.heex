@@ -148,6 +148,12 @@
             exact: true,
             icon: :code
           )}
+          <%= if not Keila.Projects.Brand.completed?(@current_project) do %>
+            {menu_link(@conn, :wizard, :show, [@current_project.id], gettext("✨ Configurar marca"),
+              exact: true,
+              icon: :sparkles
+            )}
+          <% end %>
           {menu_link(@conn, :units, :index, [@current_project.id], gettext("Minhas Academias"),
             exact: true,
             icon: :office_building

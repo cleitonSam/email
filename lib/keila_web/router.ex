@@ -173,6 +173,7 @@ defmodule KeilaWeb.Router do
     get "/projects/:project_id/media", MediaController, :index
     get "/projects/:project_id/media/list.json", MediaApiController, :list
     get "/projects/:project_id/automacoes", AutomationsController, :index
+    get "/projects/:project_id/setup", WizardController, :show
   end
 
   # Public Routes

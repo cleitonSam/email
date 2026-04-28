@@ -56,7 +56,9 @@ defmodule Keila.Mailings.Builder do
         "campaign",
         process_assigns(Map.take(campaign, [:data, :subject, :preview_text]))
       )
+      |> Map.put_new("brand", brand_for_project(campaign.project_id))
       |> Map.put("unsubscribe_link", unsubscribe_link)
+      |> Map.put("link_unsubscribe", unsubscribe_link)
       |> Map.put("assets_url", Routes.static_url(KeilaWeb.Endpoint, "/"))
       |> maybe_put_public_link(campaign)
 
@@ -69,6 +71,17 @@ defmodule Keila.Mailings.Builder do
     |> put_anti_spam_headers(campaign)
     |> maybe_put_precedence_header()
     |> maybe_put_tracking(campaign, recipient)
+  end
+
+  # Carrega o brand kit do projeto pra disponibilizar como {{ brand.* }} nos
+  # templates Liquid. Configurado pelo wizard /projects/:id/setup.
+  defp brand_for_project(project_id) do
+    case Keila.Projects.get_project(project_id) do
+      nil -> %{}
+      project -> Keila.Projects.Brand.get(project)
+    end
+  rescue
+    _ -> %{}
   end
 
   @default_preview_contact %Keila.Contacts.Contact{

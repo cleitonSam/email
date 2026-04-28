@@ -36,7 +36,7 @@ defmodule KeilaWeb.WizardLive do
         accept: ~w(.png .jpg .jpeg .webp .svg),
         max_entries: 1,
         max_file_size: @max_logo_size,
-        auto_upload: true
+        auto_upload: false
       )
 
     {:ok, socket}

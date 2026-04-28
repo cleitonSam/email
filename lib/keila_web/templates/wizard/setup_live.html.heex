@@ -39,7 +39,7 @@
       </div>
     <% end %>
 
-    <!-- ============== STEP 2: Logo ============== -->
+    <!-- ============== STEP 2: Logo (form HTML POST tradicional — sem LiveView upload) ============== -->
     <%= if @step == 2 do %>
       <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-8">
         <div class="text-5xl mb-5">🎨</div>
@@ -51,79 +51,46 @@
             ImageKit não configurado. Configure as variáveis IMAGEKIT_* e reinicie.
           </div>
         <% else %>
-          <form id="logo-form" phx-change="validate-logo" phx-submit="submit-logo">
-            <div
-              class="bg-gray-800/40 border-2 border-dashed border-gray-700 hover:border-fluxo-500/50 rounded-2xl p-10 text-center transition"
-              phx-drop-target={@uploads.logo.ref}
-            >
-              <%= if @uploads.logo.entries == [] do %>
-                <span class="text-5xl block mb-3">📁</span>
-                <p class="text-white font-semibold mb-1">Arraste o logo aqui</p>
-                <p class="text-sm text-gray-400 mb-5">ou clique no botão abaixo</p>
-                <label for={@uploads.logo.ref} class="button button--cta button--large cursor-pointer inline-block">
-                  📤 Escolher arquivo
-                </label>
-                <.live_file_input upload={@uploads.logo} class="sr-only" />
-              <% else %>
-                <%= for entry <- @uploads.logo.entries do %>
-                  <p class="text-white font-semibold mb-3">📄 {entry.client_name}</p>
-                  <%= if @saving do %>
-                    <p class="text-fluxo-300 text-sm mb-3">📤 Enviando pro servidor (5-15 segundos)...</p>
-                    <div class="w-full max-w-md mx-auto bg-gray-700 rounded-full h-3 overflow-hidden">
-                      <div class="bg-fluxo-500 h-3 rounded-full animate-pulse" style="width: 100%"></div>
-                    </div>
-                  <% else %>
-                    <p class="text-xs text-gray-400 mb-3">Pronto pra enviar</p>
-                  <% end %>
-                  <%= for err <- upload_errors(@uploads.logo, entry) do %>
-                    <p class="text-xs text-red-400 mt-2">{format_upload_error(err)}</p>
-                  <% end %>
-                <% end %>
-              <% end %>
+          <form id="logo-form" action={"/projects/" <> @current_project.id <> "/setup/logo"} method="post" enctype="multipart/form-data">
+            <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
+            <div class="bg-gray-800/40 border-2 border-dashed border-gray-700 hover:border-fluxo-500/50 rounded-2xl p-10 text-center transition">
+              <span class="text-5xl block mb-3">📁</span>
+              <p class="text-white font-semibold mb-1">Escolhe o logo</p>
+              <p class="text-sm text-gray-400 mb-5">PNG, JPG, WebP ou SVG (até 5MB)</p>
+              <label for="logo-input" class="button button--cta button--large cursor-pointer inline-block">
+                📤 Selecionar arquivo
+              </label>
+              <input
+                id="logo-input"
+                type="file"
+                name="logo"
+                accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml,.png,.jpg,.jpeg,.webp,.svg"
+                class="sr-only"
+                onchange="document.getElementById('selected-name').textContent = '📄 ' + (this.files[0]?.name || ''); document.getElementById('upload-actions').classList.remove('hidden'); document.getElementById('placeholder-actions').classList.add('hidden');"
+              />
+              <p id="selected-name" class="text-fluxo-300 text-sm font-medium mt-4"></p>
             </div>
 
-            <%= if @uploads.logo.entries != [] and not @saving do %>
-              <div class="mt-5 flex gap-3">
-                <button type="button" phx-click="prev-step" class="button">← Voltar</button>
-                <button type="submit" class="flex-1 button button--cta button--large">
-                  Enviar logo e extrair cores ✨
-                </button>
-              </div>
-            <% else %>
-              <div class="mt-5 flex gap-3">
-                <button type="button" phx-click="prev-step" class="button" disabled={@saving}>← Voltar</button>
-                <p class="flex-1 text-xs text-gray-500 self-center text-center">
-                  <%= if @saving do %>
-                    Aguarda alguns segundos... ☕
-                  <% else %>
-                    Escolhe um logo pra continuar
-                  <% end %>
-                </p>
-              </div>
-            <% end %>
+            <div id="upload-actions" class="mt-5 flex gap-3 hidden">
+              <button type="button" phx-click="prev-step" class="button">← Voltar</button>
+              <button
+                type="submit"
+                class="flex-1 button button--cta button--large"
+                onclick="this.disabled=true; this.innerHTML='📤 Enviando... aguarda 5-15 seg'; this.form.submit();"
+              >
+                Enviar logo e extrair cores ✨
+              </button>
+            </div>
+
+            <div id="placeholder-actions" class="mt-5 flex gap-3">
+              <button type="button" phx-click="prev-step" class="button">← Voltar</button>
+              <p class="flex-1 text-xs text-gray-500 self-center text-center">
+                Escolhe um logo pra continuar
+              </p>
+            </div>
           </form>
         <% end %>
       </div>
-
-      <!-- Auto-trigger submit ao selecionar arquivo (UX melhor) -->
-      <script>
-        (function() {
-          const form = document.getElementById('logo-form');
-          if (!form) return;
-          const input = form.querySelector('input[type="file"]');
-          if (!input || input.dataset.autoBound) return;
-          input.dataset.autoBound = '1';
-          // Pequeno delay pra LiveView atualizar entries antes do submit
-          input.addEventListener('change', () => {
-            setTimeout(() => {
-              if (input.files && input.files.length > 0) {
-                const submitBtn = form.querySelector('button[type="submit"]');
-                if (submitBtn && !submitBtn.disabled) submitBtn.click();
-              }
-            }, 300);
-          });
-        })();
-      </script>
     <% end %>
 
     <!-- ============== STEP 3: Cores automáticas (Color Thief) ============== -->

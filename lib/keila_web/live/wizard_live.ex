@@ -36,7 +36,8 @@ defmodule KeilaWeb.WizardLive do
         accept: ~w(.png .jpg .jpeg .webp .svg),
         max_entries: 1,
         max_file_size: @max_logo_size,
-        auto_upload: false
+        auto_upload: true,
+        progress: &handle_logo_progress/3
       )
 
     {:ok, socket}
@@ -91,6 +92,17 @@ defmodule KeilaWeb.WizardLive do
     end
   end
 
+  # Auto-progress: detecta quando upload local terminou e dispara processing
+  defp handle_logo_progress(:logo, entry, socket) do
+    if entry.done? do
+      # Upload client→server pronto. Dispara processing async.
+      send(self(), :process_logo)
+      {:noreply, assign(socket, :saving, true)}
+    else
+      {:noreply, socket}
+    end
+  end
+
   # Step 2: Upload logo (assíncrono pra evitar timeout do socket LiveView)
   def handle_event("validate-logo", _params, socket), do: {:noreply, socket}
 
@@ -136,6 +148,45 @@ defmodule KeilaWeb.WizardLive do
   end
 
   @impl true
+  def handle_info(:process_logo, socket) do
+    project_id = socket.assigns.current_project.id
+    user_id = socket.assigns.current_user && socket.assigns.current_user.id
+
+    upload_data =
+      consume_uploaded_entries(socket, :logo, fn meta, entry ->
+        case File.read(meta.path) do
+          {:ok, bytes} ->
+            {:ok, %{bytes: bytes, filename: entry.client_name, content_type: entry.client_type}}
+
+          _ ->
+            {:postpone, :read_failed}
+        end
+      end)
+
+    case upload_data do
+      [%{bytes: _} = data | _] ->
+        live_view_pid = self()
+
+        Task.start(fn ->
+          result =
+            Media.upload_and_create(project_id, data,
+              folder: "logos",
+              uploaded_by_user_id: user_id
+            )
+
+          send(live_view_pid, {:logo_upload_done, result})
+        end)
+
+        {:noreply, put_flash(socket, :info, "📤 Subindo logo pro servidor...")}
+
+      _ ->
+        {:noreply,
+         socket
+         |> assign(:saving, false)
+         |> put_flash(:error, "Não consegui ler o arquivo. Tenta de novo.")}
+    end
+  end
+
   def handle_info({:logo_upload_done, {:ok, asset}}, socket) do
     project_id = socket.assigns.current_project.id
 

@@ -39,21 +39,21 @@
       </div>
     <% end %>
 
-    <!-- ============== STEP 2: Logo ============== -->
+    <!-- ============== STEP 2: Logo (auto-upload — sem form/botão submit) ============== -->
     <%= if @step == 2 do %>
       <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-8">
         <div class="text-5xl mb-5">🎨</div>
         <h2 class="text-3xl font-bold text-white mb-2">Manda o logo da {@brand["name"]}</h2>
-        <p class="text-gray-400 mb-8">PNG, JPG ou SVG. Vou usar pra extrair sua paleta de cores automaticamente. ✨</p>
+        <p class="text-gray-400 mb-8">PNG, JPG ou SVG. Sobe automático e já extrai as cores. ✨</p>
 
         <%= if not @imagekit_configured? do %>
           <div class="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 mb-5 text-sm text-amber-200">
-            ImageKit não configurado. Configure as variáveis de ambiente IMAGEKIT_* e reinicie o servidor.
+            ImageKit não configurado. Configure as variáveis IMAGEKIT_* e reinicie.
           </div>
         <% else %>
-          <form phx-submit="submit-logo" phx-change="validate-logo" class="space-y-5">
+          <form id="logo-upload-form" phx-change="validate-logo" phx-submit="validate-logo">
             <div
-              class="bg-gray-800/40 border-2 border-dashed border-gray-700 hover:border-fluxo-500/50 rounded-2xl p-12 text-center transition cursor-pointer"
+              class="bg-gray-800/40 border-2 border-dashed border-gray-700 hover:border-fluxo-500/50 rounded-2xl p-12 text-center transition"
               phx-drop-target={@uploads.logo.ref}
             >
               <%= if @uploads.logo.entries == [] do %>
@@ -66,27 +66,31 @@
                 <.live_file_input upload={@uploads.logo} class="sr-only" />
               <% else %>
                 <%= for entry <- @uploads.logo.entries do %>
-                  <p class="text-white font-medium mb-2">📤 {entry.client_name}</p>
-                  <div class="w-full max-w-xs mx-auto bg-gray-700 rounded-full h-2">
-                    <div class="bg-fluxo-500 h-2 rounded-full transition-all" style={"width: #{entry.progress}%"}></div>
+                  <p class="text-white font-medium mb-3">📤 {entry.client_name}</p>
+                  <div class="w-full max-w-md mx-auto bg-gray-700 rounded-full h-3 overflow-hidden">
+                    <div class="bg-fluxo-500 h-3 rounded-full transition-all" style={"width: #{entry.progress}%"}></div>
                   </div>
+                  <p class="text-xs text-gray-400 mt-2">
+                    <%= cond do %>
+                      <% entry.progress < 100 -> %>Subindo... {entry.progress}%
+                      <% @saving -> %>📤 Enviando pro servidor...
+                      <% true -> %>✓ Pronto, processando...
+                    <% end %>
+                  </p>
                   <%= for err <- upload_errors(@uploads.logo, entry) do %>
                     <p class="text-xs text-red-400 mt-2">{format_upload_error(err)}</p>
                   <% end %>
                 <% end %>
               <% end %>
             </div>
-            <div class="flex gap-3">
-              <button type="button" phx-click="prev-step" class="button">← Voltar</button>
-              <button
-                type="submit"
-                disabled={@uploads.logo.entries == []}
-                class="flex-1 button button--cta disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Enviar e extrair cores ✨
-              </button>
-            </div>
           </form>
+
+          <div class="mt-5 flex gap-3">
+            <button type="button" phx-click="prev-step" class="button">← Voltar</button>
+            <p class="flex-1 text-xs text-gray-500 self-center text-center">
+              💡 Não precisa clicar nada — o upload começa automático ao escolher o arquivo
+            </p>
+          </div>
         <% end %>
       </div>
     <% end %>

@@ -3,7 +3,8 @@
     <button
       type="button"
       title="Inserir imagem da biblioteca"
-      @click.prevent={"open('/projects/" <> @current_project.id <> "/media/list.json')"}
+      data-project-id={@current_project.id}
+      x-on:click.prevent="open('/projects/' + $el.dataset.projectId + '/media/list.json')"
       class="flex items-center gap-1.5 px-3 h-10 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors text-xs font-medium"
     >
       {render_icon(:photograph)}
@@ -43,9 +44,9 @@
   <div
     x-show="isOpen"
     x-cloak
-    @keydown.escape.window="close()"
+    x-on:keydown.escape.window="close()"
     class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
-    @click.self="close()"
+    x-on:click.self="close()"
   >
     <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-4xl w-full max-h-[85vh] overflow-hidden flex flex-col shadow-2xl">
       <!-- Header -->
@@ -79,13 +80,13 @@
       <!-- Grid de imagens -->
       <div x-show="!loading && assets.length > 0" class="flex-1 overflow-y-auto p-6">
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-          <template x-for="asset in assets" :key="asset.id">
+          <template x-for="asset in assets" x-bind:key="asset.id">
             <button
               type="button"
-              @click="copyUrl(asset.url, asset.filename)"
+              x-on:click="copyUrl(asset.url, asset.filename)"
               class="group relative aspect-square bg-gray-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-fluxo-500 transition"
             >
-              <img :src="asset.thumbnail_url" :alt="asset.filename" loading="lazy" class="w-full h-full object-cover" />
+              <img x-bind:src="asset.thumbnail_url" x-bind:alt="asset.filename" loading="lazy" class="w-full h-full object-cover" />
               <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent opacity-0 group-hover:opacity-100 transition flex flex-col justify-end p-2.5">
                 <div class="text-xs font-semibold text-white truncate" x-text="asset.filename"></div>
                 <div class="text-[10px] text-fluxo-300 mt-0.5">Clique pra copiar URL</div>

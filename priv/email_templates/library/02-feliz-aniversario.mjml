@@ -10,20 +10,6 @@
     </mj-attributes>
     <mj-style>
       .confetti { letter-spacing: -2px; }
-      .pill { display: inline-block; padding: 6px 14px; border-radius: 999px; background: #F4EFEA; font-size: 12px; font-weight: 600; color: #0A0E27; letter-spacing: 0.3px; }
-
-      /* Mobile-first reforço: telas até 480px */
-      @media only screen and (max-width: 480px) {
-        .display-mobile div, .display-mobile p { font-size: 32px !important; line-height: 1.1 !important; letter-spacing: -0.5px !important; }
-        .h2-mobile div, .h2-mobile p { font-size: 22px !important; line-height: 1.2 !important; }
-        .lead-mobile div, .lead-mobile p { font-size: 15px !important; line-height: 1.55 !important; }
-        .number-mobile div, .number-mobile p { font-size: 36px !important; }
-        .stats-mobile div, .stats-mobile p { font-size: 22px !important; }
-        .quote-mobile div, .quote-mobile p { font-size: 19px !important; line-height: 1.4 !important; }
-        .cta-mobile div, .cta-mobile p { font-size: 26px !important; line-height: 1.15 !important; }
-        .hide-mobile { display: none !important; }
-      }
-      /* Tablets pequenos */
       @media only screen and (max-width: 600px) {
         .display-mobile { font-size: 44px !important; line-height: 1.05 !important; }
       }
@@ -76,7 +62,7 @@
     </mj-section>
 
     <!-- 3 BENEFÍCIOS DECORATIVOS -->
-    <mj-section background-color="#FFF8F0" padding="64px 40px 24px">
+    <mj-section background-color="#FFF8F0" padding="40px 24px 16px">
       <mj-column width="33%">
         <mj-text font-size="36px" align="center" padding="0 0 8px">🌟</mj-text>
         <mj-text font-size="13px" font-weight="700" color="#0A0E27" align="center" padding="0 0 4px">+50 aulas</mj-text>
@@ -100,4 +86,23 @@
         <mj-divider border-color="#EFE4D2" border-width="1px" padding="0 0 32px" />
         <mj-text font-size="16px" color="#4A5167" line-height="1.7" align="center" padding="0">
           Com carinho,<br/>
-          <strong style="color:#0A0E27">Equ
+          <strong style="color:#0A0E27">Equipe {{ brand.name }} — {{ unidade }}</strong>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- FOOTER -->
+    <mj-section background-color="#0A0E27" padding="32px 24px 24px">
+      <mj-column>
+        <mj-text color="#8B92A8" font-size="13px" line-height="1.65" align="center" padding="0 0 16px">
+          <strong style="color:#FFFFFF">{{ brand.name }}</strong> — {{ unidade }}<br/>
+          {{ brand.address }}
+        </mj-text>
+        <mj-text color="#5A6378" font-size="11px" line-height="1.6" align="center" padding="0">
+          <a href="{{ link_unsubscribe }}" style="color:#8B92A8;text-decoration:underline">Descadastrar</a> · <a href="{{ brand.privacy_url }}" style="color:#8B92A8;text-decoration:underline">Privacidade</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+  </mj-body>
+</mjml>

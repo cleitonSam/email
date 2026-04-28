@@ -124,7 +124,7 @@
                 phx-value-id={unit.id}
                 data-confirm={"Remover \"#{unit.name}\"? Os contatos importados continuam aqui, mas a academia será desconectada."}
                 class="px-3 py-2 text-sm font-medium text-red-400 bg-red-500/10 hover:bg-red-500/20 rounded-lg"
-              >{render_icon(:trash)}</button>
+              ><span class="inline-flex h-4 w-4">{render_icon(:trash)}</span></button>
             </div>
           </div>
         <% end %>
@@ -142,7 +142,7 @@
               <h3 class="text-xl font-bold text-white">{if @editing, do: "Editar academia", else: "Adicionar academia"}</h3>
               <p class="text-sm text-gray-400 mt-1">Só 3 campos. Em 30 segundos tá pronto.</p>
             </div>
-            <button type="button" phx-click="close-form" class="text-gray-400 hover:text-white">{render_icon(:x)}</button>
+            <button type="button" phx-click="close-form" class="text-gray-400 hover:text-white"><span class="inline-flex h-5 w-5">{render_icon(:x)}</span></button>
           </div>
 
           <div class="space-y-4">

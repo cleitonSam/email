@@ -85,7 +85,7 @@
                     phx-value-ref={entry.ref}
                     class="text-gray-400 hover:text-red-400 px-2"
                   >
-                    {render_icon(:x)}
+                    <span class="inline-flex h-5 w-5">{render_icon(:x)}</span>
                   </button>
                 </div>
                 <%= for err <- upload_errors(@uploads.image, entry) do %>
@@ -177,7 +177,7 @@
           <div class="p-6">
             <div class="flex justify-between mb-4">
               <h3 class="text-lg font-semibold text-white truncate">{@selected_asset.filename}</h3>
-              <button phx-click="close-asset" class="text-gray-400 hover:text-white">{render_icon(:x)}</button>
+              <button phx-click="close-asset" class="text-gray-400 hover:text-white"><span class="inline-flex h-5 w-5">{render_icon(:x)}</span></button>
             </div>
 
             <dl class="text-sm space-y-1 mb-6 text-gray-400">

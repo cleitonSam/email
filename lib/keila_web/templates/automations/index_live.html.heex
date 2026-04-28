@@ -62,7 +62,7 @@
                 phx-value-id={a.id}
                 data-confirm={"Remover automação \"#{a.name}\"?"}
                 class="px-2 py-1.5 text-xs text-red-400 bg-red-500/10 hover:bg-red-500/20 rounded-lg"
-              >{render_icon(:trash)}</button>
+              ><span class="inline-flex h-4 w-4">{render_icon(:trash)}</span></button>
             </div>
           </div>
         <% end %>
@@ -119,7 +119,7 @@
                 <p class="text-xs text-gray-400 mt-0.5">{length(@current_recipe.steps)} email(s) na cadência</p>
               </div>
             </div>
-            <button type="button" phx-click="close-recipe" class="text-gray-400 hover:text-white">{render_icon(:x)}</button>
+            <button type="button" phx-click="close-recipe" class="text-gray-400 hover:text-white"><span class="inline-flex h-5 w-5">{render_icon(:x)}</span></button>
           </div>
 
           <p class="text-sm text-gray-300 mb-6">{@current_recipe.description}</p>

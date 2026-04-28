@@ -67,12 +67,12 @@
         href={Routes.project_path(@conn, :show, project.id)}
       >
         <!-- Top accent bar -->
-        <div class={"h-1 w-full bg-gradient-to-r #{Enum.at(["from-fluxo-500 to-cyan-400", "from-purple-500 to-fluxo-400", "from-cyan-500 to-fluxo-500", "from-emerald-500 to-cyan-400", "from-rose-500 to-orange-400", "from-amber-500 to-fluxo-400"], rem(idx, 6))}"}></div>
+        <div class={"h-1 w-full bg-gradient-to-r #{Enum.at(["from-fluxo-500 to-cyan-400", "from-purple-500 to-fluxo-400", "from-cyan-500 to-fluxo-500", "from-fluxo-500 to-cyan-400", "from-rose-500 to-orange-400", "from-amber-500 to-fluxo-400"], rem(idx, 6))}"}></div>
 
         <div class="p-6">
           <div class="flex items-start gap-4">
             <!-- Avatar -->
-            <div class={"flex-shrink-0 h-12 w-12 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg #{Enum.at(["bg-gradient-to-br from-fluxo-600 to-cyan-500 shadow-fluxo-500/20", "bg-gradient-to-br from-purple-600 to-fluxo-500 shadow-purple-500/20", "bg-gradient-to-br from-cyan-600 to-fluxo-500 shadow-cyan-500/20", "bg-gradient-to-br from-emerald-600 to-cyan-500 shadow-emerald-500/20", "bg-gradient-to-br from-rose-600 to-orange-500 shadow-rose-500/20", "bg-gradient-to-br from-amber-600 to-fluxo-500 shadow-amber-500/20"], rem(idx, 6))}"}>
+            <div class={"flex-shrink-0 h-12 w-12 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg #{Enum.at(["bg-gradient-to-br from-fluxo-600 to-cyan-500 shadow-fluxo-500/20", "bg-gradient-to-br from-purple-600 to-fluxo-500 shadow-purple-500/20", "bg-gradient-to-br from-cyan-600 to-fluxo-500 shadow-cyan-500/20", "bg-gradient-to-br from-fluxo-600 to-cyan-500 shadow-fluxo-500/20", "bg-gradient-to-br from-rose-600 to-orange-500 shadow-rose-500/20", "bg-gradient-to-br from-amber-600 to-fluxo-500 shadow-amber-500/20"], rem(idx, 6))}"}>
               {String.upcase(String.first(project.name))}
             </div>
             <div class="flex-grow min-w-0">

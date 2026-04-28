@@ -3,7 +3,7 @@
   <div class="container flex py-8 sm:py-11 mb-6">
     <div class="flex-grow gap-4 flex flex-col sm:flex-row sm:items-center">
       <div class="flex items-center gap-4 flex-grow">
-        <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+        <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-fluxo-400 to-cyan-400 flex items-center justify-center shadow-lg shadow-fluxo-500/20">
           <span class="inline-flex h-6 w-6 text-white">{render_icon(:lightning_bolt)}</span>
         </div>
         <div>
@@ -14,7 +14,7 @@
       <div class="flex items-center gap-3">
         <button
           phx-click="toggle-settings"
-          class={"px-4 py-2.5 rounded-xl border text-sm font-medium transition-all flex items-center gap-2 #{if @show_settings, do: "bg-emerald-500/20 border-emerald-500/30 text-emerald-300", else: "bg-gray-800/80 border-gray-700/50 text-gray-300 hover:text-white hover:bg-gray-700/80"}"}
+          class={"px-4 py-2.5 rounded-xl border text-sm font-medium transition-all flex items-center gap-2 #{if @show_settings, do: "bg-fluxo-500/20 border-fluxo-500/30 text-fluxo-300", else: "bg-gray-800/80 border-gray-700/50 text-gray-300 hover:text-white hover:bg-gray-700/80"}"}
         >
           <span class="inline-flex h-4 w-4">{render_icon(:cog)}</span>
           {gettext("Settings")}
@@ -28,8 +28,8 @@
     <div class="container mb-8 animate-fade-in">
       <div class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6">
         <div class="flex items-center gap-3 mb-6">
-          <div class="h-8 w-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
-            <span class="inline-flex h-4 w-4 text-emerald-400">{render_icon(:key)}</span>
+          <div class="h-8 w-8 rounded-lg bg-fluxo-500/20 flex items-center justify-center">
+            <span class="inline-flex h-4 w-4 text-fluxo-400">{render_icon(:key)}</span>
           </div>
           <div>
             <h3 class="font-semibold text-white">{gettext("EVO API Configuration")}</h3>
@@ -45,7 +45,7 @@
                 name="evo_dns"
                 value={@evo_dns}
                 placeholder="your-gym.evo.com.br"
-                class="w-full rounded-xl bg-gray-800/80 border border-gray-700/50 text-gray-200 px-4 py-3 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all text-sm"
+                class="w-full rounded-xl bg-gray-800/80 border border-gray-700/50 text-gray-200 px-4 py-3 focus:ring-2 focus:ring-fluxo-500/50 focus:border-fluxo-500/50 transition-all text-sm"
               />
               <p class="text-xs text-gray-500 mt-1">{gettext("Your EVO platform identifier")}</p>
             </div>
@@ -56,7 +56,7 @@
                 name="evo_secret_key"
                 value={@evo_secret}
                 placeholder="••••••••••••"
-                class="w-full rounded-xl bg-gray-800/80 border border-gray-700/50 text-gray-200 px-4 py-3 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all text-sm"
+                class="w-full rounded-xl bg-gray-800/80 border border-gray-700/50 text-gray-200 px-4 py-3 focus:ring-2 focus:ring-fluxo-500/50 focus:border-fluxo-500/50 transition-all text-sm"
               />
               <p class="text-xs text-gray-500 mt-1">{gettext("Your EVO API secret key")}</p>
             </div>
@@ -64,13 +64,13 @@
           <div class="flex items-center gap-4">
             <button
               type="submit"
-              class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-medium transition-all shadow-lg hover:shadow-emerald-500/25 text-sm flex items-center gap-2"
+              class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-fluxo-500 to-cyan-500 hover:from-fluxo-600 hover:to-cyan-600 text-white font-medium transition-all shadow-lg hover:shadow-fluxo-500/25 text-sm flex items-center gap-2"
             >
               <span class="inline-flex h-4 w-4">{render_icon(:check)}</span>
               {gettext("Save Configuration")}
             </button>
             <%= if @settings_saved do %>
-              <span class="text-sm text-emerald-400 flex items-center gap-1 animate-fade-in">
+              <span class="text-sm text-fluxo-400 flex items-center gap-1 animate-fade-in">
                 <span class="inline-flex h-4 w-4">{render_icon(:check_circle)}</span>
                 {gettext("Saved!")}
               </span>
@@ -109,7 +109,7 @@
               type="date"
               name="date_start"
               value={@date_start}
-              class="w-full rounded-xl bg-gray-800/80 border border-gray-700/50 text-gray-200 px-4 py-3 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
+              class="w-full rounded-xl bg-gray-800/80 border border-gray-700/50 text-gray-200 px-4 py-3 focus:ring-2 focus:ring-fluxo-500/50 focus:border-fluxo-500/50 transition-all"
             />
           </div>
           <div class="flex-grow">
@@ -118,13 +118,13 @@
               type="date"
               name="date_end"
               value={@date_end}
-              class="w-full rounded-xl bg-gray-800/80 border border-gray-700/50 text-gray-200 px-4 py-3 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
+              class="w-full rounded-xl bg-gray-800/80 border border-gray-700/50 text-gray-200 px-4 py-3 focus:ring-2 focus:ring-fluxo-500/50 focus:border-fluxo-500/50 transition-all"
             />
           </div>
           <button
             type="submit"
             disabled={@loading}
-            class="px-8 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-medium transition-all duration-200 shadow-lg hover:shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap"
+            class="px-8 py-3 rounded-xl bg-gradient-to-r from-fluxo-500 to-cyan-500 hover:from-fluxo-600 hover:to-cyan-600 text-white font-medium transition-all duration-200 shadow-lg hover:shadow-fluxo-500/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap"
           >
             <%= if @loading do %>
               <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -154,9 +154,9 @@
     <!-- Import Success -->
     <%= if @import_done do %>
       <div class="container mb-6">
-        <div class="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 flex gap-3 items-center animate-fade-in">
-          <span class="inline-flex h-5 w-5 text-emerald-400 shrink-0">{render_icon(:check_circle)}</span>
-          <p class="text-sm text-emerald-300">
+        <div class="bg-fluxo-500/10 border border-fluxo-500/30 rounded-2xl p-4 flex gap-3 items-center animate-fade-in">
+          <span class="inline-flex h-5 w-5 text-fluxo-400 shrink-0">{render_icon(:check_circle)}</span>
+          <p class="text-sm text-fluxo-300">
             {gettext("%{count} contacts imported successfully! Segment \"Prospects EVO\" created.", count: @imported_count)}
           </p>
         </div>
@@ -179,8 +179,8 @@
           </div>
           <div class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-xl p-4">
             <div class="flex items-center gap-3 mb-2">
-              <div class="h-8 w-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
-                <span class="inline-flex h-4 w-4 text-emerald-400">{render_icon(:at_symbol)}</span>
+              <div class="h-8 w-8 rounded-lg bg-fluxo-500/20 flex items-center justify-center">
+                <span class="inline-flex h-4 w-4 text-fluxo-400">{render_icon(:at_symbol)}</span>
               </div>
               <span class="text-xs font-medium text-gray-400 uppercase tracking-wider">{gettext("With Email")}</span>
             </div>
@@ -224,7 +224,7 @@
                 name="search"
                 value={@search}
                 placeholder={gettext("Search by name, email, phone...")}
-                class="w-full rounded-xl bg-gray-800/80 border border-gray-700/50 text-gray-200 pl-11 pr-4 py-3 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all text-sm"
+                class="w-full rounded-xl bg-gray-800/80 border border-gray-700/50 text-gray-200 pl-11 pr-4 py-3 focus:ring-2 focus:ring-fluxo-500/50 focus:border-fluxo-500/50 transition-all text-sm"
                 phx-debounce="300"
               />
             </div>
@@ -286,10 +286,10 @@
                   <tr
                     phx-click="toggle-select"
                     phx-value-email={prospect.email}
-                    class={"cursor-pointer transition-colors #{if MapSet.member?(@selected, prospect.email), do: "bg-emerald-500/10 hover:bg-emerald-500/15", else: "hover:bg-gray-800/40"}"}
+                    class={"cursor-pointer transition-colors #{if MapSet.member?(@selected, prospect.email), do: "bg-fluxo-500/10 hover:bg-fluxo-500/15", else: "hover:bg-gray-800/40"}"}
                   >
                     <td class="px-4 py-3">
-                      <div class={"h-5 w-5 rounded-md border-2 flex items-center justify-center transition-all #{if MapSet.member?(@selected, prospect.email), do: "bg-emerald-500 border-emerald-500", else: "border-gray-600"}"}>
+                      <div class={"h-5 w-5 rounded-md border-2 flex items-center justify-center transition-all #{if MapSet.member?(@selected, prospect.email), do: "bg-fluxo-500 border-fluxo-500", else: "border-gray-600"}"}>
                         <%= if MapSet.member?(@selected, prospect.email) do %>
                           <svg class="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -299,7 +299,7 @@
                     </td>
                     <td class="px-4 py-3">
                       <div class="flex items-center gap-3">
-                        <div class="h-8 w-8 rounded-full bg-gradient-to-br from-emerald-400/20 to-teal-400/20 flex items-center justify-center text-emerald-400 text-xs font-bold shrink-0">
+                        <div class="h-8 w-8 rounded-full bg-gradient-to-br from-fluxo-400/20 to-cyan-400/20 flex items-center justify-center text-fluxo-400 text-xs font-bold shrink-0">
                           {String.first(prospect.name) || "?"}
                         </div>
                         <span class="text-sm text-gray-200 font-medium">{prospect.name}</span>
@@ -332,7 +332,7 @@
       <div class="container flex flex-col items-center justify-center py-20 animate-fade-in">
         <div class="text-center">
           <div class="inline-flex items-center justify-center h-20 w-20 rounded-2xl bg-gray-900/60 border border-gray-800/50 mb-6">
-            <span class="inline-flex h-10 w-10 text-emerald-500/50">{render_icon(:lightning_bolt)}</span>
+            <span class="inline-flex h-10 w-10 text-fluxo-500/50">{render_icon(:lightning_bolt)}</span>
           </div>
           <h3 class="text-xl font-semibold text-white mb-2">{gettext("Connect to EVO")}</h3>
           <p class="text-gray-400 max-w-md">

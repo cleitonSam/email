@@ -3526,3 +3526,109 @@ msgstr "Esquerda"
 msgctxt "text-alignment"
 msgid "Right"
 msgstr "Direita"
+
+# Adicionado pelo Fluxo — strings novas e ainda não traduzidas
+msgid "Account Settings"
+msgstr "Configurações da conta"
+
+msgid "Sending Quota"
+msgstr "Cota de envio"
+
+msgid "Change Password"
+msgstr "Mudar senha"
+
+msgid "Update password"
+msgstr "Atualizar senha"
+
+msgid "Change Language"
+msgstr "Mudar idioma"
+
+msgid "Update language settings"
+msgstr "Atualizar idioma"
+
+msgid "Language"
+msgstr "Idioma"
+
+msgid "API Keys"
+msgstr "Chaves de API"
+
+msgid "API Docs"
+msgstr "Documentação da API"
+
+msgid "API Key Name"
+msgstr "Nome da chave API"
+
+msgid "My API Key"
+msgstr "Minha chave API"
+
+msgid "API key copied to clipboard"
+msgstr "Chave API copiada"
+
+msgid "Copy"
+msgstr "Copiar"
+
+msgid "Revoke"
+msgstr "Revogar"
+
+msgid "The following is your private API Key. Use it to authorize API calls."
+msgstr "Esta é sua chave de API privada. Use para autenticar chamadas à API."
+
+msgid "Important: The private API Key is displayed only once and cannot be recovered."
+msgstr "Importante: a chave privada é exibida apenas uma vez e não pode ser recuperada."
+
+msgid "Wow, such empty!"
+msgstr "Ainda não tem nada por aqui!"
+
+msgid "New campaign"
+msgstr "Nova campanha"
+
+msgid "New Campaign"
+msgstr "Nova campanha"
+
+msgid "Modelos de Email"
+msgstr "Modelos de Email"
+
+msgid "Modelos prontos"
+msgstr "Modelos prontos"
+
+msgid "Abrir biblioteca de imagens"
+msgstr "Abrir biblioteca de imagens"
+
+msgid "Imagens"
+msgstr "Imagens"
+
+msgid "Minhas Academias"
+msgstr "Minhas Academias"
+
+msgid "Importar EVO"
+msgstr "Importar EVO"
+
+msgid "Automações"
+msgstr "Automações"
+
+msgid "EVO Integration"
+msgstr "Integração EVO"
+
+msgid "Insert image"
+msgstr "Inserir imagem"
+
+msgid "Expand editor"
+msgstr "Expandir editor"
+
+msgid "Preview"
+msgstr "Visualizar"
+
+msgid "8 modelos prontos pra academia. Clique em \"Usar este modelo\" e edite à vontade."
+msgstr "8 modelos prontos pra academia. Clique em \"Usar este modelo\" e edite à vontade."
+
+msgid "Ver completo"
+msgstr "Ver completo"
+
+msgid "Usar este →"
+msgstr "Usar este →"
+
+msgid "Como funciona"
+msgstr "Como funciona"
+
+msgid "Cada modelo já vem com texto, imagens e estrutura prontos. Quando você clicar em \"Usar este\", a gente cria uma campanha nova com esse modelo carregado e você só edita o que quiser: trocar foto, mudar texto, ajustar cor — tudo no editor visual."
+msgstr "Cada modelo já vem com texto, imagens e estrutura prontos. Quando você clicar em \"Usar este\", a gente cria uma campanha nova com esse modelo carregado e você só edita o que quiser: trocar foto, mudar texto, ajustar cor — tudo no editor visual."

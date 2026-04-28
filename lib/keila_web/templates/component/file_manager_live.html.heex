@@ -22,7 +22,7 @@
       </div>
     </label>
     <%= if not Enum.empty?(@uploads.files.entries) do %>
-      <button class="flex gap-2 items-center px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-medium transition-all duration-200 shadow-lg hover:shadow-emerald-500/25 mt-4" type="submit">
+      <button class="flex gap-2 items-center px-6 py-3 rounded-xl bg-gradient-to-r from-fluxo-500 to-fluxo-600 hover:from-fluxo-600 hover:to-fluxo-700 text-white font-medium transition-all duration-200 shadow-lg hover:shadow-fluxo-500/25 mt-4" type="submit">
         {render_icon(:cursor_click)}
         {gettext("Start Upload")}
       </button>
@@ -116,7 +116,7 @@
             <span
               x-text="$refs.i18n.dataset[campaign.status]"
               x-bind:class="{
-                'px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-400': campaign.status === 'draft',
+                'px-3 py-1 rounded-full text-xs font-medium bg-fluxo-500/20 text-fluxo-400': campaign.status === 'draft',
                 'px-3 py-1 rounded-full text-xs font-medium bg-red-500/20 text-red-400': campaign.status === 'sent'
               }"
             >

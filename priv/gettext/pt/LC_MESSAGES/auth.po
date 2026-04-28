@@ -221,3 +221,49 @@ msgstr "Olá,\n\npor favor verifique seu endereço de email de remetente visitan
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Please Verify Your Email for Fluxo Email MKT"
 msgstr "Por favor, verifique seu email para Fluxo Email MKT"
+
+# Adicionado pelo Fluxo
+msgid "Start sending emails with Fluxo Email MKT now"
+msgstr "Comece a enviar emails com o Fluxo Email MKT agora"
+
+msgid "Register your Fluxo Email MKT account now and start your newsletter project within minutes."
+msgstr "Registre sua conta no Fluxo Email MKT e comece a enviar seus emails em minutos."
+
+msgid "Sign up now"
+msgstr "Criar conta"
+
+msgid "Already have an account?"
+msgstr "Já tem uma conta?"
+
+msgid "Try signing in."
+msgstr "Faça login."
+
+msgid "Email"
+msgstr "Email"
+
+msgid "Senha"
+msgstr "Senha"
+
+msgid "Must have at least 10 characters."
+msgstr "Mínimo de 10 caracteres."
+
+msgid "Set a new secure password to keep using Fluxo Email MKT."
+msgstr "Defina uma nova senha pra continuar usando o Fluxo Email MKT."
+
+msgid "Reset password now"
+msgstr "Redefinir senha"
+
+msgid "Request password reset"
+msgstr "Solicitar redefinição de senha"
+
+msgid "Remember your password again?"
+msgstr "Lembrou da senha?"
+
+msgid "Your password was changed!"
+msgstr "Sua senha foi alterada!"
+
+msgid "Registration disabled."
+msgstr "Cadastro desativado."
+
+msgid "Please contact an administrator."
+msgstr "Entre em contato com um administrador."

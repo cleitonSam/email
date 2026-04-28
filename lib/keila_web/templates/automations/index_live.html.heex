@@ -25,7 +25,7 @@
       <div class="space-y-3">
         <%= for a <- @automations do %>
           <div class="bg-gray-900/60 border border-gray-800 rounded-xl p-5 flex items-start gap-4">
-            <div class={"h-10 w-10 rounded-lg flex items-center justify-center text-lg font-bold flex-shrink-0 " <> if a.active, do: "bg-emerald-500/20 text-emerald-300", else: "bg-gray-700/50 text-gray-400"}>
+            <div class={"h-10 w-10 rounded-lg flex items-center justify-center text-lg font-bold flex-shrink-0 " <> if a.active, do: "bg-fluxo-500/20 text-fluxo-300", else: "bg-gray-700/50 text-gray-400"}>
               <%= case Keila.Automations.Recipes.get(a.recipe_slug) do %>
                 <% {:ok, recipe} -> %>{recipe.icon}
                 <% _ -> %>⚡

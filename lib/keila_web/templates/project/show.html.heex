@@ -56,7 +56,7 @@
     <!-- Forms KPI -->
     <div class="group bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6 hover:bg-gray-900/80 hover:border-gray-700/50 transition-all duration-300 cursor-default">
       <div class="flex items-center justify-between mb-4">
-        <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+        <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-fluxo-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-fluxo-500/20">
           <span class="inline-flex h-5 w-5 text-white">{render_icon(:document_add)}</span>
         </div>
         <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">{gettext("Collect")}</span>
@@ -141,19 +141,19 @@
   <!-- Contacts Card -->
   <a href={Routes.contact_path(@conn, :index, @current_project.id)} class="group card bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 hover:bg-gray-900/80 hover:border-gray-700/50 hover:scale-[1.02] transition-all duration-300 flex flex-col p-6">
     <div class="flex items-start justify-between mb-4">
-      <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-emerald-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-emerald-500/20 flex-shrink-0">
+      <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-fluxo-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-fluxo-500/20 flex-shrink-0">
         <span class="inline-flex h-6 w-6 text-white">{render_icon(:user_group)}</span>
       </div>
       <div class="text-gray-400 group-hover:text-gray-300 transition-colors">
         {render_icon(:cursor_click)}
       </div>
     </div>
-    <h2 class="font-semibold text-lg text-white group-hover:text-emerald-300 transition-colors mb-1">
+    <h2 class="font-semibold text-lg text-white group-hover:text-fluxo-300 transition-colors mb-1">
       {gettext("Contacts")}
     </h2>
     <p class="text-sm text-gray-500 mb-4 flex-grow">{gettext("Manage your contact database")}</p>
-    <div class="flex items-center text-sm font-semibold text-emerald-400 group-hover:text-emerald-300">
-      <span class="inline-flex h-7 px-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+    <div class="flex items-center text-sm font-semibold text-fluxo-400 group-hover:text-fluxo-300">
+      <span class="inline-flex h-7 px-3 rounded-lg bg-fluxo-500/10 border border-fluxo-500/20">
         {@contacts_count}
       </span>
     </div>
@@ -226,7 +226,7 @@
   <!-- Senders Card -->
   <a href={Routes.sender_path(@conn, :index, @current_project.id)} class="group card bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 hover:bg-gray-900/80 hover:border-gray-700/50 hover:scale-[1.02] transition-all duration-300 flex flex-col p-6">
     <div class="flex items-start justify-between mb-4">
-      <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-cyan-600 to-teal-500 flex items-center justify-center shadow-lg shadow-cyan-500/20 flex-shrink-0">
+      <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-cyan-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-cyan-500/20 flex-shrink-0">
         <span class="inline-flex h-6 w-6 text-white">{render_icon(:at_symbol)}</span>
       </div>
       <div class="text-gray-400 group-hover:text-gray-300 transition-colors">

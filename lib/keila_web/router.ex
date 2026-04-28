@@ -21,6 +21,9 @@ defmodule KeilaWeb.Router do
 
     get "/verify-sender/:token", SenderController, :verify_from_token
     get "/verify-sender/c/:token", SenderController, :cancel_verification_from_token
+
+    # Previews dos modelos de email — servidos diretamente do disco
+    get "/email-previews/:slug", PreviewController, :show
   end
 
   scope "/" do

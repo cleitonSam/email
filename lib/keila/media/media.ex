@@ -120,11 +120,21 @@ defmodule Keila.Media do
 
   @doc """
   Remove uma imagem (do ImageKit + do banco).
+
+  Best-effort no ImageKit — mesmo se a remoção remota falhar (arquivo já
+  deletado, sem internet, etc), removemos o registro local pra não deixar
+  imagem fantasma na biblioteca do usuário.
   """
   @spec delete_asset(Asset.t()) :: {:ok, Asset.t()} | {:error, term()}
   def delete_asset(%Asset{} = asset) do
-    # Best-effort no ImageKit — se o arquivo não existe lá, deletar local mesmo assim
-    _ = ImageKit.delete_file(asset.imagekit_file_id)
+    try do
+      _ = ImageKit.delete_file(asset.imagekit_file_id)
+    rescue
+      e ->
+        require Logger
+        Logger.warning("[Media] Falha ao deletar #{asset.imagekit_file_id} do ImageKit: #{inspect(e)}")
+    end
+
     Repo.delete(asset)
   end
 

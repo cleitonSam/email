@@ -13,6 +13,14 @@
         </div>
       </div>
       <div class="flex items-center gap-3">
+        <%= if @units != [] do %>
+          <button phx-click="sync-now" disabled={@syncing} class="button button--large group disabled:opacity-50">
+            <svg class={"w-5 h-5 #{if @syncing, do: "animate-spin"}"} fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h5M20 20v-5h-5M4 9a8 8 0 0114-3M20 15a8 8 0 01-14 3" />
+            </svg>
+            {if @syncing, do: "Sincronizando...", else: "Sincronizar agora"}
+          </button>
+        <% end %>
         <button phx-click="new-unit" class="button button--cta button--large group">
           <svg class="w-5 h-5 group-hover:rotate-90 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
@@ -22,6 +30,39 @@
       </div>
     </div>
   </div>
+
+  <!-- EXPLICAÇÃO PARA O USUÁRIO -->
+  <%= if @units != [] do %>
+    <div class="container max-w-5xl mb-6">
+      <div class="bg-fluxo-500/5 border border-fluxo-500/20 rounded-xl p-5">
+        <h3 class="text-white font-semibold mb-3 flex items-center gap-2">
+          <span class="text-xl">🔄</span> Como funciona a sincronização
+        </h3>
+        <div class="grid sm:grid-cols-2 gap-4 text-sm text-gray-300">
+          <div>
+            <div class="flex items-start gap-2 mb-2">
+              <span class="inline-flex h-6 w-6 rounded bg-fluxo-500/20 text-fluxo-300 text-xs font-bold items-center justify-center flex-shrink-0">💡</span>
+              <div>
+                <strong class="text-white">Oportunidades</strong> = leads novos da EVO (prospects). Alguém que demonstrou interesse mas não fechou ainda.
+              </div>
+            </div>
+            <div class="flex items-start gap-2">
+              <span class="inline-flex h-6 w-6 rounded bg-fluxo-500/20 text-fluxo-300 text-xs font-bold items-center justify-center flex-shrink-0">🎯</span>
+              <div>
+                <strong class="text-white">Alunos</strong> = members matriculados. Já fecharam plano e treinam na sua academia.
+              </div>
+            </div>
+          </div>
+          <div>
+            <p class="mb-2">A sincronização roda <strong class="text-white">automaticamente a cada 15 min</strong> e importa ambos como Contatos.</p>
+            <p>Pra ver os contatos importados:
+              <a href={"/projects/" <> @current_project.id <> "/contacts"} class="text-fluxo-300 hover:text-fluxo-200 underline font-semibold">→ Abrir Contatos</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
 
   <!-- LISTA DE UNIDADES -->
   <div class="container max-w-5xl pb-16">

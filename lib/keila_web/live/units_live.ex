@@ -30,6 +30,7 @@ defmodule KeilaWeb.UnitsLive do
       |> assign(:form_changeset, empty_changeset(project.id))
       |> assign(:test_result, nil)
       |> assign(:testing, false)
+      |> assign(:syncing, false)
 
     {:ok, socket}
   end
@@ -156,7 +157,28 @@ defmodule KeilaWeb.UnitsLive do
     end
   end
 
+  def handle_event("sync-now", _params, socket) do
+    project_id = socket.assigns.current_project.id
+    send(self(), {:do_sync, project_id})
+
+    {:noreply,
+     socket
+     |> put_flash(:info, "Sincronizando... Pode levar alguns segundos.")
+     |> assign(:syncing, true)}
+  end
+
   @impl true
+  def handle_info({:do_sync, project_id}, socket) do
+    # Dispara sync síncrono — pega oportunidades + alunos de todas unidades ativas
+    Keila.Automations.Workers.SyncWorker.sync_project(project_id)
+
+    {:noreply,
+     socket
+     |> assign(:units, Units.list_units(project_id))
+     |> assign(:syncing, false)
+     |> put_flash(:info, "Sincronização concluída! Vai em \"Contacts\" pra ver os leads importados.")}
+  end
+
   def handle_info(_msg, socket), do: {:noreply, socket}
 
   defp empty_changeset(project_id) do

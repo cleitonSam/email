@@ -171,6 +171,7 @@ defmodule KeilaWeb.Router do
     get "/projects/:project_id/evo", EvoController, :index
     get "/projects/:project_id/academias", UnitsController, :index
     get "/projects/:project_id/media", MediaController, :index
+    get "/projects/:project_id/media/list.json", MediaApiController, :list
     get "/projects/:project_id/automacoes", AutomationsController, :index
   end
 

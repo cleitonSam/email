@@ -118,22 +118,31 @@ defmodule KeilaWeb.MediaLive do
   end
 
   def handle_event("delete-asset", %{"id" => id}, socket) do
-    asset = Media.get_asset(id)
     project_id = socket.assigns.current_project.id
 
-    case asset && Media.delete_asset(asset) do
-      {:ok, _} ->
-        socket =
-          socket
-          |> assign(:assets, Media.list_assets(project_id, folder: socket.assigns.active_folder))
-          |> assign(:counts, Media.count_by_folder(project_id))
-          |> assign(:selected_asset, nil)
-          |> put_flash(:info, "Imagem removida.")
+    case Media.get_asset(id) do
+      nil ->
+        {:noreply, put_flash(socket, :error, "Imagem não encontrada (talvez já tenha sido removida).")}
 
-        {:noreply, socket}
+      %Keila.Media.Asset{} = asset ->
+        case Media.delete_asset(asset) do
+          {:ok, _} ->
+            socket =
+              socket
+              |> assign(:assets, Media.list_assets(project_id, folder: socket.assigns.active_folder))
+              |> assign(:counts, Media.count_by_folder(project_id))
+              |> assign(:selected_asset, nil)
+              |> put_flash(:info, "Imagem excluída com sucesso.")
 
-      _ ->
-        {:noreply, put_flash(socket, :error, "Não consegui remover a imagem.")}
+            {:noreply, socket}
+
+          {:error, reason} ->
+            require Logger
+            Logger.error("[MediaLive] Erro ao excluir asset #{id}: #{inspect(reason)}")
+
+            {:noreply,
+             put_flash(socket, :error, "Erro ao excluir: #{inspect(reason)}. Tenta de novo.")}
+        end
     end
   end
 

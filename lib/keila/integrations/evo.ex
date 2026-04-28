@@ -7,7 +7,89 @@ defmodule Keila.Integrations.Evo do
   require Logger
 
   @prospects_url "https://evo-integracao-api.w12app.com.br/api/v1/prospects"
+  @members_url "https://evo-integracao-api.w12app.com.br/api/v1/members"
   @page_size 50
+
+  @doc """
+  Faz fetch de MEMBERS (alunos matriculados) da EVO. Mesmo padrão de
+  `fetch_prospects/1` mas no endpoint /members.
+
+  Retorna `{:ok, members_list, total}` ou `{:error, reason}`.
+  """
+  @spec fetch_members(keyword()) :: {:ok, list(), integer()} | {:error, term()}
+  def fetch_members(opts \\ []) do
+    with {:ok, dns} <- get_config(:evo_dns, opts),
+         {:ok, secret} <- get_config(:evo_secret_key, opts) do
+      auth = Base.encode64("#{dns}:#{secret}")
+
+      case fetch_all_members_pages(auth, 0, []) do
+        {:ok, members} ->
+          members_with_email =
+            members
+            |> Enum.filter(&has_valid_email?/1)
+            |> Enum.map(&normalize_member/1)
+
+          {:ok, members_with_email, length(members)}
+
+        {:error, reason} ->
+          {:error, reason}
+      end
+    end
+  end
+
+  defp fetch_all_members_pages(auth, skip, acc) do
+    url = "#{@members_url}?take=#{@page_size}&skip=#{skip}"
+    headers = [{"Authorization", "Basic #{auth}"}]
+
+    case HTTPoison.get(url, headers, recv_timeout: 15_000) do
+      {:ok, %{status_code: 200, body: body}} ->
+        case Jason.decode(body) do
+          {:ok, data} when is_list(data) ->
+            new_acc = acc ++ data
+
+            if length(data) < @page_size do
+              {:ok, new_acc}
+            else
+              fetch_all_members_pages(auth, skip + @page_size, new_acc)
+            end
+
+          {:ok, _other} ->
+            {:ok, acc}
+
+          {:error, _} ->
+            {:error, "Resposta inválida do EVO (members)"}
+        end
+
+      {:ok, %{status_code: status, body: body}} ->
+        Logger.error("[EVO Members] API status #{status}: #{body}")
+        {:error, "EVO retornou status #{status}"}
+
+      {:error, %HTTPoison.Error{reason: reason}} ->
+        {:error, "EVO request failed: #{inspect(reason)}"}
+    end
+  end
+
+  defp normalize_member(member) do
+    contract_status =
+      case member["currentContract"] do
+        %{"status" => s} -> s
+        _ -> nil
+      end
+
+    %{
+      name: member["name"] || member["firstName"] || "",
+      first_name: member["firstName"] || extract_first_name(member["name"]),
+      last_name: member["lastName"] || extract_last_name(member["name"]),
+      email: String.trim(member["email"] || ""),
+      phone: member["phone"] || member["cellphone"] || "",
+      register_date: member["registerDate"] || "",
+      branch: member["branchName"] || member["branch"] || "",
+      id_evo: member["idMember"] || member["id"] || nil,
+      member_status: member["memberStatus"] || member["status"] || "Ativo",
+      contract_status: contract_status,
+      type: "member"
+    }
+  end
 
   @doc """
   Fetches prospects from the EVO API for a given date range.

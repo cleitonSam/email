@@ -222,12 +222,13 @@
             </form>
 
             <button
+              type="button"
               phx-click="delete-asset"
               phx-value-id={@selected_asset.id}
-              data-confirm="Tem certeza? Essa imagem vai ser removida."
+              data-confirm="Tem certeza que quer excluir essa imagem? Essa ação não pode ser desfeita."
               class="mt-3 w-full px-4 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 rounded-lg text-sm font-semibold"
             >
-              Excluir imagem
+              🗑️ Excluir imagem
             </button>
           </div>
         </div>

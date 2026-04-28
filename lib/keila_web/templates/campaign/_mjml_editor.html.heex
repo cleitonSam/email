@@ -1,15 +1,25 @@
-<div id="mjml-editor-toolbar" class="w-full sticky top-0 z-10" phx-update="ignore">
+<div id="mjml-editor-toolbar" class="w-full sticky top-0 z-10" phx-update="ignore" x-data="imagePicker()">
   <div class="wysiwyg--menu bg-gray-800 relative shadow-lg z-10 flex overflow-x-auto mt-4 rounded-t-xl border border-gray-700/50">
-    <a
-      title={gettext("Abrir biblioteca de imagens")}
-      href={"/projects/" <> @current_project.id <> "/media"}
-      target="_blank"
+    <button
+      type="button"
+      title="Inserir imagem da biblioteca"
+      @click.prevent={"open('/projects/" <> @current_project.id <> "/media/list.json')"}
       class="flex items-center gap-1.5 px-3 h-10 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors text-xs font-medium"
     >
       {render_icon(:photograph)}
-      <span>Biblioteca</span>
+      <span>Inserir imagem</span>
+    </button>
+    <a
+      title="Gerenciar biblioteca de imagens"
+      href={"/projects/" <> @current_project.id <> "/media"}
+      target="_blank"
+      class="flex items-center gap-1.5 px-3 h-10 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors text-xs font-medium border-l border-gray-700/50"
+    >
+      {render_icon(:cog)}
+      <span>Gerenciar</span>
     </a>
     <button
+      type="button"
       title={gettext("Expand editor")}
       class="flex w-10 h-10 p-2 items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors"
       @click.prevent="$dispatch('x-toggle-expand-editor')"
@@ -20,6 +30,7 @@
     <div class="flex-grow"></div>
 
     <button
+      type="button"
       title={gettext("Preview")}
       class="flex w-10 h-10 p-2 items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors"
       @click.prevent="$dispatch('x-toggle-preview')"
@@ -27,7 +38,109 @@
       {render_icon(:eye)}
     </button>
   </div>
+
+  <!-- MODAL DO PICKER (inline, mesma tela) -->
+  <div
+    x-show="isOpen"
+    x-cloak
+    @keydown.escape.window="close()"
+    class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+    @click.self="close()"
+  >
+    <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-4xl w-full max-h-[85vh] overflow-hidden flex flex-col shadow-2xl">
+      <!-- Header -->
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-800">
+        <div>
+          <h3 class="text-lg font-bold text-white">Inserir imagem</h3>
+          <p class="text-xs text-gray-400 mt-0.5" x-text="`${assets.length} imagens disponíveis · clique pra copiar URL`"></p>
+        </div>
+        <button @click="close()" class="text-gray-400 hover:text-white">{render_icon(:x)}</button>
+      </div>
+
+      <!-- Loading -->
+      <div x-show="loading" class="flex-1 flex items-center justify-center p-12">
+        <div class="text-gray-400">Carregando imagens...</div>
+      </div>
+
+      <!-- Empty state -->
+      <div x-show="!loading && assets.length === 0" class="flex-1 flex flex-col items-center justify-center p-12 text-center">
+        <span class="text-5xl mb-4">📷</span>
+        <p class="text-white font-semibold mb-2">Nenhuma imagem na biblioteca ainda</p>
+        <p class="text-sm text-gray-400 mb-5">Faça o upload primeiro pra usar nos emails.</p>
+        <a
+          :href={"`/projects/" <> @current_project.id <> "/media`"}
+          target="_blank"
+          class="px-4 py-2 bg-fluxo-500 hover:bg-fluxo-600 text-white rounded-lg text-sm font-semibold"
+        >
+          Abrir biblioteca →
+        </a>
+      </div>
+
+      <!-- Grid de imagens -->
+      <div x-show="!loading && assets.length > 0" class="flex-1 overflow-y-auto p-6">
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+          <template x-for="asset in assets" :key="asset.id">
+            <button
+              type="button"
+              @click="copyUrl(asset.url, asset.filename)"
+              class="group relative aspect-square bg-gray-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-fluxo-500 transition"
+            >
+              <img :src="asset.thumbnail_url" :alt="asset.filename" loading="lazy" class="w-full h-full object-cover" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent opacity-0 group-hover:opacity-100 transition flex flex-col justify-end p-2.5">
+                <div class="text-xs font-semibold text-white truncate" x-text="asset.filename"></div>
+                <div class="text-[10px] text-fluxo-300 mt-0.5">Clique pra copiar URL</div>
+              </div>
+              <span x-show="asset.folder !== 'geral'" class="absolute top-1.5 right-1.5 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-black/70 text-white rounded" x-text="asset.folder"></span>
+            </button>
+          </template>
+        </div>
+      </div>
+
+      <!-- Footer com mensagem de cópia -->
+      <div x-show="copiedUrl" x-transition class="px-6 py-3 bg-fluxo-500/20 border-t border-fluxo-500/30 text-fluxo-200 text-sm flex items-center gap-2">
+        <span class="text-lg">✓</span>
+        <span>URL copiada! Cola no MJML em <code class="bg-black/30 px-1.5 py-0.5 rounded text-xs">&lt;mj-image src="..."&gt;</code></span>
+      </div>
+    </div>
+  </div>
 </div>
+
+<script>
+  function imagePicker() {
+    return {
+      isOpen: false,
+      loading: false,
+      assets: [],
+      copiedUrl: false,
+      open(url) {
+        this.isOpen = true;
+        this.loading = true;
+        this.assets = [];
+        this.copiedUrl = false;
+        fetch(url)
+          .then(r => r.json())
+          .then(data => {
+            this.assets = data.assets || [];
+            this.loading = false;
+          })
+          .catch(e => {
+            console.error(e);
+            this.loading = false;
+          });
+      },
+      close() {
+        this.isOpen = false;
+        this.copiedUrl = false;
+      },
+      copyUrl(url, filename) {
+        navigator.clipboard.writeText(url).then(() => {
+          this.copiedUrl = true;
+          setTimeout(() => { this.copiedUrl = false; }, 3000);
+        });
+      }
+    }
+  }
+</script>
 
 <div id="mjml-editor-wrapper" phx-update="ignore">
   <div

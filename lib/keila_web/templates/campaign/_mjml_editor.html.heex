@@ -7,7 +7,7 @@
       x-on:click.prevent="open('/projects/' + $el.dataset.projectId + '/media/list.json')"
       class="flex items-center gap-1.5 px-3 h-10 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors text-xs font-medium"
     >
-      {render_icon(:photograph)}
+      <span class="inline-flex h-4 w-4 flex-shrink-0">{render_icon(:photograph)}</span>
       <span>Inserir imagem</span>
     </button>
     <a
@@ -16,16 +16,16 @@
       target="_blank"
       class="flex items-center gap-1.5 px-3 h-10 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors text-xs font-medium border-l border-gray-700/50"
     >
-      {render_icon(:cog)}
+      <span class="inline-flex h-4 w-4 flex-shrink-0">{render_icon(:cog)}</span>
       <span>Gerenciar</span>
     </a>
     <button
       type="button"
       title={gettext("Expand editor")}
-      class="flex w-10 h-10 p-2 items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors"
+      class="flex w-10 h-10 p-2 items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors flex-shrink-0"
       @click.prevent="$dispatch('x-toggle-expand-editor')"
     >
-      {render_icon(:arrows_expand)}
+      <span class="inline-flex h-4 w-4">{render_icon(:arrows_expand)}</span>
     </button>
 
     <div class="flex-grow"></div>
@@ -33,10 +33,10 @@
     <button
       type="button"
       title={gettext("Preview")}
-      class="flex w-10 h-10 p-2 items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors"
+      class="flex w-10 h-10 p-2 items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors flex-shrink-0"
       @click.prevent="$dispatch('x-toggle-preview')"
     >
-      {render_icon(:eye)}
+      <span class="inline-flex h-4 w-4">{render_icon(:eye)}</span>
     </button>
   </div>
 
@@ -55,7 +55,7 @@
           <h3 class="text-lg font-bold text-white">Inserir imagem</h3>
           <p class="text-xs text-gray-400 mt-0.5" x-text="`${assets.length} imagens disponíveis · clique pra copiar URL`"></p>
         </div>
-        <button @click="close()" class="text-gray-400 hover:text-white">{render_icon(:x)}</button>
+        <button type="button" x-on:click="close()" class="text-gray-400 hover:text-white"><span class="inline-flex h-5 w-5">{render_icon(:x)}</span></button>
       </div>
 
       <!-- Loading -->

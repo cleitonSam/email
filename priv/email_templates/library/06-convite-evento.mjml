@@ -35,11 +35,9 @@
     </mj-section>
 
     <!-- HERO IMAGE FULL-BLEED -->
-    <mj-section background-url="{{ hero_image | default: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1280&q=85' }}" background-size="cover" background-position="center" padding="0">
+    <mj-section padding="0">
       <mj-column>
-        <mj-spacer height="80px" />
-        <mj-spacer height="80px" />
-        <mj-spacer height="80px" />
+        <mj-image src="{{ hero_image | default: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1280&q=85' }}" alt="" padding="0" fluid-on-mobile="true" />
       </mj-column>
     </mj-section>
 

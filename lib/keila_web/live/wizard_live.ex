@@ -36,8 +36,7 @@ defmodule KeilaWeb.WizardLive do
         accept: ~w(.png .jpg .jpeg .webp .svg),
         max_entries: 1,
         max_file_size: @max_logo_size,
-        auto_upload: true,
-        progress: &handle_logo_progress/3
+        auto_upload: false
       )
 
     {:ok, socket}
@@ -92,25 +91,14 @@ defmodule KeilaWeb.WizardLive do
     end
   end
 
-  # Auto-progress: detecta quando upload local terminou e dispara processing
-  defp handle_logo_progress(:logo, entry, socket) do
-    if entry.done? do
-      # Upload client→server pronto. Dispara processing async.
-      send(self(), :process_logo)
-      {:noreply, assign(socket, :saving, true)}
-    else
-      {:noreply, socket}
-    end
-  end
-
-  # Step 2: Upload logo (assíncrono pra evitar timeout do socket LiveView)
+  # Step 2: Upload logo
   def handle_event("validate-logo", _params, socket), do: {:noreply, socket}
 
   def handle_event("submit-logo", _params, socket) do
     project_id = socket.assigns.current_project.id
     user_id = socket.assigns.current_user && socket.assigns.current_user.id
 
-    # Consome entries SINCRONAMENTE (lê arquivos do disco rapidinho — só I/O local)
+    # Consume RAPIDINHO (só I/O local, ~50ms)
     upload_data =
       consume_uploaded_entries(socket, :logo, fn meta, entry ->
         case File.read(meta.path) do
@@ -124,10 +112,10 @@ defmodule KeilaWeb.WizardLive do
 
     case upload_data do
       [%{bytes: _} = data | _] ->
-        # Dispara upload pro ImageKit em background (pode levar 5-30s)
+        # Upload pro ImageKit em BACKGROUND (5-30s não trava socket)
         live_view_pid = self()
 
-        Task.start(fn ->
+        spawn(fn ->
           result =
             Media.upload_and_create(project_id, data,
               folder: "logos",
@@ -140,53 +128,14 @@ defmodule KeilaWeb.WizardLive do
         {:noreply,
          socket
          |> assign(:saving, true)
-         |> put_flash(:info, "📤 Enviando logo... (pode levar uns segundos)")}
+         |> put_flash(:info, "📤 Enviando logo pro servidor...")}
 
       _ ->
-        {:noreply, put_flash(socket, :error, "Selecione um arquivo válido.")}
+        {:noreply, put_flash(socket, :error, "Não consegui ler o arquivo. Tenta de novo.")}
     end
   end
 
   @impl true
-  def handle_info(:process_logo, socket) do
-    project_id = socket.assigns.current_project.id
-    user_id = socket.assigns.current_user && socket.assigns.current_user.id
-
-    upload_data =
-      consume_uploaded_entries(socket, :logo, fn meta, entry ->
-        case File.read(meta.path) do
-          {:ok, bytes} ->
-            {:ok, %{bytes: bytes, filename: entry.client_name, content_type: entry.client_type}}
-
-          _ ->
-            {:postpone, :read_failed}
-        end
-      end)
-
-    case upload_data do
-      [%{bytes: _} = data | _] ->
-        live_view_pid = self()
-
-        Task.start(fn ->
-          result =
-            Media.upload_and_create(project_id, data,
-              folder: "logos",
-              uploaded_by_user_id: user_id
-            )
-
-          send(live_view_pid, {:logo_upload_done, result})
-        end)
-
-        {:noreply, put_flash(socket, :info, "📤 Subindo logo pro servidor...")}
-
-      _ ->
-        {:noreply,
-         socket
-         |> assign(:saving, false)
-         |> put_flash(:error, "Não consegui ler o arquivo. Tenta de novo.")}
-    end
-  end
-
   def handle_info({:logo_upload_done, {:ok, asset}}, socket) do
     project_id = socket.assigns.current_project.id
 

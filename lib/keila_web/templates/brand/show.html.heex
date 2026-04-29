@@ -13,11 +13,9 @@
 </div>
 
 <div class="container max-w-3xl pb-16">
-  <!-- Logo -->
   <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 mb-6">
     <h2 class="text-lg font-bold text-white mb-1">🖼️ Logo da academia</h2>
     <p class="text-sm text-gray-400 mb-5">Aparece no topo de todos os emails.</p>
-
     <div class="flex items-center gap-5">
       <div class="bg-white rounded-xl p-4 flex items-center justify-center" style="min-width: 140px; min-height: 100px;">
         <%= if @brand["logo_url"] != "" do %>
@@ -34,29 +32,19 @@
     </div>
   </div>
 
-  <!-- Form principal: nome + cores -->
   <form action={"/projects/" <> @current_project.id <> "/marca"} method="post">
     <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
     <input type="hidden" name="_method" value="put" />
 
-    <!-- Nome -->
     <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 mb-6">
       <h2 class="text-lg font-bold text-white mb-1">📝 Nome da academia</h2>
       <p class="text-sm text-gray-400 mb-5">Aparece no rodapé dos emails e no nome do remetente.</p>
-      <input
-        type="text"
-        name="brand[name]"
-        value={@brand["name"]}
-        placeholder="Ex: Academia Movimento"
-        class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-3 text-sm"
-      />
+      <input type="text" name="brand[name]" value={@brand["name"]} placeholder="Ex: Academia Movimento" class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-3 text-sm" />
     </div>
 
-    <!-- Cores principais -->
     <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 mb-6">
       <h2 class="text-lg font-bold text-white mb-1">🎨 Cores principais</h2>
       <p class="text-sm text-gray-400 mb-5">Aplicadas nos botões, títulos e detalhes dos emails.</p>
-
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div data-color-field="primary">
           <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Primária</label>
@@ -64,7 +52,6 @@
             <input type="color" data-role="picker" value={@brand["color_primary"]} class="h-12 w-12 rounded cursor-pointer bg-gray-800 border border-gray-700" />
             <input type="text" name="brand[color_primary]" data-role="hex" value={@brand["color_primary"]} class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono uppercase" pattern="^#[0-9A-Fa-f]{6}$" />
           </div>
-          <p class="text-xs text-gray-500 mt-1">Botões e CTAs</p>
         </div>
         <div data-color-field="dark">
           <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Escura (fundo)</label>
@@ -72,7 +59,6 @@
             <input type="color" data-role="picker" value={@brand["color_dark"]} class="h-12 w-12 rounded cursor-pointer bg-gray-800 border border-gray-700" />
             <input type="text" name="brand[color_dark]" data-role="hex" value={@brand["color_dark"]} class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono uppercase" pattern="^#[0-9A-Fa-f]{6}$" />
           </div>
-          <p class="text-xs text-gray-500 mt-1">Hero/seções escuras</p>
         </div>
         <div data-color-field="accent">
           <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Destaque</label>
@@ -80,88 +66,63 @@
             <input type="color" data-role="picker" value={@brand["color_accent"]} class="h-12 w-12 rounded cursor-pointer bg-gray-800 border border-gray-700" />
             <input type="text" name="brand[color_accent]" data-role="hex" value={@brand["color_accent"]} class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono uppercase" pattern="^#[0-9A-Fa-f]{6}$" />
           </div>
-          <p class="text-xs text-gray-500 mt-1">Detalhes e accent</p>
         </div>
       </div>
     </div>
 
-    <!-- Cores extras -->
-    <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 mb-6" id="extras-section">
-      <div class="flex items-center justify-between mb-1">
-        <h2 class="text-lg font-bold text-white">➕ Cores extras (opcional)</h2>
-      </div>
-      <p class="text-sm text-gray-400 mb-5">Cores adicionais da paleta da marca pra usar em campanhas customizadas.</p>
-
+    <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 mb-6">
+      <h2 class="text-lg font-bold text-white mb-1">➕ Cores extras (opcional)</h2>
+      <p class="text-sm text-gray-400 mb-5">Cores adicionais da paleta da marca.</p>
       <div id="extras-list" class="space-y-3">
         <%= for {color, idx} <- Enum.with_index(@extra_colors) do %>
           <div class="flex gap-2 items-center" data-extra>
             <input type="color" data-role="picker" value={color} class="h-10 w-10 rounded cursor-pointer bg-gray-800 border border-gray-700" />
             <input type="text" name={"brand[extra_#{idx}]"} data-role="hex" value={color} class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono uppercase" pattern="^#[0-9A-Fa-f]{6}$" />
-            <button type="button" onclick="this.parentElement.remove()" class="px-3 py-2 text-red-400 hover:bg-red-500/10 rounded-lg text-sm">✕</button>
+            <button type="button" onclick="this.parentElement.remove()" class="px-3 py-2 text-red-400 hover:bg-red-500/10 rounded-lg text-sm">x</button>
           </div>
         <% end %>
       </div>
-
-      <button type="button" id="add-extra-btn" class="mt-4 button text-sm">
-        + Adicionar cor
-      </button>
-
+      <button type="button" id="add-extra-btn" class="mt-4 button text-sm">+ Adicionar cor</button>
       <script type="text/javascript">
         (function() {
-          function bindColorSync(container) {
-            var picker = container.querySelector('[data-role="picker"]');
-            var hex = container.querySelector('[data-role="hex"]');
-            if (!picker || !hex) return;
-            picker.addEventListener('input', function() { hex.value = picker.value.toUpperCase(); });
-            hex.addEventListener('input', function() {
-              if (/^#[0-9A-Fa-f]{6}$/.test(hex.value)) picker.value = hex.value.toLowerCase();
+          function bindColorSync(c) {
+            var p = c.querySelector('[data-role="picker"]');
+            var h = c.querySelector('[data-role="hex"]');
+            if (!p || !h) return;
+            p.addEventListener('input', function() { h.value = p.value.toUpperCase(); });
+            h.addEventListener('input', function() {
+              if (/^#[0-9A-Fa-f]{6}$/.test(h.value)) p.value = h.value.toLowerCase();
             });
           }
-
           document.querySelectorAll('[data-color-field]').forEach(bindColorSync);
           document.querySelectorAll('[data-extra]').forEach(bindColorSync);
-
           var btn = document.getElementById('add-extra-btn');
-          if (btn) {
-            btn.addEventListener('click', function() {
-              var list = document.getElementById('extras-list');
-              var existing = list.querySelectorAll('[data-extra]').length;
-              var div = document.createElement('div');
-              div.className = 'flex gap-2 items-center';
-              div.setAttribute('data-extra', '');
-              var inputColor = document.createElement('input');
-              inputColor.type = 'color';
-              inputColor.setAttribute('data-role', 'picker');
-              inputColor.value = '#FF5A1F';
-              inputColor.className = 'h-10 w-10 rounded cursor-pointer bg-gray-800 border border-gray-700';
-              var inputText = document.createElement('input');
-              inputText.type = 'text';
-              inputText.name = 'brand[extra_' + existing + ']';
-              inputText.setAttribute('data-role', 'hex');
-              inputText.value = '#FF5A1F';
-              inputText.className = 'flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono uppercase';
-              inputText.pattern = '^#[0-9A-Fa-f]{6}$';
-              var btnRm = document.createElement('button');
-              btnRm.type = 'button';
-              btnRm.textContent = '✕';
-              btnRm.className = 'px-3 py-2 text-red-400 hover:bg-red-500/10 rounded-lg text-sm';
-              btnRm.addEventListener('click', function() { div.remove(); });
-              div.appendChild(inputColor);
-              div.appendChild(inputText);
-              div.appendChild(btnRm);
-              list.appendChild(div);
-              bindColorSync(div);
-            });
-          }
+          if (btn) btn.addEventListener('click', function() {
+            var list = document.getElementById('extras-list');
+            var i = list.querySelectorAll('[data-extra]').length;
+            var d = document.createElement('div');
+            d.className = 'flex gap-2 items-center';
+            d.setAttribute('data-extra', '');
+            var ic = document.createElement('input');
+            ic.type = 'color'; ic.setAttribute('data-role', 'picker'); ic.value = '#FF5A1F';
+            ic.className = 'h-10 w-10 rounded cursor-pointer bg-gray-800 border border-gray-700';
+            var it = document.createElement('input');
+            it.type = 'text'; it.name = 'brand[extra_' + i + ']'; it.setAttribute('data-role', 'hex');
+            it.value = '#FF5A1F'; it.pattern = '^#[0-9A-Fa-f]{6}$';
+            it.className = 'flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono uppercase';
+            var rm = document.createElement('button');
+            rm.type = 'button'; rm.textContent = 'x';
+            rm.className = 'px-3 py-2 text-red-400 hover:bg-red-500/10 rounded-lg text-sm';
+            rm.addEventListener('click', function() { d.remove(); });
+            d.appendChild(ic); d.appendChild(it); d.appendChild(rm);
+            list.appendChild(d); bindColorSync(d);
+          });
         })();
       </script>
     </div>
 
-    <!-- Outros (whatsapp, endereço) -->
     <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 mb-6">
       <h2 class="text-lg font-bold text-white mb-1">📞 Contato (opcional)</h2>
-      <p class="text-sm text-gray-400 mb-5">Aparece no rodapé dos emails.</p>
-
       <div class="space-y-4">
         <div>
           <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">WhatsApp</label>
@@ -169,19 +130,11 @@
         </div>
         <div>
           <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Endereço</label>
-          <input type="text" name="brand[address]" value={@brand["address"]} placeholder="Rua X, 123 — Centro, São Paulo/SP" class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-3 text-sm" />
+          <input type="text" name="brand[address]" value={@brand["address"]} placeholder="Rua X, 123" class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-3 text-sm" />
         </div>
       </div>
     </div>
 
-    <button type="submit" class="button button--cta button--large w-full">
-      Salvar mudanças ✓
-    </button>
+    <button type="submit" class="button button--cta button--large w-full">Salvar mudanças</button>
   </form>
-
-  <!-- Preview live -->
-  <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 mt-8">
-    <h2 class="text-lg font-bold text-white mb-1">👀 Como vai ficar no email</h2>
-    <p class="text-sm text-gray-400 mb-5">Preview do template "Boas-vindas" com sua marca aplicada:</p>
-
-    <div clas
+</div>

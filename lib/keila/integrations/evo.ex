@@ -45,6 +45,21 @@ defmodule Keila.Integrations.Evo do
       {:ok, %{status_code: 200, body: body}} ->
         case Jason.decode(body) do
           {:ok, data} when is_list(data) ->
+            # Debug: log estrutura do primeiro member pra ver campos disponíveis
+            if skip == 0 and length(data) > 0 do
+              first = List.first(data)
+              keys = if is_map(first), do: Map.keys(first), else: []
+              Logger.info("[EVO Members] Sample fields: #{inspect(Enum.take(keys, 30))}")
+
+              if is_map(first) do
+                birth_fields =
+                  ["birthDate", "birthday", "dateOfBirth", "birth_date", "dataNascimento"]
+                  |> Enum.filter(&Map.has_key?(first, &1))
+
+                Logger.info("[EVO Members] Birth date fields detected: #{inspect(birth_fields)}")
+              end
+            end
+
             new_acc = acc ++ data
 
             if length(data) < @page_size do
@@ -76,6 +91,13 @@ defmodule Keila.Integrations.Evo do
         _ -> nil
       end
 
+    raw_birth =
+      member["birthDate"] || member["birthday"] || member["dateOfBirth"] ||
+        member["birth_date"] || member["dataNascimento"] || member["data_nascimento"] ||
+        get_in(member, ["personalInfo", "birthDate"]) ||
+        get_in(member, ["profile", "birthDate"]) ||
+        nil
+
     %{
       name: member["name"] || member["firstName"] || "",
       first_name: member["firstName"] || extract_first_name(member["name"]),
@@ -83,7 +105,8 @@ defmodule Keila.Integrations.Evo do
       email: String.trim(member["email"] || ""),
       phone: member["phone"] || member["cellphone"] || "",
       register_date: member["registerDate"] || "",
-      birth_date: normalize_birth_date(member["birthDate"] || member["dateOfBirth"]),
+      birth_date: normalize_birth_date(raw_birth),
+      birth_date_raw: raw_birth,
       branch: member["branchName"] || member["branch"] || "",
       id_evo: member["idMember"] || member["id"] || nil,
       member_status: member["memberStatus"] || member["status"] || "Ativo",

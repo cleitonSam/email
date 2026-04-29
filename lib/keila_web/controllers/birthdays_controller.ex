@@ -7,6 +7,7 @@ defmodule KeilaWeb.BirthdaysController do
 
   alias Keila.Automations.Workers.BirthdayWorker
   alias Keila.Automations
+  alias Keila.Automations.Workers.SyncWorker
   import Ecto.Query
   alias Keila.Repo
   alias Keila.Contacts.Contact
@@ -44,6 +45,23 @@ defmodule KeilaWeb.BirthdaysController do
     |> assign(:total_contacts, total_contacts)
     |> assign(:automation_active, automation_active)
     |> render("index.html")
+  end
+
+  @doc """
+  Dispara sync EVO agora pro projeto e redireciona de volta.
+  """
+  def sync_now(conn, _params) do
+    project = current_project(conn)
+
+    # Roda sync inline (pode demorar — controller espera, sem timeout de socket)
+    Task.start(fn -> SyncWorker.sync_project(project.id) end)
+
+    conn
+    |> put_flash(
+      :info,
+      "🔄 Sincronizando com EVO agora... volte aqui em 30 segundos pra ver os aniversariantes."
+    )
+    |> redirect(to: "/projects/#{project.id}/aniversariantes")
   end
 
   defp current_project(conn), do: conn.assigns.current_project

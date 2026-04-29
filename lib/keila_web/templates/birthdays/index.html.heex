@@ -1,6 +1,6 @@
 <div class="container flex py-8 sm:py-11 mb-6">
   <div class="flex-grow gap-4 flex flex-col sm:flex-row sm:items-center">
-    <div class="flex items-center gap-4">
+    <div class="flex items-center gap-4 flex-grow">
       <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-fluxo-400 to-pink-400 flex items-center justify-center shadow-lg">
         <span class="text-2xl">🎂</span>
       </div>
@@ -9,6 +9,12 @@
         <p class="text-sm text-gray-400 mt-1">Quem faz aniversário em breve. Manda mensagem afetiva automática.</p>
       </div>
     </div>
+    <form action={"/projects/" <> @current_project.id <> "/aniversariantes/sync"} method="post" class="flex-shrink-0">
+      <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
+      <button type="submit" class="button button--cta">
+        🔄 Sincronizar EVO agora
+      </button>
+    </form>
   </div>
 </div>
 
@@ -70,16 +76,34 @@
     <div class="bg-gray-900/40 border border-gray-800 rounded-2xl p-8 text-center">
       <span class="text-4xl block mb-3">🎂</span>
       <p class="text-white font-semibold mb-2">Nenhum aniversariante nos próximos 30 dias</p>
-      <p class="text-sm text-gray-400 mb-5">
-        <%= if @total_with_birthday == 0 do %>
-          Você ainda não tem datas de nascimento dos contatos.
-        <% else %>
-          Mas você tem {@total_with_birthday} contatos com data cadastrada.
-        <% end %>
-      </p>
-      <a href={"/projects/" <> @current_project.id <> "/contacts/import"} class="text-fluxo-400 hover:underline text-sm">
-        → Importar contatos com data de nascimento via planilha
-      </a>
+      <%= if @total_with_birthday == 0 and @total_contacts > 0 do %>
+        <p class="text-sm text-amber-300 mb-2">⚠️ Você tem {@total_contacts} contatos mas NENHUM com data de nascimento.</p>
+        <p class="text-sm text-gray-400 mb-5">Possíveis causas:<br/>
+          • Os contatos vieram da EVO mas a API não retornou o campo de aniversário<br/>
+          • Os contatos importados eram prospects (leads) que não têm aniversário<br/>
+          • A planilha CSV importada não tinha coluna data_nascimento
+        </p>
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+          <form action={"/projects/" <> @current_project.id <> "/aniversariantes/sync"} method="post">
+            <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
+            <button type="submit" class="button button--cta">🔄 Sincronizar Members EVO agora</button>
+          </form>
+          <a href={"/projects/" <> @current_project.id <> "/contacts/import"} class="button">
+            📥 Importar via planilha CSV
+          </a>
+        </div>
+      <% else %>
+        <p class="text-sm text-gray-400 mb-5">
+          <%= if @total_with_birthday == 0 do %>
+            Você ainda não tem datas de nascimento dos contatos.
+          <% else %>
+            Mas você tem {@total_with_birthday} contatos com data cadastrada.
+          <% end %>
+        </p>
+        <a href={"/projects/" <> @current_project.id <> "/contacts/import"} class="text-fluxo-400 hover:underline text-sm">
+          → Importar contatos com data de nascimento via planilha
+        </a>
+      <% end %>
     </div>
   <% else %>
     <div class="space-y-2">

@@ -1,9 +1,6 @@
 defmodule KeilaWeb.BrandController do
   @moduledoc """
   Tela "Minha Marca" — edita brand kit do projeto a qualquer momento.
-
-  Permite editar nome, logo, cores principais (primary, dark, accent) e
-  adicionar cores extras (color_1, color_2, etc).
   """
   use KeilaWeb, :controller
 
@@ -23,7 +20,6 @@ defmodule KeilaWeb.BrandController do
   def update(conn, %{"brand" => params}) do
     project = current_project(conn)
 
-    # Junta cores extras (color_1, color_2, ...) num só "extra_colors" array
     extras =
       params
       |> Enum.filter(fn {k, _} -> String.starts_with?(k, "extra_") end)
@@ -76,6 +72,41 @@ defmodule KeilaWeb.BrandController do
     conn
     |> put_flash(:error, "Selecione um logo.")
     |> redirect(to: "/projects/#{project.id}/marca")
+  end
+
+  @doc "Pesquisa identidade da marca via IA."
+  def research(conn, _params) do
+    project = current_project(conn)
+    brand = Brand.get(project)
+    name = brand["name"] || ""
+
+    if name == "" do
+      conn
+      |> put_flash(:error, "Coloca o nome da academia primeiro pra IA pesquisar.")
+      |> redirect(to: "/projects/#{project.id}/marca")
+    else
+      case Keila.AI.BrandResearch.research(name, address: brand["address"] || "") do
+        {:ok, profile} ->
+          merged =
+            brand
+            |> Map.put("ai_profile", profile)
+            |> Map.put("tone", profile["tone"] || brand["tone"])
+            |> Map.put("keywords", profile["keywords"] || [])
+            |> Map.put("target_audience", profile["target_audience"])
+            |> Map.put("communication_style", profile["communication_style"])
+
+          Brand.update(project.id, merged)
+
+          conn
+          |> put_flash(:info, "✓ Identidade pesquisada! A IA vai usar esse perfil pra editar emails.")
+          |> redirect(to: "/projects/#{project.id}/marca")
+
+        {:error, reason} ->
+          conn
+          |> put_flash(:error, "Erro: #{inspect(reason)}")
+          |> redirect(to: "/projects/#{project.id}/marca")
+      end
+    end
   end
 
   defp get_extras(brand) do

@@ -1,14 +1,12 @@
 defmodule KeilaWeb.AIController do
   @moduledoc """
   Endpoints JSON pra editar/criar emails MJML via IA.
-
-  Chamados via fetch() pelos modais "🪄 Ajustar com IA" no editor de campanha
-  e "✨ Criar com IA" na galeria de modelos.
   """
   use KeilaWeb, :controller
 
   alias Keila.AI.EmailEditor
   alias Keila.Mailings
+  alias Keila.Projects.Brand
   alias Keila.Integrations.OpenRouter
 
   def status(conn, _params) do
@@ -17,18 +15,12 @@ defmodule KeilaWeb.AIController do
 
   def edit_mjml(conn, %{"mjml" => mjml, "instruction" => instruction}) do
     if not OpenRouter.configured?() do
-      conn
-      |> put_status(503)
-      |> json(%{error: "IA não configurada. Configure OPENROUTER_API_KEY no servidor."})
+      conn |> put_status(503) |> json(%{error: "IA não configurada. Configure OPENROUTER_API_KEY no servidor."})
     else
-      case EmailEditor.edit(mjml, instruction) do
-        {:ok, new_mjml} ->
-          json(conn, %{mjml: new_mjml})
-
-        {:error, reason} ->
-          conn
-          |> put_status(422)
-          |> json(%{error: "#{inspect(reason)}"})
+      brand = current_brand(conn)
+      case EmailEditor.edit(mjml, instruction, brand) do
+        {:ok, new_mjml} -> json(conn, %{mjml: new_mjml})
+        {:error, reason} -> conn |> put_status(422) |> json(%{error: "#{inspect(reason)}"})
       end
     end
   end
@@ -41,13 +33,12 @@ defmodule KeilaWeb.AIController do
     project = current_project(conn)
 
     if not OpenRouter.configured?() do
-      conn
-      |> put_status(503)
-      |> json(%{error: "IA não configurada."})
+      conn |> put_status(503) |> json(%{error: "IA não configurada."})
     else
-      case EmailEditor.create(description) do
+      brand = current_brand(conn)
+
+      case EmailEditor.create(description, brand) do
         {:ok, mjml} ->
-          # Cria uma campanha em rascunho com o MJML gerado pela IA
           params = %{
             "subject" => "Email criado com IA — edite o assunto",
             "mjml_body" => mjml,
@@ -64,14 +55,11 @@ defmodule KeilaWeb.AIController do
               })
 
             {:error, _changeset} ->
-              # Mesmo se não conseguiu criar campanha, devolve o MJML
               json(conn, %{mjml: mjml})
           end
 
         {:error, reason} ->
-          conn
-          |> put_status(422)
-          |> json(%{error: "#{inspect(reason)}"})
+          conn |> put_status(422) |> json(%{error: "#{inspect(reason)}"})
       end
     end
   end
@@ -81,4 +69,11 @@ defmodule KeilaWeb.AIController do
   end
 
   defp current_project(conn), do: conn.assigns.current_project
+
+  defp current_brand(conn) do
+    case conn.assigns[:current_project] do
+      nil -> nil
+      project -> Brand.get(project)
+    end
+  end
 end

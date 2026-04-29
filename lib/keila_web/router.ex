@@ -197,6 +197,7 @@ defmodule KeilaWeb.Router do
     put "/projects/:project_id/marca", BrandController, :update
     post "/projects/:project_id/marca", BrandController, :update
     post "/projects/:project_id/marca/logo", BrandController, :upload_logo
+    post "/projects/:project_id/marca/pesquisar", BrandController, :research
 
     get "/projects/:project_id/team", TeamController, :index
     post "/projects/:project_id/team/invite", TeamController, :invite

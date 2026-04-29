@@ -353,3 +353,7 @@ config :keila, :imagekit,
   url_endpoint: System.get_env("IMAGEKIT_URL_ENDPOINT")
 
 # --- O
+# --- OpenRouter (IA pra editar/criar emails MJML) ---
+config :keila, :openrouter,
+  api_key: System.get_env("OPENROUTER_API_KEY"),
+  default_model: System.get_env("OPENROUTER_MODEL") || "google/gemini-2.5-flash"

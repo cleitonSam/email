@@ -71,4 +71,5 @@ defmodule Keila.Media.Asset do
   end
 
   @spec valid_folders() :: [String.t()]
-  def valid_folders, do: @valid_fo
+  def valid_folders, do: @valid_folders
+end

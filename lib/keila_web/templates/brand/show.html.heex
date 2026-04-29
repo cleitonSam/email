@@ -14,27 +14,21 @@
 
 <div class="container max-w-3xl pb-16">
   <div class="bg-gradient-to-r from-fluxo-500/15 to-purple-500/15 border border-fluxo-500/30 rounded-2xl p-6 mb-6">
-    <div class="flex items-start justify-between gap-4">
-      <div class="flex-1">
-        <h2 class="text-lg font-bold text-white mb-1">🤖 Pesquisar identidade da marca</h2>
-        <p class="text-sm text-gray-300 mb-3">
-          A IA pesquisa sua academia e descobre tom de voz, palavras-chave, público-alvo e estilo de comunicação. Esses dados ficam salvos e a IA usa pra editar emails depois.
-        </p>
-        <%= if @brand["ai_profile"] do %>
-          <div class="bg-gray-900/60 rounded-lg p-3 mb-3 text-xs text-gray-300 space-y-1">
-            <div><strong class="text-fluxo-300">Tom:</strong> {@brand["tone"] || "—"}</div>
-            <div><strong class="text-fluxo-300">Público:</strong> {@brand["target_audience"] || "—"}</div>
-            <div><strong class="text-fluxo-300">Palavras-chave:</strong> {if is_list(@brand["keywords"]), do: Enum.join(@brand["keywords"], ", "), else: "—"}</div>
-          </div>
-        <% end %>
-        <form action={"/projects/" <> @current_project.id <> "/marca/pesquisar"} method="post" class="inline-block">
-          <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
-          <button type="submit" class="button button--cta text-sm">
-            <%= if @brand["ai_profile"], do: "🔄 Pesquisar de novo", else: "🔍 Pesquisar com IA" %>
-          </button>
-        </form>
+    <h2 class="text-lg font-bold text-white mb-1">🤖 Pesquisar identidade da marca</h2>
+    <p class="text-sm text-gray-300 mb-3">A IA pesquisa sua academia e descobre tom de voz, palavras-chave e público-alvo. Esses dados ficam salvos e a IA usa pra editar emails depois.</p>
+    <%= if @brand["ai_profile"] do %>
+      <div class="bg-gray-900/60 rounded-lg p-3 mb-3 text-xs text-gray-300 space-y-1">
+        <div><strong class="text-fluxo-300">Tom:</strong> {@brand["tone"] || "—"}</div>
+        <div><strong class="text-fluxo-300">Público:</strong> {@brand["target_audience"] || "—"}</div>
+        <div><strong class="text-fluxo-300">Palavras-chave:</strong> {if is_list(@brand["keywords"]), do: Enum.join(@brand["keywords"], ", "), else: "—"}</div>
       </div>
-    </div>
+    <% end %>
+    <form action={"/projects/" <> @current_project.id <> "/marca/pesquisar"} method="post" class="inline-block">
+      <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
+      <button type="submit" class="button button--cta text-sm">
+        <%= if @brand["ai_profile"], do: "🔄 Pesquisar de novo", else: "🔍 Pesquisar com IA" %>
+      </button>
+    </form>
   </div>
 
   <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 mb-6">
@@ -70,25 +64,25 @@
       <h2 class="text-lg font-bold text-white mb-1">🎨 Cores principais</h2>
       <p class="text-sm text-gray-400 mb-5">Aplicadas nos botões, títulos e detalhes dos emails.</p>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div data-color-field="primary">
+        <div>
           <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Primária</label>
           <div class="flex gap-2">
-            <input type="color" data-role="picker" value={@brand["color_primary"]} class="h-12 w-12 rounded cursor-pointer bg-gray-800 border border-gray-700" />
-            <input type="text" name="brand[color_primary]" data-role="hex" value={@brand["color_primary"]} class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono uppercase" pattern="^#[0-9A-Fa-f]{6}$" />
+            <input type="color" value={@brand["color_primary"]} oninput="this.nextElementSibling.value=this.value.toUpperCase()" class="h-12 w-12 rounded cursor-pointer bg-gray-800 border border-gray-700" />
+            <input type="text" name="brand[color_primary]" value={@brand["color_primary"]} oninput="if(/^#[0-9A-Fa-f]{6}$/.test(this.value)) this.previousElementSibling.value=this.value.toLowerCase()" class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono uppercase" pattern="^#[0-9A-Fa-f]{6}$" />
           </div>
         </div>
-        <div data-color-field="dark">
+        <div>
           <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Escura (fundo)</label>
           <div class="flex gap-2">
-            <input type="color" data-role="picker" value={@brand["color_dark"]} class="h-12 w-12 rounded cursor-pointer bg-gray-800 border border-gray-700" />
-            <input type="text" name="brand[color_dark]" data-role="hex" value={@brand["color_dark"]} class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono uppercase" pattern="^#[0-9A-Fa-f]{6}$" />
+            <input type="color" value={@brand["color_dark"]} oninput="this.nextElementSibling.value=this.value.toUpperCase()" class="h-12 w-12 rounded cursor-pointer bg-gray-800 border border-gray-700" />
+            <input type="text" name="brand[color_dark]" value={@brand["color_dark"]} oninput="if(/^#[0-9A-Fa-f]{6}$/.test(this.value)) this.previousElementSibling.value=this.value.toLowerCase()" class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono uppercase" pattern="^#[0-9A-Fa-f]{6}$" />
           </div>
         </div>
-        <div data-color-field="accent">
+        <div>
           <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Destaque</label>
           <div class="flex gap-2">
-            <input type="color" data-role="picker" value={@brand["color_accent"]} class="h-12 w-12 rounded cursor-pointer bg-gray-800 border border-gray-700" />
-            <input type="text" name="brand[color_accent]" data-role="hex" value={@brand["color_accent"]} class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono uppercase" pattern="^#[0-9A-Fa-f]{6}$" />
+            <input type="color" value={@brand["color_accent"]} oninput="this.nextElementSibling.value=this.value.toUpperCase()" class="h-12 w-12 rounded cursor-pointer bg-gray-800 border border-gray-700" />
+            <input type="text" name="brand[color_accent]" value={@brand["color_accent"]} oninput="if(/^#[0-9A-Fa-f]{6}$/.test(this.value)) this.previousElementSibling.value=this.value.toLowerCase()" class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono uppercase" pattern="^#[0-9A-Fa-f]{6}$" />
           </div>
         </div>
       </div>
@@ -99,38 +93,30 @@
       <p class="text-sm text-gray-400 mb-5">Cores adicionais da paleta da marca.</p>
       <div id="extras-list" class="space-y-3">
         <%= for {color, idx} <- Enum.with_index(@extra_colors) do %>
-          <div class="flex gap-2 items-center" data-extra>
-            <input type="color" data-role="picker" value={color} class="h-10 w-10 rounded cursor-pointer bg-gray-800 border border-gray-700" />
-            <input type="text" name={"brand[extra_#{idx}]"} data-role="hex" value={color} class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono uppercase" pattern="^#[0-9A-Fa-f]{6}$" />
+          <div class="flex gap-2 items-center">
+            <input type="color" value={color} oninput="this.nextElementSibling.value=this.value.toUpperCase()" class="h-10 w-10 rounded cursor-pointer bg-gray-800 border border-gray-700" />
+            <input type="text" name={"brand[extra_#{idx}]"} value={color} oninput="if(/^#[0-9A-Fa-f]{6}$/.test(this.value)) this.previousElementSibling.value=this.value.toLowerCase()" class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono uppercase" pattern="^#[0-9A-Fa-f]{6}$" />
             <button type="button" onclick="this.parentElement.remove()" class="px-3 py-2 text-red-400 hover:bg-red-500/10 rounded-lg text-sm">x</button>
           </div>
         <% end %>
       </div>
-      <button type="button" id="add-extra-btn" class="mt-4 button text-sm">+ Adicionar cor</button>
-      <script type="text/javascript">
-        (function() {
-          function bindColorSync(c) {
-            var p = c.querySelector('[data-role="picker"]');
-            var h = c.querySelector('[data-role="hex"]');
-            if (!p || !h) return;
-            p.addEventListener('input', function() { h.value = p.value.toUpperCase(); });
-            h.addEventListener('input', function() {
-              if (/^#[0-9A-Fa-f]{6}$/.test(h.value)) p.value = h.value.toLowerCase();
-            });
-          }
-          document.querySelectorAll('[data-color-field]').forEach(bindColorSync);
-          document.querySelectorAll('[data-extra]').forEach(bindColorSync);
-          var btn = document.getElementById('add-extra-btn');
-          if (btn) btn.addEventListener('click', function() {
-            var list = document.getElementById('extras-list');
-            var i = list.querySelectorAll('[data-extra]').length;
-            var d = document.createElement('div');
-            d.className = 'flex gap-2 items-center';
-            d.setAttribute('data-extra', '');
-            var ic = document.createElement('input');
-            ic.type = 'color'; ic.setAttribute('data-role', 'picker'); ic.value = '#FF5A1F';
-            ic.className = 'h-10 w-10 rounded cursor-pointer bg-gray-800 border border-gray-700';
-            var it = document.createElement('input');
-            it.type = 'text'; it.name = 'brand[extra_' + i + ']'; it.setAttribute('data-role', 'hex');
-            it.value = '#FF5A1F'; it.pattern = '^#[0-9A-Fa-f]{6}$';
-            it.className = 'flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono uppercase';
+      <button type="button" onclick="var l=document.getElementById('extras-list');var n=l.children.length;var h='&lt;div class=&quot;flex gap-2 items-center&quot;&gt;&lt;input type=&quot;color&quot; value=&quot;#FF5A1F&quot; oninput=&quot;this.nextElementSibling.value=this.value.toUpperCase()&quot; class=&quot;h-10 w-10 rounded cursor-pointer bg-gray-800 border border-gray-700&quot;&gt;&lt;input type=&quot;text&quot; name=&quot;brand[extra_'+n+']&quot; value=&quot;#FF5A1F&quot; class=&quot;flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono uppercase&quot;&gt;&lt;button type=&quot;button&quot; onclick=&quot;this.parentElement.remove()&quot; class=&quot;px-3 py-2 text-red-400&quot;&gt;x&lt;/button&gt;&lt;/div&gt;';var t=document.createElement('template');t.innerHTML=h.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"');l.appendChild(t.content.firstChild);" class="mt-4 button text-sm">+ Adicionar cor</button>
+    </div>
+
+    <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 mb-6">
+      <h2 class="text-lg font-bold text-white mb-1">📞 Contato (opcional)</h2>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">WhatsApp</label>
+          <input type="url" name="brand[whatsapp_url]" value={@brand["whatsapp_url"]} placeholder="https://wa.me/5511999999999" class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-3 text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Endereço</label>
+          <input type="text" name="brand[address]" value={@brand["address"]} placeholder="Rua X, 123" class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-3 text-sm" />
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="button button--cta button--large w-full">Salvar mudanças ✓</button>
+  </form>
+</div>

@@ -1,0 +1,17 @@
+<div class="container flex flex-wrap gap-2 mb-4">
+  <%= for {value, label} <- [{"all", gettext("All")}, {"member", gettext("Members")}, {"opportunity", gettext("Opportunities")}] do %>
+    <a
+      href={"#{Routes.contact_path(@conn, :index, @current_project.id)}?type=#{value}"}
+      class={
+        "px-4 py-2 rounded-lg text-sm font-medium border transition-colors " <>
+        if Map.get(assigns, :contact_type, "all") == value do
+          "bg-fluxo-600/20 border-fluxo-500/40 text-fluxo-200"
+        else
+          "bg-gray-900/40 border-gray-800/50 text-gray-400 hover:text-white hover:border-fluxo-500/30"
+        end
+      }
+    >
+      {label}
+    </a>
+  <% end %>
+</div>

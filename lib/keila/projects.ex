@@ -33,8 +33,12 @@ defmodule Keila.Projects do
         |> Repo.insert()
       end
       |> case do
-        {:ok, project = %Project{}} -> project
-        {:error, changeset = %Changeset{}} -> Repo.rollback(changeset)
+        {:ok, project = %Project{}} ->
+          _ = Keila.Contacts.Categories.seed_for_project(project.id)
+          project
+
+        {:error, changeset = %Changeset{}} ->
+          Repo.rollback(changeset)
       end
     end)
   end

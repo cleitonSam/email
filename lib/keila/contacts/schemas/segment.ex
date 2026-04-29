@@ -6,6 +6,7 @@ defmodule Keila.Contacts.Segment do
     field(:name, :string)
 
     field(:filter, :map)
+    field(:system_category, :string)
 
     timestamps()
   end
@@ -13,14 +14,14 @@ defmodule Keila.Contacts.Segment do
   @spec creation_changeset(t(), Changeset.data()) :: Changeset.t(t())
   def creation_changeset(struct \\ %__MODULE__{}, params) do
     struct
-    |> cast(params, [:name, :project_id, :filter])
+    |> cast(params, [:name, :project_id, :filter, :system_category])
     |> ensure_filter_not_empty()
   end
 
   @spec update_changeset(t(), Changeset.data()) :: Changeset.t(t())
   def update_changeset(struct, params) do
     struct
-    |> cast(params, [:name, :filter])
+    |> cast(params, [:name, :filter, :system_category])
     |> validate_required(:name)
     |> ensure_filter_not_empty()
   end

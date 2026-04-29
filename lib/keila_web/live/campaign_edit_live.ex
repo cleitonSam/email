@@ -18,6 +18,10 @@ defmodule KeilaWeb.CampaignEditLive do
     changeset = Ecto.Changeset.change(campaign, %{})
     account = session["account"]
 
+    units =
+      session["units"] ||
+        Keila.Integrations.Evo.Units.list_active_units(project.id)
+
     socket =
       socket
       |> assign(:current_project, project)
@@ -25,6 +29,7 @@ defmodule KeilaWeb.CampaignEditLive do
       |> assign(:senders, senders)
       |> assign(:segments, segments)
       |> assign(:templates, templates)
+      |> assign(:units, units)
       |> assign(:changeset, changeset)
       |> assign(:settings_changeset, changeset)
       |> assign(:account, account)
@@ -482,9 +487,12 @@ defmodule KeilaWeb.CampaignEditLive do
 
   defp put_recipient_count(socket) do
     segment_id = Ecto.Changeset.get_field(socket.assigns.changeset, :segment_id)
+    unit_id = Ecto.Changeset.get_field(socket.assigns.changeset, :unit_id)
 
-    if !Map.has_key?(socket.assigns, :segment_id) ||
-         Map.get(socket.assigns, :segment_id) != segment_id do
+    cached_segment_id = Map.get(socket.assigns, :segment_id, :unset)
+    cached_unit_id = Map.get(socket.assigns, :unit_id, :unset)
+
+    if cached_segment_id != segment_id or cached_unit_id != unit_id do
       segment_filter =
         case segment_id do
           nil ->
@@ -495,10 +503,16 @@ defmodule KeilaWeb.CampaignEditLive do
 
             Enum.find_value(segments, fn segment ->
               if segment.id == segment_id, do: segment.filter
-            end)
+            end) || %{}
         end
 
-      filter = %{"$and" => [segment_filter, %{"status" => "active"}]}
+      unit_filter =
+        case unit_id do
+          nil -> %{}
+          uid -> %{"data.evo_unit_id" => uid}
+        end
+
+      filter = %{"$and" => [segment_filter, unit_filter, %{"status" => "active"}]}
 
       recipient_count =
         Keila.Contacts.get_project_contacts_count(socket.assigns.current_project.id,
@@ -507,6 +521,7 @@ defmodule KeilaWeb.CampaignEditLive do
 
       socket
       |> assign(:segment_id, segment_id)
+      |> assign(:unit_id, unit_id)
       |> assign(:recipient_count, recipient_count)
     else
       socket

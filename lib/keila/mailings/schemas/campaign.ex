@@ -15,6 +15,7 @@ defmodule Keila.Mailings.Campaign do
     :sender_id,
     :template_id,
     :segment_id,
+    :unit_id,
     :data,
     :preview_text,
     :public_link_enabled
@@ -40,6 +41,7 @@ defmodule Keila.Mailings.Campaign do
     belongs_to :sender, Sender, type: Sender.Id
     belongs_to :project, Project, type: Project.Id
     belongs_to :segment, Segment, type: Segment.Id
+    belongs_to :unit, Keila.Integrations.Evo.Unit
 
     timestamps()
   end

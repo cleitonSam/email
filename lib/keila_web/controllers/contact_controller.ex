@@ -50,7 +50,13 @@ defmodule KeilaWeb.ContactController do
     search = Map.get(params, "search")
     search_filter = build_search_filter(search)
     status_filter = %{"status" => conn.assigns.contacts_status |> to_string()}
-    filter = Map.merge(status_filter, search_filter)
+    contact_type = normalize_contact_type(Map.get(params, "type"))
+    type_filter = build_type_filter(contact_type)
+
+    filter =
+      status_filter
+      |> Map.merge(search_filter)
+      |> Map.merge(type_filter)
 
     sort_by = get_sort_by(params)
     sort_order = get_sort_order(params)
@@ -70,8 +76,20 @@ defmodule KeilaWeb.ContactController do
     |> assign(:sort_by, sort_by)
     |> assign(:sort_order, sort_order)
     |> assign(:contacts_stats, contacts_stats)
+    |> assign(:contact_type, contact_type)
     |> render("index.html")
   end
+
+  defp normalize_contact_type(t) when t in ["member", "opportunity"], do: t
+  defp normalize_contact_type("oportunidade"), do: "opportunity"
+  defp normalize_contact_type(_), do: "all"
+
+  defp build_type_filter("member"), do: %{"data.evo_type" => "member"}
+
+  defp build_type_filter("opportunity"),
+    do: %{"data.evo_type" => %{"$in" => ["prospect", "opportunity"]}}
+
+  defp build_type_filter(_), do: %{}
 
   defp get_page(%{"page" => raw_page}) when is_binary(raw_page) do
     case Integer.parse(raw_page) do

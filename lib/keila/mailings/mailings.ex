@@ -568,7 +568,14 @@ defmodule Keila.Mailings do
       |> Repo.update()
 
     segment_filter = if campaign.segment, do: campaign.segment.filter, else: %{}
-    filter = %{"$and" => [segment_filter, %{"status" => "active"}]}
+
+    unit_filter =
+      case campaign.unit_id do
+        nil -> %{}
+        unit_id -> %{"data.evo_unit_id" => unit_id}
+      end
+
+    filter = %{"$and" => [segment_filter, unit_filter, %{"status" => "active"}]}
 
     Keila.Contacts.stream_project_contacts(campaign.project_id, filter: filter)
     |> Stream.chunk_every(5000)

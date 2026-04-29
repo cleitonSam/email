@@ -1,0 +1,182 @@
+<div class="container flex py-8 sm:py-11 mb-6">
+  <div class="flex-grow gap-4 flex flex-col sm:flex-row sm:items-center">
+    <div class="flex items-center gap-4">
+      <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-fluxo-400 to-cyan-400 flex items-center justify-center shadow-lg shadow-fluxo-500/20">
+        <span class="inline-flex h-6 w-6 text-white">{render_icon(:color_swatch)}</span>
+      </div>
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-bold text-white">Minha Marca</h1>
+        <p class="text-sm text-gray-400 mt-1">Logo, nome e cores que aparecem nos emails. Edite a qualquer momento.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container max-w-3xl pb-16">
+  <!-- Logo -->
+  <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 mb-6">
+    <h2 class="text-lg font-bold text-white mb-1">🖼️ Logo da academia</h2>
+    <p class="text-sm text-gray-400 mb-5">Aparece no topo de todos os emails.</p>
+
+    <div class="flex items-center gap-5">
+      <div class="bg-white rounded-xl p-4 flex items-center justify-center" style="min-width: 140px; min-height: 100px;">
+        <%= if @brand["logo_url"] != "" do %>
+          <img src={@brand["logo_url"]} alt={@brand["name"]} class="max-h-20 max-w-full" />
+        <% else %>
+          <span class="text-gray-400 text-xs">Sem logo</span>
+        <% end %>
+      </div>
+      <form action={"/projects/" <> @current_project.id <> "/marca/logo"} method="post" enctype="multipart/form-data" class="flex-1">
+        <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
+        <input type="file" name="logo" accept="image/png,image/jpeg,image/webp,image/svg+xml" class="block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-fluxo-500 file:text-white hover:file:bg-fluxo-600 file:cursor-pointer" required onchange="this.form.submit()" />
+        <p class="text-xs text-gray-500 mt-2">PNG, JPG, WebP ou SVG · até 5MB</p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Form principal: nome + cores -->
+  <form action={"/projects/" <> @current_project.id <> "/marca"} method="post">
+    <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
+    <input type="hidden" name="_method" value="put" />
+
+    <!-- Nome -->
+    <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 mb-6">
+      <h2 class="text-lg font-bold text-white mb-1">📝 Nome da academia</h2>
+      <p class="text-sm text-gray-400 mb-5">Aparece no rodapé dos emails e no nome do remetente.</p>
+      <input
+        type="text"
+        name="brand[name]"
+        value={@brand["name"]}
+        placeholder="Ex: Academia Movimento"
+        class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-3 text-sm"
+      />
+    </div>
+
+    <!-- Cores principais -->
+    <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 mb-6">
+      <h2 class="text-lg font-bold text-white mb-1">🎨 Cores principais</h2>
+      <p class="text-sm text-gray-400 mb-5">Aplicadas nos botões, títulos e detalhes dos emails.</p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Primária</label>
+          <div class="flex gap-2">
+            <input type="color" name="brand[color_primary]" value={@brand["color_primary"]} class="h-12 w-12 rounded cursor-pointer bg-gray-800 border border-gray-700" />
+            <input type="text" name="brand[color_primary]" value={@brand["color_primary"]} class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono" pattern="^#[0-9A-Fa-f]{6}$" />
+          </div>
+          <p class="text-xs text-gray-500 mt-1">Botões e CTAs</p>
+        </div>
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Escura (fundo)</label>
+          <div class="flex gap-2">
+            <input type="color" name="brand[color_dark]" value={@brand["color_dark"]} class="h-12 w-12 rounded cursor-pointer bg-gray-800 border border-gray-700" />
+            <input type="text" name="brand[color_dark]" value={@brand["color_dark"]} class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono" pattern="^#[0-9A-Fa-f]{6}$" />
+          </div>
+          <p class="text-xs text-gray-500 mt-1">Hero/seções escuras</p>
+        </div>
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Destaque</label>
+          <div class="flex gap-2">
+            <input type="color" name="brand[color_accent]" value={@brand["color_accent"]} class="h-12 w-12 rounded cursor-pointer bg-gray-800 border border-gray-700" />
+            <input type="text" name="brand[color_accent]" value={@brand["color_accent"]} class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono" pattern="^#[0-9A-Fa-f]{6}$" />
+          </div>
+          <p class="text-xs text-gray-500 mt-1">Detalhes e accent</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cores extras -->
+    <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 mb-6" id="extras-section">
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="text-lg font-bold text-white">➕ Cores extras (opcional)</h2>
+      </div>
+      <p class="text-sm text-gray-400 mb-5">Cores adicionais da paleta da marca pra usar em campanhas customizadas.</p>
+
+      <div id="extras-list" class="space-y-3">
+        <%= for {color, idx} <- Enum.with_index(@extra_colors) do %>
+          <div class="flex gap-2 items-center">
+            <input type="color" name={"brand[extra_#{idx}]"} value={color} class="h-10 w-10 rounded cursor-pointer bg-gray-800 border border-gray-700" />
+            <input type="text" name={"brand[extra_#{idx}]"} value={color} class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono" pattern="^#[0-9A-Fa-f]{6}$" />
+            <button type="button" onclick="this.parentElement.remove()" class="px-3 py-2 text-red-400 hover:bg-red-500/10 rounded-lg text-sm">✕</button>
+          </div>
+        <% end %>
+      </div>
+
+      <button type="button" onclick="addExtraColor()" class="mt-4 button text-sm">
+        + Adicionar cor
+      </button>
+
+      <script>
+        let extraIdx = {Enum.count(@extra_colors)};
+        function addExtraColor() {
+          const list = document.getElementById('extras-list');
+          const div = document.createElement('div');
+          div.className = 'flex gap-2 items-center';
+          div.innerHTML = `
+            <input type="color" name="brand[extra_${extraIdx}]" value="#FF5A1F" class="h-10 w-10 rounded cursor-pointer bg-gray-800 border border-gray-700" />
+            <input type="text" name="brand[extra_${extraIdx}]" value="#FF5A1F" class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono" pattern="^#[0-9A-Fa-f]{6}$" />
+            <button type="button" onclick="this.parentElement.remove()" class="px-3 py-2 text-red-400 hover:bg-red-500/10 rounded-lg text-sm">✕</button>
+          `;
+          list.appendChild(div);
+          extraIdx++;
+          // Sincroniza color picker com text input
+          const inputs = div.querySelectorAll('input[type="color"], input[type="text"]');
+          inputs[0].addEventListener('input', () => inputs[1].value = inputs[0].value.toUpperCase());
+          inputs[1].addEventListener('input', () => { if (/^#[0-9A-Fa-f]{6}$/.test(inputs[1].value)) inputs[0].value = inputs[1].value; });
+        }
+        // Sincroniza pickers existentes
+        document.querySelectorAll('#extras-list > div').forEach(div => {
+          const inputs = div.querySelectorAll('input[type="color"], input[type="text"]');
+          inputs[0].addEventListener('input', () => inputs[1].value = inputs[0].value.toUpperCase());
+          inputs[1].addEventListener('input', () => { if (/^#[0-9A-Fa-f]{6}$/.test(inputs[1].value)) inputs[0].value = inputs[1].value; });
+        });
+        // Sincroniza pickers principais
+        document.querySelectorAll('input[name^="brand[color_"]').forEach((input, i, all) => {
+          if (i % 2 === 0 && all[i+1]) {
+            input.addEventListener('input', () => all[i+1].value = input.value.toUpperCase());
+            all[i+1].addEventListener('input', () => { if (/^#[0-9A-Fa-f]{6}$/.test(all[i+1].value)) input.value = all[i+1].value; });
+          }
+        });
+      </script>
+    </div>
+
+    <!-- Outros (whatsapp, endereço) -->
+    <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 mb-6">
+      <h2 class="text-lg font-bold text-white mb-1">📞 Contato (opcional)</h2>
+      <p class="text-sm text-gray-400 mb-5">Aparece no rodapé dos emails.</p>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">WhatsApp</label>
+          <input type="url" name="brand[whatsapp_url]" value={@brand["whatsapp_url"]} placeholder="https://wa.me/5511999999999" class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-3 text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Endereço</label>
+          <input type="text" name="brand[address]" value={@brand["address"]} placeholder="Rua X, 123 — Centro, São Paulo/SP" class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-3 text-sm" />
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="button button--cta button--large w-full">
+      Salvar mudanças ✓
+    </button>
+  </form>
+
+  <!-- Preview live -->
+  <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 mt-8">
+    <h2 class="text-lg font-bold text-white mb-1">👀 Como vai ficar no email</h2>
+    <p class="text-sm text-gray-400 mb-5">Preview do template "Boas-vindas" com sua marca aplicada:</p>
+
+    <div class="bg-white rounded-xl overflow-hidden">
+      <iframe
+        src={"/email-previews/01-boas-vindas-matricula?p=" <> @current_project.id}
+        class="w-full"
+        style="height: 600px; border: 0;"
+      >
+      </iframe>
+    </div>
+    <p class="text-xs text-gray-500 mt-3 text-center">
+      <a href={"/projects/" <> @current_project.id <> "/campaigns/library"} class="text-fluxo-400 hover:underline">Ver todos os 8 modelos com sua marca →</a>
+    </p>
+  </div>
+</div>

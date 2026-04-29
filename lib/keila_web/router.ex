@@ -24,6 +24,10 @@ defmodule KeilaWeb.Router do
 
     # Previews dos modelos de email — servidos diretamente do disco
     get "/email-previews/:slug", PreviewController, :show
+
+    # Convite pra entrar num projeto (link recebido por email)
+    get "/invite/:token", InviteController, :show
+    post "/invite/:token", InviteController, :accept
   end
 
   scope "/" do
@@ -175,6 +179,15 @@ defmodule KeilaWeb.Router do
     get "/projects/:project_id/automacoes", AutomationsController, :index
     get "/projects/:project_id/setup", WizardController, :show
     post "/projects/:project_id/setup/logo", WizardController, :upload_logo
+
+    get "/projects/:project_id/marca", BrandController, :show
+    put "/projects/:project_id/marca", BrandController, :update
+    post "/projects/:project_id/marca", BrandController, :update
+    post "/projects/:project_id/marca/logo", BrandController, :upload_logo
+
+    get "/projects/:project_id/team", TeamController, :index
+    post "/projects/:project_id/team/invite", TeamController, :invite
+    post "/projects/:project_id/team/invitations/:id/revoke", TeamController, :revoke
   end
 
   # Public Routes

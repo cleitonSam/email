@@ -153,6 +153,11 @@
               exact: true,
               icon: :sparkles
             )}
+          <% else %>
+            {menu_link(@conn, :brand, :show, [@current_project.id], gettext("Minha Marca"),
+              exact: true,
+              icon: :color_swatch
+            )}
           <% end %>
           {menu_link(@conn, :units, :index, [@current_project.id], gettext("Minhas Academias"),
             exact: true,
@@ -169,6 +174,10 @@
           {menu_link(@conn, :media, :index, [@current_project.id], gettext("Imagens"),
             exact: true,
             icon: :photograph
+          )}
+          {menu_link(@conn, :team, :index, [@current_project.id], gettext("Equipe"),
+            exact: true,
+            icon: :users
           )}
         <% end %>
         <div class="hidden sm:block sm:flex-grow"></div>

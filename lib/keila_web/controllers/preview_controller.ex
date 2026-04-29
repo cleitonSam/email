@@ -33,7 +33,7 @@ defmodule KeilaWeb.PreviewController do
   @doc false
   def previews_loaded, do: Map.keys(@previews)
 
-  def show(conn, %{"slug" => slug}) do
+  def show(conn, %{"slug" => slug} = params) do
     slug =
       slug
       |> String.replace_suffix(".html", "")
@@ -53,12 +53,52 @@ defmodule KeilaWeb.PreviewController do
             |> send_resp(404, "Modelo \"#{slug}\" não encontrado.\n\nDisponíveis: #{available}")
 
           content ->
+            content = maybe_apply_brand(content, params["p"])
+
             conn
             |> put_resp_content_type("text/html; charset=utf-8")
             |> put_resp_header("x-frame-options", "SAMEORIGIN")
-            |> put_resp_header("cache-control", "public, max-age=300")
+            |> put_resp_header("cache-control", "private, max-age=60")
             |> send_resp(200, content)
         end
     end
   end
+
+  # Substitui cores/logo/nome dos defaults pelas do brand do projeto.
+  # Recebe project_id via ?p=... no preview URL.
+  defp maybe_apply_brand(html, nil), do: html
+  defp maybe_apply_brand(html, ""), do: html
+
+  defp maybe_apply_brand(html, project_id) do
+    try do
+      case Keila.Projects.get_project(project_id) do
+        nil ->
+          html
+
+        project ->
+          brand = Keila.Projects.Brand.get(project)
+
+          html
+          |> replace_safe("#FF5A1F", brand["color_primary"])
+          |> replace_safe("#0A0E27", brand["color_dark"])
+          |> replace_safe("#C4FF00", brand["color_accent"])
+          |> replace_safe(
+            "https://placehold.co/240x80/0C4A6E/FFFFFF/png?text=ACADEMIA+MOVIMENTO",
+            brand["logo_url"]
+          )
+          |> replace_safe(
+            "https://placehold.co/140x44/0A0E27/FFFFFF/png?text=ACADEMIA",
+            brand["logo_url"]
+          )
+          |> replace_safe("Academia Movimento", brand["name"])
+      end
+    rescue
+      _ -> html
+    end
+  end
+
+  defp replace_safe(html, _from, nil), do: html
+  defp replace_safe(html, _from, ""), do: html
+  defp replace_safe(html, from, to) when is_binary(to), do: String.replace(html, from, to)
+  defp replace_safe(html, _, _), do: html
 end

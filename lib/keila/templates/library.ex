@@ -143,6 +143,7 @@ defmodule Keila.Templates.Library do
     content
     |> apply_liquid_vars(brand, keys)
     |> apply_hex_substitutions(brand)
+    |> apply_smart_contrast(brand)
     |> apply_placeholder_substitutions(brand)
   end
 
@@ -222,5 +223,91 @@ defmodule Keila.Templates.Library do
 
   defp maybe_replace_name(content, name) do
     String.replace(content, "Academia Movimento", name)
+  end
+
+  # ── Contraste inteligente (WCAG luminance) ──
+  # Se a cor primaria/dark for clara, texto branco em cima fica invisivel.
+  # Detecta via luminancia e troca pra texto escuro nas areas afetadas.
+
+  @doc """
+  Devolve o hex de texto legivel em cima de uma cor de fundo.
+  Usa luminancia relativa (WCAG) com threshold 0.55.
+  """
+  @spec contrast_text(String.t()) :: String.t()
+  def contrast_text(hex) when is_binary(hex) do
+    case luminance(hex) do
+      :error -> "#FFFFFF"
+      l when l > 0.55 -> "#0A0E27"
+      _ -> "#FFFFFF"
+    end
+  end
+
+  def contrast_text(_), do: "#FFFFFF"
+
+  defp luminance("#" <> hex), do: luminance(hex)
+
+  defp luminance(hex) when byte_size(hex) == 6 do
+    with {r, ""} <- Integer.parse(binary_part(hex, 0, 2), 16),
+         {g, ""} <- Integer.parse(binary_part(hex, 2, 2), 16),
+         {b, ""} <- Integer.parse(binary_part(hex, 4, 2), 16) do
+      rl = channel_lum(r / 255)
+      gl = channel_lum(g / 255)
+      bl = channel_lum(b / 255)
+      0.2126 * rl + 0.7152 * gl + 0.0722 * bl
+    else
+      _ -> :error
+    end
+  end
+
+  defp luminance(_), do: :error
+
+  defp channel_lum(c) when c <= 0.03928, do: c / 12.92
+  defp channel_lum(c), do: :math.pow((c + 0.055) / 1.055, 2.4)
+
+  # Aplica swap de texto branco -> escuro quando o fundo e claro demais
+  defp apply_smart_contrast(content, brand) do
+    primary = Map.get(brand, "color_primary") || ""
+    dark = Map.get(brand, "color_dark") || ""
+
+    content
+    |> maybe_fix_contrast(primary)
+    |> maybe_fix_contrast(dark)
+  end
+
+  defp maybe_fix_contrast(content, ""), do: content
+
+  defp maybe_fix_contrast(content, hex) do
+    if contrast_text(hex) == "#0A0E27" do
+      # Fundo eh claro: texto branco precisa virar escuro
+      swap_white_text_near_bg(content, hex, "#0A0E27")
+    else
+      content
+    end
+  end
+
+  defp swap_white_text_near_bg(content, bg_hex, new_text) do
+    bg = Regex.escape(bg_hex)
+
+    # Pattern 1: HTML inline style — bg antes do color (ate ~300 chars dentro do mesmo style="...")
+    p1 = ~r/(background(?:-color)?:\s*#{bg}[^"]{0,300}?color:\s*)(?:#FFFFFF|#ffffff|#fff|white)/i
+
+    # Pattern 2: HTML inline style — color antes do bg
+    p2 = ~r/(color:\s*)(?:#FFFFFF|#ffffff|#fff|white)([^"]{0,300}?background(?:-color)?:\s*#{bg})/i
+
+    # Pattern 3: HTML attr bgcolor="..." em <td> com <a style="...color:#FFF" dentro (ate ~500 chars)
+    p3 = ~r/(bgcolor="#{bg}"[^>]*>[^<]{0,200}<a[^>]*style="[^"]*color:\s*)(?:#FFFFFF|#ffffff|#fff|white)/i
+
+    # Pattern 4: MJML <mj-button> com bg primary depois color="#FFFFFF"
+    p4 = ~r/(<mj-button\b[^>]*background-color="#{bg}"[^>]*?\bcolor=)"(?:#FFFFFF|#ffffff|white)"/i
+
+    # Pattern 5: MJML <mj-button> com color="#FFFFFF" antes do bg
+    p5 = ~r/(<mj-button\b[^>]*?\bcolor=)"(?:#FFFFFF|#ffffff|white)"([^>]*background-color="#{bg}")/i
+
+    content
+    |> String.replace(p1, "\\1" <> new_text)
+    |> String.replace(p2, "\\1" <> new_text <> "\\2")
+    |> String.replace(p3, "\\1" <> new_text)
+    |> String.replace(p4, "\\1\"" <> new_text <> "\"")
+    |> String.replace(p5, "\\1\"" <> new_text <> "\"\\2")
   end
 end

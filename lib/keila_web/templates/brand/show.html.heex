@@ -106,39 +106,54 @@
         + Adicionar cor
       </button>
 
-      <script>
-        // Sincroniza color picker (sem name) com text input (com name) — só o text é submetido
-        function bindColorSync(container) {
-          const picker = container.querySelector('[data-role="picker"]');
-          const hex = container.querySelector('[data-role="hex"]');
-          if (!picker || !hex) return;
-          picker.addEventListener('input', () => hex.value = picker.value.toUpperCase());
-          hex.addEventListener('input', () => {
-            if (/^#[0-9A-Fa-f]{6}$/.test(hex.value)) picker.value = hex.value.toLowerCase();
-          });
-        }
+      <script type="text/javascript">
+        (function() {
+          function bindColorSync(container) {
+            var picker = container.querySelector('[data-role="picker"]');
+            var hex = container.querySelector('[data-role="hex"]');
+            if (!picker || !hex) return;
+            picker.addEventListener('input', function() { hex.value = picker.value.toUpperCase(); });
+            hex.addEventListener('input', function() {
+              if (/^#[0-9A-Fa-f]{6}$/.test(hex.value)) picker.value = hex.value.toLowerCase();
+            });
+          }
 
-        // Bind nas cores principais
-        document.querySelectorAll('[data-color-field]').forEach(bindColorSync);
-        // Bind nos extras existentes
-        document.querySelectorAll('[data-extra]').forEach(bindColorSync);
+          document.querySelectorAll('[data-color-field]').forEach(bindColorSync);
+          document.querySelectorAll('[data-extra]').forEach(bindColorSync);
 
-        // Adicionar nova cor extra
-        let extraIdx = {Enum.count(@extra_colors)};
-        document.getElementById('add-extra-btn').addEventListener('click', () => {
-          const list = document.getElementById('extras-list');
-          const div = document.createElement('div');
-          div.className = 'flex gap-2 items-center';
-          div.dataset.extra = '';
-          div.innerHTML = `
-            <input type="color" data-role="picker" value="#FF5A1F" class="h-10 w-10 rounded cursor-pointer bg-gray-800 border border-gray-700">
-            <input type="text" name="brand[extra_${extraIdx}]" data-role="hex" value="#FF5A1F" class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono uppercase" pattern="^#[0-9A-Fa-f]{6}$">
-            <button type="button" onclick="this.parentElement.remove()" class="px-3 py-2 text-red-400 hover:bg-red-500/10 rounded-lg text-sm">✕</button>
-          `;
-          list.appendChild(div);
-          bindColorSync(div);
-          extraIdx++;
-        });
+          var btn = document.getElementById('add-extra-btn');
+          if (btn) {
+            btn.addEventListener('click', function() {
+              var list = document.getElementById('extras-list');
+              var existing = list.querySelectorAll('[data-extra]').length;
+              var div = document.createElement('div');
+              div.className = 'flex gap-2 items-center';
+              div.setAttribute('data-extra', '');
+              var inputColor = document.createElement('input');
+              inputColor.type = 'color';
+              inputColor.setAttribute('data-role', 'picker');
+              inputColor.value = '#FF5A1F';
+              inputColor.className = 'h-10 w-10 rounded cursor-pointer bg-gray-800 border border-gray-700';
+              var inputText = document.createElement('input');
+              inputText.type = 'text';
+              inputText.name = 'brand[extra_' + existing + ']';
+              inputText.setAttribute('data-role', 'hex');
+              inputText.value = '#FF5A1F';
+              inputText.className = 'flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono uppercase';
+              inputText.pattern = '^#[0-9A-Fa-f]{6}$';
+              var btnRm = document.createElement('button');
+              btnRm.type = 'button';
+              btnRm.textContent = '✕';
+              btnRm.className = 'px-3 py-2 text-red-400 hover:bg-red-500/10 rounded-lg text-sm';
+              btnRm.addEventListener('click', function() { div.remove(); });
+              div.appendChild(inputColor);
+              div.appendChild(inputText);
+              div.appendChild(btnRm);
+              list.appendChild(div);
+              bindColorSync(div);
+            });
+          }
+        })();
       </script>
     </div>
 
@@ -169,17 +184,4 @@
     <h2 class="text-lg font-bold text-white mb-1">👀 Como vai ficar no email</h2>
     <p class="text-sm text-gray-400 mb-5">Preview do template "Boas-vindas" com sua marca aplicada:</p>
 
-    <div class="bg-white rounded-xl overflow-hidden">
-      <iframe
-        src={"/email-previews/01-boas-vindas-matricula?p=" <> @current_project.id}
-        class="w-full"
-        style="height: 600px; border: 0;"
-      >
-      </iframe>
-    </div>
-    <p class="text-xs text-gray-500 mt-3 text-center">
-      <a href={"/projects/" <> @current_project.id <> "/campaigns/library"} class="text-fluxo-400 hover:underline">Ver todos os 8 modelos com sua marca →</a>
-    </p>
-  </div>
-</div>
-                                                                                                                                                      
+    <div clas

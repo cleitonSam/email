@@ -100,6 +100,23 @@
                   <dd class="text-gray-300">{unit.branch_label}</dd>
                 </div>
               <% end %>
+              <%= if Map.get(unit, :cnpj) do %>
+                <div class="flex justify-between">
+                  <dt class="text-gray-500">CNPJ</dt>
+                  <dd class="text-gray-300 font-mono text-xs">{unit.cnpj}</dd>
+                </div>
+              <% end %>
+              <%= if Map.get(unit, :address) do %>
+                <div class="flex justify-between gap-3">
+                  <dt class="text-gray-500 flex-shrink-0">Endereço</dt>
+                  <dd class="text-gray-300 text-xs text-right">{unit.address}</dd>
+                </div>
+              <% end %>
+              <%= if Map.get(unit, :is_primary) do %>
+                <div class="flex justify-between pt-1">
+                  <dt class="text-fluxo-300 text-xs font-semibold">⭐ Unidade principal</dt>
+                </div>
+              <% end %>
               <%= if unit.last_sync_error do %>
                 <div class="bg-red-500/10 border border-red-500/30 rounded p-2 mt-3">
                   <p class="text-xs text-red-300">⚠ {unit.last_sync_error}</p>
@@ -150,24 +167,4 @@
             <div>
               <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Nome da academia</label>
               <input
-                type="text"
-                name="unit[name]"
-                value={Ecto.Changeset.get_field(@form_changeset, :name)}
-                placeholder="Ex: Unidade Centro"
-                class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-3 text-sm"
-                required
-              />
-              <%= case @form_changeset.errors[:name] do %>
-                <% nil -> %>
-                <% {msg, _} -> %>
-                  <p class="text-xs text-red-400 mt-1">{msg}</p>
-              <% end %>
-            </div>
-
-            <!-- Login EVO -->
-            <div>
-              <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Login EVO</label>
-              <input
-                type="text"
-                name="unit[evo_dns]"
-     
+    

@@ -15,6 +15,10 @@ defmodule Keila.Integrations.Evo.Unit do
     field :evo_dns, :string
     field :evo_secret_key, :string
     field :branch_label, :string
+    field :cnpj, :string
+    field :address, :string
+    field :phone, :string
+    field :is_primary, :boolean, default: false
     field :active, :boolean, default: true
     field :last_sync_at, :utc_datetime
     field :last_sync_status, :string
@@ -31,6 +35,10 @@ defmodule Keila.Integrations.Evo.Unit do
     :evo_dns,
     :evo_secret_key,
     :branch_label,
+    :cnpj,
+    :address,
+    :phone,
+    :is_primary,
     :active
   ]
 
@@ -39,6 +47,10 @@ defmodule Keila.Integrations.Evo.Unit do
     :evo_dns,
     :evo_secret_key,
     :branch_label,
+    :cnpj,
+    :address,
+    :phone,
+    :is_primary,
     :active,
     :last_sync_at,
     :last_sync_status,
@@ -61,10 +73,4 @@ defmodule Keila.Integrations.Evo.Unit do
   def update_changeset(struct, params) do
     struct
     |> cast(params, @update_fields)
-    |> validate_required([:name, :evo_dns, :evo_secret_key])
-    |> validate_length(:name, min: 1, max: 80)
-    |> unique_constraint([:project_id, :evo_dns],
-      message: "Esta unidade EVO já está cadastrada neste projeto."
-    )
-  end
-end
+    |> va

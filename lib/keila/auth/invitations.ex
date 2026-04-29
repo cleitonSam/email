@@ -41,8 +41,10 @@ defmodule Keila.Auth.Invitations do
   @spec create(map()) :: {:ok, Invitation.t()} | {:error, Ecto.Changeset.t()}
   def create(params) do
     with {:ok, invitation} <- params |> Invitation.creation_changeset() |> Repo.insert() do
-      send_invitation_email(invitation)
-      {:ok, invitation}
+      case send_invitation_email(invitation) do
+        :ok -> {:ok, invitation}
+        :error -> {:ok, invitation, :email_failed}
+      end
     end
   end
 
@@ -63,8 +65,7 @@ defmodule Keila.Auth.Invitations do
 
   defp send_invitation_email(%Invitation{} = invitation) do
     invitation = Repo.preload(invitation, [:project, :invited_by_user])
-    base_url = base_url()
-    accept_url = "#{base_url}/invite/#{invitation.token}"
+    accept_url = "#{base_url()}/invite/#{invitation.token}"
 
     inviter_name =
       case invitation.invited_by_user do
@@ -72,52 +73,23 @@ defmodule Keila.Auth.Invitations do
         _ -> "Alguém"
       end
 
-    project_name = invitation.project && invitation.project.name || "Fluxo Email MKT"
+    project_name = (invitation.project && invitation.project.name) || "Fluxo Email MKT"
 
-    body = """
-    Olá!
+    params = %{
+      url: accept_url,
+      email: invitation.email,
+      inviter: inviter_name,
+      project_name: project_name
+    }
 
-    #{inviter_name} convidou você pra fazer parte do projeto "#{project_name}" no Fluxo Email MKT.
-
-    Pra aceitar o convite e criar sua conta, clica no link abaixo:
-
-    #{accept_url}
-
-    Esse link vale por 7 dias.
-
-    Se você não esperava esse convite, pode ignorar este email com tranquilidade.
-
-    --
-    Fluxo Email MKT
-    Email Marketing pra Academias
-    """
-
-    email =
-      Swoosh.Email.new()
-      |> Swoosh.Email.to({invitation.email, invitation.email})
-      |> Swoosh.Email.from(default_from())
-      |> Swoosh.Email.subject("Você foi convidado pro #{project_name} no Fluxo")
-      |> Swoosh.Email.text_body(body)
-
-    case Keila.Mailer.deliver(email) do
-      {:ok, _} ->
-        Logger.info("[Invitation] Sent to #{invitation.email}")
-        :ok
-
-      {:error, reason} ->
-        Logger.error("[Invitation] Failed to send to #{invitation.email}: #{inspect(reason)}")
+    try do
+      Keila.Auth.Emails.send!(:invitation, params)
+      Logger.info("[Invitation] Sent to #{invitation.email}")
+      :ok
+    rescue
+      e ->
+        Logger.error("[Invitation] Failed to send to #{invitation.email}: #{inspect(e)}")
         :error
-    end
-  rescue
-    e ->
-      Logger.error("[Invitation] Exception sending email: #{inspect(e)}")
-      :error
-  end
-
-  defp default_from do
-    case System.get_env("MAILER_SMTP_FROM_EMAIL") do
-      nil -> {"Fluxo Email MKT", "noreply@fluxodigitaltech.com.br"}
-      email -> {"Fluxo Email MKT", email}
     end
   end
 

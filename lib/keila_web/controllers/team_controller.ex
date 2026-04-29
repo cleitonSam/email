@@ -47,6 +47,16 @@ defmodule KeilaWeb.TeamController do
             |> put_flash(:info, "✓ Convite enviado pra #{email}")
             |> redirect(to: "/projects/#{project.id}/team")
 
+          {:ok, invitation, :email_failed} ->
+            link = "/invite/#{invitation.token}"
+
+            conn
+            |> put_flash(
+              :error,
+              "Convite criado mas falhou ao enviar email. Compartilhe este link manualmente: #{link}"
+            )
+            |> redirect(to: "/projects/#{project.id}/team")
+
           {:error, _changeset} ->
             conn
             |> put_flash(:error, "Erro ao criar convite. Talvez essa pessoa já tenha sido convidada.")

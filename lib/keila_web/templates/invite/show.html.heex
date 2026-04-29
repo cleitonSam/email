@@ -1,0 +1,57 @@
+<div class="min-h-screen flex items-center justify-center px-6 py-12">
+  <div class="max-w-md w-full">
+    <div class="text-center mb-8">
+      <span class="text-6xl block mb-3">🎉</span>
+      <h1 class="text-3xl font-bold text-white mb-2">Você foi convidado!</h1>
+      <p class="text-gray-400">
+        <%= if @invitation.invited_by_user do %>
+          <strong class="text-white">{@invitation.invited_by_user.email}</strong> te convidou pra
+        <% else %>
+          Você foi convidado(a) pra
+        <% end %>
+        entrar no projeto <strong class="text-fluxo-300">{@invitation.project && @invitation.project.name || "Fluxo"}</strong>.
+      </p>
+    </div>
+
+    <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-8">
+      <h2 class="text-lg font-bold text-white mb-1">Crie sua conta em 30 segundos</h2>
+      <p class="text-sm text-gray-400 mb-6">Só preencher uma senha e pronto.</p>
+
+      <form action={"/invite/" <> @token} method="post" class="space-y-4">
+        <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
+
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Email</label>
+          <input
+            type="email"
+            value={@invitation.email}
+            disabled
+            class="w-full bg-gray-800/50 border border-gray-700 text-gray-300 rounded-lg px-4 py-3 text-sm font-mono"
+          />
+        </div>
+
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Crie uma senha</label>
+          <input
+            type="password"
+            name="user[password]"
+            placeholder="Mínimo 10 caracteres"
+            required
+            minlength="10"
+            autocomplete="new-password"
+            class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-3 text-sm"
+          />
+          <p class="text-xs text-gray-500 mt-2">Use uma senha forte: pelo menos 10 caracteres com letras e números.</p>
+        </div>
+
+        <button type="submit" class="w-full button button--cta button--large">
+          Criar conta e entrar →
+        </button>
+      </form>
+    </div>
+
+    <p class="text-center text-xs text-gray-500 mt-6">
+      Já tem conta? <a href="/auth/login" class="text-fluxo-400 hover:underline">Faz login</a>
+    </p>
+  </div>
+</div>

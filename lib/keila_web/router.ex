@@ -188,6 +188,11 @@ defmodule KeilaWeb.Router do
     get "/projects/:project_id/team", TeamController, :index
     post "/projects/:project_id/team/invite", TeamController, :invite
     post "/projects/:project_id/team/invitations/:id/revoke", TeamController, :revoke
+
+    # Endpoints JSON pra IA (chamados via fetch dos modais)
+    get "/projects/:project_id/ai/status", AIController, :status
+    post "/projects/:project_id/ai/edit-mjml", AIController, :edit_mjml
+    post "/projects/:project_id/ai/create-mjml", AIController, :create_mjml
   end
 
   # Public Routes

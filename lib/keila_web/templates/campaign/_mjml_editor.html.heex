@@ -21,6 +21,15 @@
     </a>
     <button
       type="button"
+      title="Ajustar email com IA"
+      onclick={"document.getElementById('ai-modal-" <> @current_project.id <> "').classList.remove('hidden')"}
+      class="flex items-center gap-1.5 px-3 h-10 bg-gradient-to-r from-fluxo-500/20 to-cyan-500/20 hover:from-fluxo-500/30 hover:to-cyan-500/30 text-fluxo-200 transition-colors text-xs font-bold border-l border-gray-700/50"
+    >
+      <span class="text-base">🪄</span>
+      <span>Ajustar com IA</span>
+    </button>
+    <button
+      type="button"
       title={gettext("Expand editor")}
       class="flex w-10 h-10 p-2 items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors flex-shrink-0"
       @click.prevent="$dispatch('x-toggle-expand-editor')"
@@ -141,6 +150,125 @@
       }
     }
   }
+</script>
+
+<!-- Modal IA: ajustar MJML com prompt em linguagem natural -->
+<div id={"ai-modal-" <> @current_project.id} class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl">
+    <div class="flex justify-between items-start mb-5">
+      <div>
+        <h3 class="text-xl font-bold text-white flex items-center gap-2">
+          <span class="text-2xl">🪄</span> Ajustar com IA
+        </h3>
+        <p class="text-sm text-gray-400 mt-1">Descreve em português o que você quer mudar.</p>
+      </div>
+      <button type="button" onclick={"document.getElementById('ai-modal-" <> @current_project.id <> "').classList.add('hidden')"} class="text-gray-400 hover:text-white text-2xl">×</button>
+    </div>
+
+    <textarea
+      id={"ai-prompt-" <> @current_project.id}
+      rows="4"
+      placeholder="Ex: deixa o tom mais informal, encurta o email pela metade, troca o título por algo sobre Black Friday, adiciona urgência no CTA..."
+      class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-3 text-sm mb-3"
+    ></textarea>
+
+    <p class="text-xs text-gray-500 mb-3">💡 Sugestões rápidas:</p>
+    <div id={"ai-suggestions-" <> @current_project.id} class="flex flex-wrap gap-2 mb-5">
+      <%= for s <- ["Encurtar pela metade", "Tom mais informal", "Adicionar urgência", "Trocar todas as cores pra mais vibrantes", "Adicionar emoji nos títulos", "Reescrever em pt-BR mais coloquial"] do %>
+        <button
+          type="button"
+          onclick={"document.getElementById('ai-prompt-" <> @current_project.id <> "').value='" <> s <> "'"}
+          class="px-3 py-1.5 text-xs bg-gray-800 hover:bg-fluxo-500/20 hover:text-fluxo-300 text-gray-300 rounded-lg border border-gray-700 transition"
+        >{s}</button>
+      <% end %>
+    </div>
+
+    <div id={"ai-status-" <> @current_project.id} class="hidden text-sm text-fluxo-300 mb-3">⏳ IA pensando... (pode levar 5-15 segundos)</div>
+    <div id={"ai-error-" <> @current_project.id} class="hidden bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-sm text-red-300 mb-3"></div>
+
+    <div class="flex gap-3">
+      <button
+        type="button"
+        onclick={"document.getElementById('ai-modal-" <> @current_project.id <> "').classList.add('hidden')"}
+        class="button"
+      >Cancelar</button>
+      <button
+        id={"ai-submit-" <> @current_project.id}
+        type="button"
+        data-project-id={@current_project.id}
+        onclick="window.runAIEdit(this)"
+        class="flex-1 button button--cta"
+      >🪄 Ajustar email</button>
+    </div>
+
+    <p class="text-xs text-gray-500 mt-4 text-center">
+      💰 ~$0.005 por edição · Modelo: Gemini 2.5 Flash
+    </p>
+  </div>
+</div>
+
+<script>
+  window.runAIEdit = async function(btn) {
+    const projectId = btn.dataset.projectId;
+    const promptEl = document.getElementById('ai-prompt-' + projectId);
+    const statusEl = document.getElementById('ai-status-' + projectId);
+    const errorEl = document.getElementById('ai-error-' + projectId);
+    const modalEl = document.getElementById('ai-modal-' + projectId);
+
+    const instruction = promptEl.value.trim();
+    if (!instruction) { errorEl.textContent = 'Diz o que você quer mudar 🙂'; errorEl.classList.remove('hidden'); return; }
+
+    // Pega MJML atual da textarea hidden do editor
+    const textarea = document.querySelector('textarea[name="campaign[mjml_body]"]');
+    if (!textarea) { errorEl.textContent = 'Editor MJML não encontrado.'; errorEl.classList.remove('hidden'); return; }
+
+    statusEl.classList.remove('hidden');
+    errorEl.classList.add('hidden');
+    btn.disabled = true; btn.textContent = '⏳ Processando...';
+
+    try {
+      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+      const resp = await fetch(`/projects/${projectId}/ai/edit-mjml`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-csrf-token': csrfToken,
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ mjml: textarea.value, instruction })
+      });
+
+      const data = await resp.json();
+
+      if (!resp.ok) {
+        errorEl.textContent = data.error || 'Erro desconhecido';
+        errorEl.classList.remove('hidden');
+        statusEl.classList.add('hidden');
+        btn.disabled = false; btn.textContent = '🪄 Ajustar email';
+        return;
+      }
+
+      // Atualiza textarea + dispara evento pra Phoenix LiveView pegar
+      textarea.value = data.mjml;
+      textarea.dispatchEvent(new Event('input', { bubbles: true }));
+      textarea.dispatchEvent(new Event('change', { bubbles: true }));
+
+      // Atualiza editor visual (CodeMirror) se existir
+      const cm = document.querySelector('.CodeMirror');
+      if (cm && cm.CodeMirror) cm.CodeMirror.setValue(data.mjml);
+
+      modalEl.classList.add('hidden');
+      promptEl.value = '';
+      btn.disabled = false; btn.textContent = '🪄 Ajustar email';
+      statusEl.classList.add('hidden');
+      alert('✓ Email ajustado pela IA! Confere o preview e salva.');
+    } catch (e) {
+      errorEl.textContent = 'Erro: ' + e.message;
+      errorEl.classList.remove('hidden');
+      statusEl.classList.add('hidden');
+      btn.disabled = false; btn.textContent = '🪄 Ajustar email';
+    }
+  };
 </script>
 
 <div id="mjml-editor-wrapper" phx-update="ignore">

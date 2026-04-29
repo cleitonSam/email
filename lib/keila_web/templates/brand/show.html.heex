@@ -6,7 +6,7 @@
       </div>
       <div>
         <h1 class="text-2xl sm:text-3xl font-bold text-white">Minha Marca</h1>
-        <p class="text-sm text-gray-400 mt-1">Logo, nome e cores que aparecem nos emails. Edite a qualquer momento.</p>
+        <p class="text-sm text-gray-400 mt-1">Logo, nome e cores que aparecem nos emails.</p>
       </div>
     </div>
   </div>
@@ -15,7 +15,7 @@
 <div class="container max-w-3xl pb-16">
   <div class="bg-gradient-to-r from-fluxo-500/15 to-purple-500/15 border border-fluxo-500/30 rounded-2xl p-6 mb-6">
     <h2 class="text-lg font-bold text-white mb-1">🤖 Pesquisar identidade da marca</h2>
-    <p class="text-sm text-gray-300 mb-3">A IA pesquisa sua academia e descobre tom de voz, palavras-chave e público-alvo. Esses dados ficam salvos e a IA usa pra editar emails depois.</p>
+    <p class="text-sm text-gray-300 mb-3">A IA pesquisa sua academia e descobre tom de voz, palavras-chave e público-alvo.</p>
     <%= if @brand["ai_profile"] do %>
       <div class="bg-gray-900/60 rounded-lg p-3 mb-3 text-xs text-gray-300 space-y-1">
         <div><strong class="text-fluxo-300">Tom:</strong> {@brand["tone"] || "—"}</div>
@@ -56,7 +56,6 @@
 
     <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 mb-6">
       <h2 class="text-lg font-bold text-white mb-1">📝 Nome da academia</h2>
-      <p class="text-sm text-gray-400 mb-5">Aparece no rodapé dos emails e no nome do remetente.</p>
       <input type="text" name="brand[name]" value={@brand["name"]} placeholder="Ex: Academia Movimento" class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-3 text-sm" />
     </div>
 
@@ -66,41 +65,30 @@
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div>
           <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Primária</label>
-          <div class="flex gap-2">
-            <input type="color" value={@brand["color_primary"]} oninput="this.nextElementSibling.value=this.value.toUpperCase()" class="h-12 w-12 rounded cursor-pointer bg-gray-800 border border-gray-700" />
-            <input type="text" name="brand[color_primary]" value={@brand["color_primary"]} oninput="if(/^#[0-9A-Fa-f]{6}$/.test(this.value)) this.previousElementSibling.value=this.value.toLowerCase()" class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono uppercase" pattern="^#[0-9A-Fa-f]{6}$" />
-          </div>
+          <input type="color" name="brand[color_primary]" value={@brand["color_primary"]} class="h-12 w-full rounded cursor-pointer bg-gray-800 border border-gray-700" />
         </div>
         <div>
           <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Escura (fundo)</label>
-          <div class="flex gap-2">
-            <input type="color" value={@brand["color_dark"]} oninput="this.nextElementSibling.value=this.value.toUpperCase()" class="h-12 w-12 rounded cursor-pointer bg-gray-800 border border-gray-700" />
-            <input type="text" name="brand[color_dark]" value={@brand["color_dark"]} oninput="if(/^#[0-9A-Fa-f]{6}$/.test(this.value)) this.previousElementSibling.value=this.value.toLowerCase()" class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono uppercase" pattern="^#[0-9A-Fa-f]{6}$" />
-          </div>
+          <input type="color" name="brand[color_dark]" value={@brand["color_dark"]} class="h-12 w-full rounded cursor-pointer bg-gray-800 border border-gray-700" />
         </div>
         <div>
           <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Destaque</label>
-          <div class="flex gap-2">
-            <input type="color" value={@brand["color_accent"]} oninput="this.nextElementSibling.value=this.value.toUpperCase()" class="h-12 w-12 rounded cursor-pointer bg-gray-800 border border-gray-700" />
-            <input type="text" name="brand[color_accent]" value={@brand["color_accent"]} oninput="if(/^#[0-9A-Fa-f]{6}$/.test(this.value)) this.previousElementSibling.value=this.value.toLowerCase()" class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono uppercase" pattern="^#[0-9A-Fa-f]{6}$" />
-          </div>
+          <input type="color" name="brand[color_accent]" value={@brand["color_accent"]} class="h-12 w-full rounded cursor-pointer bg-gray-800 border border-gray-700" />
         </div>
       </div>
     </div>
 
     <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 mb-6">
       <h2 class="text-lg font-bold text-white mb-1">➕ Cores extras (opcional)</h2>
-      <p class="text-sm text-gray-400 mb-5">Cores adicionais da paleta da marca.</p>
-      <div id="extras-list" class="space-y-3">
-        <%= for {color, idx} <- Enum.with_index(@extra_colors) do %>
-          <div class="flex gap-2 items-center">
-            <input type="color" value={color} oninput="this.nextElementSibling.value=this.value.toUpperCase()" class="h-10 w-10 rounded cursor-pointer bg-gray-800 border border-gray-700" />
-            <input type="text" name={"brand[extra_#{idx}]"} value={color} oninput="if(/^#[0-9A-Fa-f]{6}$/.test(this.value)) this.previousElementSibling.value=this.value.toLowerCase()" class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono uppercase" pattern="^#[0-9A-Fa-f]{6}$" />
-            <button type="button" onclick="this.parentElement.remove()" class="px-3 py-2 text-red-400 hover:bg-red-500/10 rounded-lg text-sm">x</button>
+      <p class="text-sm text-gray-400 mb-5">Até 5 cores adicionais. Deixe em branco as que não usar.</p>
+      <div class="grid grid-cols-5 gap-3">
+        <%= for i <- 0..4 do %>
+          <div>
+            <label class="block text-xs text-gray-500 mb-1">Extra {i + 1}</label>
+            <input type="color" name={"brand[extra_#{i}]"} value={Enum.at(@extra_colors, i, "#FFFFFF")} class="h-12 w-full rounded cursor-pointer bg-gray-800 border border-gray-700" />
           </div>
         <% end %>
       </div>
-      <button type="button" onclick="var l=document.getElementById('extras-list');var n=l.children.length;var h='&lt;div class=&quot;flex gap-2 items-center&quot;&gt;&lt;input type=&quot;color&quot; value=&quot;#FF5A1F&quot; oninput=&quot;this.nextElementSibling.value=this.value.toUpperCase()&quot; class=&quot;h-10 w-10 rounded cursor-pointer bg-gray-800 border border-gray-700&quot;&gt;&lt;input type=&quot;text&quot; name=&quot;brand[extra_'+n+']&quot; value=&quot;#FF5A1F&quot; class=&quot;flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono uppercase&quot;&gt;&lt;button type=&quot;button&quot; onclick=&quot;this.parentElement.remove()&quot; class=&quot;px-3 py-2 text-red-400&quot;&gt;x&lt;/button&gt;&lt;/div&gt;';var t=document.createElement('template');t.innerHTML=h.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"');l.appendChild(t.content.firstChild);" class="mt-4 button text-sm">+ Adicionar cor</button>
     </div>
 
     <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 mb-6">

@@ -171,6 +171,10 @@
             exact: true,
             icon: :sparkles
           )}
+          {menu_link(@conn, :birthdays, :index, [@current_project.id], gettext("🎂 Aniversariantes"),
+            exact: true,
+            icon: :gift
+          )}
           {menu_link(@conn, :media, :index, [@current_project.id], gettext("Imagens"),
             exact: true,
             icon: :photograph

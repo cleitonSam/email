@@ -110,7 +110,9 @@ config :keila, Oban,
         args: %{"task" => "sync_all"}},
        # Processa runs vencidas a cada 5 min (sem fazer fetch EVO)
        {"*/5 * * * *", Keila.Automations.Workers.SyncWorker,
-        args: %{"task" => "process_runs"}}
+        args: %{"task" => "process_runs"}},
+       # Aniversariantes: roda 9h da manhã todo dia, identifica e dispara
+       {"0 9 * * *", Keila.Automations.Workers.BirthdayWorker}
      ]}
   ]
 

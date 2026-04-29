@@ -177,6 +177,7 @@ defmodule KeilaWeb.Router do
     get "/projects/:project_id/media", MediaController, :index
     get "/projects/:project_id/media/list.json", MediaApiController, :list
     get "/projects/:project_id/automacoes", AutomationsController, :index
+    get "/projects/:project_id/aniversariantes", BirthdaysController, :index
     get "/projects/:project_id/setup", WizardController, :show
     post "/projects/:project_id/setup/logo", WizardController, :upload_logo
 

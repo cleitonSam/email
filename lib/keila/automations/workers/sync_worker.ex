@@ -153,6 +153,7 @@ defmodule Keila.Automations.Workers.SyncWorker do
       "last_name" => member.last_name,
       "data" => %{
         "phone" => member.phone,
+        "birth_date" => Map.get(member, :birth_date),
         "evo_branch" => member.branch,
         "evo_unit_id" => Map.get(member, :evo_unit_id),
         "evo_unit_name" => Map.get(member, :evo_unit_name),

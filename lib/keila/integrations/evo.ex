@@ -83,6 +83,7 @@ defmodule Keila.Integrations.Evo do
       email: String.trim(member["email"] || ""),
       phone: member["phone"] || member["cellphone"] || "",
       register_date: member["registerDate"] || "",
+      birth_date: normalize_birth_date(member["birthDate"] || member["dateOfBirth"]),
       branch: member["branchName"] || member["branch"] || "",
       id_evo: member["idMember"] || member["id"] || nil,
       member_status: member["memberStatus"] || member["status"] || "Ativo",
@@ -90,6 +91,36 @@ defmodule Keila.Integrations.Evo do
       type: "member"
     }
   end
+
+  # Normaliza data de nascimento pra formato "MM-DD" (ano não importa pra aniversário).
+  # Aceita: "1985-04-29T00:00:00", "1985-04-29", "29/04/1985"
+  defp normalize_birth_date(nil), do: nil
+  defp normalize_birth_date(""), do: nil
+
+  defp normalize_birth_date(date_str) when is_binary(date_str) do
+    cond do
+      # ISO: 1985-04-29 ou 1985-04-29T00:00:00
+      Regex.match?(~r/^\d{4}-\d{2}-\d{2}/, date_str) ->
+        case String.split(date_str, "-") do
+          [_year, month, day_part] ->
+            day = String.slice(day_part, 0, 2)
+            "#{month}-#{day}"
+
+          _ ->
+            nil
+        end
+
+      # BR: 29/04/1985
+      Regex.match?(~r/^\d{2}\/\d{2}\/\d{4}/, date_str) ->
+        [day, month, _] = String.split(date_str, "/")
+        "#{month}-#{day}"
+
+      true ->
+        nil
+    end
+  end
+
+  defp normalize_birth_date(_), do: nil
 
   @doc """
   Fetches prospects from the EVO API for a given date range.

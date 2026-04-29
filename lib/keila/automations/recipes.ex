@@ -58,6 +58,18 @@ defmodule Keila.Automations.Recipes do
         %{order: 2, delay_days: 7, template_slug: "06-convite-evento"},
         %{order: 3, delay_days: 30, template_slug: "05-avaliacao-fisica"}
       ]
+    },
+    %{
+      slug: "aniversariantes",
+      title: "Aniversariantes do dia",
+      icon: "🎂",
+      description:
+        "Todo dia às 9h, identifica quem faz aniversário hoje e manda mensagem afetiva com presente. Precisa de data de nascimento no contato (vem do EVO ou import de planilha).",
+      trigger_status: "birthday",
+      trigger_type: "daily_birthday",
+      steps: [
+        %{order: 1, delay_days: 0, template_slug: "02-feliz-aniversario"}
+      ]
     }
   ]
 

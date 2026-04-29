@@ -202,6 +202,7 @@ defmodule KeilaWeb.Router do
     get "/projects/:project_id/team", TeamController, :index
     post "/projects/:project_id/team/invite", TeamController, :invite
     post "/projects/:project_id/team/invitations/:id/revoke", TeamController, :revoke
+    post "/projects/:project_id/team/members/:id/remove", TeamController, :remove_member
 
   end
 

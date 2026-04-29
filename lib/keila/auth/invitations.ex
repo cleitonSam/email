@@ -22,6 +22,17 @@ defmodule Keila.Auth.Invitations do
     |> Repo.all()
   end
 
+  @doc "Lista convites já aceitos (= membros ativos do projeto)."
+  @spec list_accepted(binary()) :: [Invitation.t()]
+  def list_accepted(project_id) do
+    Invitation
+    |> where([i], i.project_id == ^project_id)
+    |> where([i], not is_nil(i.accepted_at))
+    |> order_by([i], desc: i.accepted_at)
+    |> preload([:invited_by_user, :accepted_by_user])
+    |> Repo.all()
+  end
+
   @spec get_by_token(String.t()) :: Invitation.t() | nil
   def get_by_token(token) when is_binary(token) and token != "" do
     Repo.get_by(Invitation, token: token)
@@ -60,8 +71,6 @@ defmodule Keila.Auth.Invitations do
 
   @spec get(binary()) :: Invitation.t() | nil
   def get(id), do: Repo.get(Invitation, id) |> Repo.preload([:project, :invited_by_user])
-
-  # --- Email ---
 
   defp send_invitation_email(%Invitation{} = invitation) do
     invitation = Repo.preload(invitation, [:project, :invited_by_user])

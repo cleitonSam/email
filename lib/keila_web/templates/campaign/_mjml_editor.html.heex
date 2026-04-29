@@ -1,4 +1,5 @@
-<div id="mjml-editor-toolbar" class="w-full sticky top-0 z-10" phx-update="ignore" x-data="{mode: 'simple', ...imagePicker()}">
+<div x-data="{mode: 'simple', ...imagePicker()}">
+<div id="mjml-editor-toolbar" class="w-full sticky top-0 z-10" phx-update="ignore">
   <!-- TABS Simples / Avancado -->
   <div class="flex bg-gray-900 border border-gray-800 rounded-t-xl mt-4 overflow-hidden">
     <button type="button"
@@ -454,4 +455,5 @@
   data-iframe="#html-inline-preview, #html-preview"
 >
   {@preview}
+</div>
 </div>

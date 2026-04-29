@@ -200,5 +200,7 @@ defmodule KeilaWeb.MediaLive do
   def humanize_size(bytes), do: "#{Float.round(bytes / 1024 / 1024, 1)} MB"
 
   @doc false
+  # SVG e GIF nao suportam transformacoes ImageKit — usa URL original
+  def asset_thumb(%Asset{url: url, mime_type: mime}) when mime in ["image/svg+xml", "image/gif"], do: url
   def asset_thumb(%Asset{url: url}), do: ImageKit.thumbnail(url, w: 400, h: 400, c: "maintain_ratio")
 end

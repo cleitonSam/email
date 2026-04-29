@@ -153,6 +153,8 @@
 </script>
 
 <!-- Modal IA: ajustar MJML com prompt em linguagem natural -->
+<!-- phx-update=ignore IMPEDE o LiveView de re-renderizar e perder o estado do modal/textarea -->
+<div id="ai-modal-wrapper" phx-update="ignore">
 <div id={"ai-modal-" <> @current_project.id} class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" onclick="if(event.target===this)this.classList.add('hidden')">
   <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl">
     <div class="flex justify-between items-start mb-5">
@@ -205,6 +207,7 @@
       💰 ~$0.005 por edição · Modelo: Gemini 2.5 Flash
     </p>
   </div>
+</div>
 </div>
 
 <script>

@@ -11,6 +11,11 @@ defmodule Keila.AI.EmailEditor do
   @system_prompt_edit """
   Você é um editor especialista em MJML (Mailjet Markup Language) pra emails de academia em pt-BR.
 
+  ⚠️ FORMATO DE RESPOSTA OBRIGATÓRIO ⚠️
+  Sua resposta DEVE começar exatamente com `<mjml>` e terminar exatamente com `</mjml>`.
+  NÃO escreva NADA antes do `<mjml>`. NÃO escreva NADA depois do `</mjml>`.
+  NÃO use markdown ```mjml ```. NÃO explique. NÃO comente. APENAS o código MJML.
+
   REGRAS ABSOLUTAS:
   1. Sempre retorne APENAS código MJML válido, NADA mais — sem explicações, sem markdown, sem ```mjml.
   2. Preserve a estrutura `<mjml>...<mj-head>...</mj-head>...<mj-body>...</mj-body></mjml>`.
@@ -97,7 +102,7 @@ defmodule Keila.AI.EmailEditor do
       ]
 
       with {:ok, response} <- OpenRouter.chat_completion(messages, temperature: 0.3) do
-        {:ok, extract_mjml(response)}
+        validate_mjml(extract_mjml(response))
       end
     end
   end
@@ -131,8 +136,43 @@ defmodule Keila.AI.EmailEditor do
       ]
 
       with {:ok, response} <- OpenRouter.chat_completion(messages, temperature: 0.6, max_tokens: 6000) do
-        {:ok, extract_mjml(response)}
+        validate_mjml(extract_mjml(response))
       end
+    end
+  end
+
+  # Valida que o resultado começa com <mjml> e termina com </mjml>.
+  # Se a IA retornou texto antes/depois ou MJML quebrado, retorna erro.
+  defp validate_mjml(text) do
+    text = String.trim(text)
+
+    cond do
+      not String.starts_with?(text, "<mjml") ->
+        # Tenta extrair a parte que começa com <mjml
+        case String.split(text, "<mjml", parts: 2) do
+          [_, rest] ->
+            mjml = "<mjml" <> rest
+
+            if String.contains?(mjml, "</mjml>") do
+              [final, _] = String.split(mjml, "</mjml>", parts: 2)
+              {:ok, final <> "</mjml>"}
+            else
+              {:error, "IA retornou MJML incompleto. Tenta de novo com instrução mais específica."}
+            end
+
+          _ ->
+            {:error, "IA não retornou MJML válido. Tenta uma instrução mais clara."}
+        end
+
+      not String.ends_with?(text, "</mjml>") ->
+        # Tenta cortar até o último </mjml>
+        case String.split(text, "</mjml>", parts: 2) do
+          [final, _] -> {:ok, final <> "</mjml>"}
+          _ -> {:error, "IA retornou MJML incompleto."}
+        end
+
+      true ->
+        {:ok, text}
     end
   end
 

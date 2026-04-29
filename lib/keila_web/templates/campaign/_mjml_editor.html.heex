@@ -174,13 +174,14 @@
       </div>
     </div>
 
-    <%= if @simple_fields == [] do %>
+    <% simple_fields = assigns[:simple_fields] || [] %>
+    <%= if simple_fields == [] do %>
       <div class="bg-gray-900/40 border border-gray-800 rounded-xl p-8 text-center text-gray-400 text-sm">
         Nenhum campo editavel encontrado neste email. Use o modo Avancado para editar o codigo MJML diretamente.
       </div>
     <% else %>
       <div class="space-y-4">
-        <%= for field <- @simple_fields do %>
+        <%= for field <- simple_fields do %>
           <div class="bg-gray-900/60 border border-gray-800 rounded-xl p-4">
             <label class="block text-xs uppercase tracking-wider text-fluxo-300 font-semibold mb-2">
               {field.label}

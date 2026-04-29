@@ -75,11 +75,12 @@
       <%= inputs_for(f, :settings, fn fs -> %>
         <label class="text-lg font-semibold text-gray-300 mb-4 block">{gettext("Choose Your Editor")}</label>
         <div class="grid grid-cols-2 gap-4">
-          {radio_button(fs, :type, "text", class: "hidden", x_model: "type")}
+          <input type="radio" name={input_name(fs, :type)} id={input_id(fs, :type, "text")} value="text" class="hidden" x-bind:checked="type === 'text'" />
           <label
             for={input_id(fs, :type, "text")}
-            class="group bg-gray-900/60 border-2 border-gray-700/50 rounded-2xl p-5 hover:border-fluxo-500/40 hover:bg-gray-800/60 transition-all duration-300 cursor-pointer flex flex-col items-center text-center"
-            x-bind:class="type == 'text' && 'border-fluxo-500 bg-fluxo-500/10 shadow-lg shadow-fluxo-500/10'"
+            x-on:click="type = 'text'"
+            class="group bg-gray-900/60 border-2 rounded-2xl p-5 hover:bg-gray-800/60 transition-all duration-300 cursor-pointer flex flex-col items-center text-center"
+            x-bind:class="type === 'text' ? 'border-fluxo-500 bg-fluxo-500/10 shadow-lg shadow-fluxo-500/10' : 'border-gray-700/50 hover:border-fluxo-500/40'"
           >
             <div class="h-14 w-14 bg-gradient-to-br from-fluxo-400 to-cyan-400 rounded-xl text-white flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-fluxo-500/20">
               {render_icon(:plain_text)}
@@ -92,11 +93,12 @@
             </p>
           </label>
 
-          {radio_button(fs, :type, "markdown", class: "hidden", x_model: "type")}
+          <input type="radio" name={input_name(fs, :type)} id={input_id(fs, :type, "markdown")} value="markdown" class="hidden" x-bind:checked="type === 'markdown'" />
           <label
             for={input_id(fs, :type, "markdown")}
-            class="group bg-gray-900/60 border-2 border-gray-700/50 rounded-2xl p-5 hover:border-fluxo-500/40 hover:bg-gray-800/60 transition-all duration-300 cursor-pointer flex flex-col items-center text-center"
-            x-bind:class="type == 'markdown' && 'border-fluxo-500 bg-fluxo-500/10 shadow-lg shadow-fluxo-500/10'"
+            x-on:click="type = 'markdown'"
+            class="group bg-gray-900/60 border-2 rounded-2xl p-5 hover:bg-gray-800/60 transition-all duration-300 cursor-pointer flex flex-col items-center text-center"
+            x-bind:class="type === 'markdown' ? 'border-fluxo-500 bg-fluxo-500/10 shadow-lg shadow-fluxo-500/10' : 'border-gray-700/50 hover:border-fluxo-500/40'"
           >
             <div class="h-14 w-14 bg-gradient-to-br from-cyan-500 to-fluxo-500 rounded-xl text-white flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-cyan-500/20">
               {render_icon(:markdown)}
@@ -107,11 +109,12 @@
             </p>
           </label>
 
-          {radio_button(fs, :type, "block", class: "hidden", x_model: "type")}
+          <input type="radio" name={input_name(fs, :type)} id={input_id(fs, :type, "block")} value="block" class="hidden" x-bind:checked="type === 'block'" />
           <label
             for={input_id(fs, :type, "block")}
-            class="group bg-gray-900/60 border-2 border-gray-700/50 rounded-2xl p-5 hover:border-fluxo-500/40 hover:bg-gray-800/60 transition-all duration-300 cursor-pointer flex flex-col items-center text-center relative overflow-hidden"
-            x-bind:class="type == 'block' && 'border-fluxo-500 bg-fluxo-500/10 shadow-lg shadow-fluxo-500/10'"
+            x-on:click="type = 'block'"
+            class="group bg-gray-900/60 border-2 rounded-2xl p-5 hover:bg-gray-800/60 transition-all duration-300 cursor-pointer flex flex-col items-center text-center relative overflow-hidden"
+            x-bind:class="type === 'block' ? 'border-fluxo-500 bg-fluxo-500/10 shadow-lg shadow-fluxo-500/10' : 'border-gray-700/50 hover:border-fluxo-500/40'"
           >
             <span class="absolute top-2 right-2 bg-fluxo-500 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">beta</span>
             <div class="h-14 w-14 bg-gradient-to-br from-purple-500 to-fluxo-500 rounded-xl text-white flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-purple-500/20">
@@ -123,11 +126,12 @@
             </p>
           </label>
 
-          {radio_button(fs, :type, "mjml", class: "hidden", x_model: "type")}
+          <input type="radio" name={input_name(fs, :type)} id={input_id(fs, :type, "mjml")} value="mjml" class="hidden" x-bind:checked="type === 'mjml'" />
           <label
             for={input_id(fs, :type, "mjml")}
-            class="group bg-gray-900/60 border-2 border-gray-700/50 rounded-2xl p-5 hover:border-fluxo-500/40 hover:bg-gray-800/60 transition-all duration-300 cursor-pointer flex flex-col items-center text-center relative overflow-hidden"
-            x-bind:class="type == 'mjml' && 'border-fluxo-500 bg-fluxo-500/10 shadow-lg shadow-fluxo-500/10'"
+            x-on:click="type = 'mjml'"
+            class="group bg-gray-900/60 border-2 rounded-2xl p-5 hover:bg-gray-800/60 transition-all duration-300 cursor-pointer flex flex-col items-center text-center relative overflow-hidden"
+            x-bind:class="type === 'mjml' ? 'border-fluxo-500 bg-fluxo-500/10 shadow-lg shadow-fluxo-500/10' : 'border-gray-700/50 hover:border-fluxo-500/40'"
           >
             <span class="absolute top-2 right-2 bg-gradient-to-r from-fluxo-500 to-cyan-400 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">recomendado</span>
             <div class="h-14 w-14 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl text-white flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-orange-500/20">

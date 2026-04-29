@@ -93,7 +93,7 @@ defmodule Keila.Integrations.Evo do
     email = get_row_field(row, ["email", "e_mail", "endereco_de_e_mail"]) |> trim_str()
     phone = get_row_field(row, ["telefone", "celular", "phone", "cellphone"]) |> trim_str()
     branch = get_row_field(row, ["filial", "branch", "branchname", "unidade"]) |> trim_str()
-    raw_birth = get_row_field(row, ["data_de_nascimento", "data_nascimento", "nascimento", "birthdate", "birth_date", "dataNascimento"])
+    raw_birth = get_row_field(row, ["datanascimento", "data_nascimento", "data_de_nascimento", "nascimento", "birthdate", "birth_date", "dt_nascimento", "data_nasc"])
     register_date = get_row_field(row, ["data_de_cadastro", "registerdate", "data_cadastro", "dt_cadastro"]) |> to_str()
     member_status = get_row_field(row, ["status", "memberstatus", "situacao"]) |> to_str()
     id_evo = get_row_field(row, ["id", "idmember", "codigo", "id_member", "matricula"]) |> to_str()

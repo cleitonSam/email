@@ -352,27 +352,4 @@ config :keila, :imagekit,
   private_key: System.get_env("IMAGEKIT_PRIVATE_KEY"),
   url_endpoint: System.get_env("IMAGEKIT_URL_ENDPOINT")
 
-# --- OpenRouter (IA pra editar/criar emails) ---
-# Pegue a chave em https://openrouter.ai/keys
-# Modelo default: Gemini 2.5 Flash — melhor inteligência/preço atual
-# Alternativas (override via env var OPENROUTER_MODEL):
-#   google/gemini-2.5-flash       (~$0.005/edição — recomendado)
-#   openai/gpt-4.1-mini           (~$0.004)
-#   google/gemini-2.0-flash       (~$0.002 — mais barato ainda)
-#   anthropic/claude-3.5-haiku    (~$0.02 — mais caro mas + obediente)
-config :keila, :openrouter,
-  api_key: System.get_env("OPENROUTER_API_KEY"),
-  default_model: System.get_env("OPENROUTER_MODEL") || "google/gemini-2.5-flash"
-
-if config_env() == :test do
-  db_url = System.get_env("DB_URL")
-
-  if db_url do
-    db_url = db_url <> "#{System.get_env("MIX_TEST_PARTITION")}"
-    config(:keila, Keila.Repo, url: db_url)
-  end
-end
-
-Keila.if_cloud do
-  use KeilaCloud.RuntimeConfig
-end
+# --- O

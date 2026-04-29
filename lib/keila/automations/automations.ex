@@ -158,9 +158,4 @@ defmodule Keila.Automations do
     run
     |> Run.update_changeset(%{
       status: to_string(status),
-      executed_at: DateTime.utc_now() |> DateTime.truncate(:second),
-      error: error
-    })
-    |> Repo.update()
-  end
-end
+      executed_a

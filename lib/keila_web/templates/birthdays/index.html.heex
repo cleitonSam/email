@@ -6,7 +6,7 @@
       </div>
       <div>
         <h1 class="text-2xl sm:text-3xl font-bold text-white">Aniversariantes</h1>
-        <p class="text-sm text-gray-400 mt-1">Quem faz aniversário em breve. Manda mensagem afetiva automática.</p>
+        <p class="text-sm text-gray-400 mt-1">Mensagem afetiva automática pros alunos no dia.</p>
       </div>
     </div>
     <form action={"/projects/" <> @current_project.id <> "/aniversariantes/sync"} method="post" class="flex-shrink-0">
@@ -19,29 +19,47 @@
 </div>
 
 <div class="container max-w-5xl pb-16">
-  <!-- Status da automação -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-    <div class="bg-gray-900/60 border border-gray-800 rounded-xl p-5">
-      <p class="text-3xl font-bold text-fluxo-300">{@total_with_birthday}</p>
-      <p class="text-xs text-gray-400 uppercase tracking-wider mt-1">Com data de nascimento</p>
-      <p class="text-xs text-gray-500 mt-2">de {@total_contacts} contatos totais</p>
+  <!-- Aviso conceitual: Member ≠ Oportunidade -->
+  <div class="bg-fluxo-500/10 border border-fluxo-500/30 rounded-xl p-4 mb-6">
+    <div class="flex items-start gap-3">
+      <span class="text-xl flex-shrink-0">💡</span>
+      <div class="text-sm text-gray-200 leading-relaxed">
+        <strong class="text-white">Como funciona o aniversário na EVO:</strong>
+        a data de nascimento <strong class="text-fluxo-300">só vem dos Members</strong> (alunos matriculados).
+        <strong class="text-amber-300">Oportunidades/Prospects não têm aniversário</strong> — são leads que ainda não viraram aluno.
+        Pra ter aniversariante, precisa ter Member ativo na EVO.
+      </div>
     </div>
-    <div class="bg-gray-900/60 border border-gray-800 rounded-xl p-5">
-      <p class="text-3xl font-bold text-pink-300">{length(@today_birthdays)}</p>
-      <p class="text-xs text-gray-400 uppercase tracking-wider mt-1">Aniversariantes hoje</p>
-      <p class="text-xs text-gray-500 mt-2">vão receber email às 9h</p>
+  </div>
+
+  <!-- Status da base separado: Members vs Oportunidades -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+    <div class="bg-gray-900/60 border border-gray-800 rounded-xl p-4">
+      <p class="text-2xl font-bold text-fluxo-300">{@total_members}</p>
+      <p class="text-[11px] text-gray-400 uppercase tracking-wider mt-1">Members (alunos)</p>
+      <p class="text-[10px] text-gray-500 mt-1">com birth_date</p>
     </div>
-    <div class="bg-gray-900/60 border border-gray-800 rounded-xl p-5">
-      <p class={"text-3xl font-bold " <> if @automation_active, do: "text-emerald-300", else: "text-amber-300"}>
+    <div class="bg-gray-900/60 border border-gray-800 rounded-xl p-4">
+      <p class="text-2xl font-bold text-amber-300">{@total_prospects}</p>
+      <p class="text-[11px] text-gray-400 uppercase tracking-wider mt-1">Oportunidades</p>
+      <p class="text-[10px] text-gray-500 mt-1">sem birth_date</p>
+    </div>
+    <div class="bg-gray-900/60 border border-gray-800 rounded-xl p-4">
+      <p class="text-2xl font-bold text-pink-300">{@members_with_birthday}</p>
+      <p class="text-[11px] text-gray-400 uppercase tracking-wider mt-1">Com data nascimento</p>
+      <p class="text-[10px] text-gray-500 mt-1">de {@total_members} members</p>
+    </div>
+    <div class="bg-gray-900/60 border border-gray-800 rounded-xl p-4">
+      <p class={"text-2xl font-bold " <> if @automation_active, do: "text-emerald-300", else: "text-amber-300"}>
         {if @automation_active, do: "Ativa", else: "Pausada"}
       </p>
-      <p class="text-xs text-gray-400 uppercase tracking-wider mt-1">Automação</p>
+      <p class="text-[11px] text-gray-400 uppercase tracking-wider mt-1">Automação</p>
       <%= if not @automation_active do %>
-        <a href={"/projects/" <> @current_project.id <> "/automacoes"} class="text-xs text-fluxo-400 hover:underline mt-2 block">
-          → Ativar receita "Aniversariantes do dia"
+        <a href={"/projects/" <> @current_project.id <> "/automacoes"} class="text-[10px] text-fluxo-400 hover:underline mt-1 block">
+          → Ativar receita
         </a>
       <% else %>
-        <p class="text-xs text-gray-500 mt-2">Roda 9h da manhã todo dia</p>
+        <p class="text-[10px] text-gray-500 mt-1">9h da manhã todo dia</p>
       <% end %>
     </div>
   </div>
@@ -76,67 +94,27 @@
     <div class="bg-gray-900/40 border border-gray-800 rounded-2xl p-8 text-center">
       <span class="text-4xl block mb-3">🎂</span>
       <p class="text-white font-semibold mb-2">Nenhum aniversariante nos próximos 30 dias</p>
-      <%= if @total_with_birthday == 0 and @total_contacts > 0 do %>
-        <p class="text-sm text-amber-300 mb-2">⚠️ Você tem {@total_contacts} contatos mas NENHUM com data de nascimento.</p>
-        <p class="text-sm text-gray-400 mb-5">Possíveis causas:<br/>
-          • Os contatos vieram da EVO mas a API não retornou o campo de aniversário<br/>
-          • Os contatos importados eram prospects (leads) que não têm aniversário<br/>
-          • A planilha CSV importada não tinha coluna data_nascimento
-        </p>
-        <div class="flex flex-col sm:flex-row gap-3 justify-center">
-          <form action={"/projects/" <> @current_project.id <> "/aniversariantes/sync"} method="post">
-            <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
-            <button type="submit" class="button button--cta">🔄 Sincronizar Members EVO agora</button>
-          </form>
-          <a href={"/projects/" <> @current_project.id <> "/contacts/import"} class="button">
-            📥 Importar via planilha CSV
-          </a>
-        </div>
-      <% else %>
-        <p class="text-sm text-gray-400 mb-5">
-          <%= if @total_with_birthday == 0 do %>
-            Você ainda não tem datas de nascimento dos contatos.
-          <% else %>
-            Mas você tem {@total_with_birthday} contatos com data cadastrada.
-          <% end %>
-        </p>
-        <a href={"/projects/" <> @current_project.id <> "/contacts/import"} class="text-fluxo-400 hover:underline text-sm">
-          → Importar contatos com data de nascimento via planilha
-        </a>
-      <% end %>
-    </div>
-  <% else %>
-    <div class="space-y-2">
-      <%= for day <- @upcoming do %>
-        <div class="bg-gray-900/60 border border-gray-800 rounded-xl p-4">
-          <div class="flex items-center justify-between mb-2">
-            <div class="text-white font-bold">{KeilaWeb.BirthdaysView.format_birth_md(day.md)}</div>
-            <div class="text-xs text-gray-400">{KeilaWeb.BirthdaysView.days_until(day.iso)} · {length(day.contacts)} {if length(day.contacts) == 1, do: "pessoa", else: "pessoas"}</div>
-          </div>
-          <div class="flex flex-wrap gap-2">
-            <%= for c <- day.contacts do %>
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-800 text-sm text-gray-300 rounded-lg">
-                <span class="h-5 w-5 rounded-full bg-pink-500/30 flex items-center justify-center text-pink-200 text-xs font-bold">{String.first(c.first_name || c.email) |> String.upcase()}</span>
-                {c.first_name || c.email}
-              </span>
-            <% end %>
-          </div>
-        </div>
-      <% end %>
-    </div>
-  <% end %>
 
-  <!-- Como funciona -->
-  <div class="mt-8 bg-fluxo-500/5 border border-fluxo-500/20 rounded-xl p-5">
-    <h3 class="text-white font-semibold mb-3 flex items-center gap-2">
-      <span class="inline-flex h-5 w-5 text-fluxo-400">{render_icon(:light_bulb)}</span>
-      Como funciona
-    </h3>
-    <ol class="text-sm text-gray-300 space-y-2 list-decimal pl-5">
-      <li><strong class="text-white">Importa as datas de nascimento:</strong> via sincronização EVO (campo birthDate dos members) OU upload de planilha CSV em <a href={"/projects/" <> @current_project.id <> "/contacts/import"} class="text-fluxo-400 hover:underline">Contatos → Importar</a></li>
-      <li><strong class="text-white">Ativa a receita "Aniversariantes do dia":</strong> em <a href={"/projects/" <> @current_project.id <> "/automacoes"} class="text-fluxo-400 hover:underline">Automações</a> — 1 clique pra ativar</li>
-      <li><strong class="text-white">Todo dia às 9h da manhã:</strong> sistema identifica quem faz aniversário hoje e manda automaticamente o template "Feliz aniversário 🎂" com sua marca</li>
-      <li><strong class="text-white">CSV deve ter:</strong> colunas <code class="bg-gray-800 px-1.5 py-0.5 rounded text-xs">email</code> e <code class="bg-gray-800 px-1.5 py-0.5 rounded text-xs">data_nascimento</code> (formato DD/MM/AAAA ou AAAA-MM-DD)</li>
-    </ol>
-  </div>
-</div>
+      <%= cond do %>
+        <% @total_members == 0 and @total_prospects > 0 -> %>
+          <!-- Caso 1: tem oportunidades mas nenhum member -->
+          <div class="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 mt-3 mb-4 text-left">
+            <p class="text-sm text-amber-300 font-semibold mb-2">⚠️ Você tem {@total_prospects} oportunidades, mas 0 members.</p>
+            <p class="text-sm text-gray-300 leading-relaxed mb-3">
+              Oportunidades são leads que ainda não viraram aluno — por isso não têm aniversário cadastrado na EVO.
+              Pra ter aniversariantes, você precisa de <strong class="text-white">members ativos</strong> (alunos matriculados).
+            </p>
+            <p class="text-xs text-gray-400">
+              Possíveis causas:<br/>
+              • A unidade EVO ainda não tem membros ativos cadastrados<br/>
+              • Os membros foram cadastrados mas sem o campo birthDate preenchido<br/>
+              • O secret_key da EVO não tem permissão pra ler endpoint /members
+            </p>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-3 justify-center">
+            <form action={"/projects/" <> @current_project.id <> "/aniversariantes/sync"} method="post">
+              <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
+              <button type="submit" class="button button--cta">🔄 Sincronizar EVO de novo</button>
+            </form>
+            <a href={"/projects/" <> @current_project.id <> "/contacts/import"} class="button">
+              📥 Importar

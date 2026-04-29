@@ -195,26 +195,4 @@ defmodule KeilaWeb.UnitsLive do
   def status_color(%Unit{active: false}), do: "bg-gray-500"
   def status_color(%Unit{last_sync_status: "ok"}), do: "bg-emerald-500"
   def status_color(%Unit{last_sync_status: "error"}), do: "bg-red-500"
-  def status_color(%Unit{}), do: "bg-amber-500"
-
-  @doc false
-  def status_label(%Unit{active: false}), do: "Desativada"
-  def status_label(%Unit{last_sync_status: "ok"}), do: "Conectada"
-  def status_label(%Unit{last_sync_status: "error"}), do: "Erro"
-  def status_label(%Unit{last_sync_at: nil}), do: "Nunca sincronizou"
-  def status_label(%Unit{}), do: "Pendente"
-
-  @doc false
-  def humanize_sync_at(nil), do: "Nunca sincronizado"
-
-  def humanize_sync_at(%DateTime{} = dt) do
-    diff = DateTime.diff(DateTime.utc_now(), dt, :second)
-
-    cond do
-      diff < 60 -> "Agora há pouco"
-      diff < 3600 -> "Há #{div(diff, 60)} min"
-      diff < 86_400 -> "Há #{div(diff, 3600)}h"
-      true -> "Há #{div(diff, 86_400)} dia(s)"
-    end
-  end
-end
+  de

@@ -136,34 +136,4 @@ defmodule Keila.Auth.Emails do
   @spec build(:invitation, %{
           url: String.t(),
           email: String.t(),
-          inviter: String.t(),
-          project_name: String.t()
-        }) :: term() | no_return()
-  def build(:invitation, %{url: url, email: email, inviter: inviter, project_name: project_name}) do
-    new()
-    |> from({"Fluxo Email MKT", system_from_email()})
-    |> subject("Você foi convidado pro #{project_name} no Fluxo")
-    |> to(email)
-    |> text_body("""
-    Olá!
-
-    #{inviter} convidou você pra fazer parte do projeto "#{project_name}" no Fluxo Email MKT.
-
-    Pra aceitar o convite e criar sua conta, clica no link abaixo:
-
-    #{url}
-
-    Esse link vale por 7 dias.
-
-    Se você não esperava esse convite, pode ignorar este email com tranquilidade.
-
-    --
-    Fluxo Email MKT
-    Email Marketing pra Academias
-    """)
-  end
-
-  defp system_from_email() do
-    Application.get_env(:keila, __MODULE__) |> Keyword.fetch!(:from_email)
-  end
-end
+          inviter: String.t()

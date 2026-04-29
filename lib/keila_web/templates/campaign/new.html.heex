@@ -18,8 +18,8 @@
     id="form"
     action={Routes.campaign_path(@conn, :post_new, @current_project.id)}
     class="max-w-4xl flex flex-col gap-4"
-    x-data="{type: null}"
-    x-init="type = $el.querySelector('[name=\'campaign[settings][type]\'][checked]').value"
+    x-data="{type: 'block'}"
+    x-init="(function(){var c=$el.querySelector('input[type=radio]:checked'); if(c) type = c.value;})()"
   >
     <div class="inline-form-row">
       {label(f, :sender_id, gettext("Sender"))}
@@ -233,5 +233,4 @@
         {gettext("Create campaign")}
       </button>
     </div>
-  </.form>
-</div>
+  

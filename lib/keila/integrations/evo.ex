@@ -1,19 +1,18 @@
 defmodule Keila.Integrations.Evo do
   @moduledoc """
   Client for the EVO fitness platform API.
-  Fetches prospects (leads) from EVO and supports importing them as contacts.
+  Fetches prospects (leads via JSON) and members (via XLSX summary endpoint).
   """
 
   require Logger
 
   @prospects_url "https://evo-integracao-api.w12app.com.br/api/v1/prospects"
-  @members_url "https://evo-integracao-api.w12app.com.br/api/v1/members"
+  # Endpoint XLSX que retorna members com birthDate (testado, funciona)
+  @members_excel_url "https://evo-integracao.w12app.com.br/api/v1/members/summary-excel"
   @page_size 50
 
   @doc """
-  Faz fetch de MEMBERS (alunos matriculados) da EVO. Mesmo padrão de
-  `fetch_prospects/1` mas no endpoint /members.
-
+  Faz fetch de MEMBERS da EVO via endpoint summary-excel (XLSX).
   Retorna `{:ok, members_list, total}` ou `{:error, reason}`.
   """
   @spec fetch_members(keyword()) :: {:ok, list(), integer()} | {:error, term()}
@@ -21,108 +20,135 @@ defmodule Keila.Integrations.Evo do
     with {:ok, dns} <- get_config(:evo_dns, opts),
          {:ok, secret} <- get_config(:evo_secret_key, opts) do
       auth = Base.encode64("#{dns}:#{secret}")
+      headers = [{"Authorization", "Basic #{auth}"}]
 
-      case fetch_all_members_pages(auth, 0, []) do
-        {:ok, members} ->
-          members_with_email =
-            members
-            |> Enum.filter(&has_valid_email?/1)
-            |> Enum.map(&normalize_member/1)
+      Logger.info("[EVO Members] Fetching XLSX from #{@members_excel_url}")
 
-          {:ok, members_with_email, length(members)}
+      case HTTPoison.get(@members_excel_url, headers, recv_timeout: 60_000, timeout: 60_000) do
+        {:ok, %{status_code: 200, body: body}} ->
+          case parse_members_xlsx(body) do
+            {:ok, rows} ->
+              members =
+                rows
+                |> Enum.filter(&has_valid_email_row?/1)
+                |> Enum.map(&normalize_member_row/1)
 
-        {:error, reason} ->
-          {:error, reason}
+              Logger.info("[EVO Members] Parsed #{length(rows)} rows, #{length(members)} with valid email")
+              {:ok, members, length(rows)}
+
+            {:error, reason} ->
+              Logger.error("[EVO Members] XLSX parse failed: #{inspect(reason)}")
+              {:error, "Falha ao processar planilha de members: #{inspect(reason)}"}
+          end
+
+        {:ok, %{status_code: status, body: body}} ->
+          snippet = body |> to_string() |> String.slice(0, 300)
+          Logger.error("[EVO Members] HTTP #{status}: #{snippet}")
+          {:error, "EVO retornou status #{status}"}
+
+        {:error, %HTTPoison.Error{reason: reason}} ->
+          Logger.error("[EVO Members] Request failed: #{inspect(reason)}")
+          {:error, "Falha de conexão: #{inspect(reason)}"}
       end
     end
   end
 
-  defp fetch_all_members_pages(auth, skip, acc) do
-    url = "#{@members_url}?take=#{@page_size}&skip=#{skip}"
-    headers = [{"Authorization", "Basic #{auth}"}]
+  defp parse_members_xlsx(binary) do
+    with {:ok, package} <- XlsxReader.open(binary, source: :binary),
+         [first_sheet | _] <- XlsxReader.sheet_names(package),
+         {:ok, [headers | rows]} <- XlsxReader.sheet(package, first_sheet) do
+      header_keys = Enum.map(headers, &normalize_header/1)
+      data = Enum.map(rows, fn row -> Enum.zip(header_keys, row) |> Map.new() end)
 
-    case HTTPoison.get(url, headers, recv_timeout: 15_000) do
-      {:ok, %{status_code: 200, body: body}} ->
-        case Jason.decode(body) do
-          {:ok, data} when is_list(data) ->
-            # Debug: log estrutura do primeiro member pra ver campos disponíveis
-            if skip == 0 and length(data) > 0 do
-              first = List.first(data)
-              keys = if is_map(first), do: Map.keys(first), else: []
-              Logger.info("[EVO Members] Sample fields: #{inspect(Enum.take(keys, 30))}")
+      if length(data) > 0 do
+        sample_keys = data |> List.first() |> Map.keys()
+        Logger.info("[EVO Members] XLSX columns: #{inspect(sample_keys)}")
+      end
 
-              if is_map(first) do
-                birth_fields =
-                  ["birthDate", "birthday", "dateOfBirth", "birth_date", "dataNascimento"]
-                  |> Enum.filter(&Map.has_key?(first, &1))
-
-                Logger.info("[EVO Members] Birth date fields detected: #{inspect(birth_fields)}")
-              end
-            end
-
-            new_acc = acc ++ data
-
-            if length(data) < @page_size do
-              {:ok, new_acc}
-            else
-              fetch_all_members_pages(auth, skip + @page_size, new_acc)
-            end
-
-          {:ok, _other} ->
-            {:ok, acc}
-
-          {:error, _} ->
-            {:error, "Resposta inválida do EVO (members)"}
-        end
-
-      {:ok, %{status_code: status, body: body}} ->
-        Logger.error("[EVO Members] API status #{status}: #{body}")
-        {:error, "EVO retornou status #{status}"}
-
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        {:error, "EVO request failed: #{inspect(reason)}"}
+      {:ok, data}
+    else
+      {:error, reason} -> {:error, reason}
+      [] -> {:error, "XLSX sem planilhas"}
+      other -> {:error, "Inesperado: #{inspect(other)}"}
     end
   end
 
-  defp normalize_member(member) do
-    contract_status =
-      case member["currentContract"] do
-        %{"status" => s} -> s
-        _ -> nil
-      end
+  defp normalize_header(h) when is_binary(h) do
+    h
+    |> String.trim()
+    |> String.downcase()
+    |> String.replace(~r/[^\w]+/u, "_")
+    |> String.trim("_")
+  end
 
-    raw_birth =
-      member["birthDate"] || member["birthday"] || member["dateOfBirth"] ||
-        member["birth_date"] || member["dataNascimento"] || member["data_nascimento"] ||
-        get_in(member, ["personalInfo", "birthDate"]) ||
-        get_in(member, ["profile", "birthDate"]) ||
-        nil
+  defp normalize_header(_), do: ""
+
+  defp has_valid_email_row?(row) do
+    email = get_row_field(row, ["email", "e_mail", "endereco_de_e_mail"])
+    is_binary(email) and String.contains?(email, "@")
+  end
+
+  defp normalize_member_row(row) do
+    name = get_row_field(row, ["nome", "name", "nome_completo"]) || ""
+    email = get_row_field(row, ["email", "e_mail", "endereco_de_e_mail"]) |> trim_str()
+    phone = get_row_field(row, ["telefone", "celular", "phone", "cellphone"]) |> trim_str()
+    branch = get_row_field(row, ["filial", "branch", "branchname", "unidade"]) |> trim_str()
+    raw_birth = get_row_field(row, ["data_de_nascimento", "data_nascimento", "nascimento", "birthdate", "birth_date", "dataNascimento"])
+    register_date = get_row_field(row, ["data_de_cadastro", "registerdate", "data_cadastro", "dt_cadastro"]) |> to_str()
+    member_status = get_row_field(row, ["status", "memberstatus", "situacao"]) |> to_str()
+    id_evo = get_row_field(row, ["id", "idmember", "codigo", "id_member", "matricula"]) |> to_str()
 
     %{
-      name: member["name"] || member["firstName"] || "",
-      first_name: member["firstName"] || extract_first_name(member["name"]),
-      last_name: member["lastName"] || extract_last_name(member["name"]),
-      email: String.trim(member["email"] || ""),
-      phone: member["phone"] || member["cellphone"] || "",
-      register_date: member["registerDate"] || "",
+      name: name,
+      first_name: extract_first_name(name),
+      last_name: extract_last_name(name),
+      email: email,
+      phone: phone,
+      register_date: register_date,
       birth_date: normalize_birth_date(raw_birth),
-      birth_date_raw: raw_birth,
-      branch: member["branchName"] || member["branch"] || "",
-      id_evo: member["idMember"] || member["id"] || nil,
-      member_status: member["memberStatus"] || member["status"] || "Ativo",
-      contract_status: contract_status,
+      birth_date_raw: to_str(raw_birth),
+      branch: branch,
+      id_evo: id_evo,
+      member_status: member_status,
+      contract_status: nil,
       type: "member"
     }
   end
 
-  # Normaliza data de nascimento pra formato "MM-DD" (ano não importa pra aniversário).
-  # Aceita: "1985-04-29T00:00:00", "1985-04-29", "29/04/1985"
+  defp get_row_field(row, candidates) do
+    Enum.find_value(candidates, fn key ->
+      case Map.get(row, key) do
+        nil -> nil
+        "" -> nil
+        v -> v
+      end
+    end)
+  end
+
+  defp trim_str(v) when is_binary(v), do: String.trim(v)
+  defp trim_str(nil), do: ""
+  defp trim_str(v), do: to_string(v)
+
+  defp to_str(nil), do: ""
+  defp to_str(v) when is_binary(v), do: v
+  defp to_str(%Date{} = d), do: Date.to_iso8601(d)
+  defp to_str(%NaiveDateTime{} = dt), do: NaiveDateTime.to_iso8601(dt)
+  defp to_str(v), do: to_string(v)
+
+  # Normaliza data pra "MM-DD" (ano não importa pra aniversário)
   defp normalize_birth_date(nil), do: nil
   defp normalize_birth_date(""), do: nil
 
+  defp normalize_birth_date(%Date{month: m, day: d}) do
+    "#{pad(m)}-#{pad(d)}"
+  end
+
+  defp normalize_birth_date(%NaiveDateTime{month: m, day: d}) do
+    "#{pad(m)}-#{pad(d)}"
+  end
+
   defp normalize_birth_date(date_str) when is_binary(date_str) do
     cond do
-      # ISO: 1985-04-29 ou 1985-04-29T00:00:00
       Regex.match?(~r/^\d{4}-\d{2}-\d{2}/, date_str) ->
         case String.split(date_str, "-") do
           [_year, month, day_part] ->
@@ -133,7 +159,6 @@ defmodule Keila.Integrations.Evo do
             nil
         end
 
-      # BR: 29/04/1985
       Regex.match?(~r/^\d{2}\/\d{2}\/\d{4}/, date_str) ->
         [day, month, _] = String.split(date_str, "/")
         "#{month}-#{day}"
@@ -145,15 +170,11 @@ defmodule Keila.Integrations.Evo do
 
   defp normalize_birth_date(_), do: nil
 
+  defp pad(n) when n < 10, do: "0#{n}"
+  defp pad(n), do: "#{n}"
+
   @doc """
   Fetches prospects from the EVO API for a given date range.
-  Returns only prospects that have a valid email address.
-
-  ## Options
-  - `:register_date_start` - Start date (format: "YYYY-MM-DD"). Defaults to first day of current month.
-  - `:register_date_end` - End date (format: "YYYY-MM-DD"). Defaults to last day of current month.
-  - `:evo_dns` - EVO DNS identifier (per-project config).
-  - `:evo_secret_key` - EVO secret key (per-project config).
   """
   def fetch_prospects(opts \\ []) do
     with {:ok, dns} <- get_config(:evo_dns, opts),
@@ -176,30 +197,9 @@ defmodule Keila.Integrations.Evo do
     end
   end
 
-  @doc """
-  Faz fetch de prospects de uma LISTA de unidades EVO em paralelo.
-
-  Cada prospect retornado vem marcado com `:evo_unit_id` e `:evo_unit_name`
-  pra rastrear de qual academia veio.
-
-  ## Argumentos
-  - `units` — lista de `%Keila.Integrations.Evo.Unit{}`
-  - `opts` — mesmas opções de `fetch_prospects/1` (register_date_start, register_date_end)
-
-  ## Retorno
-  ```
-  {:ok, %{
-    prospects: [%{...}, ...],   # prospects normalizados de TODAS unidades
-    per_unit: %{unit_id => {:ok, count} | {:error, reason}},
-    total_fetched: integer,
-    total_with_email: integer
-  }}
-  ```
-  """
-  @spec fetch_prospects_multi([Keila.Integrations.Evo.Unit.t()], keyword()) ::
-          {:ok, map()}
+  @doc "Fetch prospects de várias unidades em paralelo."
+  @spec fetch_prospects_multi([Keila.Integrations.Evo.Unit.t()], keyword()) :: {:ok, map()}
   def fetch_prospects_multi(units, opts \\ []) when is_list(units) do
-    # Roda em paralelo com timeout por unidade
     results =
       units
       |> Task.async_stream(
@@ -231,10 +231,7 @@ defmodule Keila.Integrations.Evo do
           {acc ++ tagged, Map.put(status, unit.id, {:ok, length(tagged)}), sum + total}
 
         {:ok, {unit, {:error, reason}}}, {acc, status, sum} ->
-          Logger.warning(
-            "[EVO Multi] Unidade #{unit.name} (#{unit.id}) falhou: #{inspect(reason)}"
-          )
-
+          Logger.warning("[EVO Multi] Unidade #{unit.name} (#{unit.id}) falhou: #{inspect(reason)}")
           {acc, Map.put(status, unit.id, {:error, reason}), sum}
 
         {:exit, reason}, {acc, status, sum} ->
@@ -281,11 +278,11 @@ defmodule Keila.Integrations.Evo do
         end
 
       {:ok, %{status_code: status, body: body}} ->
-        Logger.error("[EVO Integration] API returned status #{status}: #{body}")
+        Logger.error("[EVO] API returned status #{status}: #{body}")
         {:error, "EVO API returned status #{status}"}
 
       {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.error("[EVO Integration] Request failed: #{inspect(reason)}")
+        Logger.error("[EVO] Request failed: #{inspect(reason)}")
         {:error, "EVO API request failed: #{inspect(reason)}"}
     end
   end
@@ -314,18 +311,22 @@ defmodule Keila.Integrations.Evo do
 
   defp extract_first_name(nil), do: ""
 
-  defp extract_first_name(name) do
-    name |> String.split(" ", parts: 2) |> List.first() || ""
+  defp extract_first_name(name) when is_binary(name) do
+    name |> String.trim() |> String.split(" ", parts: 2) |> List.first() || ""
   end
+
+  defp extract_first_name(_), do: ""
 
   defp extract_last_name(nil), do: ""
 
-  defp extract_last_name(name) do
-    case String.split(name, " ", parts: 2) do
+  defp extract_last_name(name) when is_binary(name) do
+    case name |> String.trim() |> String.split(" ", parts: 2) do
       [_, last] -> last
       _ -> ""
     end
   end
+
+  defp extract_last_name(_), do: ""
 
   defp date_range(opts) do
     start_date = Keyword.get(opts, :register_date_start)
@@ -345,7 +346,7 @@ defmodule Keila.Integrations.Evo do
     case Keyword.get(opts, :evo_dns) do
       nil ->
         case System.get_env("EVO_DNS") do
-          nil -> {:error, "EVO_DNS not configured. Configure in project settings."}
+          nil -> {:error, "EVO_DNS not configured."}
           val -> {:ok, val}
         end
 
@@ -353,7 +354,7 @@ defmodule Keila.Integrations.Evo do
         {:ok, val}
 
       _ ->
-        {:error, "EVO_DNS not configured. Configure in project settings."}
+        {:error, "EVO_DNS not configured."}
     end
   end
 
@@ -361,7 +362,7 @@ defmodule Keila.Integrations.Evo do
     case Keyword.get(opts, :evo_secret_key) do
       nil ->
         case System.get_env("EVO_SECRET_KEY") do
-          nil -> {:error, "EVO_SECRET_KEY not configured. Configure in project settings."}
+          nil -> {:error, "EVO_SECRET_KEY not configured."}
           val -> {:ok, val}
         end
 
@@ -369,7 +370,7 @@ defmodule Keila.Integrations.Evo do
         {:ok, val}
 
       _ ->
-        {:error, "EVO_SECRET_KEY not configured. Configure in project settings."}
+        {:error, "EVO_SECRET_KEY not configured."}
     end
   end
 end

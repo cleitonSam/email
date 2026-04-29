@@ -17,4 +17,36 @@
         @conn,
         view_module(@conn),
         view_template(@conn),
-     
+        :title,
+        gettext("Email Marketing Profissional")
+      ) <> " · Fluxo Email MKT"}
+    </title>
+    <meta property="og:title" content="Fluxo Email MKT" />
+    <meta property="og:image" content={Routes.static_url(@conn, "/images/og_image.png")} />
+    <meta property="og:description" content="Fluxo Email MKT - Email Marketing Profissional" />
+    <meta name="twitter:card" content="summary" />
+    <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/css/app.css")} />
+    <script
+      defer
+      phx-track-static
+      type="text/javascript"
+      src={Routes.static_path(@conn, "/js/app.js")}
+    >
+    </script>
+  </head>
+  <%= if @current_user do %>
+    <body class="grid grid-cols-1 sm:grid-cols-[16em,1fr]">
+      {render("_menu.html", assigns)}
+      <div>
+        {@inner_content}
+        {render("_footer.html", assigns)}
+      </div>
+    </body>
+  <% else %>
+    <body class="grid grid-cols-1">
+      {render("_menu.html", assigns)}
+      {@inner_content}
+      {render("_footer.html", assigns)}
+    </body>
+  <% end %>
+</html>

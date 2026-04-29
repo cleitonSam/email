@@ -125,36 +125,102 @@ defmodule Keila.Templates.Library do
   end
 
   @doc """
-  Aplica os valores do brand do projeto direto no MJML, substituindo as
-  variaveis Liquid `{{ brand.X }}` (com ou sem `default:`) pelos valores
-  reais. Assim a campanha nasce ja com a paleta da empresa em vez dos
-  fallbacks genericos.
+  Aplica os valores do brand do projeto direto no MJML/HTML, substituindo:
+
+    * Variaveis Liquid `{{ brand.X }}` (com ou sem `default:`)
+    * Cores hardcoded conhecidas dos templates (#FF5A1F, #F97316 -> primary;
+      #0A0E27, #1E2749 -> dark; #C4FF00 -> accent)
+    * URLs placeholder de logo (placehold.co/...ACADEMIA*) -> logo_url
+    * Nome generico "Academia Movimento" -> brand.name
+
+  Funciona tanto em MJML cru quanto em HTML compilado, ja que sao
+  substituicoes de string puras.
   """
   @spec apply_brand(String.t(), map()) :: String.t()
-  def apply_brand(mjml, brand) when is_binary(mjml) and is_map(brand) do
+  def apply_brand(content, brand) when is_binary(content) and is_map(brand) do
     keys = ["color_primary", "color_dark", "color_accent", "color_text", "logo_url", "name"]
 
-    Enum.reduce(keys, mjml, fn key, acc ->
-      value = Map.get(brand, key) || ""
+    content
+    |> apply_liquid_vars(brand, keys)
+    |> apply_hex_substitutions(brand)
+    |> apply_placeholder_substitutions(brand)
+  end
 
-      if value != "" do
-        replace_brand_var(acc, key, value)
+  def apply_brand(content, _), do: content
+
+  # ── Liquid {{ brand.X }} ──
+  defp apply_liquid_vars(content, brand, keys) do
+    Enum.reduce(keys, content, fn key, acc ->
+      value = Map.get(brand, key) || ""
+      if value != "", do: replace_brand_var(acc, key, value), else: acc
+    end)
+  end
+
+  defp replace_brand_var(content, key, value) do
+    pattern_with_default = ~r/\{\{\s*brand\.#{key}\s*\|\s*default:\s*\'[^\']*\'\s*\}\}/
+    pattern_simple = ~r/\{\{\s*brand\.#{key}\s*\}\}/
+
+    content
+    |> String.replace(pattern_with_default, value)
+    |> String.replace(pattern_simple, value)
+  end
+
+  # ── Cores hardcoded → slots da marca ──
+  # Mapeamento de hex codes que aparecem hardcoded nos 8 templates
+  # padroes do Fluxo. Quando o brand do projeto tem o slot definido,
+  # substitui CASE-INSENSITIVE em todo o conteudo.
+  @hex_map %{
+    # Primary (laranja Fluxo): aparece como #FF5A1F nos defaults Liquid
+    # e como #F97316 (orange-500 Tailwind) hardcoded em alguns templates
+    "color_primary" => ["#FF5A1F", "#F97316", "#ff5a1f", "#f97316"],
+
+    # Dark (navy): #0A0E27 e a variante mais clara #1E2749
+    "color_dark" => ["#0A0E27", "#1E2749", "#0a0e27", "#1e2749"],
+
+    # Accent (lime): #C4FF00
+    "color_accent" => ["#C4FF00", "#c4ff00"]
+  }
+
+  defp apply_hex_substitutions(content, brand) do
+    Enum.reduce(@hex_map, content, fn {brand_key, hex_list}, acc ->
+      value = Map.get(brand, brand_key) || ""
+
+      if value != "" and String.starts_with?(value, "#") do
+        Enum.reduce(hex_list, acc, fn hex, inner_acc ->
+          String.replace(inner_acc, hex, value)
+        end)
       else
         acc
       end
     end)
   end
 
-  def apply_brand(mjml, _), do: mjml
+  # ── Placeholders de logo + nome generico ──
+  @logo_placeholders [
+    "https://placehold.co/240x80/0C4A6E/FFFFFF/png?text=ACADEMIA+MOVIMENTO",
+    "https://placehold.co/140x44/0A0E27/FFFFFF/png?text=ACADEMIA"
+  ]
 
-  defp replace_brand_var(mjml, key, value) do
-    # Pattern 1: {{ brand.KEY | default: 'whatever' }}
-    pattern_with_default = ~r/\{\{\s*brand\.#{key}\s*\|\s*default:\s*\'[^\']*\'\s*\}\}/
-    # Pattern 2: {{ brand.KEY }}
-    pattern_simple = ~r/\{\{\s*brand\.#{key}\s*\}\}/
+  defp apply_placeholder_substitutions(content, brand) do
+    logo = Map.get(brand, "logo_url") || ""
+    name = Map.get(brand, "name") || ""
 
-    mjml
-    |> String.replace(pattern_with_default, value)
-    |> String.replace(pattern_simple, value)
+    content
+    |> maybe_replace_logo(logo)
+    |> maybe_replace_name(name)
+  end
+
+  defp maybe_replace_logo(content, ""), do: content
+
+  defp maybe_replace_logo(content, logo_url) do
+    Enum.reduce(@logo_placeholders, content, fn placeholder, acc ->
+      String.replace(acc, placeholder, logo_url)
+    end)
+  end
+
+  defp maybe_replace_name(content, ""), do: content
+
+  defp maybe_replace_name(content, name) do
+    String.replace(content, "Academia Movimento", name)
   end
 end

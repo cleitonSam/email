@@ -66,6 +66,8 @@ defmodule KeilaWeb.PreviewController do
 
   # Substitui cores/logo/nome dos defaults pelas do brand do projeto.
   # Recebe project_id via ?p=... no preview URL.
+  # Delega pro Library.apply_brand pra logica ser identica entre o preview
+  # da galeria e o conteudo MJML que vai pra campanha real.
   defp maybe_apply_brand(html, nil), do: html
   defp maybe_apply_brand(html, ""), do: html
 
@@ -77,28 +79,10 @@ defmodule KeilaWeb.PreviewController do
 
         project ->
           brand = Keila.Projects.Brand.get(project)
-
-          html
-          |> replace_safe("#FF5A1F", brand["color_primary"])
-          |> replace_safe("#0A0E27", brand["color_dark"])
-          |> replace_safe("#C4FF00", brand["color_accent"])
-          |> replace_safe(
-            "https://placehold.co/240x80/0C4A6E/FFFFFF/png?text=ACADEMIA+MOVIMENTO",
-            brand["logo_url"]
-          )
-          |> replace_safe(
-            "https://placehold.co/140x44/0A0E27/FFFFFF/png?text=ACADEMIA",
-            brand["logo_url"]
-          )
-          |> replace_safe("Academia Movimento", brand["name"])
+          Keila.Templates.Library.apply_brand(html, brand)
       end
     rescue
       _ -> html
     end
   end
-
-  defp replace_safe(html, _from, nil), do: html
-  defp replace_safe(html, _from, ""), do: html
-  defp replace_safe(html, from, to) when is_binary(to), do: String.replace(html, from, to)
-  defp replace_safe(html, _, _), do: html
 end

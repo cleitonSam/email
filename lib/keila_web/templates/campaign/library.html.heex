@@ -134,7 +134,7 @@
         <!-- Preview iframe (zoom out 50% pra caber bonito) -->
         <div class="relative w-full h-72 overflow-hidden bg-gray-50 border-b border-gray-100">
           <iframe
-            src={model.preview_url <> "?p=" <> @current_project.id}
+            src={model.preview_url <> "?p=" <> @current_project.id <> "&v=" <> @brand_version}
             loading="lazy"
             class="absolute top-0 left-0 origin-top-left pointer-events-none"
             style="width: 200%; height: 200%; transform: scale(0.5); border: 0;"
@@ -159,7 +159,7 @@
 
           <div class="flex gap-2">
             <a
-              href={model.preview_url <> "?p=" <> @current_project.id}
+              href={model.preview_url <> "?p=" <> @current_project.id <> "&v=" <> @brand_version}
               target="_blank"
               rel="noopener"
               class="flex-1 px-4 py-2.5 text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg text-center transition"

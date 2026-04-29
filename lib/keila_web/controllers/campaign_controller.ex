@@ -99,10 +99,29 @@ defmodule KeilaWeb.CampaignController do
   """
   @spec library(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def library(conn, _params) do
+    project = current_project(conn)
+    brand = Keila.Projects.Brand.get(project)
+    # Cache-buster: muda quando o brand muda, forcando iframes a recarregar
+    brand_version = brand_hash(brand)
+
     conn
     |> assign(:models, Library.list_models())
+    |> assign(:brand_version, brand_version)
     |> put_meta(:title, gettext("Modelos de Email"))
     |> render("library.html")
+  end
+
+  defp brand_hash(brand) do
+    [
+      Map.get(brand, "color_primary"),
+      Map.get(brand, "color_dark"),
+      Map.get(brand, "color_accent"),
+      Map.get(brand, "logo_url"),
+      Map.get(brand, "name")
+    ]
+    |> Enum.join("|")
+    |> :erlang.phash2()
+    |> Integer.to_string()
   end
 
   @doc """

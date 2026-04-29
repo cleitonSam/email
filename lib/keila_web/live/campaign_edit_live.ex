@@ -47,10 +47,16 @@ defmodule KeilaWeb.CampaignEditLive do
 
     json_body = if campaign.json_body, do: Jason.encode!(campaign.json_body), else: "{}"
 
+    simple_fields =
+      if campaign.settings && campaign.settings.type == :mjml,
+        do: Keila.Mailings.SimpleEditor.parse(campaign.mjml_body || ""),
+        else: []
+
     socket
     |> maybe_put_styles(template)
     |> assign(:preview, preview)
     |> assign(:json_body, json_body)
+    |> assign(:simple_fields, simple_fields)
   end
 
   @impl true
@@ -60,6 +66,7 @@ defmodule KeilaWeb.CampaignEditLive do
 
   @impl true
   def handle_event("update", params, socket) do
+    params = maybe_apply_simple_edits(params, socket)
     changeset = merged_changeset(socket, params["campaign"])
 
     socket =
@@ -350,6 +357,31 @@ defmodule KeilaWeb.CampaignEditLive do
   end
 
   def handle_info(_msg, socket), do: {:noreply, socket}
+
+  # Modo Simples: traduz params["simple"] em mjml_body atualizado.
+  # So roda quando _target indica edicao em campo "simple" — evita sobrescrever
+  # o MJML quando o usuario digita no CodeMirror (modo Avancado).
+  defp maybe_apply_simple_edits(
+         %{"_target" => ["simple" | _], "simple" => simple} = params,
+         socket
+       )
+       when is_map(simple) do
+    current_mjml =
+      Ecto.Changeset.get_field(socket.assigns.changeset, :mjml_body) || ""
+
+    new_mjml = Keila.Mailings.SimpleEditor.apply_edits(current_mjml, simple)
+
+    campaign_params =
+      params
+      |> Map.get("campaign", %{})
+      |> Map.put("mjml_body", new_mjml)
+
+    params
+    |> Map.put("campaign", campaign_params)
+    |> Map.delete("simple")
+  end
+
+  defp maybe_apply_simple_edits(params, _socket), do: params
 
   defp merged_changeset(socket, params) do
     params = maybe_parse_json_body(params)

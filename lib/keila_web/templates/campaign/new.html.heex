@@ -18,7 +18,7 @@
     id="form"
     action={Routes.campaign_path(@conn, :post_new, @current_project.id)}
     class="max-w-4xl flex flex-col gap-4"
-    x-data="{type: 'block'}"
+    x-data="{type: 'mjml'}"
     x-init="(function(){var c=$el.querySelector('input[type=radio]:checked'); if(c) type = c.value;})()"
   >
     <div class="inline-form-row">
@@ -126,9 +126,10 @@
           {radio_button(fs, :type, "mjml", class: "hidden", x_model: "type")}
           <label
             for={input_id(fs, :type, "mjml")}
-            class="group bg-gray-900/60 border-2 border-gray-700/50 rounded-2xl p-5 hover:border-fluxo-500/40 hover:bg-gray-800/60 transition-all duration-300 cursor-pointer flex flex-col items-center text-center"
+            class="group bg-gray-900/60 border-2 border-gray-700/50 rounded-2xl p-5 hover:border-fluxo-500/40 hover:bg-gray-800/60 transition-all duration-300 cursor-pointer flex flex-col items-center text-center relative overflow-hidden"
             x-bind:class="type == 'mjml' && 'border-fluxo-500 bg-fluxo-500/10 shadow-lg shadow-fluxo-500/10'"
           >
+            <span class="absolute top-2 right-2 bg-gradient-to-r from-fluxo-500 to-cyan-400 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">recomendado</span>
             <div class="h-14 w-14 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl text-white flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-orange-500/20">
               {render_icon(:mjml)}
             </div>

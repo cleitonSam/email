@@ -123,4 +123,38 @@ defmodule Keila.Templates.Library do
       _ -> ""
     end
   end
+
+  @doc """
+  Aplica os valores do brand do projeto direto no MJML, substituindo as
+  variaveis Liquid `{{ brand.X }}` (com ou sem `default:`) pelos valores
+  reais. Assim a campanha nasce ja com a paleta da empresa em vez dos
+  fallbacks genericos.
+  """
+  @spec apply_brand(String.t(), map()) :: String.t()
+  def apply_brand(mjml, brand) when is_binary(mjml) and is_map(brand) do
+    keys = ["color_primary", "color_dark", "color_accent", "color_text", "logo_url", "name"]
+
+    Enum.reduce(keys, mjml, fn key, acc ->
+      value = Map.get(brand, key) || ""
+
+      if value != "" do
+        replace_brand_var(acc, key, value)
+      else
+        acc
+      end
+    end)
+  end
+
+  def apply_brand(mjml, _), do: mjml
+
+  defp replace_brand_var(mjml, key, value) do
+    # Pattern 1: {{ brand.KEY | default: 'whatever' }}
+    pattern_with_default = ~r/\{\{\s*brand\.#{key}\s*\|\s*default:\s*\'[^\']*\'\s*\}\}/
+    # Pattern 2: {{ brand.KEY }}
+    pattern_simple = ~r/\{\{\s*brand\.#{key}\s*\}\}/
+
+    mjml
+    |> String.replace(pattern_with_default, value)
+    |> String.replace(pattern_simple, value)
+  end
 end

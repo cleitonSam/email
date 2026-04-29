@@ -114,7 +114,10 @@ defmodule KeilaWeb.CampaignController do
     project = current_project(conn)
 
     with {:ok, model} <- Library.get_model(slug),
-         {:ok, mjml} <- Library.load_mjml(slug) do
+         {:ok, mjml_raw} <- Library.load_mjml(slug) do
+      brand = Keila.Projects.Brand.get(project)
+      mjml = Library.apply_brand(mjml_raw, brand)
+
       params = %{
         "subject" => Library.default_subject(slug),
         "mjml_body" => mjml,

@@ -159,14 +159,8 @@
 
   <!-- MODAL DE IMAGEM SELECIONADA -->
   <%= if @selected_asset do %>
-    <div
-      class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-      phx-click="close-asset"
-    >
-      <div
-        class="bg-gray-900 border border-gray-800 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
-        onclick="event.stopPropagation()"
-      >
+    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div class="grid md:grid-cols-2 gap-0">
           <!-- Preview -->
           <div class="bg-gray-800 flex items-center justify-center p-6 max-h-[50vh] md:max-h-none">

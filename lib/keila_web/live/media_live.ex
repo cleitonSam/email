@@ -190,4 +190,15 @@ defmodule KeilaWeb.MediaLive do
   defp plural(_, _, plur), do: plur
 
   @doc false
-  def humanize
+  def humanize_size(nil), do: "—"
+
+  def humanize_size(bytes) when bytes < 1024, do: "#{bytes} B"
+
+  def humanize_size(bytes) when bytes < 1024 * 1024,
+    do: "#{Float.round(bytes / 1024, 1)} KB"
+
+  def humanize_size(bytes), do: "#{Float.round(bytes / 1024 / 1024, 1)} MB"
+
+  @doc false
+  def asset_thumb(%Asset{url: url}), do: ImageKit.thumbnail(url, w: 400, h: 400, c: "maintain_ratio")
+end

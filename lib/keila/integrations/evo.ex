@@ -222,4 +222,154 @@ defmodule Keila.Integrations.Evo do
       Enum.reduce(results, {[], %{}, 0}, fn
         {:ok, {unit, {:ok, prospects, total}}}, {acc, status, sum} ->
           tagged =
-            Enum.map(prospects, fn p -
+            Enum.map(prospects, fn p ->
+              p
+              |> Map.put(:evo_unit_id, unit.id)
+              |> Map.put(:evo_unit_name, unit.name)
+            end)
+
+          {acc ++ tagged, Map.put(status, unit.id, {:ok, length(tagged)}), sum + total}
+
+        {:ok, {unit, {:error, reason}}}, {acc, status, sum} ->
+          Logger.warning(
+            "[EVO Multi] Unidade #{unit.name} (#{unit.id}) falhou: #{inspect(reason)}"
+          )
+
+          {acc, Map.put(status, unit.id, {:error, reason}), sum}
+
+        {:exit, reason}, {acc, status, sum} ->
+          Logger.error("[EVO Multi] Task crashed: #{inspect(reason)}")
+          {acc, status, sum}
+      end)
+
+    {:ok,
+     %{
+       prospects: all_prospects,
+       per_unit: per_unit,
+       total_fetched: total_fetched,
+       total_with_email: length(all_prospects)
+     }}
+  end
+
+  defp fetch_all_pages(start_date, end_date, auth) do
+    fetch_all_pages(start_date, end_date, auth, 0, [])
+  end
+
+  defp fetch_all_pages(start_date, end_date, auth, skip, acc) do
+    url =
+      "#{@prospects_url}?registerDateStart=#{start_date}&registerDateEnd=#{end_date}&take=#{@page_size}&skip=#{skip}"
+
+    headers = [{"Authorization", "Basic #{auth}"}]
+
+    case HTTPoison.get(url, headers, recv_timeout: 15_000) do
+      {:ok, %{status_code: 200, body: body}} ->
+        case Jason.decode(body) do
+          {:ok, data} when is_list(data) ->
+            new_acc = acc ++ data
+
+            if length(data) < @page_size do
+              {:ok, new_acc}
+            else
+              fetch_all_pages(start_date, end_date, auth, skip + @page_size, new_acc)
+            end
+
+          {:ok, _other} ->
+            {:ok, acc}
+
+          {:error, _} ->
+            {:error, "Failed to parse EVO API response"}
+        end
+
+      {:ok, %{status_code: status, body: body}} ->
+        Logger.error("[EVO Integration] API returned status #{status}: #{body}")
+        {:error, "EVO API returned status #{status}"}
+
+      {:error, %HTTPoison.Error{reason: reason}} ->
+        Logger.error("[EVO Integration] Request failed: #{inspect(reason)}")
+        {:error, "EVO API request failed: #{inspect(reason)}"}
+    end
+  end
+
+  defp has_valid_email?(%{"email" => email}) when is_binary(email) do
+    email = String.trim(email)
+    email != "" and String.contains?(email, "@")
+  end
+
+  defp has_valid_email?(_), do: false
+
+  defp normalize_prospect(prospect) do
+    %{
+      name: prospect["name"] || prospect["firstName"] || "",
+      first_name: prospect["firstName"] || extract_first_name(prospect["name"]),
+      last_name: prospect["lastName"] || extract_last_name(prospect["name"]),
+      email: String.trim(prospect["email"] || ""),
+      phone: prospect["phone"] || prospect["cellphone"] || "",
+      register_date: prospect["registerDate"] || "",
+      source: prospect["prospectSource"] || prospect["source"] || "",
+      status: prospect["prospectStatus"] || prospect["status"] || "",
+      branch: prospect["branchName"] || prospect["branch"] || "",
+      id_evo: prospect["idProspect"] || prospect["id"] || nil
+    }
+  end
+
+  defp extract_first_name(nil), do: ""
+
+  defp extract_first_name(name) do
+    name |> String.split(" ", parts: 2) |> List.first() || ""
+  end
+
+  defp extract_last_name(nil), do: ""
+
+  defp extract_last_name(name) do
+    case String.split(name, " ", parts: 2) do
+      [_, last] -> last
+      _ -> ""
+    end
+  end
+
+  defp date_range(opts) do
+    start_date = Keyword.get(opts, :register_date_start)
+    end_date = Keyword.get(opts, :register_date_end)
+
+    if start_date && end_date do
+      {start_date, end_date}
+    else
+      today = Date.utc_today()
+      first_day = %{today | day: 1}
+      last_day = Date.end_of_month(today)
+      {Date.to_iso8601(first_day), Date.to_iso8601(last_day)}
+    end
+  end
+
+  defp get_config(:evo_dns, opts) do
+    case Keyword.get(opts, :evo_dns) do
+      nil ->
+        case System.get_env("EVO_DNS") do
+          nil -> {:error, "EVO_DNS not configured. Configure in project settings."}
+          val -> {:ok, val}
+        end
+
+      val when is_binary(val) and val != "" ->
+        {:ok, val}
+
+      _ ->
+        {:error, "EVO_DNS not configured. Configure in project settings."}
+    end
+  end
+
+  defp get_config(:evo_secret_key, opts) do
+    case Keyword.get(opts, :evo_secret_key) do
+      nil ->
+        case System.get_env("EVO_SECRET_KEY") do
+          nil -> {:error, "EVO_SECRET_KEY not configured. Configure in project settings."}
+          val -> {:ok, val}
+        end
+
+      val when is_binary(val) and val != "" ->
+        {:ok, val}
+
+      _ ->
+        {:error, "EVO_SECRET_KEY not configured. Configure in project settings."}
+    end
+  end
+end

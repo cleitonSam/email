@@ -64,4 +64,23 @@ defmodule Keila.Automations.Recipes do
       title: "Aniversariantes do dia",
       icon: "🎂",
       description:
-        "Todo dia às 9h, identifica quem faz aniversário hoje e manda mensagem afetiva com presente. Precisa de data de nascimento no contato (vem do EVO 
+        "Todo dia às 9h, identifica quem faz aniversário hoje e manda mensagem afetiva com presente. Precisa de data de nascimento no contato (vem do EVO ou import de planilha).",
+      trigger_status: "birthday",
+      trigger_type: "daily_birthday",
+      steps: [
+        %{order: 1, delay_days: 0, template_slug: "02-feliz-aniversario"}
+      ]
+    }
+  ]
+
+  @spec list() :: [map()]
+  def list, do: @recipes
+
+  @spec get(String.t()) :: {:ok, map()} | {:error, :not_found}
+  def get(slug) do
+    case Enum.find(@recipes, &(&1.slug == slug)) do
+      nil -> {:error, :not_found}
+      recipe -> {:ok, recipe}
+    end
+  end
+end

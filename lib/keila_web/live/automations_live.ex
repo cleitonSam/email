@@ -102,4 +102,15 @@ defmodule KeilaWeb.AutomationsLive do
   @doc false
   def step_summary(steps) when is_list(steps) do
     steps
-    |> Enum.sort_by(& &1.o
+    |> Enum.sort_by(& &1.order)
+    |> Enum.map_join(" → ", fn s ->
+      cond do
+        s.delay_days == 0 -> "hoje"
+        s.delay_days == 1 -> "amanhã"
+        true -> "+#{s.delay_days}d"
+      end
+    end)
+  end
+
+  def step_summary(_), do: "—"
+end

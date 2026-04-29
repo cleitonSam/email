@@ -114,4 +114,107 @@ defmodule Keila.Media do
         {:error, changeset} ->
           # Se falhar no banco, deleta a imagem do ImageKit pra não deixar lixo
           _ = ImageKit.delete_file(imagekit_resp["fileId"])
-          {:e
+          {:error, changeset_errors(changeset)}
+      end
+    end
+  end
+
+  defp changeset_errors(%Ecto.Changeset{errors: errors}) do
+    errors
+    |> Enum.map(fn {field, {msg, _}} -> "#{field}: #{msg}" end)
+    |> Enum.join(", ")
+  end
+
+  defp changeset_errors(other), do: inspect(other)
+
+  @doc """
+  Remove uma imagem (do ImageKit + do banco).
+
+  Best-effort no ImageKit — mesmo se a remoção remota falhar (arquivo já
+  deletado, sem internet, etc), removemos o registro local pra não deixar
+  imagem fantasma na biblioteca do usuário.
+  """
+  @spec delete_asset(Asset.t()) :: {:ok, Asset.t()} | {:error, term()}
+  def delete_asset(%Asset{} = asset) do
+    try do
+      _ = ImageKit.delete_file(asset.imagekit_file_id)
+    rescue
+      e ->
+        require Logger
+        Logger.warning("[Media] Falha ao deletar #{asset.imagekit_file_id} do ImageKit: #{inspect(e)}")
+    end
+
+    Repo.delete(asset)
+  end
+
+  @spec update_asset(Asset.t(), map()) :: {:ok, Asset.t()} | {:error, Ecto.Changeset.t()}
+  def update_asset(%Asset{} = asset, params) do
+    asset
+    |> Asset.update_changeset(params)
+    |> Repo.update()
+  end
+
+  defp validate_upload(upload) do
+    cond do
+      is_map(upload) and is_binary(Map.get(upload, :bytes)) ->
+        validate_upload_size_and_type(upload, Map.get(upload, :content_type))
+
+      is_map(upload) and is_binary(Map.get(upload, :path)) ->
+        path = Map.get(upload, :path)
+        ct = Map.get(upload, :content_type)
+
+        cond do
+          not File.exists?(path) ->
+            {:error, "Arquivo temporário não encontrado"}
+
+          is_binary(ct) and ct not in @allowed_mime_types ->
+            {:error,
+             "Tipo não suportado. Aceitamos: PNG, JPG, WebP, GIF, SVG (esse arquivo é #{ct})"}
+
+          File.stat!(path).size > @max_file_size ->
+            size_mb = Float.round(File.stat!(path).size / 1024 / 1024, 1)
+            {:error, "Arquivo grande demais (#{size_mb}MB) — limite é 10MB"}
+
+          File.stat!(path).size == 0 ->
+            {:error, "Arquivo vazio"}
+
+          true ->
+            :ok
+        end
+
+      true ->
+        {:error, "Arquivo inválido"}
+    end
+  end
+
+  defp validate_upload_size_and_type(%{bytes: bytes}, content_type) do
+    cond do
+      is_binary(content_type) and content_type not in @allowed_mime_types ->
+        {:error, "Tipo não suportado: #{content_type}"}
+
+      byte_size(bytes) > @max_file_size ->
+        size_mb = Float.round(byte_size(bytes) / 1024 / 1024, 1)
+        {:error, "Arquivo grande demais (#{size_mb}MB) — limite é 10MB"}
+
+      byte_size(bytes) == 0 ->
+        {:error, "Arquivo vazio"}
+
+      true ->
+        :ok
+    end
+  end
+
+  defp validate_upload_size_and_type(_, _), do: :ok
+
+  defp get_upload_field(%Plug.Upload{} = u, :path), do: u.path
+  defp get_upload_field(%Plug.Upload{} = u, :content_type), do: u.content_type
+  defp get_upload_field(%Plug.Upload{} = u, :filename), do: u.filename
+  defp get_upload_field(map, key) when is_map(map), do: Map.get(map, key)
+  defp get_upload_field(_, _), do: nil
+
+  @spec max_file_size() :: integer()
+  def max_file_size, do: @max_file_size
+
+  @spec allowed_mime_types() :: [String.t()]
+  def allowed_mime_types, do: @allowed_mime_types
+end

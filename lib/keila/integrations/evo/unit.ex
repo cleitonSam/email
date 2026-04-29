@@ -73,4 +73,10 @@ defmodule Keila.Integrations.Evo.Unit do
   def update_changeset(struct, params) do
     struct
     |> cast(params, @update_fields)
-    |> va
+    |> validate_required([:name, :evo_dns, :evo_secret_key])
+    |> validate_length(:name, min: 1, max: 80)
+    |> unique_constraint([:project_id, :evo_dns],
+      message: "Esta unidade EVO já está cadastrada neste projeto."
+    )
+  end
+end

@@ -423,4 +423,16 @@ defmodule Keila.Mailings.Builder do
 
   defp maybe_put_public_link(assigns, _campaign), do: assigns
 
-  defp put_tr
+  defp put_tracking_pixel(html, campaign, recipient) do
+    pixel_url = Routes.static_url(KeilaWeb.Endpoint, "/images/pixel.gif")
+    params = %{url: pixel_url, campaign_id: campaign.id, recipient_id: recipient.id}
+    url = Keila.Tracking.get_tracking_url(KeilaWeb.Endpoint, :open, params)
+
+    img = {"img", [{"src", url}], []}
+
+    Floki.traverse_and_update(html, fn
+      {"body", tags, children} -> {"body", tags, children ++ [img]}
+      other -> other
+    end)
+  end
+end

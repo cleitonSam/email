@@ -66,4 +66,17 @@ defmodule KeilaWeb.TeamController do
   end
 
   def revoke(conn, %{"id" => id}) do
-    project = current_p
+    project = current_project(conn)
+    invitation = Invitations.get(id)
+
+    if invitation && invitation.project_id == project.id do
+      Invitations.revoke(invitation)
+    end
+
+    conn
+    |> put_flash(:info, "Convite cancelado.")
+    |> redirect(to: "/projects/#{project.id}/team")
+  end
+
+  defp current_project(conn), do: conn.assigns.current_project
+end

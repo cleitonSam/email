@@ -58,27 +58,27 @@
       <p class="text-sm text-gray-400 mb-5">Aplicadas nos botões, títulos e detalhes dos emails.</p>
 
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div>
+        <div data-color-field="primary">
           <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Primária</label>
           <div class="flex gap-2">
-            <input type="color" name="brand[color_primary]" value={@brand["color_primary"]} class="h-12 w-12 rounded cursor-pointer bg-gray-800 border border-gray-700" />
-            <input type="text" name="brand[color_primary]" value={@brand["color_primary"]} class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono" pattern="^#[0-9A-Fa-f]{6}$" />
+            <input type="color" data-role="picker" value={@brand["color_primary"]} class="h-12 w-12 rounded cursor-pointer bg-gray-800 border border-gray-700" />
+            <input type="text" name="brand[color_primary]" data-role="hex" value={@brand["color_primary"]} class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono uppercase" pattern="^#[0-9A-Fa-f]{6}$" />
           </div>
           <p class="text-xs text-gray-500 mt-1">Botões e CTAs</p>
         </div>
-        <div>
+        <div data-color-field="dark">
           <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Escura (fundo)</label>
           <div class="flex gap-2">
-            <input type="color" name="brand[color_dark]" value={@brand["color_dark"]} class="h-12 w-12 rounded cursor-pointer bg-gray-800 border border-gray-700" />
-            <input type="text" name="brand[color_dark]" value={@brand["color_dark"]} class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono" pattern="^#[0-9A-Fa-f]{6}$" />
+            <input type="color" data-role="picker" value={@brand["color_dark"]} class="h-12 w-12 rounded cursor-pointer bg-gray-800 border border-gray-700" />
+            <input type="text" name="brand[color_dark]" data-role="hex" value={@brand["color_dark"]} class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono uppercase" pattern="^#[0-9A-Fa-f]{6}$" />
           </div>
           <p class="text-xs text-gray-500 mt-1">Hero/seções escuras</p>
         </div>
-        <div>
+        <div data-color-field="accent">
           <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Destaque</label>
           <div class="flex gap-2">
-            <input type="color" name="brand[color_accent]" value={@brand["color_accent"]} class="h-12 w-12 rounded cursor-pointer bg-gray-800 border border-gray-700" />
-            <input type="text" name="brand[color_accent]" value={@brand["color_accent"]} class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono" pattern="^#[0-9A-Fa-f]{6}$" />
+            <input type="color" data-role="picker" value={@brand["color_accent"]} class="h-12 w-12 rounded cursor-pointer bg-gray-800 border border-gray-700" />
+            <input type="text" name="brand[color_accent]" data-role="hex" value={@brand["color_accent"]} class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono uppercase" pattern="^#[0-9A-Fa-f]{6}$" />
           </div>
           <p class="text-xs text-gray-500 mt-1">Detalhes e accent</p>
         </div>
@@ -94,48 +94,50 @@
 
       <div id="extras-list" class="space-y-3">
         <%= for {color, idx} <- Enum.with_index(@extra_colors) do %>
-          <div class="flex gap-2 items-center">
-            <input type="color" name={"brand[extra_#{idx}]"} value={color} class="h-10 w-10 rounded cursor-pointer bg-gray-800 border border-gray-700" />
-            <input type="text" name={"brand[extra_#{idx}]"} value={color} class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono" pattern="^#[0-9A-Fa-f]{6}$" />
+          <div class="flex gap-2 items-center" data-extra>
+            <input type="color" data-role="picker" value={color} class="h-10 w-10 rounded cursor-pointer bg-gray-800 border border-gray-700" />
+            <input type="text" name={"brand[extra_#{idx}]"} data-role="hex" value={color} class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono uppercase" pattern="^#[0-9A-Fa-f]{6}$" />
             <button type="button" onclick="this.parentElement.remove()" class="px-3 py-2 text-red-400 hover:bg-red-500/10 rounded-lg text-sm">✕</button>
           </div>
         <% end %>
       </div>
 
-      <button type="button" onclick="addExtraColor()" class="mt-4 button text-sm">
+      <button type="button" id="add-extra-btn" class="mt-4 button text-sm">
         + Adicionar cor
       </button>
 
       <script>
+        // Sincroniza color picker (sem name) com text input (com name) — só o text é submetido
+        function bindColorSync(container) {
+          const picker = container.querySelector('[data-role="picker"]');
+          const hex = container.querySelector('[data-role="hex"]');
+          if (!picker || !hex) return;
+          picker.addEventListener('input', () => hex.value = picker.value.toUpperCase());
+          hex.addEventListener('input', () => {
+            if (/^#[0-9A-Fa-f]{6}$/.test(hex.value)) picker.value = hex.value.toLowerCase();
+          });
+        }
+
+        // Bind nas cores principais
+        document.querySelectorAll('[data-color-field]').forEach(bindColorSync);
+        // Bind nos extras existentes
+        document.querySelectorAll('[data-extra]').forEach(bindColorSync);
+
+        // Adicionar nova cor extra
         let extraIdx = {Enum.count(@extra_colors)};
-        function addExtraColor() {
+        document.getElementById('add-extra-btn').addEventListener('click', () => {
           const list = document.getElementById('extras-list');
           const div = document.createElement('div');
           div.className = 'flex gap-2 items-center';
+          div.dataset.extra = '';
           div.innerHTML = `
-            <input type="color" name="brand[extra_${extraIdx}]" value="#FF5A1F" class="h-10 w-10 rounded cursor-pointer bg-gray-800 border border-gray-700" />
-            <input type="text" name="brand[extra_${extraIdx}]" value="#FF5A1F" class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono" pattern="^#[0-9A-Fa-f]{6}$" />
+            <input type="color" data-role="picker" value="#FF5A1F" class="h-10 w-10 rounded cursor-pointer bg-gray-800 border border-gray-700">
+            <input type="text" name="brand[extra_${extraIdx}]" data-role="hex" value="#FF5A1F" class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm font-mono uppercase" pattern="^#[0-9A-Fa-f]{6}$">
             <button type="button" onclick="this.parentElement.remove()" class="px-3 py-2 text-red-400 hover:bg-red-500/10 rounded-lg text-sm">✕</button>
           `;
           list.appendChild(div);
+          bindColorSync(div);
           extraIdx++;
-          // Sincroniza color picker com text input
-          const inputs = div.querySelectorAll('input[type="color"], input[type="text"]');
-          inputs[0].addEventListener('input', () => inputs[1].value = inputs[0].value.toUpperCase());
-          inputs[1].addEventListener('input', () => { if (/^#[0-9A-Fa-f]{6}$/.test(inputs[1].value)) inputs[0].value = inputs[1].value; });
-        }
-        // Sincroniza pickers existentes
-        document.querySelectorAll('#extras-list > div').forEach(div => {
-          const inputs = div.querySelectorAll('input[type="color"], input[type="text"]');
-          inputs[0].addEventListener('input', () => inputs[1].value = inputs[0].value.toUpperCase());
-          inputs[1].addEventListener('input', () => { if (/^#[0-9A-Fa-f]{6}$/.test(inputs[1].value)) inputs[0].value = inputs[1].value; });
-        });
-        // Sincroniza pickers principais
-        document.querySelectorAll('input[name^="brand[color_"]').forEach((input, i, all) => {
-          if (i % 2 === 0 && all[i+1]) {
-            input.addEventListener('input', () => all[i+1].value = input.value.toUpperCase());
-            all[i+1].addEventListener('input', () => { if (/^#[0-9A-Fa-f]{6}$/.test(all[i+1].value)) input.value = all[i+1].value; });
-          }
         });
       </script>
     </div>

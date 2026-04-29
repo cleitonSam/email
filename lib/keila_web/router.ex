@@ -15,6 +15,17 @@ defmodule KeilaWeb.Router do
     plug KeilaWeb.InstanceInfoPlug
   end
 
+  # Pipeline pra endpoints JSON autenticados (AI, MediaApi, etc).
+  # Aceita application/json ao invés de só html — evita 406.
+  pipeline :authenticated_json do
+    plug :accepts, ["json"]
+    plug :fetch_session
+    plug :put_secure_browser_headers
+    plug KeilaWeb.AuthSession.Plug
+    plug KeilaWeb.AuthSession.RequireAuthPlug
+    plug KeilaWeb.ProjectPlug
+  end
+
   # Non-authenticated Routes
   scope "/", KeilaWeb do
     pipe_through :browser
@@ -190,7 +201,12 @@ defmodule KeilaWeb.Router do
     post "/projects/:project_id/team/invite", TeamController, :invite
     post "/projects/:project_id/team/invitations/:id/revoke", TeamController, :revoke
 
-    # Endpoints JSON pra IA (chamados via fetch dos modais)
+  end
+
+  # Scope JSON autenticado pra endpoints AI (precisa accept json)
+  scope "/", KeilaWeb do
+    pipe_through [:authenticated_json]
+
     get "/projects/:project_id/ai/status", AIController, :status
     post "/projects/:project_id/ai/edit-mjml", AIController, :edit_mjml
     post "/projects/:project_id/ai/create-mjml", AIController, :create_mjml

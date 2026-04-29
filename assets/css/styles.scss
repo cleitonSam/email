@@ -1,0 +1,904 @@
+/*! Fluxo Email MKT | Powered by Fluxo Digital Tech | https://fluxodigitaltech.com.br */
+
+@import "_inter.scss";
+@import "_header.scss";
+
+html {
+    font-family: "Poppins", "Inter", sans-serif;
+    overflow-y: scroll;
+    @apply bg-gray-950;
+}
+
+@supports (font-variation-settings: normal) {
+    html {
+        font-family: "Poppins", "Inter var", sans-serif;
+    }
+}
+
+.container {
+    @apply mx-auto max-w-7xl px-4 md:px-8;
+
+    &.container--no-px {
+        @apply px-0;
+    }
+}
+
+.card {
+    @apply p-4 sm:max-w-5xl sm:p-8 bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-2xl shadow-lg transition-all duration-300 hover:border-fluxo-500/30 hover:shadow-xl hover:shadow-fluxo-500/5;
+}
+
+.button {
+    @apply rounded-xl inline-flex flex-nowrap whitespace-nowrap px-3 py-2 gap-2 outline-none items-center focus:outline-none cursor-pointer disabled:cursor-default transition-all duration-200 text-sm font-medium;
+
+    svg {
+        @apply w-5 flex-grow-0;
+    }
+
+    &:not(.button--cta):not(.button--warn):not(.button--text):not(.button--muted):not(.button--white-frame):not(.button--white) {
+        @apply border border-gray-700/50 text-gray-300 bg-gray-800/40
+            hover:bg-gray-700/60 hover:text-white hover:border-gray-600/60
+            focus:ring-2 focus:ring-fluxo-500/30
+            active:bg-gray-700/80;
+    }
+
+    &.button--cta {
+        @apply bg-gradient-to-r from-fluxo-500 to-fluxo-400 text-white font-semibold outline-none transform shadow-lg shadow-fluxo-500/20
+            hover:from-fluxo-400 hover:to-cyan-500 hover:shadow-fluxo-500/40 hover:scale-[1.02]
+            focus:ring-2 focus:ring-fluxo-400/50 focus:ring-offset-2 focus:ring-offset-gray-900
+            active:scale-[0.98]
+            disabled:bg-gray-700 disabled:from-gray-700 disabled:to-gray-700 disabled:text-gray-500
+            disabled:shadow-none disabled:transform-none disabled:scale-100;
+    }
+
+    &.button--muted {
+        @apply border border-gray-700/40 text-gray-500 bg-transparent
+            hover:text-gray-300 hover:border-gray-600/50 hover:bg-gray-800/30;
+    }
+
+    &.button--white {
+        @apply bg-white text-gray-900 font-semibold border border-white/20 shadow-sm
+            hover:bg-gray-100 hover:shadow-md
+            focus:ring-2 focus:ring-white/30
+            active:bg-gray-200;
+    }
+
+    &.button--white-frame {
+        @apply bg-transparent text-white border border-white/30
+            hover:bg-white/10 hover:border-white/50
+            focus:ring-2 focus:ring-white/20
+            active:bg-white/20
+            disabled:border-gray-600/50 disabled:text-gray-500;
+    }
+
+    &.button--warn {
+        @apply bg-gradient-to-r from-red-600 to-red-500 text-white font-semibold outline-none shadow-lg shadow-red-500/20
+            hover:from-red-500 hover:to-red-400 hover:shadow-red-500/40 hover:scale-[1.02]
+            focus:ring-2 focus:ring-red-400/50 focus:ring-offset-2 focus:ring-offset-gray-900
+            active:scale-[0.98];
+    }
+
+    &.button--large {
+        @apply px-5 py-2.5 text-sm;
+    }
+
+    &.button--small {
+        @apply py-1.5 px-2.5 text-xs min-h-7 rounded-lg;
+
+        svg {
+            @apply w-4;
+        }
+    }
+
+    &.button--text {
+        @apply px-2 py-1.5 text-gray-400 bg-transparent border-none
+            hover:text-fluxo-400 hover:bg-fluxo-500/5
+            focus:ring-2 focus:ring-fluxo-500/20;
+    }
+}
+
+.form-errors {
+    @apply py-2;
+
+    .invalid-feedback {
+        @apply p-2 text-sm text-red-400 bg-red-500/10 border border-red-500/30 rounded-lg;
+    }
+}
+
+select,
+input[type="date"],
+input:not([type="checkbox"]):not([type="radio"]),
+textarea {
+    @apply rounded-lg bg-gray-800/60 border border-gray-700/80 text-white placeholder-gray-500 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all duration-200;
+}
+
+input[type="checkbox"] {
+    @apply rounded bg-gray-800 border-gray-600 text-fluxo-500 focus:ring-fluxo-500/30 focus:ring-offset-0 transition-colors;
+}
+
+input[type="radio"] {
+    @apply bg-gray-800 border-gray-600 text-fluxo-500 focus:ring-fluxo-500/30 focus:ring-offset-0 transition-colors;
+}
+
+.form-error-indicator + input,
+.form-error-indicator + textarea {
+    @apply bg-red-300 text-gray-900 border-red-500;
+}
+
+.form-error-indicator + div.h-captcha iframe,
+.form-error-indicator + div.frc-captcha {
+    border: none;
+    @apply ring-2 ring-red-300;
+}
+
+input[disabled] {
+    @apply bg-gray-800/30 text-gray-500 border-gray-700/50 cursor-not-allowed;
+}
+
+.tabs {
+    .tab-label {
+        @apply inline-block bg-gray-800/60 hover:bg-gray-700/80 px-4 py-2.5 rounded-t-lg text-gray-300 hover:text-white transition-all duration-300 relative font-medium text-sm;
+
+        &.active {
+            @apply bg-gray-900/80 text-white border-t-2 border-x border-fluxo-500 border-gray-700/50;
+
+            &::after {
+                @apply content-[''] absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-fluxo-400 to-cyan-400;
+            }
+        }
+    }
+
+    .tab-content {
+        @apply p-5 ring-1 ring-inset ring-gray-700/50 bg-gray-900/30 rounded-b-lg flex flex-col gap-4;
+    }
+}
+
+.with-ol {
+    ol {
+        @apply list-decimal pl-5;
+    }
+}
+
+.with-ul {
+    ul {
+        @apply list-disc pl-5;
+    }
+}
+
+.form-row {
+    @apply flex flex-col gap-1.5;
+
+    & + .form-row {
+        @apply mt-3;
+    }
+
+    label {
+        @apply text-sm font-medium text-gray-300;
+    }
+
+    p.text-xs {
+        @apply text-gray-500 mt-1;
+    }
+}
+
+.form-row-checkbox {
+    @apply flex-row items-center gap-3;
+
+    label {
+        @apply text-sm text-gray-400 cursor-pointer select-none;
+    }
+}
+
+.inline-form-row {
+    @apply flex flex-col gap-1.5;
+}
+
+.bg-onboarding {
+    @apply bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl;
+}
+
+/* Table Styles */
+table {
+    @apply w-full;
+
+    thead {
+        th {
+            @apply text-xs font-semibold text-gray-400 uppercase tracking-wider px-4 py-3 text-left border-b border-gray-800/80;
+        }
+    }
+
+    tbody {
+        tr {
+            @apply border-b border-gray-800/40 transition-colors duration-150 hover:bg-gray-800/30;
+
+            td {
+                @apply px-4 py-3.5 text-sm text-gray-300;
+            }
+        }
+    }
+}
+
+/* Badge/Tag Styles */
+.badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+
+    &.badge--success {
+        @apply bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/20;
+    }
+
+    &.badge--warning {
+        @apply bg-amber-500/10 text-amber-400 ring-1 ring-amber-500/20;
+    }
+
+    &.badge--danger {
+        @apply bg-red-500/10 text-red-400 ring-1 ring-red-500/20;
+    }
+
+    &.badge--info {
+        @apply bg-fluxo-500/10 text-fluxo-400 ring-1 ring-fluxo-500/20;
+    }
+
+    &.badge--neutral {
+        @apply bg-gray-500/10 text-gray-400 ring-1 ring-gray-500/20;
+    }
+}
+
+/* Page Header Styles */
+.page-header {
+    @apply flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6;
+
+    h1, h2 {
+        @apply text-2xl font-bold text-white;
+    }
+}
+
+/* Tooltip Styles */
+.tooltip {
+    @apply relative;
+
+    &::after {
+        @apply absolute z-10 px-3 py-1.5 text-xs font-medium text-white bg-gray-800 rounded-lg shadow-lg border border-gray-700/50 opacity-0 invisible transition-all duration-200;
+        content: attr(data-tooltip);
+    }
+
+    &:hover::after {
+        @apply opacity-100 visible;
+    }
+}
+
+/* Skeleton Loading */
+.skeleton {
+    @apply animate-pulse bg-gray-800/50 rounded-lg;
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+    @apply w-2;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-gray-950;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-gray-700 rounded-full;
+
+    &:hover {
+        @apply bg-gray-600;
+    }
+}
+
+/*
+Fix for Phoenix during development
+*/
+iframe[src="/phoenix/live_reload/frame"] {
+    display: none;
+}
+
+.contact-form {
+    a {
+        text-decoration: underline;
+    }
+}
+
+.markdown {
+    a {
+        @apply underline;
+    }
+    strong {
+        @apply font-bold;
+    }
+    em {
+        @apply italic;
+    }
+}
+
+/*
+Block Editor Styles
+*/
+.codex-editor {
+    padding-top: 20px;
+
+    .ce-toolbar__actions {
+        @apply bg-white/95;
+        @apply rounded;
+    }
+}
+
+.codex-editor__redactor {
+    max-width: 680px;
+    padding: 20px;
+    margin: 0 auto;
+    margin-right: auto !important;
+    background: white;
+    padding-bottom: 20px !important;
+
+    font-family:
+        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+        Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial,
+        sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+
+    .ce-block > * > *:last-child {
+        padding: 0;
+        padding-bottom: 20px;
+    }
+
+    .cdx-block {
+        padding: 0;
+    }
+
+    .ce-block--type-paragraph + .ce-block--type-paragraph,
+    .ce-block--type-header + .ce-block--type-paragraph {
+        margin-top: -10px !important ;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5 {
+        margin: 0;
+    }
+
+    .ce-block--type-image {
+        div {
+            position: relative;
+            @apply relative text-left;
+        }
+
+        div[contentEditable="true"][data-placeholder]:empty::before {
+            content: attr(data-placeholder);
+            @apply absolute w-full left-0 right-0 text-sm cursor-pointer opacity-90;
+        }
+
+        div[contentEditable="true"][data-placeholder]:focus::before {
+            display: none;
+        }
+    }
+
+    .ce-block + .ce-block--type-separator > div {
+        margin-top: -1px 0;
+        padding: 1px 0;
+    }
+
+    .ce-block.ce-block--type-separator > * > :last-child {
+        padding-bottom: 0px;
+    }
+
+    .ce-tune-alignment--left {
+        text-align: left;
+    }
+
+    .ce-tune-alignment--center {
+        text-align: center;
+    }
+
+    .ce-tune-alignment--right {
+        text-align: right;
+    }
+
+    .ce-tune-alignment--justify {
+        text-align: justify;
+    }
+}
+
+.codex-editor {
+    z-index: auto;
+}
+
+.codex-editor .codex-editor {
+    padding-top: 0;
+
+    .ce-toolbar__actions {
+        right: 3px;
+        top: 3px;
+    }
+
+    .codex-editor__redactor {
+        padding: 0;
+        box-shadow: none !important;
+
+        .ce-block:last-of-type > * > *:last-child {
+            padding: 0;
+            padding-bottom: 0px;
+        }
+    }
+}
+
+.image-block {
+    img:not([width]) {
+        width: 100%;
+    }
+    caption {
+        width: 100%;
+    }
+}
+
+.cdx-block.cdx-quote {
+    font-style: italic;
+
+    .cdx-input {
+        border: none;
+        padding: 0;
+        box-shadow: none;
+        min-height: unset;
+        border-radius: 0;
+    }
+
+    .cdx-quote__text {
+        font-size: 25px;
+        line-height: 33px;
+    }
+
+    .cdx-quote__text,
+    .cdx-quote__caption {
+        border-color: #eee !important;
+        border-left: 5px solid;
+        padding-left: 30px !important;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        margin-bottom: 0;
+    }
+}
+
+.ce-toolbar,
+.ce-inline-toolbar {
+    z-index: 1;
+    @apply text-gray-800;
+}
+
+.ce-inline-tool--open-dropdown {
+    background-color: #eff2f5;
+}
+
+.ce-popover--opened {
+    max-height: 350px;
+}
+
+/*
+Hover helper to bridge the gap between the Plus button and the toolbox
+*/
+.codex-editor .codex-editor--toolbox-opened .ce-toolbox:after {
+    content: "";
+    display: block;
+    position: absolute;
+    right: 0;
+    width: 180px;
+    height: 50px;
+    top: -25px;
+    z-index: -1;
+}
+
+@keyframes hide-hover-helper {
+    99% {
+        pointer-events: all;
+    }
+
+    100% {
+        pointer-events: none;
+    }
+}
+
+.codex-editor .codex-editor--toolbox-opened .ce-toolbox:hover:after {
+    animation: 1000ms forwards hide-hover-helper;
+}
+
+.codex-editor .codex-editor--toolbox-opened .ce-toolbox:active:after {
+    pointer-events: none;
+}
+
+/* Fix for Safari SVG display issues — scoped to avoid stretching SVGs inside flex containers */
+svg:not(.no-flex-auto) {
+    flex-shrink: 0;
+}
+
+/* Utility Classes for Modern Design */
+
+.glass-card {
+    @apply bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl shadow-xl;
+}
+
+.gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-fluxo-400 to-cyan-400;
+}
+
+.hover-glow {
+    @apply transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,102,255,0.3)];
+}
+
+.hover-lift {
+    @apply transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg;
+}
+
+.section-divider {
+    @apply border-t border-gray-800/50 my-6;
+}
+
+.text-muted {
+    @apply text-gray-400 text-sm;
+}
+
+.text-label {
+    @apply text-xs font-semibold text-gray-400 uppercase tracking-wider;
+}
+
+/* Focus visible for keyboard navigation */
+*:focus-visible {
+    @apply outline-2 outline-offset-2 outline-fluxo-500;
+}
+
+/* Selection color */
+::selection {
+    @apply bg-fluxo-500/30 text-white;
+}
+
+/* Smooth page transitions */
+.page-enter {
+    animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ========================================
+   MICRO-ANIMATIONS & UTILITY CLASSES
+   ======================================== */
+
+/* Fade In Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-fade-in {
+        animation: none;
+        opacity: 1;
+    }
+}
+
+/* Slide Up Animation */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-slide-up {
+    animation: slideUp 0.5s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-slide-up {
+        animation: none;
+        opacity: 1;
+    }
+}
+
+/* Slide In Right Animation */
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.animate-slide-in-right {
+    animation: slideInRight 0.5s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-slide-in-right {
+        animation: none;
+        opacity: 1;
+    }
+}
+
+/* Soft Pulse Animation */
+@keyframes pulseSoft {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+}
+
+.animate-pulse-soft {
+    animation: pulseSoft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-pulse-soft {
+        animation: none;
+        opacity: 1;
+    }
+}
+
+/* Count Up Animation */
+@keyframes countUp {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-count-up {
+    animation: countUp 0.6s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-count-up {
+        animation: none;
+        opacity: 1;
+    }
+}
+
+/* ========================================
+   SKELETON LOADING STATES
+   ======================================== */
+
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+.skeleton {
+    background: linear-gradient(90deg, #1f2937 25%, #374151 50%, #1f2937 75%);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+    border-radius: 0.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .skeleton {
+        animation: none;
+        background: #1f2937;
+    }
+}
+
+.skeleton-text {
+    @apply skeleton h-4 w-3/4 rounded;
+}
+
+.skeleton-card {
+    @apply skeleton h-32 w-full rounded-lg;
+}
+
+/* ========================================
+   TOAST NOTIFICATIONS
+   ======================================== */
+
+.toast {
+    @apply fixed bottom-4 right-4 px-4 py-3 rounded-lg shadow-lg backdrop-blur-sm border text-sm font-medium animate-slide-up;
+    z-index: 9999;
+}
+
+.toast--success {
+    @apply bg-green-500/10 text-green-300 border-green-500/30;
+}
+
+.toast--error {
+    @apply bg-red-500/10 text-red-300 border-red-500/30;
+}
+
+.toast--info {
+    @apply bg-blue-500/10 text-blue-300 border-blue-500/30;
+}
+
+/* ========================================
+   PROGRESS BARS
+   ======================================== */
+
+@keyframes slideProgress {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 40px 0;
+    }
+}
+
+.progress-bar {
+    @apply h-2 rounded-full overflow-hidden bg-gray-800;
+    position: relative;
+}
+
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: slideProgress 2s linear infinite;
+}
+
+.progress-bar--green {
+    @apply bg-green-500/20;
+    background-image: linear-gradient(90deg, #10b981 0%, #059669 100%);
+}
+
+.progress-bar--blue {
+    @apply bg-blue-500/20;
+    background-image: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+.progress-bar--amber {
+    @apply bg-amber-500/20;
+    background-image: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+}
+
+.progress-bar--red {
+    @apply bg-red-500/20;
+    background-image: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+}
+
+/* ========================================
+   KPI CARDS
+   ======================================== */
+
+.kpi-card {
+    @apply bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6 transition-all duration-300;
+}
+
+.kpi-card:hover {
+    @apply -translate-y-1 border-fluxo-500/30 shadow-lg;
+    box-shadow: 0 0 20px rgba(0, 102, 255, 0.1);
+}
+
+/* ========================================
+   METRIC BADGES
+   ======================================== */
+
+.metric-badge {
+    @apply inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-semibold;
+}
+
+.metric-badge--good {
+    @apply bg-green-500/10 text-green-300 border border-green-500/20;
+}
+
+.metric-badge--warning {
+    @apply bg-amber-500/10 text-amber-300 border border-amber-500/20;
+}
+
+.metric-badge--danger {
+    @apply bg-red-500/10 text-red-300 border border-red-500/20;
+}
+
+/* ========================================
+   STATUS INDICATORS
+   ======================================== */
+
+@keyframes pulseGreen {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.4;
+    }
+}
+
+@keyframes pulseAmber {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.status-dot {
+    @apply inline-flex h-2.5 w-2.5 rounded-full;
+}
+
+.status-dot--active {
+    @apply bg-green-500;
+    animation: pulseGreen 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .status-dot--active {
+        animation: none;
+    }
+}
+
+.status-dot--pending {
+    @apply bg-amber-500;
+    animation: pulseAmber 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .status-dot--pending {
+        animation: none;
+    }
+}
+
+.status-dot--inactive {
+    @apply bg-gray-500;
+}
+
+/* ========================================
+   SCROLL & FOCUS ENHANCEMENTS
+   ======================================== */
+
+html {
+    scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+}
+
+*:focus-visible {
+    @apply outline-2 outline-offset-2 outline-fluxo-500;
+}
+
+/* ========================================
+   CARD HOVER EFFECTS
+   ======================================== */
+
+.card-hover-effect {
+    @apply transition-all duration-300 ease-out;
+}
+
+.card-hover-effect:hover {
+    @apply -translate-y-1 shadow-lg;
+    box-shadow: 0 0 20px rgba(0, 102, 255, 0.15);
+    border-color: rgba(0, 102, 255, 0.3);
+}

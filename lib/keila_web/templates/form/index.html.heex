@@ -1,0 +1,52 @@
+<div class="container flex py-8 sm:py-11 mb-4">
+  <div class="flex-grow gap-4 flex flex-col sm:flex-row sm:items-center">
+    <div class="flex items-center gap-3">
+      <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center shadow-lg shadow-purple-500/20">
+        <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-bold text-white">
+        {gettext("Forms")}
+      </h1>
+    </div>
+    <div class="flex-grow flex flex-row-reverse justify-end gap-4 sm:flex-row">
+      <a href={Routes.form_path(@conn, :new, @current_project.id)} class="button button--cta">
+        {render_icon(:document_add)}
+        {gettext("Create a new form")}
+      </a>
+    </div>
+  </div>
+</div>
+
+<%= if Enum.empty?(@forms) do %>
+  {render("_empty_state.html", assigns)}
+<% end %>
+
+<div class="container md:grid md:grid-cols-2 gap-4 md:gap-6">
+  <%= for form <- @forms do %>
+    <div class="group bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6 hover:border-fluxo-500/30 hover:shadow-lg hover:shadow-fluxo-500/5 transition-all duration-300">
+      <h2 class="font-semibold text-xl text-white flex items-center gap-2 mb-2">
+        {form.name}
+      </h2>
+      <p class="text-sm text-gray-400 flex items-center gap-2">
+        {[gettext("Updated at:"), " ", local_datetime_tag(form.updated_at)]}
+      </p>
+
+      <div class="flex flex-row gap-4 justify-end mt-4 pt-4 border-t border-gray-800/50">
+        <a
+          href={Routes.public_form_path(@conn, :show, form.id)}
+          class="button button--text text-gray-400 hover:text-fluxo-400"
+          target="_blank"
+        >
+          {render_icon(:external_link)}
+          {gettext("Open")}
+        </a>
+        <a href={Routes.form_path(@conn, :edit, @current_project.id, form.id)} class="button button--cta button--small">
+          {render_icon(:pencil_alt)}
+          {gettext("Edit")}
+        </a>
+      </div>
+    </div>
+  <% end %>
+</div>

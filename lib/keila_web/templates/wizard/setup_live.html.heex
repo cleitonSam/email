@@ -1,0 +1,313 @@
+<div class="min-h-screen bg-gray-950">
+  <div class="max-w-3xl mx-auto px-6 py-12">
+    <!-- Progress bar -->
+    <div class="mb-12">
+      <div class="flex items-center justify-between mb-3">
+        <h1 class="text-2xl font-bold text-white">Configurar sua marca</h1>
+        <button phx-click="skip" class="text-sm text-gray-500 hover:text-gray-300 underline">Pular por agora</button>
+      </div>
+      <div class="flex gap-2">
+        <%= for n <- 1..4 do %>
+          <div class={"flex-1 h-1.5 rounded-full transition-all " <> if n <= @step, do: "bg-fluxo-500", else: "bg-gray-800"}></div>
+        <% end %>
+      </div>
+      <p class="text-xs text-gray-500 mt-2">Passo {@step} de 4 · Em ~1 minuto sua marca tá aplicada nos templates</p>
+    </div>
+
+    <!-- ============== STEP 1: Nome ============== -->
+    <%= if @step == 1 do %>
+      <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-8">
+        <div class="text-5xl mb-5">🏋️</div>
+        <h2 class="text-3xl font-bold text-white mb-2">Qual o nome da sua academia?</h2>
+        <p class="text-gray-400 mb-8">Esse nome vai aparecer no rodapé dos emails.</p>
+
+        <form phx-submit="save-name" class="space-y-5">
+          <input
+            type="text"
+            name="brand[name]"
+            value={@brand["name"]}
+            placeholder="Ex: Academia Movimento"
+            autocomplete="off"
+            autofocus
+            class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white text-xl rounded-xl px-5 py-4"
+            required
+          />
+          <button type="submit" class="button button--cta button--large w-full">
+            Próximo: enviar logo →
+          </button>
+        </form>
+      </div>
+    <% end %>
+
+    <!-- ============== STEP 2: Logo (form HTML POST tradicional — sem LiveView upload) ============== -->
+    <%= if @step == 2 do %>
+      <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-8">
+        <div class="text-5xl mb-5">🎨</div>
+        <h2 class="text-3xl font-bold text-white mb-2">Manda o logo da {@brand["name"]}</h2>
+        <p class="text-gray-400 mb-8">PNG, JPG ou SVG. Vou usar pra extrair as cores. ✨</p>
+
+        <%= if not @imagekit_configured? do %>
+          <div class="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 mb-5 text-sm text-amber-200">
+            ImageKit não configurado. Configure as variáveis IMAGEKIT_* e reinicie.
+          </div>
+        <% else %>
+          <form id="logo-form" action={"/projects/" <> @current_project.id <> "/setup/logo"} method="post" enctype="multipart/form-data">
+            <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
+            <div class="bg-gray-800/40 border-2 border-dashed border-gray-700 hover:border-fluxo-500/50 rounded-2xl p-10 text-center transition">
+              <span class="text-5xl block mb-3">📁</span>
+              <p class="text-white font-semibold mb-1">Escolhe o logo</p>
+              <p class="text-sm text-gray-400 mb-5">PNG, JPG, WebP ou SVG (até 5MB)</p>
+              <label for="logo-input" class="button button--cta button--large cursor-pointer inline-block">
+                📤 Selecionar arquivo
+              </label>
+              <input
+                id="logo-input"
+                type="file"
+                name="logo"
+                accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml,.png,.jpg,.jpeg,.webp,.svg"
+                class="sr-only"
+                onchange="document.getElementById('selected-name').textContent = '📄 ' + (this.files[0]?.name || ''); document.getElementById('upload-actions').classList.remove('hidden'); document.getElementById('placeholder-actions').classList.add('hidden');"
+              />
+              <p id="selected-name" class="text-fluxo-300 text-sm font-medium mt-4"></p>
+            </div>
+
+            <div id="upload-actions" class="mt-5 flex gap-3 hidden">
+              <button type="button" phx-click="prev-step" class="button">← Voltar</button>
+              <button
+                type="submit"
+                class="flex-1 button button--cta button--large"
+                onclick="this.disabled=true; this.innerHTML='📤 Enviando... aguarda 5-15 seg'; this.form.submit();"
+              >
+                Enviar logo e extrair cores ✨
+              </button>
+            </div>
+
+            <div id="placeholder-actions" class="mt-5 flex gap-3">
+              <button type="button" phx-click="prev-step" class="button">← Voltar</button>
+              <p class="flex-1 text-xs text-gray-500 self-center text-center">
+                Escolhe um logo pra continuar
+              </p>
+            </div>
+          </form>
+        <% end %>
+      </div>
+    <% end %>
+
+    <!-- ============== STEP 3: Cores automáticas (Color Thief) ============== -->
+    <%= if @step == 3 do %>
+      <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-8" data-logo-url={@brand["logo_url"]}>
+        <div class="text-5xl mb-5">✨</div>
+        <h2 class="text-3xl font-bold text-white mb-2">Cores extraídas do seu logo</h2>
+        <p class="text-gray-400 mb-8">Olhei seu logo e sugeri essa paleta. Confirma pra aplicar nos emails.</p>
+
+        <div class="bg-gray-800/40 rounded-xl p-6 mb-5">
+          <img
+            id="logo-preview-img"
+            src={@brand["logo_url"]}
+            alt="Logo"
+            crossorigin="anonymous"
+            class="max-h-32 mx-auto block"
+          />
+        </div>
+
+        <div id="extracted-palette" class="grid grid-cols-3 gap-3 mb-5">
+          <div class="bg-gray-800 border border-gray-700 rounded-xl p-4 text-center" data-role="primary">
+            <div class="h-16 rounded-lg mb-2" style={"background:" <> (@brand["color_primary"] || "#FF5A1F")}></div>
+            <p class="text-xs text-gray-400 uppercase tracking-wider">Primária</p>
+            <p class="text-xs text-white font-mono mt-1" data-color>{@brand["color_primary"] || "#FF5A1F"}</p>
+          </div>
+          <div class="bg-gray-800 border border-gray-700 rounded-xl p-4 text-center" data-role="dark">
+            <div class="h-16 rounded-lg mb-2" style={"background:" <> (@brand["color_dark"] || "#0A0E27")}></div>
+            <p class="text-xs text-gray-400 uppercase tracking-wider">Escura</p>
+            <p class="text-xs text-white font-mono mt-1" data-color>{@brand["color_dark"] || "#0A0E27"}</p>
+          </div>
+          <div class="bg-gray-800 border border-gray-700 rounded-xl p-4 text-center" data-role="accent">
+            <div class="h-16 rounded-lg mb-2" style={"background:" <> (@brand["color_accent"] || "#C4FF00")}></div>
+            <p class="text-xs text-gray-400 uppercase tracking-wider">Destaque</p>
+            <p class="text-xs text-white font-mono mt-1" data-color>{@brand["color_accent"] || "#C4FF00"}</p>
+          </div>
+        </div>
+
+        <p id="extractor-status" class="text-xs text-gray-500 mb-5">⏳ Analisando logo...</p>
+
+        <form phx-submit="save-colors">
+          <input type="hidden" name="primary" id="hidden-primary" value={@brand["color_primary"] || "#FF5A1F"} />
+          <input type="hidden" name="dark" id="hidden-dark" value={@brand["color_dark"] || "#0A0E27"} />
+          <input type="hidden" name="accent" id="hidden-accent" value={@brand["color_accent"] || "#C4FF00"} />
+          <div class="flex gap-3">
+            <button type="button" phx-click="prev-step" class="button">← Voltar</button>
+            <button type="submit" class="flex-1 button button--cta">
+              Confirmar cores →
+            </button>
+          </div>
+        </form>
+      </div>
+    <% end %>
+
+    <!-- ============== STEP 4: Preview + finalizar ============== -->
+    <%= if @step == 4 do %>
+      <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-8">
+        <div class="text-5xl mb-5">🎉</div>
+        <h2 class="text-3xl font-bold text-white mb-2">Tudo pronto!</h2>
+        <p class="text-gray-400 mb-8">Sua marca tá aplicada nos templates. Olha como vai ficar:</p>
+
+        <!-- Mini preview email -->
+        <div class="bg-white rounded-xl overflow-hidden mb-6 shadow-2xl">
+          <div class="px-6 py-4 border-b border-gray-200 flex items-center gap-3">
+            <%= if @brand["logo_url"] != "" do %>
+              <img src={@brand["logo_url"]} alt={@brand["name"]} class="h-8" />
+            <% end %>
+          </div>
+          <div class="p-12" style={"background: " <> (@brand["color_dark"] || "#0A0E27")}>
+            <p class="text-xs font-bold tracking-widest uppercase mb-3" style={"color: " <> (@brand["color_primary"] || "#FF5A1F")}>
+              ▸ Bem-vindo ao time
+            </p>
+            <h3 class="text-3xl font-bold text-white mb-3">Carlos, vamos juntos.</h3>
+            <p class="text-gray-300 mb-5 text-sm leading-relaxed">
+              Sua matrícula tá confirmada. Agora começa a parte boa: treinar com método.
+            </p>
+            <button class="px-6 py-3 rounded-full text-white font-semibold text-sm" style={"background: " <> (@brand["color_primary"] || "#FF5A1F")}>
+              Agendar minha avaliação →
+            </button>
+          </div>
+          <div class="px-6 py-4 bg-gray-50 text-xs text-gray-500 text-center">
+            {@brand["name"]} · Powered by Fluxo Email MKT
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2 mb-6 text-center text-xs">
+          <div>
+            <div class="h-8 rounded mb-1" style={"background: " <> (@brand["color_primary"] || "#FF5A1F")}></div>
+            <span class="text-gray-400 font-mono">{@brand["color_primary"]}</span>
+          </div>
+          <div>
+            <div class="h-8 rounded mb-1" style={"background: " <> (@brand["color_dark"] || "#0A0E27")}></div>
+            <span class="text-gray-400 font-mono">{@brand["color_dark"]}</span>
+          </div>
+          <div>
+            <div class="h-8 rounded mb-1" style={"background: " <> (@brand["color_accent"] || "#C4FF00")}></div>
+            <span class="text-gray-400 font-mono">{@brand["color_accent"]}</span>
+          </div>
+        </div>
+
+        <div class="flex gap-3">
+          <button type="button" phx-click="prev-step" class="button">← Voltar e ajustar</button>
+          <button type="button" phx-click="finish" class="flex-1 button button--cta">
+            Salvar e começar a usar 🚀
+          </button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<!-- Color Thief via CDN — extrai paleta dominante do logo no navegador -->
+<script src="https://unpkg.com/colorthief@2.4.0/dist/color-thief.umd.js" crossorigin="anonymous"></script>
+<script>
+  (function() {
+    // Algoritmo ROBUSTO de extração:
+    // - PRIMARY = cor mais SATURADA do logo (a "cara" da marca)
+    // - DARK = navy fixo #0A0E27 (garante contraste com texto branco)
+    // - ACCENT = lima fixo #C4FF00 (vibrante, sempre destaca)
+    // Excepção: se logo é monocromático (preto/branco/cinza), usa
+    // tons reais do logo
+
+    function tryExtract() {
+      const img = document.getElementById('logo-preview-img');
+      const status = document.getElementById('extractor-status');
+      if (!img || typeof ColorThief === 'undefined') {
+        if (status) status.textContent = '⚠️ Extrator indisponível, usando cores padrão.';
+        return;
+      }
+
+      const run = () => {
+        try {
+          const ct = new ColorThief();
+          const palette = ct.getPalette(img, 8);
+          if (!palette || palette.length === 0) {
+            if (status) status.textContent = 'ℹ️ Sem cores detectadas, usando padrão.';
+            return;
+          }
+
+          const toHex = (rgb) => '#' + rgb.map(c => c.toString(16).padStart(2,'0')).join('').toUpperCase();
+          const sat = (rgb) => {
+            const max = Math.max(...rgb), min = Math.min(...rgb);
+            return max === 0 ? 0 : (max - min) / max;
+          };
+          const lum = (rgb) => 0.299*rgb[0] + 0.587*rgb[1] + 0.114*rgb[2];
+
+          // Filtra branco puro e preto puro (não servem como primary)
+          const meaningful = palette.filter(c => {
+            const l = lum(c);
+            return l > 30 && l < 230;
+          });
+          const usePalette = meaningful.length > 0 ? meaningful : palette;
+
+          // Primary = mais saturada (a "vibe" do logo)
+          const sortedBySat = [...usePalette].sort((a,b) => sat(b) - sat(a));
+          const primary = sortedBySat[0];
+
+          // Logo é monocromático? (toda cor com saturação < 0.2)
+          const isMonochrome = usePalette.every(c => sat(c) < 0.2);
+
+          let dark, accent;
+
+          if (isMonochrome) {
+            // Logo só com tons de cinza/preto/branco — usa tons reais
+            const sorted = [...palette].sort((a,b) => lum(a) - lum(b));
+            dark = sorted[0];
+            accent = sorted[sorted.length-1];
+          } else {
+            // Logo colorido — força navy escuro pra dark e lima pra accent
+            // garante contraste visual mesmo se logo for monocromático colorido (só verdes)
+            dark = [10, 14, 39];      // #0A0E27 navy
+            accent = [196, 255, 0];   // #C4FF00 lima vibrante
+          }
+
+          const colors = {
+            primary: toHex(primary),
+            dark: toHex(dark),
+            accent: toHex(accent)
+          };
+
+          // Atualiza visual
+          ['primary','dark','accent'].forEach(role => {
+            const card = document.querySelector('[data-role="'+role+'"]');
+            if (card) {
+              card.querySelector('div[style*="background"]').style.background = colors[role];
+              card.querySelector('[data-color]').textContent = colors[role];
+            }
+            const hidden = document.getElementById('hidden-'+role);
+            if (hidden) hidden.value = colors[role];
+          });
+
+          if (status) {
+            if (isMonochrome) {
+              status.textContent = '✓ Logo monocromático detectado — paleta extraída em tons.';
+            } else {
+              status.textContent = '✓ Cor da marca extraída! Dark e Accent são padrão pra garantir contraste.';
+            }
+          }
+        } catch (e) {
+          console.error('ColorThief error', e);
+          if (status) status.textContent = '⚠️ Erro: ' + e.message + ' — usando cores padrão.';
+        }
+      };
+
+      if (img.complete && img.naturalHeight > 0) {
+        run();
+      } else {
+        img.addEventListener('load', run, { once: true });
+        img.addEventListener('error', () => {
+          if (status) status.textContent = '⚠️ Logo não carregou.';
+        }, { once: true });
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', tryExtract);
+    } else {
+      setTimeout(tryExtract, 100);
+    }
+  })();
+</script>

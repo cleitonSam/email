@@ -1,0 +1,179 @@
+<mjml>
+  <mj-head>
+    <mj-title>Bem-vindo(a) à {{ unidade }}, {{ first_name }}</mj-title>
+    <mj-preview>{{ first_name }}, sua jornada começa agora. 3 passos pra você sair na frente.</mj-preview>
+    <mj-attributes>
+      <mj-all font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" />
+      <mj-text color="#0A0E27" font-size="16px" line-height="1.65" />
+      <mj-button background-color="{{ brand.color_primary | default: '#FF5A1F' }}" color="#FFFFFF" font-size="15px" font-weight="700" padding="0" inner-padding="18px 36px" border-radius="999px" />
+      <mj-section padding="0" />
+      <mj-class name="eyebrow" font-size="11px" font-weight="700" letter-spacing="2.5px" text-transform="uppercase" />
+      <mj-class name="display" font-size="56px" font-weight="800" line-height="1.05" letter-spacing="-1.5px" />
+      <mj-class name="h2" font-size="32px" font-weight="700" line-height="1.2" letter-spacing="-0.5px" />
+      <mj-class name="lead" font-size="18px" line-height="1.6" color="#4A5167" />
+      <mj-class name="caption" font-size="13px" color="#8B92A8" line-height="1.5" />
+    </mj-attributes>
+    <mj-style>
+      .gradient-overlay { background: linear-gradient(180deg, rgba(10,14,39,0) 0%, rgba(10,14,39,0.85) 100%); }
+      .number-mega { font-size: 64px; font-weight: 800; line-height: 1; letter-spacing: -3px; color: {{ brand.color_primary | default: '#FF5A1F' }}; }
+      .pill { display: inline-block; padding: 6px 14px; border-radius: 999px; background: #F4EFEA; font-size: 12px; font-weight: 600; color: #0A0E27; letter-spacing: 0.3px; }
+      a.link-accent { color: {{ brand.color_primary | default: '#FF5A1F' }}; text-decoration: none; font-weight: 600; border-bottom: 2px solid {{ brand.color_primary | default: '#FF5A1F' }}; }
+      @media only screen and (max-width: 600px) {
+        .display-mobile { font-size: 38px !important; line-height: 1.1 !important; }
+        .h2-mobile { font-size: 24px !important; }
+      }
+    </mj-style>
+  </mj-head>
+
+  <mj-body background-color="#F4EFEA" width="600px">
+
+    <!-- HEADER -->
+    <mj-section background-color="#FFFFFF" padding="20px 24px">
+      <mj-column width="50%">
+        <mj-image src="{{ brand.logo_url | default: 'https://placehold.co/140x44/0A0E27/FFFFFF/png?text=ACADEMIA' }}" alt="{{ brand.name }}" width="140px" align="left" padding="0" />
+      </mj-column>
+      <mj-column width="50%">
+        <mj-text align="right" font-size="12px" color="#8B92A8" font-weight="600" padding="12px 0 0">
+          {{ unidade }}
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- HERO IMAGE FULL-BLEED -->
+    <mj-section padding="0">
+      <mj-column>
+        <mj-image src="{{ hero_image | default: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1280&q=85' }}" alt="" padding="0" fluid-on-mobile="true" />
+      </mj-column>
+    </mj-section>
+
+    <!-- HERO TEXT BLOCK -->
+    <mj-section background-color="#0A0E27" padding="40px 24px 48px">
+      <mj-column>
+        <mj-text mj-class="eyebrow" color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="0 0 20px">
+          ▸ Bem-vindo(a) ao time
+        </mj-text>
+        <mj-text mj-class="display" css-class="display-mobile" color="#FFFFFF" padding="0 0 24px">
+          {{ first_name }},<br/>vamos juntos.
+        </mj-text>
+        <mj-text font-size="18px" color="#C8CCDB" line-height="1.65" padding="0 0 36px">
+          Sua matrícula tá confirmada. Agora começa a parte boa: <strong style="color:#FFFFFF">treinar com método, ter alguém te olhando</strong> e ver o resultado aparecer sem milagre.
+        </mj-text>
+        <mj-button href="{{ link_agendamento }}" align="left" background-color="{{ brand.color_primary | default: '#FF5A1F' }}">
+          Agendar minha avaliação grátis →
+        </mj-button>
+        <mj-text font-size="13px" color="#8B92A8" padding="16px 0 0">
+          30 minutos · sem compromisso · com profissional especializado
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- STATS BAR -->
+    <mj-section background-color="#0A0E27" padding="0 24px 40px">
+      <mj-column width="33%" border-right="1px solid #1E2749" padding="0 16px 0 0">
+        <mj-text font-size="32px" font-weight="800" color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="0 0 4px">+2.4mil</mj-text>
+        <mj-text font-size="12px" color="#8B92A8" line-height="1.4" padding="0">alunos ativos na rede</mj-text>
+      </mj-column>
+      <mj-column width="33%" border-right="1px solid #1E2749" padding="0 16px">
+        <mj-text font-size="32px" font-weight="800" color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="0 0 4px">14h</mj-text>
+        <mj-text font-size="12px" color="#8B92A8" line-height="1.4" padding="0">por dia, todos os dias</mj-text>
+      </mj-column>
+      <mj-column width="33%" padding="0 0 0 16px">
+        <mj-text font-size="32px" font-weight="800" color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="0 0 4px">98%</mj-text>
+        <mj-text font-size="12px" color="#8B92A8" line-height="1.4" padding="0">de retenção em 90 dias</mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- 3 STEPS -->
+    <mj-section background-color="#FFFFFF" padding="48px 24px 24px">
+      <mj-column>
+        <mj-text mj-class="eyebrow" color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="0 0 16px">
+          O caminho
+        </mj-text>
+        <mj-text mj-class="h2" css-class="h2-mobile" padding="0 0 12px">
+          Três passos pra sair na frente.
+        </mj-text>
+        <mj-text mj-class="lead" padding="0 0 48px">
+          A gente já estruturou pra você. Sem você precisar pensar em nada.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#FFFFFF" padding="0 24px 16px">
+      <mj-column width="33%" padding="0 12px 0 0">
+        <mj-text css-class="number-mega" padding="0 0 16px">01</mj-text>
+        <mj-text font-size="17px" font-weight="700" color="#0A0E27" padding="0 0 8px">Avaliação física</mj-text>
+        <mj-text font-size="14px" color="#4A5167" line-height="1.55" padding="0">Mapeamos seu ponto de partida em 30 minutos. Plano personalizado em mãos.</mj-text>
+      </mj-column>
+      <mj-column width="33%" padding="0 12px">
+        <mj-text css-class="number-mega" padding="0 0 16px">02</mj-text>
+        <mj-text font-size="17px" font-weight="700" color="#0A0E27" padding="0 0 8px">Ficha montada</mj-text>
+        <mj-text font-size="14px" color="#4A5167" line-height="1.55" padding="0">Treino que cabe na sua rotina, no seu nível, com objetivo claro de 4 semanas.</mj-text>
+      </mj-column>
+      <mj-column width="33%" padding="0 0 0 12px">
+        <mj-text css-class="number-mega" padding="0 0 16px">03</mj-text>
+        <mj-text font-size="17px" font-weight="700" color="#0A0E27" padding="0 0 8px">Acompanhamento</mj-text>
+        <mj-text font-size="14px" color="#4A5167" line-height="1.55" padding="0">Time presente nos 7 primeiros treinos. Você nunca está sozinho(a) na ficha.</mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- TESTIMONIAL -->
+    <mj-section background-color="#FFFFFF" padding="40px 24px">
+      <mj-column>
+        <mj-divider border-color="#E8EAED" border-width="1px" padding="0 0 48px" />
+        <mj-text font-size="28px" font-weight="600" color="#0A0E27" line-height="1.4" letter-spacing="-0.4px" padding="0 0 32px">
+          "Em 3 meses voltei a dormir bem. Não vim atrás de músculo, vim atrás de saúde — encontrei as duas coisas."
+        </mj-text>
+        <mj-table>
+          <tr>
+            <td width="48" style="vertical-align:middle;padding-right:12px">
+              <img src="https://i.pravatar.cc/96?img=12" width="48" height="48" style="border-radius:50%;display:block" alt="" />
+            </td>
+            <td style="vertical-align:middle">
+              <div style="font-size:14px;font-weight:700;color:#0A0E27">Mariana T.</div>
+              <div style="font-size:12px;color:#8B92A8">Aluna há 8 meses · {{ unidade }}</div>
+            </td>
+          </tr>
+        </mj-table>
+      </mj-column>
+    </mj-section>
+
+    <!-- CTA FINAL -->
+    <mj-section background-color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="40px 24px">
+      <mj-column>
+        <mj-text mj-class="eyebrow" color="#FFFFFF" padding="0 0 16px">
+          Próximo passo
+        </mj-text>
+        <mj-text font-size="38px" font-weight="800" color="#FFFFFF" line-height="1.1" letter-spacing="-1px" padding="0 0 24px">
+          Bora marcar sua avaliação?
+        </mj-text>
+        <mj-text font-size="16px" color="#FFFFFF" line-height="1.6" padding="0 0 32px">
+          É grátis, leva 30 min e você sai com seu primeiro treino na mão.
+        </mj-text>
+        <mj-button href="{{ link_agendamento }}" align="left" background-color="#0A0E27" color="#FFFFFF">
+          Quero agendar agora →
+        </mj-button>
+        <mj-text font-size="13px" color="#FFE5D6" padding="20px 0 0">
+          Ou chama no WhatsApp: <a href="{{ brand.whatsapp_url }}" style="color:#FFFFFF;text-decoration:underline;font-weight:600">clica aqui</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- FOOTER -->
+    <mj-section background-color="#0A0E27" padding="32px 24px 24px">
+      <mj-column>
+        <mj-image src="{{ brand.logo_url_white | default: 'https://placehold.co/140x44/0A0E27/FFFFFF/png?text=ACADEMIA' }}" alt="{{ brand.name }}" width="120px" align="left" padding="0 0 20px" />
+        <mj-text color="#8B92A8" font-size="13px" line-height="1.65" padding="0 0 16px">
+          <strong style="color:#FFFFFF">{{ brand.name }}</strong> — {{ unidade }}<br/>
+          {{ brand.address }}<br/>
+          CNPJ {{ brand.cnpj }}
+        </mj-text>
+        <mj-divider border-color="#1E2749" border-width="1px" padding="8px 0 16px" />
+        <mj-text color="#5A6378" font-size="11px" line-height="1.6" padding="0">
+          Você recebeu este email porque se matriculou na {{ unidade }}.<br/>
+          <a href="{{ link_unsubscribe }}" style="color:#8B92A8;text-decoration:underline">Descadastrar</a> · <a href="{{ brand.privacy_url }}" style="color:#8B92A8;text-decoration:underline">Privacidade</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+  </mj-body>
+</mjml>

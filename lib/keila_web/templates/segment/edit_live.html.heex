@@ -1,0 +1,303 @@
+<div x-data x-init="Hooks.RememberUnsaved.mounted.call({el: $el})"></div>
+
+<div class="container flex py-8 sm:py-11 sm:mb-4">
+  <div class="flex-grow gap-4 flex flex-col-reverse sm:flex-row sm:items-center">
+    <div class="flex items-center gap-3">
+      <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-fluxo-400 to-cyan-400 flex items-center justify-center shadow-lg shadow-fluxo-500/20">
+        <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+        </svg>
+      </div>
+      <h1 class="text-2xl md:text-3xl font-bold text-white">
+        {gettext("Edit Segment")}
+      </h1>
+    </div>
+    <div class="flex-grow flex flex-row justify-end gap-3 sm:flex-row" x-data>
+      <a
+        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 border border-transparent hover:border-gray-700/50 transition-all duration-200"
+        href={Routes.segment_path(@socket, :index, @current_project.id)}
+        @click="setUnsavedReminder(false)"
+      >
+        {gettext("Cancel")}
+      </a>
+      <.delete_form
+        struct={@segment}
+        as={:segment}
+        route={~p"/projects/#{@current_project.id}/segments"}
+      />
+      <.delete_button
+        struct={@segment}
+        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-red-400 hover:text-red-300 hover:bg-red-900/20 border border-transparent hover:border-red-800/30 transition-all duration-200"
+        @click="setUnsavedReminder(false)"
+      >
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+        {gettext("Delete")}
+      </.delete_button>
+      <button
+        class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-fluxo-500 to-fluxo-400 hover:from-fluxo-400 hover:to-cyan-500 shadow-lg shadow-fluxo-500/25 hover:shadow-fluxo-500/40 transition-all duration-200 hover:scale-[1.02]"
+        form="form"
+        value="save"
+        @click="setUnsavedReminder(false)"
+      >
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+        {gettext("Save")}
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="container flex gap-4 tabs" x-data="{tab: 'settings', showClipboardMessage: false}">
+  <.form
+    :let={f}
+    for={@changeset}
+    id="form"
+    phx-change="change"
+    phx-submit="save"
+    class="w-full flex flex-col gap-6"
+    x-on:change="setUnsavedReminder(true)"
+  >
+    <!-- Segment Name Card -->
+    <div class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6">
+      <div class="flex items-center gap-2 mb-4">
+        <svg class="w-5 h-5 text-fluxo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+        </svg>
+        <h2 class="text-lg font-semibold text-white">{gettext("Name")}</h2>
+      </div>
+      <div class="max-w-xl">
+        <%= with_validation(f, :name) do %>
+          {text_input(f, :name, placeholder: gettext("e.g. Active subscribers, VIP contacts..."), class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-500")}
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Filter Editor Card -->
+    <%= if @use_editor do %>
+      <div class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-5">
+          <div class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+            </svg>
+            <h2 class="text-lg font-semibold text-white">{gettext("Filter")}</h2>
+          </div>
+          <span class="text-xs text-gray-500 bg-gray-800/60 px-3 py-1 rounded-full">{gettext("Visual Editor")}</span>
+        </div>
+
+        <div class="flex flex-col gap-4">
+          <%= for {group_index, fields} <- @form_data do %>
+            <!-- AND Group Card -->
+            <div class="bg-gray-800/40 border border-gray-700/40 rounded-xl p-5">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="text-[10px] font-bold tracking-widest uppercase text-fluxo-400 bg-fluxo-500/10 px-2.5 py-1 rounded-md">AND</span>
+                <div class="flex-grow h-px bg-gray-700/50"></div>
+              </div>
+
+              <div class="flex flex-col gap-3">
+                <%= for {field_index, selected_field} <- fields do %>
+                  <% index = "filter[#{group_index}][#{field_index}]" %>
+
+                  <div class="flex flex-row items-center gap-3 bg-gray-900/40 rounded-lg p-3 border border-gray-700/30 hover:border-gray-600/50 transition-colors">
+                    <select name={"#{index}[field]"} class="flex-1 min-w-0 rounded-lg bg-gray-800/80 border border-gray-700/50 text-white text-sm px-3 py-2.5 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all appearance-none cursor-pointer">
+                      <%= for {field, %{label: label}} <- @fields do %>
+                        <option value={field} selected={field == selected_field["field"]}>
+                          {label}
+                        </option>
+                      <% end %>
+                    </select>
+
+                    <% widgets =
+                      case selected_field["field"] do
+                        "data." <> _ -> @widgets["data"]
+                        other -> @widgets[other]
+                      end %>
+                    <select name={"#{index}[widget]"} class="flex-1 min-w-0 rounded-lg bg-gray-800/80 border border-gray-700/50 text-white text-sm px-3 py-2.5 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all appearance-none cursor-pointer">
+                      <%= for %{name: widget, label: label} <- widgets do %>
+                        <option value={widget} selected={widget == selected_field["widget"]}>
+                          {label}
+                        </option>
+                      <% end %>
+                    </select>
+
+                    {render_widget(index, Map.put(selected_field, "campaigns", @campaigns))}
+
+                    <input name={"#{index}[type]"} value={selected_field["type"]} type="hidden" />
+
+                    <a
+                      href="#"
+                      class="flex-shrink-0 p-2 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-900/20 transition-all duration-200"
+                      phx-click="remove-field"
+                      phx-value-group={group_index}
+                      phx-value-field={field_index}
+                      title={gettext("Remove condition")}
+                    >
+                      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </a>
+                  </div>
+                <% end %>
+
+                <a
+                  href="#"
+                  class="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-fluxo-400 px-3 py-2 rounded-lg hover:bg-fluxo-500/5 transition-all duration-200 self-start"
+                  phx-click="add-field"
+                  phx-value-group={group_index}
+                >
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                  {gettext("Add AND condition")}
+                </a>
+              </div>
+            </div>
+
+            <!-- OR Divider (between groups) -->
+          <% end %>
+
+          <a
+            href="#"
+            class="inline-flex items-center gap-2 text-sm font-medium text-cyan-400 hover:text-cyan-300 px-4 py-2.5 rounded-xl border border-dashed border-gray-700/50 hover:border-cyan-500/30 hover:bg-cyan-500/5 transition-all duration-200 self-start"
+            phx-click="add-group"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            {gettext("Add OR condition")}
+          </a>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Query Section Card -->
+    <div class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+          </svg>
+          <h2 class="text-lg font-semibold text-white">{gettext("Query")}</h2>
+        </div>
+
+        <%= if @use_editor || @can_use_editor do %>
+          <a
+            class="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-fluxo-400 px-3 py-1.5 rounded-lg hover:bg-gray-800/50 transition-all duration-200"
+            phx-click="toggle-editor"
+          >
+            <%= if @use_editor do %>
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              {gettext("edit")}
+            <% else %>
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+              </svg>
+              {gettext("use filter editor")}
+            <% end %>
+          </a>
+        <% end %>
+      </div>
+
+      <%= if !@can_use_editor do %>
+        <div class="flex items-center gap-2 text-sm text-amber-400/80 bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-2 mb-4 max-w-xl">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          {gettext("This query can only be edited manually.")}
+        </div>
+      <% end %>
+
+      <textarea
+        readonly={@use_editor}
+        name={if !@use_editor, do: "filter"}
+        class="w-full max-w-xl rounded-xl bg-gray-800/50 border border-gray-700/50 text-gray-300 font-mono text-sm px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all resize-y"
+        rows="5"
+        phx-debounce="500"
+      ><%= @filter_json %></textarea>
+
+      <%= if !@valid_filter do %>
+        <div class="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-3 mt-3 max-w-xl">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          {gettext("Invalid filter")}
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Contacts Table Card -->
+    <%= if @valid_filter do %>
+      <div class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+          <div class="flex items-center gap-3">
+            <svg class="w-5 h-5 text-fluxo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <h2 class="text-lg font-semibold text-white">
+              {gettext("Contacts in this segment")}
+            </h2>
+            <span class="text-sm font-medium text-fluxo-400 bg-fluxo-500/10 px-2.5 py-0.5 rounded-full">
+              {@contacts.count}
+            </span>
+          </div>
+
+          <a
+            href={Routes.segment_path(@socket, :contacts_export, @current_project.id, @segment.id)}
+            class="inline-flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-white px-4 py-2 rounded-xl border border-gray-700/50 hover:border-gray-600 hover:bg-gray-800/50 transition-all duration-200"
+            target="_blank"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            {gettext("Download")}
+          </a>
+        </div>
+
+        <div class="overflow-x-auto rounded-xl border border-gray-800/50">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-gray-800/50">
+                <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-4 py-3">{gettext("Email")}</th>
+                <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-4 py-3 hidden lg:table-cell">{gettext("First name")}</th>
+                <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-4 py-3 hidden lg:table-cell">{gettext("Last name")}</th>
+                <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-4 py-3 hidden lg:table-cell">{gettext("Added")}</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-800/30">
+              <%= for contact <- @contacts.data do %>
+                <tr class="hover:bg-gray-800/30 transition-colors duration-150">
+                  <td class="px-4 py-3">
+                    <a
+                      class="text-fluxo-400 hover:text-fluxo-300 font-medium transition-colors"
+                      href={Routes.contact_path(@socket, :edit, @current_project.id, contact.id)}
+                    >
+                      {contact.email}
+                    </a>
+                  </td>
+                  <td class="px-4 py-3 text-gray-400 hidden lg:table-cell">
+                    {contact.first_name}
+                  </td>
+                  <td class="px-4 py-3 text-gray-400 hidden lg:table-cell">
+                    {contact.last_name}
+                  </td>
+                  <td class="px-4 py-3 text-gray-500 hidden lg:table-cell">
+                    {Calendar.strftime(contact.inserted_at, "%c")}
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="flex gap-3 justify-center pt-6">
+          <.pagination_nav pagination={@contacts} phx_click="change-page" />
+        </div>
+      </div>
+    <% end %>
+  </.form>
+</div>

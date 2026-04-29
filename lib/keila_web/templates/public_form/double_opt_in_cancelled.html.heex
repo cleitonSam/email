@@ -1,0 +1,17 @@
+<div
+  class="contact-form container max-w-md mx-auto bg-white rounded-3xl py-8 pb-10 px-7 md:py-10 md:px-10 flex flex-col items-center gap-6"
+  style={build_form_styles(@form)}
+>
+  <div class="flex flex-col items-center gap-5 py-6">
+    <div class="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center">
+      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+    </div>
+    <h2 class="text-2xl font-extrabold text-center">
+      {gettext("Data deleted")}
+    </h2>
+    <p class="text-base opacity-55 text-center leading-relaxed">
+      {gettext("Your data has been deleted. You will not be subscribed to this list.")}
+    </p>
+  </div>
+  {render_fine_print(@form)}
+</div>

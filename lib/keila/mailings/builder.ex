@@ -1,0 +1,438 @@
+defmodule Keila.Mailings.Builder do
+  @moduledoc """
+  Module for building Swoosh.Email structs from Campaigns and Contacts.
+
+  TODO: Refactor to move building for all campaign types to separate modules.
+  """
+
+  alias Keila.Mailings.{Campaign, Recipient}
+  alias Keila.Contacts.Contact
+  alias Swoosh.Email
+  alias KeilaWeb.Router.Helpers, as: Routes
+  alias Keila.Templates.{Template, Css, Html, HybridTemplate}
+  import Swoosh.Email
+  import __MODULE__.LiquidRenderer
+
+  @placeholder_recipient_id "00000000-0000-4000-0000-000000000000"
+
+  @default_contact %Keila.Contacts.Contact{
+    id: "c_id",
+    first_name: "Jane",
+    last_name: "Doe",
+    email: "jane.doe@example.com",
+    data: %{"tags" => ["rocket-scientist"]}
+  }
+
+  @doc """
+  Builds a `Swoosh.Email` struct from a Campaign, Contact, and assigns.
+
+  `contact` is automatically merged into assigns. If no contact is provided
+  (e.g. when building a preview), a default contact is injected.
+
+  The Liquid templating language can be used within email bodies and subjects.
+
+  Adds `X-Keila-Invalid` header if there was an error creating the email.
+  Such emails should not be delivered.
+  """
+  @spec build(Campaign.t(), Recipient.t() | Contact.t(), map()) :: Swoosh.Email.t()
+  def build(campaign, recipient_or_contact \\ @default_contact, assigns) do
+    {recipient, contact} =
+      case recipient_or_contact do
+        recipient = %Recipient{} -> {recipient, recipient.contact}
+        contact = %Contact{} -> {%Recipient{id: @placeholder_recipient_id}, contact}
+      end
+
+    unsubscribe_link =
+      Map.get_lazy(assigns, "unsubscribe_link", fn ->
+        Keila.Mailings.get_unsubscribe_link(campaign.project_id, recipient.id)
+      end)
+
+    assigns =
+      assigns
+      |> put_template_assigns(campaign.template)
+      |> process_assigns()
+      |> Map.put_new("contact", process_assigns(contact))
+      |> Map.put_new(
+        "campaign",
+        process_assigns(Map.take(campaign, [:data, :subject, :preview_text]))
+      )
+      |> Map.put_new("brand", brand_for_project(campaign.project_id))
+      |> Map.put("unsubscribe_link", unsubscribe_link)
+      |> Map.put("link_unsubscribe", unsubscribe_link)
+      |> Map.put("assets_url", Routes.static_url(KeilaWeb.Endpoint, "/"))
+      |> maybe_put_public_link(campaign)
+
+    Email.new()
+    |> put_subject(campaign.subject, assigns)
+    |> put_recipient(contact)
+    |> put_body(campaign, assigns)
+    |> put_unsubscribe_header(unsubscribe_link)
+    |> put_message_id(campaign, recipient)
+    |> put_anti_spam_headers(campaign)
+    |> maybe_put_precedence_header()
+    |> maybe_put_tracking(campaign, recipient)
+  end
+
+  # Carrega o brand kit do projeto pra disponibilizar como {{ brand.* }} nos
+  # templates Liquid. Configurado pelo wizard /projects/:id/setup.
+  defp brand_for_project(project_id) do
+    case Keila.Projects.get_project(project_id) do
+      nil -> %{}
+      project -> Keila.Projects.Brand.get(project)
+    end
+  rescue
+    _ -> %{}
+  end
+
+  @default_preview_contact %Keila.Contacts.Contact{
+    id: "c_id",
+    email: "keila@example.com",
+    data: %{}
+  }
+
+  @default_sender %Keila.Mailings.Sender{
+    from_name: "",
+    from_email: "keila@example.com"
+  }
+
+  @doc """
+  Builds a preview email for the given campaign and contact.
+
+  Injects a default sender and contact. The contact can be overridden by passing it as the second argument.
+  """
+  @spec build_preview(campaign :: Campaign.t(), contact :: Contact.t()) :: Email.t()
+  def build_preview(campaign, contact \\ @default_preview_contact) do
+    %{campaign | sender: @default_sender}
+    |> build(contact, %{"unsubscribe_link" => "#unsubscribe-preview-link"})
+  end
+
+  defp put_template_assigns(assigns, %Template{assigns: template_assigns = %{}}),
+    do: Map.merge(template_assigns, assigns)
+
+  defp put_template_assigns(assigns, _), do: assigns
+
+  defp put_subject(email, subject, assigns) do
+    case render_liquid(subject || "", assigns) do
+      {:ok, subject} ->
+        subject(email, subject)
+
+      {:error, error} ->
+        email
+        |> header("X-Keila-Invalid", error)
+        |> subject(subject)
+    end
+  end
+
+  defp put_recipient(email, contact) do
+    name =
+      [contact.first_name, contact.last_name]
+      |> Enum.join(" ")
+      |> String.trim()
+
+    to(email, [{name, contact.email}])
+  end
+
+  defp put_body(email, campaign, assigns)
+
+  defp put_body(email, campaign = %{settings: %{type: :text}}, assigns) do
+    body_with_signature =
+      (campaign.text_body || "") <>
+        "\n\n--  \n" <> (assigns["signature"] || HybridTemplate.text_signature())
+
+    case render_liquid(body_with_signature, assigns) do
+      {:ok, text_body} ->
+        text_body(email, text_body)
+
+      {:error, error} ->
+        email
+        |> header("X-Keila-Invalid", error)
+        |> text_body(error)
+    end
+  end
+
+  defp put_body(email, campaign = %{settings: %{type: :markdown}}, assigns) do
+    main_content = campaign.text_body || ""
+    styles = fetch_styles(campaign)
+
+    __MODULE__.Markdown.put_body(email, main_content, styles, assigns)
+  end
+
+  defp put_body(email, campaign = %{settings: %{type: :block}}, assigns) do
+    {email, assigns} = put_signature(email, assigns)
+    {email, body_blocks} = get_body_blocks(email, campaign.json_body, assigns)
+
+    styles = fetch_styles(campaign)
+
+    embedded_css =
+      styles
+      |> Enum.filter(fn {selector, _} -> selector in HybridTemplate.embedded_styles() end)
+      |> Css.encode(styles)
+
+    assigns =
+      assigns
+      |> Map.put("body_blocks", body_blocks)
+      |> Map.put("embedded_css", embedded_css)
+      |> Map.put("html_body_class", "keila--block-campaign")
+
+    with {:ok, html_body} <-
+           render_liquid(HybridTemplate.html_template(), assigns,
+             file_system: HybridTemplate.file_system()
+           ) do
+      html_body =
+        html_body
+        |> Html.parse_document!()
+        |> Html.apply_inline_styles(styles, ignore_inherit: true)
+        |> Html.to_document()
+
+      email
+      |> html_body(html_body)
+    else
+      {:error, error} ->
+        email
+        |> header("X-Keila-Invalid", error)
+        |> text_body(error)
+    end
+  end
+
+  defp put_body(email, campaign = %{settings: %{type: :mjml}}, assigns) do
+    mjml_content = campaign.mjml_body || ""
+
+    __MODULE__.MJML.put_body(email, mjml_content, assigns)
+  end
+
+  defp fetch_styles(campaign)
+
+  defp fetch_styles(%Campaign{template: %Template{styles: styles}}) when is_list(styles) do
+    default_styles = HybridTemplate.styles()
+    template_styles = styles
+
+    Css.merge(default_styles, template_styles)
+    |> HybridTemplate.apply_style_aliases()
+  end
+
+  defp fetch_styles(%Campaign{template: %Template{styles: styles}}) when is_binary(styles) do
+    default_styles = HybridTemplate.styles()
+    template_styles = Css.parse!(styles)
+
+    Css.merge(default_styles, template_styles)
+    |> HybridTemplate.apply_style_aliases()
+  end
+
+  defp fetch_styles(_) do
+    HybridTemplate.styles()
+    |> HybridTemplate.apply_style_aliases()
+  end
+
+  defp put_signature(email, assigns) do
+    signature = assigns["signature"] || HybridTemplate.signature()
+
+    with {:ok, signature_text} <- render_liquid(signature, assigns),
+         {:ok, signature_html, _} <- Earmark.as_html(signature_text) do
+      assigns =
+        assigns
+        |> Map.put("signature_text", signature_text)
+        |> Map.put("signature_html", signature_html)
+
+      {email, assigns}
+    else
+      error ->
+        error_message =
+          case error do
+            {:error, reason} when is_binary(reason) -> "Parsing error:\n" <> reason
+            _other -> "Unexpected parsing error"
+          end
+
+        assigns =
+          assigns
+          |> Map.put("signature_text", error_message)
+          |> Map.put("signature_html", error_message)
+
+        email = header(email, "X-Keila-Invalid", error_message)
+        {email, assigns}
+    end
+  end
+
+  defp get_body_blocks(email, json_body, assigns) do
+    (json_body || %{})
+    |> Map.get("blocks", [])
+    |> apply_liquid_to_blocks(assigns)
+    |> case do
+      {:ok, blocks} ->
+        {email, blocks}
+
+      {:error, blocks} ->
+        email = header(email, "X-Keila-Invalid", "Rendering error")
+        {email, blocks}
+    end
+  end
+
+  defp apply_liquid_to_blocks(blocks, assigns) do
+    blocks
+    |> Enum.reverse()
+    |> Enum.reduce({:ok, []}, fn block, {status, blocks} ->
+      {rendered_status, rendered_block} = apply_liquid(block, assigns)
+      updated_status = if status == :ok && rendered_status == :ok, do: :ok, else: :error
+      {updated_status, [rendered_block | blocks]}
+    end)
+  end
+
+  defp apply_liquid(map, assigns) when is_map(map) do
+    {rendered_map, statuses} =
+      Enum.reduce(map, {%{}, []}, fn {key, value}, {acc, statuses} ->
+        {status, rendered_value} = apply_liquid(value, assigns)
+        {Map.put(acc, key, rendered_value), [status | statuses]}
+      end)
+
+    status = if Enum.all?(statuses, &(&1 == :ok)), do: :ok, else: :error
+    {status, rendered_map}
+  end
+
+  defp apply_liquid(list, assigns) when is_list(list) do
+    {reversed_rendered_list, statuses} =
+      Enum.reduce(list, {[], []}, fn value, {acc, statuses} ->
+        {status, rendered_value} = apply_liquid(value, assigns)
+        {[rendered_value | acc], [status | statuses]}
+      end)
+
+    status = if Enum.all?(statuses, &(&1 == :ok)), do: :ok, else: :error
+    {status, Enum.reverse(reversed_rendered_list)}
+  end
+
+  defp apply_liquid(string, assigns) when is_binary(string) do
+    render_liquid(string, assigns)
+  end
+
+  defp apply_liquid(other, _assigns), do: {:ok, other}
+
+  defp put_unsubscribe_header(email, unsubscribe_link) do
+    email
+    |> header("List-Unsubscribe", "<#{unsubscribe_link}>")
+    |> header("List-Unsubscribe-Post", "List-Unsubscribe=One-Click")
+  end
+
+  defp put_message_id(email, campaign, recipient) do
+    url_host =
+      Application.get_env(:keila, KeilaWeb.Endpoint, [])
+      |> Keyword.get(:url, [])
+      |> Keyword.get(:host, "localhost")
+
+    unique_id = :crypto.hash(:sha256, "#{campaign.id}-#{recipient.id}-#{System.system_time(:nanosecond)}")
+      |> Base.encode16(case: :lower)
+      |> binary_part(0, 32)
+
+    message_id = "<#{unique_id}@#{url_host}>"
+
+    email
+    |> header("Message-ID", message_id)
+  end
+
+  defp put_anti_spam_headers(email, campaign) do
+    url_host =
+      Application.get_env(:keila, KeilaWeb.Endpoint, [])
+      |> Keyword.get(:url, [])
+      |> Keyword.get(:host, "localhost")
+
+    email
+    |> header("X-Mailer", "FluxoEmailMKT/1.0")
+    |> header("X-Auto-Response-Suppress", "OOF, AutoReply")
+    |> header("Auto-Submitted", "auto-generated")
+    |> header("Feedback-ID", "#{campaign.id}:#{campaign.project_id}:fluxo:#{url_host}")
+    |> header("MIME-Version", "1.0")
+  end
+
+  defp maybe_put_precedence_header(email) do
+    enable_precedence_header =
+      Application.get_env(:keila, Keila.Mailings)
+      |> Keyword.fetch!(:enable_precedence_header)
+
+    if enable_precedence_header do
+      header(email, "Precedence", "Bulk")
+    else
+      email
+    end
+  end
+
+  # TODO add contact settings for disabling/configuring tracking
+  defp maybe_put_tracking(email, campaign, recipient)
+
+  defp maybe_put_tracking(%{html_body: nil} = email, _campaign, _recipient), do: email
+
+  defp maybe_put_tracking(email, %{settings: %{do_not_track: true}}, _recipient), do: email
+
+  defp maybe_put_tracking(email, %{id: nil}, _recipient), do: email
+
+  defp maybe_put_tracking(email, _campaign, %{id: @placeholder_recipient_id}), do: email
+
+  defp maybe_put_tracking(email, campaign, recipient) do
+    html =
+      email.html_body
+      |> Floki.parse_document!()
+      |> put_click_tracking(campaign, recipient)
+      |> put_open_tracking(campaign, recipient)
+      |> put_tracking_pixel(campaign, recipient)
+      |> Floki.raw_html()
+
+    %{email | html_body: html}
+  end
+
+  @tracking_click_selector "a[href^=\"https://\"], a[href^=\"http://\"]"
+  defp put_click_tracking(html, campaign, recipient) do
+    Floki.find_and_update(html, @tracking_click_selector, fn {tag, attributes} ->
+      href = List.keyfind(attributes, "href", 0) |> elem(1)
+      # if not Keila link
+      if String.starts_with?(href, KeilaWeb.Endpoint.url()) do
+        {tag, attributes}
+      else
+        link = Keila.Tracking.get_or_register_link(href, campaign.id)
+
+        params = %{
+          url: href,
+          campaign_id: campaign.id,
+          recipient_id: recipient.id,
+          link_id: link.id
+        }
+
+        url = Keila.Tracking.get_tracking_url(KeilaWeb.Endpoint, :click, params)
+
+        {tag, List.keyreplace(attributes, "href", 0, {"href", url})}
+      end
+    end)
+  end
+
+  @tracking_open_selector "img[src^=\"https://\"], img[src^=\"http://\"]"
+  defp put_open_tracking(html, campaign, recipient) do
+    Floki.find_and_update(html, @tracking_open_selector, fn {tag, attributes} ->
+      src = List.keyfind(attributes, "src", 0) |> elem(1)
+
+      if String.starts_with?(src, KeilaWeb.Endpoint.url()) do
+        {tag, attributes}
+      else
+        params = %{url: src, campaign_id: campaign.id, recipient_id: recipient.id}
+        url = Keila.Tracking.get_tracking_url(KeilaWeb.Endpoint, :open, params)
+
+        {tag, List.keyreplace(attributes, "src", 0, {"src", url})}
+      end
+    end)
+  end
+
+  defp maybe_put_public_link(assigns, %{public_link_enabled: true, id: campaign_id})
+       when not is_nil(campaign_id) do
+    public_link = Keila.Mailings.get_public_campaign_link(campaign_id)
+    put_in(assigns, ["campaign", "public_link"], public_link)
+  end
+
+  defp maybe_put_public_link(assigns, _campaign), do: assigns
+
+  defp put_tracking_pixel(html, campaign, recipient) do
+    pixel_url = Routes.static_url(KeilaWeb.Endpoint, "/images/pixel.gif")
+    params = %{url: pixel_url, campaign_id: campaign.id, recipient_id: recipient.id}
+    url = Keila.Tracking.get_tracking_url(KeilaWeb.Endpoint, :open, params)
+
+    img = {"img", [{"src", url}], []}
+
+    Floki.traverse_and_update(html, fn
+      {"body", tags, children} -> {"body", tags, children ++ [img]}
+      other -> other
+    end)
+  end
+end

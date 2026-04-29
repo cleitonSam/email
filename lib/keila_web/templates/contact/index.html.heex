@@ -1,0 +1,55 @@
+<div class="container flex pt-8 sm:pt-11 mb-6">
+  <div class="flex-grow gap-4 flex flex-col sm:flex-row sm:items-center">
+    <div class="flex items-center gap-4 flex-grow">
+      <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-fluxo-400 to-cyan-400 flex items-center justify-center shadow-lg shadow-fluxo-500/20">
+        <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-bold text-white">
+          {gettext("Contacts")}
+        </h1>
+        <p class="text-sm text-gray-500 mt-0.5">
+          <span class="text-fluxo-400 font-semibold">{@contacts_stats.active + @contacts_stats.unsubscribed + @contacts_stats.unreachable}</span>
+          {gettext("total contacts")}
+        </p>
+      </div>
+    </div>
+    <div class="flex flex-row-reverse justify-end gap-3 sm:flex-row">
+      <%= if @contacts.count > 0 do %>
+        <a href={Routes.contact_path(@conn, :export, @current_project.id)} class="button">
+          {render_icon(:download)}
+          {gettext("Download")}
+        </a>
+      <% end %>
+      <a href={Routes.contact_path(@conn, :import, @current_project.id)} class="button">
+        {render_icon(:user_add)}
+        {gettext("Import")}
+      </a>
+      <a href={Routes.contact_path(@conn, :new, @current_project.id)} class="button button--cta group">
+        <svg class="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+        </svg>
+        {gettext("Create")}
+      </a>
+    </div>
+  </div>
+</div>
+
+<%= if (@contacts_stats.active + @contacts_stats.unsubscribed + @contacts_stats.unreachable) == 0  do %>
+  {render("_empty_state.html", assigns)}
+<% else %>
+  {render("_tabs.html", assigns)}
+  {render("_search.html", assigns)}
+
+  <%= cond do %>
+    <% @contacts.count > 0 -> %>
+      {render("_list.html", assigns)}
+    <% @contacts_stats.active == 0 -> %>
+      <div class="mt-4">
+        {render("_empty_state.html", assigns)}
+      </div>
+    <% true -> %>
+  <% end %>
+<% end %>

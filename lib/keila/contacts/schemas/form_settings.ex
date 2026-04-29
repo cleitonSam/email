@@ -1,0 +1,65 @@
+defmodule Keila.Contacts.Form.Settings do
+  use Ecto.Schema
+  import Ecto.Changeset
+
+  @type t :: %__MODULE__{}
+
+  embedded_schema do
+    field(:captcha_required, :boolean, default: true)
+    field(:double_opt_in_required, :boolean, default: false)
+    field(:double_opt_in_subject, :string)
+    field(:double_opt_in_markdown_body, :string)
+    field(:double_opt_in_message, :string)
+    field(:double_opt_in_url, :string)
+    field(:csrf_disabled, :boolean, default: true)
+    field(:intro_text, :string)
+    field(:fine_print, :string)
+    field(:body_bg_color, :string, default: "#f0f4f8")
+    field(:form_bg_color, :string, default: "#ffffff")
+    field(:text_color, :string, default: "#1a202c")
+    field(:submit_label, :string, default: "Inscrever-se")
+    field(:submit_bg_color, :string, default: "#0066FF")
+    field(:submit_text_color, :string, default: "#ffffff")
+    field(:input_bg_color, :string, default: "#ffffff")
+    field(:input_border_color, :string, default: "#d1d5db")
+    field(:input_text_color, :string, default: "#1a202c")
+    field(:success_text, :string)
+    field(:success_url, :string)
+    field(:failure_text, :string)
+    field(:failure_url, :string)
+    field(:welcome_enabled, :boolean, default: false)
+    field(:welcome_subject, :string)
+    field(:welcome_markdown_body, :string)
+  end
+
+  def changeset(struct \\ %__MODULE__{}, params) do
+    struct
+    |> cast(params, [
+      :captcha_required,
+      :double_opt_in_required,
+      :double_opt_in_subject,
+      :double_opt_in_markdown_body,
+      :double_opt_in_message,
+      :double_opt_in_url,
+      :csrf_disabled,
+      :intro_text,
+      :fine_print,
+      :body_bg_color,
+      :form_bg_color,
+      :text_color,
+      :input_text_color,
+      :input_bg_color,
+      :input_border_color,
+      :submit_label,
+      :submit_bg_color,
+      :submit_text_color,
+      :success_text,
+      :success_url,
+      :failure_text,
+      :failure_url,
+      :welcome_enabled,
+      :welcome_subject,
+      :welcome_markdown_body
+    ])
+  end
+end

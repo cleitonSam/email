@@ -1,0 +1,132 @@
+<mjml>
+  <mj-head>
+    <mj-title>{{ campaign.subject }}</mj-title>
+    <mj-preview>{{ campaign.preview_text }}</mj-preview>
+    <mj-attributes>
+      <mj-text
+        font-size="15px"
+        line-height="1.6"
+        color="#e5e7eb"
+        font-family="inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+      ></mj-text>
+      <mj-button
+        font-size="15px"
+        line-height="1.6"
+        font-family="inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+      ></mj-button>
+      <mj-all font-family="inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" />
+    </mj-attributes>
+    <mj-style inline="inline">
+      a { color: #06b6d4; text-decoration: none; }
+      a:hover { text-decoration: underline; }
+    </mj-style>
+    <mj-style>
+      @media (prefers-color-scheme: dark) {
+        .dark-bg { background-color: #111827 !important; }
+        .dark-card { background-color: #1f2937 !important; }
+        .dark-text { color: #e5e7eb !important; }
+      }
+    </mj-style>
+  </mj-head>
+  <mj-body background-color="#111827">
+    <mj-section padding="20px 0 10px">
+      <mj-column>
+        <mj-text align="center" font-size="24px" font-weight="bold" color="#06b6d4">
+          Fluxo Email MKT
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#1f2937" border-radius="12px" padding="30px">
+      <mj-column>
+        <mj-text font-size="22px" font-weight="bold" color="#ffffff">
+          Olá {{ contact.first_name | default: "!" }}, 
+        </mj-text>
+        <mj-text color="#d1d5db" padding-top="10px">
+          Este é um template <strong style="color: #06b6d4">MJML</strong> do Fluxo Email MKT. 
+          Crie layouts responsivos com múltiplas colunas que funcionam perfeitamente em qualquer dispositivo.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section padding="10px 0">
+      <mj-column>
+        <mj-text font-size="12px" color="#6b7280" align="center">✦</mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#1f2937" border-radius="12px" padding="0">
+      <mj-column vertical-align="middle" padding="30px">
+        <mj-text font-size="18px" font-weight="bold" color="#ffffff">
+          Layouts Multi-Coluna
+        </mj-text>
+        <mj-text color="#d1d5db" padding-top="8px">
+          O MJML facilita a criação de emails com layouts complexos e responsivos.
+        </mj-text>
+        <mj-button 
+          background-color="#06b6d4" 
+          color="#ffffff" 
+          border-radius="8px"
+          inner-padding="12px 28px"
+          href="https://fluxodigitaltech.com.br"
+        >
+          Saiba Mais
+        </mj-button>
+      </mj-column>
+      <mj-column vertical-align="middle" padding="30px" background-color="#0e7490" border-radius="0 12px 12px 0">
+        <mj-text color="#ffffff" font-size="14px">
+          ✓ Responsivo em todos os dispositivos
+        </mj-text>
+        <mj-text color="#ffffff" font-size="14px">
+          ✓ Compatível com dark mode
+        </mj-text>
+        <mj-text color="#ffffff" font-size="14px">
+          ✓ Suporte a Liquid templates
+        </mj-text>
+        <mj-text color="#ffffff" font-size="14px">
+          ✓ Funciona no Gmail, Outlook e mais
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section padding="10px 0">
+      <mj-column>
+        <mj-text font-size="12px" color="#6b7280" align="center">✦</mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section padding="0">
+      <mj-column background-color="#1f2937" border-radius="12px" padding="25px">
+        <mj-text font-size="16px" font-weight="bold" color="#ffffff" align="center">
+          📧 Email
+        </mj-text>
+        <mj-text color="#9ca3af" font-size="13px" align="center">
+          Crie campanhas poderosas com nosso editor visual.
+        </mj-text>
+      </mj-column>
+      <mj-column width="15px"></mj-column>
+      <mj-column background-color="#1f2937" border-radius="12px" padding="25px">
+        <mj-text font-size="16px" font-weight="bold" color="#ffffff" align="center">
+          📊 Analytics
+        </mj-text>
+        <mj-text color="#9ca3af" font-size="13px" align="center">
+          Acompanhe aberturas, cliques e conversões em tempo real.
+        </mj-text>
+      </mj-column>
+      <mj-column width="15px"></mj-column>
+      <mj-column background-color="#1f2937" border-radius="12px" padding="25px">
+        <mj-text font-size="16px" font-weight="bold" color="#ffffff" align="center">
+          🎯 Segmentos
+        </mj-text>
+        <mj-text color="#9ca3af" font-size="13px" align="center">
+          Envie para o público certo com segmentação avançada.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section padding="30px 0 10px">
+      <mj-column>
+        <mj-divider border-color="#374151" border-width="1px" />
+        <mj-text font-size="12px" align="center" color="#6b7280" padding-top="15px">
+          Enviado com ❤️ por Fluxo Email MKT
+          <br />
+          <a style="color: #06b6d4" href="{{ unsubscribe_link }}">Cancelar inscrição</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

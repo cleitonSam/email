@@ -1,0 +1,44 @@
+<div class="container flex py-8 sm:py-11 mb-4">
+  <div class="flex-grow gap-4 flex flex-col sm:flex-row sm:items-center">
+    <div class="flex items-center gap-3">
+      <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-fluxo-400 to-cyan-400 flex items-center justify-center shadow-lg shadow-fluxo-500/20">
+        <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+        </svg>
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-bold text-white">
+        {gettext("Segments")}
+      </h1>
+    </div>
+    <div class="flex-grow flex flex-row-reverse justify-end gap-4 sm:flex-row">
+      <a href={Routes.segment_path(@conn, :new, @current_project.id)} class="button button--cta">
+        {render_icon(:document_add)}
+        {gettext("Create a new segment")}
+      </a>
+    </div>
+  </div>
+</div>
+
+<%= if Enum.empty?(@segments) do %>
+  {render("_empty_state.html", assigns)}
+<% end %>
+
+<div class="container grid gap-4 md:grid-cols-2 md:gap-6">
+  <%= for segment <- @segments do %>
+    <div class="group bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6 hover:border-fluxo-500/30 hover:shadow-lg hover:shadow-fluxo-500/5 transition-all duration-300">
+      <h2 class="font-semibold text-xl text-white flex items-center gap-2 mb-2">
+        {segment.name}
+      </h2>
+      <p class="text-sm text-gray-400">
+        {gettext("Updated at:")}
+        {local_datetime_tag(segment.updated_at)}
+      </p>
+      <div class="flex justify-end mt-4 pt-4 border-t border-gray-800/50">
+        <a href={Routes.segment_path(@conn, :edit, @current_project.id, segment.id)} class="button button--cta button--small">
+          {render_icon(:pencil_alt)}
+          {gettext("Edit")}
+        </a>
+      </div>
+    </div>
+  <% end %>
+</div>

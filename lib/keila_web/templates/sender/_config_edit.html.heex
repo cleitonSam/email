@@ -1,0 +1,29 @@
+<%= inputs_for @form, :config, fn fc -> %>
+  {hidden_input(fc, :type)}
+  <div class="border-t border-gray-700/50 my-6"></div>
+
+  {if @sender.shared_sender do
+    render_shared_sender_adapter_form(fc, @sender.shared_sender.config.type)
+  else
+    render_sender_adapter_form(fc, @sender.config.type)
+  end}
+
+  <div class="space-y-2 mt-6">
+    {label(fc, :rate_limit_per_second, gettext("Rate limit per second"), class: "text-sm font-medium text-gray-300")}
+    <%= with_validation(fc, :rate_limit_per_second) do %>
+      {number_input(fc, :rate_limit_per_second, class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", min: 0)}
+    <% end %>
+  </div>
+  <div class="space-y-2">
+    {label(fc, :rate_limit_per_minute, gettext("Rate limit per minute"), class: "text-sm font-medium text-gray-300")}
+    <%= with_validation(fc, :rate_limit_per_minute) do %>
+      {number_input(fc, :rate_limit_per_minute, class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", min: 0)}
+    <% end %>
+  </div>
+  <div class="space-y-2">
+    {label(fc, :rate_limit_per_hour, gettext("Rate limit per hour"), class: "text-sm font-medium text-gray-300")}
+    <%= with_validation(fc, :rate_limit_per_hour) do %>
+      {number_input(fc, :rate_limit_per_hour, class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all", min: 0)}
+    <% end %>
+  </div>
+<% end %>

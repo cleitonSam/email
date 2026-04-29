@@ -1,0 +1,325 @@
+<div
+  id="send-dialogs"
+  style="display: none"
+  class="fixed z-50 inset-0 overflow-y-auto bg-gray-950/80 backdrop-blur-sm flex items-center justify-center"
+  x-on:x-confirm.stop="activeDialog = null"
+  x-show.transition="['send', 'schedule', 'preview'].includes(activeDialog)"
+  x-on:x-cancel.stop="activeDialog = null"
+  x-on:phx:preview-sent.window="activeDialog = null"
+  x-on:x-show.window="activeDialog = ($event.detail && $event.detail.dialog); if (activeDialog) { $nextTick(() => {const el = $el.querySelector(`[data-dialog-for=${activeDialog}] input, [data-dialog-for=${activeDialog}] button`); el.focus()}) }"
+  @change.stop="false"
+  @input.stop="false"
+  @blur.stop="false"
+>
+  <!-- SEND DIALOG -->
+  <div
+    x-show="activeDialog == 'send'"
+    class="flex items-center justify-center min-h-screen p-4"
+    @keydown.escape.prevent="$dispatch('x-cancel')"
+    @click.away="$dispatch('x-cancel')"
+    data-dialog-for="send"
+  >
+    <%= if @recipient_count > 0 do %>
+      <div
+        class="w-full max-w-lg bg-gray-900/95 backdrop-blur-xl border border-gray-700/50 rounded-2xl shadow-2xl p-8"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-headline"
+      >
+        <div class="flex items-center gap-3 mb-5">
+          <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-fluxo-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-fluxo-500/30">
+            <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+            </svg>
+          </div>
+          <h2 class="text-2xl font-bold text-white">{gettext("Ready to send your campaign?")}</h2>
+        </div>
+        <p class="text-gray-400 text-sm mb-3">
+          {raw(
+            gettext(
+              "Are you ready to send your campaign <em class='text-white font-medium'>%{subject}</em> to <span class='text-fluxo-400 font-semibold'>%{count}</span> contacts?",
+              subject: Ecto.Changeset.get_field(@changeset, :subject),
+              count: @recipient_count
+            )
+          )}
+        </p>
+        <% sender_id = Ecto.Changeset.get_field(@changeset, :sender_id) %>
+        <% dlg_sender = Enum.find(@senders, &(&1.id == sender_id)) %>
+        <%= if dlg_sender do %>
+          <div class="flex items-center gap-2 text-sm bg-fluxo-500/10 border border-fluxo-500/20 rounded-lg px-3 py-2.5 text-fluxo-300">
+            <svg class="w-4 h-4 flex-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            <span>{gettext("Sender:")} <span class="font-semibold text-white">{Keila.Mailings.sender_from_line(dlg_sender)}</span></span>
+          </div>
+        <% end %>
+        <%= if get_field(@changeset, :scheduled_for) do %>
+          <div class="flex items-center gap-2 text-sm text-amber-400/80 bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-2 mt-3">
+            <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            {gettext("This campaign has already been scheduled. You can manually send it up to five minutes before the scheduled sending time.")}
+          </div>
+        <% end %>
+        <div class="flex justify-end gap-3 mt-6 pt-5 border-t border-gray-800/50">
+          <button class="button button--text button--large" @click.prevent="$dispatch('x-cancel')">
+            {gettext("Cancel")}
+          </button>
+          <button
+            class="button button--cta button--large"
+            type="button"
+            @click="setUnsavedReminder(false); $dispatch('x-confirm')"
+            phx-click="send"
+          >
+            {render_icon(:paper_airplane)}
+            {gettext("Send")}
+          </button>
+        </div>
+      </div>
+    <% else %>
+      <div
+        class="w-full max-w-lg bg-gray-900/95 backdrop-blur-xl border border-gray-700/50 rounded-2xl shadow-2xl p-8"
+        role="dialog"
+        aria-modal="true"
+      >
+        <div class="flex items-center gap-3 mb-5">
+          <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-400 flex items-center justify-center">
+            <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <h2 class="text-2xl font-bold text-white">{gettext("No Contacts, No Campaign.")}</h2>
+        </div>
+        <p class="text-gray-400 text-sm">
+          {gettext("It looks like you don't yet have any contacts to receive this campaign.")}
+        </p>
+        <div class="flex justify-end mt-6 pt-5 border-t border-gray-800/50">
+          <button class="button button--cta button--large" @click.prevent="$dispatch('x-cancel')">
+            {gettext("Ok")}
+          </button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- SCHEDULE DIALOG -->
+  <div
+    x-show="activeDialog == 'schedule'"
+    class="flex items-center justify-center min-h-screen p-4"
+    @keydown.escape.prevent="$dispatch('x-cancel')"
+    @click.away="$dispatch('x-cancel')"
+    data-dialog-for="schedule"
+  >
+    <%= if @recipient_count > 0 do %>
+      <form
+        class="w-full max-w-lg bg-gray-900/95 backdrop-blur-xl border border-gray-700/50 rounded-2xl shadow-2xl p-8"
+        role="dialog"
+        aria-modal="true"
+        phx-submit="schedule"
+      >
+        <div class="flex items-center gap-3 mb-5">
+          <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-purple-500 to-fluxo-400 flex items-center justify-center shadow-lg shadow-purple-500/30">
+            <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h2 class="text-2xl font-bold text-white">{gettext("Ready to schedule your campaign?")}</h2>
+        </div>
+        <p class="text-gray-400 text-sm mb-5">
+          <%= if get_field(@changeset, :scheduled_for) do %>
+            {gettext("This campaign has already been scheduled. You can reschedule or cancel it up to five minutes before the scheduled sending time.")}
+          <% else %>
+            {raw(
+              gettext(
+                "Are you ready to schedule sending your campaign <em class='text-white font-medium'>%{subject}</em> to <span class='text-fluxo-400 font-semibold'>%{count}</span> contacts?",
+                subject: Ecto.Changeset.get_field(@changeset, :subject),
+                count: @recipient_count
+              )
+            )}
+          <% end %>
+        </p>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-sm font-medium text-gray-300">{gettext("Date")}</label>
+            <input
+              type="date"
+              name="schedule[date]"
+              id="schedule[date]"
+              phx-hook="SetLocalDateValue"
+              data-value={raw(get_field(@changeset, :scheduled_for) |> maybe_print_datetime())}
+              class="w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all"
+            />
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-sm font-medium text-gray-300">{gettext("Time")}</label>
+            <input
+              type="time"
+              id="schedule[time]"
+              name="schedule[time]"
+              class="w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all"
+              phx-hook="SetLocalTimeValue"
+              data-value={raw(get_field(@changeset, :scheduled_for) |> maybe_print_datetime())}
+            />
+          </div>
+        </div>
+        <div class="flex flex-col gap-1.5 mt-3">
+          <label class="text-sm font-medium text-gray-300">{gettext("Timezone")}</label>
+          <input
+            type="text"
+            name="schedule[timezone]"
+            readonly
+            value="Etc/UTC"
+            x-bind:value="Intl.DateTimeFormat().resolvedOptions().timeZone"
+            class="w-full rounded-xl bg-gray-800/30 border border-gray-700/30 text-gray-400 px-4 py-3 cursor-not-allowed"
+          />
+        </div>
+
+        <div class="flex justify-end gap-3 mt-6 pt-5 border-t border-gray-800/50">
+          <button class="button button--text button--large" @click.prevent="$dispatch('x-cancel')">
+            {gettext("Cancel")}
+          </button>
+          <%= if get_field(@changeset, :scheduled_for) do %>
+            <button
+              id="unschedule-button"
+              class="button button--large"
+              type="button"
+              @click="setUnsavedReminder(false); $dispatch('x-confirm')"
+              phx-click="unschedule"
+            >
+              {render_icon(:x)}
+              {gettext("Unschedule")}
+            </button>
+          <% end %>
+          <button
+            class="button button--cta button--large"
+            type="submit"
+            name="schedule[schedule]"
+            value="true"
+            @click="setUnsavedReminder(false); $dispatch('x-confirm')"
+          >
+            {render_icon(:clock)}
+            {gettext("Schedule")}
+          </button>
+        </div>
+      </form>
+    <% else %>
+      <div
+        class="w-full max-w-lg bg-gray-900/95 backdrop-blur-xl border border-gray-700/50 rounded-2xl shadow-2xl p-8"
+        role="dialog"
+        aria-modal="true"
+      >
+        <div class="flex items-center gap-3 mb-5">
+          <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-400 flex items-center justify-center">
+            <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <h2 class="text-2xl font-bold text-white">{gettext("No Contacts, No Campaign.")}</h2>
+        </div>
+        <p class="text-gray-400 text-sm">
+          {gettext("It looks like you don't yet have any contacts to receive this campaign.")}
+        </p>
+        <div class="flex justify-end mt-6 pt-5 border-t border-gray-800/50">
+          <button class="button button--cta button--large" @click.prevent="activeDialog = false">
+            {gettext("Ok")}
+          </button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- PREVIEW DIALOG -->
+  <div
+    x-show="activeDialog == 'preview'"
+    class="flex items-center justify-center min-h-screen p-4"
+    @keydown.escape.prevent="$dispatch('x-cancel')"
+    @click.away="$dispatch('x-cancel')"
+    data-dialog-for="preview"
+  >
+    <form
+      id="preview-form"
+      class="w-full max-w-lg bg-gray-900/95 backdrop-blur-xl border border-gray-700/50 rounded-2xl shadow-2xl p-8"
+      role="dialog"
+      aria-modal="true"
+      phx-submit="send-preview"
+    >
+      <div class="flex items-center gap-3 mb-5">
+        <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-cyan-500 to-fluxo-400 flex items-center justify-center shadow-lg shadow-cyan-500/30">
+          <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+        </div>
+        <h2 class="text-2xl font-bold text-white">{raw(gettext("Campaign Preview"))}</h2>
+      </div>
+
+      <%= cond do %>
+        <% @onboarding_required -> %>
+          <p class="text-gray-400 text-sm">
+            {dgettext("cloud", "To prevent abuse by spammers, sending emails is only possible once your onboarding has been completed.")}
+          </p>
+          <div class="flex justify-end gap-3 mt-6 pt-5 border-t border-gray-800/50">
+            <button class="button button--text button--large" phx-click="dismiss-preview-error" @click.prevent="$dispatch('x-cancel')">
+              {gettext("Cancel")}
+            </button>
+            <%= Keila.if_cloud do %>
+              <a href={Routes.cloud_account_path(@socket, :onboarding)} class="button button--cta button--large" phx-click="dismiss-preview-error" @click="$dispatch('x-cancel')" target="_blank">
+                {dgettext("cloud", "Review account information")}
+              </a>
+            <% end %>
+          </div>
+        <% @subscription_required -> %>
+          <p class="text-gray-400 text-sm">
+            {dgettext("cloud", "To prevent abuse by spammers, sending emails is only possible if you have an active subscription.")}
+          </p>
+          <div class="flex justify-end gap-3 mt-6 pt-5 border-t border-gray-800/50">
+            <button class="button button--text button--large" phx-click="dismiss-preview-error" @click.prevent="$dispatch('x-cancel')">
+              {gettext("Cancel")}
+            </button>
+            <a href={Routes.account_path(@socket, :edit)} class="button button--cta button--large" phx-click="dismiss-preview-error" @click="$dispatch('x-cancel')" target="_blank">
+              {dgettext("cloud", "Start your subscription now")}
+            </a>
+          </div>
+        <% not is_nil(@send_preview_error) -> %>
+          <div class="flex items-start gap-3 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
+            <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div>
+              <p class="font-medium">{gettext("There was an error sending the preview campaign.")}</p>
+              <p class="text-red-400/70 mt-1">{@send_preview_error}</p>
+            </div>
+          </div>
+          <div class="flex justify-end gap-3 mt-6 pt-5 border-t border-gray-800/50">
+            <button class="button button--text button--large" phx-click="dismiss-preview-error" @click.prevent="$dispatch('x-cancel')">
+              {gettext("Cancel")}
+            </button>
+          </div>
+        <% true -> %>
+          <p class="text-gray-400 text-sm mb-4">
+            {gettext("Enter up to five email addresses (separated with commas). If they exist in your contacts list, contact data will be used.")}
+          </p>
+          <div class="flex flex-col gap-1.5">
+            <label for="preview-emails" class="text-sm font-medium text-gray-300">{gettext("Recipients")}</label>
+            <input
+              id="preview-emails"
+              type="text"
+              name="emails"
+              class="w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-500"
+              placeholder="ola@suaempresa.com.br, teste@suaempresa.com.br"
+              autofocus
+            />
+          </div>
+          <div class="flex justify-end gap-3 mt-6 pt-5 border-t border-gray-800/50">
+            <button class="button button--text button--large" @click.prevent="$dispatch('x-cancel')">
+              {gettext("Cancel")}
+            </button>
+            <button class="button button--cta button--large" type="submit">
+              {gettext("Send preview")}
+            </button>
+          </div>
+      <% end %>
+    </form>
+  </div>
+</div>

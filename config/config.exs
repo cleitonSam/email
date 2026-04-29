@@ -1,0 +1,143 @@
+# This file is responsible for configuring your application
+# and its dependencies with the aid of the Mix.Config module.
+#
+# This configuration file is loaded before any dependency and
+# is restricted to this project.
+
+# General application configuration
+import Config
+
+config :keila, ecto_repos: [Keila.Repo]
+
+config :keila, KeilaWeb.ContactsCsvExport, chunk_size: 100
+
+# Configures the endpoint
+config :keila, KeilaWeb.Endpoint,
+  url: [host: "localhost"],
+  adapter: Bandit.PhoenixAdapter,
+  secret_key_base: "ipC9dsQLUBKuLmcrKzqB3m1M/Sw/53FcA1xQd1yUKdTSqjlBqL729evTWqqwd6zT",
+  render_errors: [
+    formats: [html: KeilaWeb.ErrorView, json: KeilaWeb.ErrorView],
+    layout: false
+  ],
+  pubsub_server: Keila.PubSub,
+  live_view: [signing_salt: "kH+cT7XL"]
+
+# Configure file uploads and serving of files
+config :keila, Keila.Files, adapter: Keila.Files.StorageAdapters.Local
+
+config :keila, Keila.Files.StorageAdapters.Local,
+  serve: true,
+  dir: "./uploads"
+
+config :esbuild,
+  version: "0.17.11",
+  default: [
+    args: ~w(js/app.js --bundle --target=es2016 --outdir=../priv/static/js),
+    cd: Path.expand("../assets", __DIR__),
+    env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
+  ]
+
+config :tailwind,
+  version: "3.4.10",
+  default: [
+    args: ~w(
+       --config=tailwind.config.js
+       --input=css/app.scss
+       --output=../priv/static/css/app.css
+     ),
+    cd: Path.expand("../assets", __DIR__)
+  ]
+
+config :keila, Keila.Id,
+  alphabet: "abcdefghijkmnopqrstuvwxyz23456789ABCDEFGHJKLMNPQRSTUVWXYZ",
+  min_len: 8
+
+config :keila, Keila.Mailings,
+  # Minimum offset in seconds between current time and allowed scheduling time
+  min_campaign_schedule_offset: 300,
+  # Set Precedence: Bulk header
+  enable_precedence_header: true
+
+config :keila, Keila.Mailings.SenderAdapters,
+  adapters: [
+    Keila.Mailings.SenderAdapters.SMTP,
+    Keila.Mailings.SenderAdapters.Sendgrid,
+    Keila.Mailings.SenderAdapters.SES,
+    Keila.Mailings.SenderAdapters.Mailgun,
+    Keila.Mailings.SenderAdapters.Postmark
+  ],
+  shared_adapters: [
+    Keila.Mailings.SenderAdapters.Shared.SES
+  ]
+
+config :keila, Keila.Accounts,
+  # Disable sending quotas by default
+  credits_enabled: false
+
+# Staging configuration for hCaptcha or FriendlyCaptcha
+config :keila, KeilaWeb.Captcha,
+  secret_key: "0x0000000000000000000000000000000000000000",
+  site_key: "10000000-ffff-ffff-ffff-000000000001",
+  url: "https://hcaptcha.com/siteverify",
+  provider: :hcaptcha
+
+# Configures Elixir's Logger
+config :logger, :console,
+  format: "$dateT$time $metadata[$level] $message\n",
+  metadata: [:request_id]
+
+# Use Jason for JSON parsing in Phoenix
+config :phoenix, :json_library, Jason
+
+config :keila, Oban,
+  queues: [
+    mailer: 50,
+    mailer_scheduler: 1,
+    updater: 1,
+    default: 10
+  ],
+  repo: Keila.Repo,
+  plugins: [
+    {Oban.Plugins.Pruner, max_age: 1800},
+    {Oban.Plugins.Cron,
+     crontab: [
+       {"* * * * *", Keila.Mailings.DeliverScheduledCampaignsWorker},
+       {"* * * * *", Keila.Mailings.ScheduleWorker},
+       {"0 0 * * *", Keila.Instance.UpdateCronWorker},
+       # Sync EVO + processa automações
+       {"*/15 * * * *", Keila.Automations.Workers.SyncWorker,
+        args: %{"task" => "sync_all"}},
+       # Processa runs vencidas a cada 5 min (sem fazer fetch EVO)
+       {"*/5 * * * *", Keila.Automations.Workers.SyncWorker,
+        args: %{"task" => "process_runs"}},
+       # Aniversariantes: roda 9h da manhã todo dia, identifica e dispara
+       {"0 9 * * *", Keila.Automations.Workers.BirthdayWorker}
+     ]}
+  ]
+
+# Use Timezone database
+config :elixir, :time_zone_database, Tzdata.TimeZoneDatabase
+
+# Add tsv MIME type
+config :mime, :types, %{
+  "text/tab-separated-values" => ["tsv"]
+}
+
+# Configure locales
+config :keila, KeilaWeb.Gettext,
+  default_locale: "pt",
+  locales: ["de", "en", "es", "fr", "hu", "it", "bg", "pt"]
+
+config :ex_cldr,
+  default_backend: Keila.Cldr
+
+config(:keila, Keila.Auth.Emails, from_email: "noreply@fluxodigitaltech.com.br")
+
+# Import environment specific config. This must remain at the bottom
+# of this file so it overrides the configuration defined above.
+import_config "#{config_env()}.exs"
+
+if System.get_env("KEILA_CLOUD") in ["1", "true", "TRUE"] do
+  import_config "../extra/keila_cloud/config/cloud_config.exs"
+end

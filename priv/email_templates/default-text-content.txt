@@ -1,0 +1,10 @@
+Olá {{ contact.first_name | default: "" }}!
+
+Este é um email de texto simples enviado pelo Fluxo Email MKT.
+
+Emails em texto simples são ótimos para mensagens diretas e pessoais.
+Sem imagens, sem formatação — apenas a sua mensagem.
+
+---
+Enviado com Fluxo Email MKT
+Para cancelar sua inscrição: {{ unsubscribe_link }}

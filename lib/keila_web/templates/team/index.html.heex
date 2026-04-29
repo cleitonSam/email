@@ -1,0 +1,107 @@
+<div class="container flex py-8 sm:py-11 mb-6">
+  <div class="flex-grow gap-4 flex flex-col sm:flex-row sm:items-center">
+    <div class="flex items-center gap-4">
+      <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-fluxo-400 to-cyan-400 flex items-center justify-center shadow-lg shadow-fluxo-500/20">
+        <span class="inline-flex h-6 w-6 text-white">{render_icon(:users)}</span>
+      </div>
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-bold text-white">Equipe</h1>
+        <p class="text-sm text-gray-400 mt-1">Convide pessoas pra trabalharem nesse projeto.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container max-w-3xl pb-16">
+  <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 mb-8">
+    <h2 class="text-lg font-bold text-white mb-1">📨 Convidar nova pessoa</h2>
+    <p class="text-sm text-gray-400 mb-5">A pessoa vai receber um email com link pra criar conta e entrar no projeto.</p>
+
+    <form action={"/projects/" <> @current_project.id <> "/team/invite"} method="post" class="flex gap-3">
+      <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
+      <input type="email" name="invitation[email]" placeholder="email@exemplo.com" required autocomplete="off" class="flex-1 bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-3 text-sm" />
+      <button type="submit" class="button button--cta">Enviar convite →</button>
+    </form>
+  </div>
+
+  <h2 class="text-lg font-bold text-white mb-4">👥 Membros do projeto</h2>
+
+  <%= if @members == [] do %>
+    <div class="bg-gray-900/40 border border-gray-800 rounded-2xl p-6 text-center mb-8">
+      <p class="text-sm text-gray-400">Nenhum membro ainda além de você. Convide alguém abaixo.</p>
+    </div>
+  <% else %>
+    <div class="space-y-3 mb-8">
+      <%= for m <- @members do %>
+        <div class="bg-gray-900/60 border border-gray-800 rounded-xl p-4 flex items-center justify-between gap-4">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="h-10 w-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-300 font-bold flex-shrink-0">
+              {String.first(m.email) |> String.upcase()}
+            </div>
+            <div class="min-w-0">
+              <div class="text-white font-medium truncate">{m.email}</div>
+              <div class="text-xs text-gray-400">
+                Entrou em {Calendar.strftime(m.accepted_at, "%d/%m/%Y")} ·
+                <span class="text-emerald-400">✓ Ativo</span>
+              </div>
+            </div>
+          </div>
+          <form action={"/projects/" <> @current_project.id <> "/team/members/" <> m.id <> "/remove"} method="post" class="flex-shrink-0" onsubmit={"return confirm('Remover #{m.email} do projeto?')"}>
+            <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
+            <button type="submit" class="px-3 py-1.5 text-xs font-medium text-red-400 bg-red-500/10 hover:bg-red-500/20 rounded-lg">
+              🗑️ Remover do projeto
+            </button>
+          </form>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <h2 class="text-lg font-bold text-white mb-4">📨 Convites pendentes</h2>
+
+  <%= if @invitations == [] do %>
+    <div class="bg-gray-900/40 border border-gray-800 rounded-2xl p-8 text-center">
+      <span class="text-4xl block mb-3">📭</span>
+      <p class="text-white font-semibold mb-1">Nenhum convite pendente</p>
+      <p class="text-sm text-gray-400">Quando você convidar alguém, vai aparecer aqui.</p>
+    </div>
+  <% else %>
+    <div class="space-y-3">
+      <%= for inv <- @invitations do %>
+        <div class="bg-gray-900/60 border border-gray-800 rounded-xl p-4 flex items-center justify-between gap-4">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="h-10 w-10 rounded-full bg-fluxo-500/20 flex items-center justify-center text-fluxo-300 font-bold flex-shrink-0">
+              {String.first(inv.email) |> String.upcase()}
+            </div>
+            <div class="min-w-0">
+              <div class="text-white font-medium truncate">{inv.email}</div>
+              <div class="text-xs text-gray-400">
+                Convidado por {inv.invited_by_user && inv.invited_by_user.email || "—"} ·
+                Expira em {Calendar.strftime(inv.expires_at, "%d/%m/%Y")}
+              </div>
+            </div>
+          </div>
+          <form action={"/projects/" <> @current_project.id <> "/team/invitations/" <> inv.id <> "/revoke"} method="post" class="flex-shrink-0" onsubmit="return confirm('Cancelar esse convite?')">
+            <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
+            <button type="submit" class="px-3 py-1.5 text-xs font-medium text-red-400 bg-red-500/10 hover:bg-red-500/20 rounded-lg">
+              ✕ Cancelar convite
+            </button>
+          </form>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="mt-8 bg-fluxo-500/5 border border-fluxo-500/20 rounded-xl p-5">
+    <h3 class="text-white font-semibold mb-3 flex items-center gap-2">
+      <span class="inline-flex h-5 w-5 text-fluxo-400">{render_icon(:light_bulb)}</span>
+      Como funciona
+    </h3>
+    <ol class="text-sm text-gray-300 space-y-2 list-decimal pl-5">
+      <li>Você digita o email da pessoa e clica "Enviar convite"</li>
+      <li>Ela recebe um email com link especial (válido por 7 dias)</li>
+      <li>Ao clicar, escolhe uma senha e cria a conta automaticamente</li>
+      <li>Pronto — ela já entra direto no projeto e pode mexer aqui dentro</li>
+    </ol>
+  </div>
+</div>

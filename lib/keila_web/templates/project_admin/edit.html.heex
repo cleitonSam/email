@@ -1,0 +1,94 @@
+<div class="container py-8 sm:py-11 mb-8">
+  <div class="flex items-center gap-6 mb-6">
+    <a href={Routes.project_admin_path(@conn, :index)} class="h-10 w-10 rounded-xl bg-gray-800/80 border border-gray-700/50 flex items-center justify-center text-gray-400 hover:text-white hover:bg-gray-700/80 transition-all">
+      <span class="inline-flex h-5 w-5">{render_icon(:chevron_left)}</span>
+    </a>
+    <div>
+      <h1 class="text-3xl font-bold text-white">{dgettext("admin", "Edit Project")}</h1>
+      <p class="text-gray-400 text-sm mt-1">{@project.name}</p>
+    </div>
+  </div>
+</div>
+
+<div class="container max-w-2xl space-y-6">
+  <!-- Project Info -->
+  <div class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-8">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="h-8 w-8 rounded-lg bg-fluxo-500/20 flex items-center justify-center">
+        <span class="inline-flex h-4 w-4 text-fluxo-400">{render_icon(:collection)}</span>
+      </div>
+      <h2 class="text-lg font-semibold text-white">{dgettext("admin", "Project Details")}</h2>
+    </div>
+
+    <.form :let={f} for={@changeset} action={Routes.project_admin_path(@conn, :update, @project.id)} method="put">
+      <div class="space-y-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">{dgettext("admin", "Project Name")}</label>
+          <%= with_validation(f, :name) do %>
+            {text_input(f, :name,
+              class: "w-full rounded-xl bg-gray-800/80 border border-gray-700/50 text-gray-200 px-4 py-3 focus:ring-2 focus:ring-fluxo-500/50 focus:border-fluxo-500/50 transition-all",
+              required: true
+            )}
+          <% end %>
+        </div>
+
+        <%= if @owner do %>
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">{dgettext("admin", "Owner")}</label>
+            <div class="flex items-center gap-3 px-4 py-3 rounded-xl bg-gray-800/40 border border-gray-700/30">
+              <div class="h-8 w-8 rounded-full bg-gradient-to-br from-fluxo-400/20 to-cyan-400/20 flex items-center justify-center text-fluxo-400 text-xs font-bold">
+                {String.first(@owner.email)}
+              </div>
+              <span class="text-gray-300 text-sm">{@owner.email}</span>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- EVO Configuration -->
+        <div class="border-t border-gray-800/50 pt-6">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="h-8 w-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+              <span class="inline-flex h-4 w-4 text-emerald-400">{render_icon(:lightning_bolt)}</span>
+            </div>
+            <div>
+              <h3 class="font-semibold text-white">{dgettext("admin", "EVO Integration")}</h3>
+              <p class="text-xs text-gray-400">{dgettext("admin", "Configure EVO API credentials for this project")}</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-2">{dgettext("admin", "EVO DNS")}</label>
+              <input
+                type="text"
+                name="project[evo_dns]"
+                value={(@project.data || %{}) |> Map.get("evo_dns", "")}
+                placeholder="your-gym.evo.com.br"
+                class="w-full rounded-xl bg-gray-800/80 border border-gray-700/50 text-gray-200 px-4 py-3 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all text-sm"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-2">{dgettext("admin", "EVO Secret Key")}</label>
+              <input
+                type="password"
+                name="project[evo_secret_key]"
+                value={(@project.data || %{}) |> Map.get("evo_secret_key", "")}
+                placeholder="••••••••••••"
+                class="w-full rounded-xl bg-gray-800/80 border border-gray-700/50 text-gray-200 px-4 py-3 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all text-sm"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-4 flex gap-4">
+          <button type="submit" class="button button--cta button--large flex-grow">
+            {render_icon(:check)} {dgettext("admin", "Save Changes")}
+          </button>
+          <a href={Routes.project_admin_path(@conn, :index)} class="button button--text button--large">
+            {gettext("Cancel")}
+          </a>
+        </div>
+      </div>
+    </.form>
+  </div>
+</div>

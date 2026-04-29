@@ -1,0 +1,39 @@
+
+#main-menu {
+    #main-menu-toggle:checked {
+        &~* #show-main-menu {
+            display: none;
+        }
+        &~ nav {
+            @apply flex;
+        }
+    }
+
+    #main-menu-toggle:not(:checked) ~ * #hide-main-menu {
+        display: none;
+    }
+}
+
+.menu-link {
+    @apply flex gap-2.5 items-center text-gray-300 hover:text-white hover:bg-white/5 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200;
+
+    svg {
+        @apply opacity-60;
+    }
+
+    &:hover svg {
+        @apply opacity-100;
+    }
+
+    &.menu-link--active {
+        @apply bg-gradient-to-r from-fluxo-600/90 to-fluxo-500/90 text-white shadow-sm shadow-fluxo-500/20;
+
+        svg {
+            @apply opacity-100;
+        }
+    }
+
+    &.sml-4.menu-link--active {
+        @apply bg-fluxo-600/30 text-fluxo-200 from-fluxo-600/30 to-fluxo-500/30;
+    }
+}

@@ -1,0 +1,42 @@
+<!-- Gradient Icon -->
+<div class="h-12 w-12 rounded-xl bg-gradient-to-br from-fluxo-400 to-cyan-400 flex items-center justify-center shadow-lg shadow-fluxo-500/20 mb-6 mx-auto">
+  <svg class="h-6 w-6 text-gray-900 stroke-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2zM12 3v18M3 9h18M3 15h18" stroke="currentColor"/>
+  </svg>
+</div>
+
+<!-- Heading -->
+<h2 class="text-xl sm:text-2xl font-bold text-white text-center mb-3">
+  {gettext("Cresça sua audiência com o Fluxo Email MKT!")}
+</h2>
+
+<!-- Description -->
+<p class="text-gray-400 text-center mb-6">
+  {gettext("Se você já tem uma audiência existente para seu newsletter, você pode usar o recurso de Importar Contatos ou criar um contato manualmente. Você também pode convidar novas pessoas para se inscrever e criar um formulário de inscrição.")}
+</p>
+
+<!-- CTA Buttons -->
+<p class="flex flex-wrap justify-center gap-4">
+  <a
+    class="button button--cta button--large inline-flex items-center gap-2"
+    href={Routes.contact_path(@conn, :import, @current_project.id)}
+  >
+    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M20 21H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2z"/>
+    </svg>
+    {gettext("Import contacts")}
+  </a>
+  <a
+    class="button button--cta button--large inline-flex items-center gap-2"
+    href={Routes.form_path(@conn, :new, @current_project.id)}
+  >
+    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M12 5v14M5 12h14"/>
+    </svg>
+    <%= if @forms_count == 0 do %>
+      {gettext("Create your first form")}
+    <% else %>
+      {gettext("Create a new form")}
+    <% end %>
+  </a>
+</p>

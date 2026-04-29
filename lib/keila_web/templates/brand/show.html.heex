@@ -1,0 +1,110 @@
+<div class="container flex py-8 sm:py-11 mb-6">
+  <div class="flex-grow gap-4 flex flex-col sm:flex-row sm:items-center">
+    <div class="flex items-center gap-4">
+      <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-fluxo-400 to-cyan-400 flex items-center justify-center shadow-lg shadow-fluxo-500/20">
+        <span class="inline-flex h-6 w-6 text-white">{render_icon(:color_swatch)}</span>
+      </div>
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-bold text-white">Minha Marca</h1>
+        <p class="text-sm text-gray-400 mt-1">Logo, nome e cores que aparecem nos emails.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container max-w-3xl pb-16">
+  <div class="bg-gradient-to-r from-fluxo-500/15 to-purple-500/15 border border-fluxo-500/30 rounded-2xl p-6 mb-6">
+    <h2 class="text-lg font-bold text-white mb-1">🤖 Pesquisar identidade da marca</h2>
+    <p class="text-sm text-gray-300 mb-3">A IA pesquisa sua academia e descobre tom de voz, palavras-chave e público-alvo.</p>
+    <%= if @brand["ai_profile"] do %>
+      <div class="bg-gray-900/60 rounded-lg p-3 mb-3 text-xs text-gray-300 space-y-1">
+        <div><strong class="text-fluxo-300">Tom:</strong> {@brand["tone"] || "—"}</div>
+        <div><strong class="text-fluxo-300">Público:</strong> {@brand["target_audience"] || "—"}</div>
+        <div><strong class="text-fluxo-300">Palavras-chave:</strong> {if is_list(@brand["keywords"]), do: Enum.join(@brand["keywords"], ", "), else: "—"}</div>
+      </div>
+    <% end %>
+    <form action={"/projects/" <> @current_project.id <> "/marca/pesquisar"} method="post" class="inline-block">
+      <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
+      <button type="submit" class="button button--cta text-sm">
+        <%= if @brand["ai_profile"], do: "🔄 Pesquisar de novo", else: "🔍 Pesquisar com IA" %>
+      </button>
+    </form>
+  </div>
+
+  <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 mb-6">
+    <h2 class="text-lg font-bold text-white mb-1">🖼️ Logo da academia</h2>
+    <p class="text-sm text-gray-400 mb-5">Aparece no topo de todos os emails.</p>
+    <div class="flex items-center gap-5">
+      <div class="bg-white rounded-xl p-4 flex items-center justify-center" style="min-width: 140px; min-height: 100px;">
+        <%= if @brand["logo_url"] != "" do %>
+          <img src={@brand["logo_url"]} alt={@brand["name"]} class="max-h-20 max-w-full" />
+        <% else %>
+          <span class="text-gray-400 text-xs">Sem logo</span>
+        <% end %>
+      </div>
+      <form action={"/projects/" <> @current_project.id <> "/marca/logo"} method="post" enctype="multipart/form-data" class="flex-1">
+        <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
+        <input type="file" name="logo" accept="image/png,image/jpeg,image/webp,image/svg+xml" class="block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-fluxo-500 file:text-white hover:file:bg-fluxo-600 file:cursor-pointer" required onchange="this.form.submit()" />
+        <p class="text-xs text-gray-500 mt-2">PNG, JPG, WebP ou SVG · até 5MB</p>
+      </form>
+    </div>
+  </div>
+
+  <form action={"/projects/" <> @current_project.id <> "/marca"} method="post">
+    <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
+    <input type="hidden" name="_method" value="put" />
+
+    <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 mb-6">
+      <h2 class="text-lg font-bold text-white mb-1">📝 Nome da academia</h2>
+      <input type="text" name="brand[name]" value={@brand["name"]} placeholder="Ex: Academia Movimento" class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-3 text-sm" />
+    </div>
+
+    <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 mb-6">
+      <h2 class="text-lg font-bold text-white mb-1">🎨 Cores principais</h2>
+      <p class="text-sm text-gray-400 mb-5">Aplicadas nos botões, títulos e detalhes dos emails.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Primária</label>
+          <input type="color" name="brand[color_primary]" value={@brand["color_primary"]} class="h-12 w-full rounded cursor-pointer bg-gray-800 border border-gray-700" />
+        </div>
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Escura (fundo)</label>
+          <input type="color" name="brand[color_dark]" value={@brand["color_dark"]} class="h-12 w-full rounded cursor-pointer bg-gray-800 border border-gray-700" />
+        </div>
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Destaque</label>
+          <input type="color" name="brand[color_accent]" value={@brand["color_accent"]} class="h-12 w-full rounded cursor-pointer bg-gray-800 border border-gray-700" />
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 mb-6">
+      <h2 class="text-lg font-bold text-white mb-1">➕ Cores extras (opcional)</h2>
+      <p class="text-sm text-gray-400 mb-5">Até 5 cores adicionais. Deixe em branco as que não usar.</p>
+      <div class="grid grid-cols-5 gap-3">
+        <%= for i <- 0..4 do %>
+          <div>
+            <label class="block text-xs text-gray-500 mb-1">Extra {i + 1}</label>
+            <input type="color" name={"brand[extra_#{i}]"} value={Enum.at(@extra_colors, i, "#FFFFFF")} class="h-12 w-full rounded cursor-pointer bg-gray-800 border border-gray-700" />
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 mb-6">
+      <h2 class="text-lg font-bold text-white mb-1">📞 Contato (opcional)</h2>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">WhatsApp</label>
+          <input type="url" name="brand[whatsapp_url]" value={@brand["whatsapp_url"]} placeholder="https://wa.me/5511999999999" class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-3 text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Endereço</label>
+          <input type="text" name="brand[address]" value={@brand["address"]} placeholder="Rua X, 123" class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-3 text-sm" />
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="button button--cta button--large w-full">Salvar mudanças ✓</button>
+  </form>
+</div>

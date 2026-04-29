@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /c/
+Disallow: /r/
+Disallow: /forms/
+Disallow: /verify-sender/
+Disallow: /double-opt-in/
+Disallow: /unsubscribe/
+Disallow: /uploads/
+Disallow: /archive/

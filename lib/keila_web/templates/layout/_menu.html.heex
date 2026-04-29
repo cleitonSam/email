@@ -1,0 +1,230 @@
+<%= if @current_user do %>
+  <aside class="flex bg-gradient-to-b from-gray-900 to-gray-950 overflow-y-auto border-r border-gray-800/50">
+    <div id="main-menu" class="container sm:h-screen sm:flex sm:flex-col">
+      <input id="main-menu-toggle" type="checkbox" aria-hidden="true" class="hidden" />
+      <div class="absolute inset-y-0 h-14 top-2 right-4 flex items-center sm:hidden">
+        <label
+          id="show-main-menu"
+          for="main-menu-toggle"
+          class="inline-flex items-center justify-center p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-fluxo-500"
+          aria-expanded="false"
+        >
+          <span class="sr-only">{gettext("Open menu")}</span>
+          <span class="inline-flex h-6 w-6">{render_icon(:menu)}</span>
+        </label>
+        <label
+          id="hide-main-menu"
+          for="main-menu-toggle"
+          class="inline-flex items-center justify-center p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-fluxo-500"
+          aria-expanded="false"
+        >
+          <span class="sr-only">{gettext("Close menu")}</span>
+          <span class="inline-flex h-6 w-6">{render_icon(:x)}</span>
+        </label>
+      </div>
+      <div class="shrink-0 grow-0 flex mx-4 text-white border-b border-gray-800/50 pb-4">
+        <a href={Routes.project_path(@conn, :index)} class="flex items-center sm:h-24 my-4 group">
+          <span class="flex justify-end h-10 w-10 group-hover:scale-110 transition-transform duration-300">
+            {render_icon(:logo)}
+          </span>
+          <span class="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-fluxo-400 to-cyan-400">Fluxo Email MKT</span>
+        </a>
+      </div>
+      <nav class="font-medium hidden flex-col gap-0.5 mt-3 mb-4 sm:flex flex-grow px-2">
+        <%= if is_nil(assigns[:current_project]) do %>
+          {menu_link(@conn, :project, :index, [], gettext("Projects"),
+            exact: true,
+            icon: :collection
+          )}
+        <% else %>
+          <a
+            href={Routes.project_path(@conn, :index)}
+            class="flex items-center gap-2 text-xs text-gray-500 my-2 px-2 hover:text-fluxo-400 transition-colors group"
+          >
+            <span class="inline-flex h-3 w-3 group-hover:-translate-x-0.5 transition-transform">{render_icon(:chevron_left)}</span>
+            {gettext("Back to projects overview")}
+          </a>
+          {menu_link(@conn, :project, :show, [@current_project.id], @current_project.name,
+            exact: true,
+            icon: :desktop_computer
+          )}
+          <%= if show_project_submenu?(@conn, @current_project) do %>
+            {menu_link(
+              @conn,
+              :project,
+              :edit,
+              [@current_project.id],
+              gettext("Project settings"),
+              exact: true,
+              icon: :cog,
+              indent: 1
+            )}
+            {menu_link(@conn, :sender, :index, [@current_project.id], gettext("Senders"),
+              exact: false,
+              icon: :speakerphone,
+              indent: 1
+            )}
+          <% end %>
+
+          <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-600 px-3 pt-4 pb-1">{gettext("Audience")}</p>
+          {menu_link(@conn, :contact, :index, [@current_project.id], gettext("Contacts"),
+            icon: :user_group,
+            exclude: [
+              {:contact, :new, [@current_project.id]},
+              {:contact, :import, [@current_project.id]}
+            ]
+          )}
+          <%= if String.starts_with?(@conn.request_path, Routes.contact_path(@conn, :index, @current_project.id)) do %>
+            {menu_link(@conn, :contact, :new, [@current_project.id], gettext("Create contact"),
+              exact: true,
+              icon: :document_add,
+              indent: 1
+            )}
+            {menu_link(
+              @conn,
+              :contact,
+              :import,
+              [@current_project.id],
+              gettext("Import contacts"),
+              exact: true,
+              icon: :user_add,
+              indent: 1
+            )}
+          <% end %>
+          {menu_link(@conn, :segment, :index, [@current_project.id], gettext("Segments"),
+            icon: :filter,
+            exclude: [{:form, :new, [@current_project.id]}]
+          )}
+
+          <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-600 px-3 pt-4 pb-1">{gettext("Content")}</p>
+          {menu_link(@conn, :form, :index, [@current_project.id], gettext("Forms"),
+            icon: :template,
+            exclude: [{:form, :new, [@current_project.id]}]
+          )}
+          <%= if String.starts_with?(@conn.request_path, Routes.form_path(@conn, :index, @current_project.id)) do %>
+            {menu_link(@conn, :form, :new, [@current_project.id], gettext("Create form"),
+              exact: true,
+              icon: :document_add,
+              indent: 1
+            )}
+          <% end %>
+          {menu_link(@conn, :template, :index, [@current_project.id], gettext("Templates"),
+            icon: :color_swatch,
+            exclude: [{:template, :new, [@current_project.id]}]
+          )}
+          <%= if String.starts_with?(@conn.request_path, Routes.template_path(@conn, :index, @current_project.id)) do %>
+            {menu_link(
+              @conn,
+              :template,
+              :new,
+              [@current_project.id],
+              gettext("Create template"),
+              exact: true,
+              icon: :document_add,
+              indent: 1
+            )}
+          <% end %>
+
+          <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-600 px-3 pt-4 pb-1">{gettext("Campaigns")}</p>
+          {menu_link(@conn, :campaign, :index, [@current_project.id], gettext("Campaigns"),
+            icon: :at_symbol,
+            exclude: [{:campaign, :new, [@current_project.id]}]
+          )}
+          <%= if String.starts_with?(@conn.request_path, Routes.campaign_path(@conn, :index, @current_project.id)) do %>
+            {menu_link(
+              @conn,
+              :campaign,
+              :new,
+              [@current_project.id],
+              gettext("Create campaign"),
+              exact: true,
+              icon: :document_add,
+              indent: 1
+            )}
+          <% end %>
+
+          <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-600 px-3 pt-4 pb-1">{gettext("Integrations")}</p>
+          {menu_link(@conn, :api_key, :index, [@current_project.id], gettext("API Keys"),
+            exact: true,
+            icon: :code
+          )}
+          <%= if not Keila.Projects.Brand.completed?(@current_project) do %>
+            {menu_link(@conn, :wizard, :show, [@current_project.id], gettext("✨ Configurar marca"),
+              exact: true,
+              icon: :sparkles
+            )}
+          <% else %>
+            {menu_link(@conn, :brand, :show, [@current_project.id], gettext("Minha Marca"),
+              exact: true,
+              icon: :color_swatch
+            )}
+          <% end %>
+          {menu_link(@conn, :units, :index, [@current_project.id], gettext("Minhas Academias"),
+            exact: true,
+            icon: :office_building
+          )}
+          {menu_link(@conn, :evo, :index, [@current_project.id], gettext("Importar EVO"),
+            exact: true,
+            icon: :lightning_bolt
+          )}
+          {menu_link(@conn, :automations, :index, [@current_project.id], gettext("Automações"),
+            exact: true,
+            icon: :sparkles
+          )}
+          {menu_link(@conn, :birthdays, :index, [@current_project.id], gettext("🎂 Aniversariantes"),
+            exact: true,
+            icon: :gift
+          )}
+          {menu_link(@conn, :media, :index, [@current_project.id], gettext("Imagens"),
+            exact: true,
+            icon: :photograph
+          )}
+          {menu_link(@conn, :team, :index, [@current_project.id], gettext("Equipe"),
+            exact: true,
+            icon: :users
+          )}
+        <% end %>
+        <div class="hidden sm:block sm:flex-grow"></div>
+        <div class="border-t border-gray-800/50 mt-3 mx-2"></div>
+        <%= if assigns[:is_admin?] do %>
+          <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-600 px-3 pt-3 pb-1">{dgettext("admin", "Admin")}</p>
+          {menu_link(@conn, Routes.project_admin_path(@conn, :index), dgettext("admin", "Projects"),
+            icon: :collection
+          )}
+          {menu_link(@conn, Routes.user_admin_path(@conn, :index), gettext("Users"), icon: :users)}
+          {menu_link(@conn, Routes.shared_sender_admin_path(@conn, :index), gettext("Senders"),
+            icon: :speakerphone
+          )}
+          {menu_link(
+            @conn,
+            Routes.instance_admin_path(@conn, :show),
+            dgettext("admin", "System Info"),
+            icon: :information_circle
+          )}
+          <div class="border-t border-gray-800/50 my-2 mx-2"></div>
+        <% end %>
+        <div class="px-3 py-2 mb-1">
+          <div class="flex items-center gap-2 text-xs text-gray-500">
+            <span class="inline-flex h-6 w-6 rounded-full bg-fluxo-600/30 border border-fluxo-500/30 items-center justify-center text-fluxo-300 font-semibold shrink-0">
+              {String.upcase(String.slice(@current_user.email, 0, 1))}
+            </span>
+            <span class="truncate">{@current_user.email}</span>
+          </div>
+        </div>
+        {menu_link(@conn, Routes.account_path(@conn, :edit), gettext("Account"), icon: :user)}
+        {menu_link(@conn, Routes.auth_path(@conn, :logout), gettext("Sign out"), icon: :logout)}
+      </nav>
+    </div>
+  </aside>
+<% else %>
+  <header class="bg-gradient-to-b from-gray-900 to-gray-950 border-b border-gray-800/50 py-4">
+    <div class="container flex justify-center">
+      <a href={Routes.project_path(@conn, :index)} class="inline-flex items-center gap-2 group">
+        <span class="flex h-10 w-10 group-hover:scale-110 transition-transform duration-300">
+          {render_icon(:logo)}
+        </span>
+        <span class="text-2xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-fluxo-400 to-cyan-400">Fluxo Email MKT</span>
+      </a>
+    </div>
+  </header>
+<% end %>

@@ -1,0 +1,56 @@
+<div class="container flex py-8 sm:py-11 mb-4">
+  <div class="flex items-center gap-4">
+    <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-red-500 to-orange-400 flex items-center justify-center shadow-lg shadow-red-500/20">
+      {render_icon(:trash)}
+    </div>
+    <h1 class="text-2xl md:text-3xl font-bold text-white">
+      {dgettext("admin", "Delete Shared Sender %{sender}?", sender: @shared_sender.name)}
+    </h1>
+  </div>
+</div>
+
+<div class="container">
+  <div class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-8 max-w-2xl">
+    <div class="p-4 bg-red-900/20 border border-red-800/50 rounded-xl mb-6">
+      <p class="text-gray-300">
+        {dgettext("admin", "Campaigns associated with this sender will not be deleted.")}
+      </p>
+      <p class="text-gray-200 font-bold mt-2">
+        {dgettext("admin", "Deleting a shared sender cannot be undone.")}
+      </p>
+    </div>
+    <.form
+      :let={f}
+      for={@changeset}
+      action={Routes.shared_sender_admin_path(@conn, :delete, @shared_sender.id)}
+      class="flex flex-col gap-4"
+      method="delete"
+    >
+      <div class="form-row">
+        {label(
+          f,
+          :delete_confirmation,
+          dgettext("admin", "Type in the shared sender name to confirm its deletion:")
+        )}
+        <%= with_validation(f, :delete_confirmation) do %>
+          {text_input(f, :delete_confirmation,
+            placeholder: @shared_sender.name,
+            class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-500"
+          )}
+        <% end %>
+      </div>
+      <div class="flex gap-4 mt-4">
+        <a
+          class="button button--text button--large"
+          href={Routes.shared_sender_admin_path(@conn, :edit, @shared_sender.id)}
+        >
+          {gettext("Cancel")}
+        </a>
+        <button class="button button--warn button--large">
+          {render_icon(:trash)}
+          {gettext("Delete")}
+        </button>
+      </div>
+    </.form>
+  </div>
+</div>

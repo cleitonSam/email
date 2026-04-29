@@ -1,0 +1,133 @@
+<!-- Aurora background -->
+<div class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-950">
+
+  <!-- Animated gradient blobs -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-fluxo-600/20 blur-[120px] animate-float"></div>
+    <div class="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-cyan-600/15 blur-[100px] animate-float-delayed"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-fluxo-800/20 blur-[80px] animate-aurora"></div>
+  </div>
+
+  <!-- Subtle grid -->
+  <div class="absolute inset-0 opacity-[0.025] pointer-events-none" style="background-image: linear-gradient(rgba(255,255,255,.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.6) 1px, transparent 1px); background-size: 48px 48px;"></div>
+
+  <!-- Noise texture overlay -->
+  <div class="absolute inset-0 opacity-[0.015] pointer-events-none" style="background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22300%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22/></filter><rect width=%22300%22 height=%22300%22 filter=%22url(%23n)%22 opacity=%221%22/></svg>');"></div>
+
+  <!-- Card -->
+  <div class="relative z-10 w-full max-w-[420px] mx-4 animate-fade-in-scale">
+
+    <!-- Glow ring behind card -->
+    <div class="absolute -inset-px rounded-2xl bg-gradient-to-br from-fluxo-500/30 via-transparent to-cyan-500/20 blur-sm"></div>
+
+    <div class="relative bg-gray-900/80 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl shadow-black/50 px-8 py-9">
+
+      <!-- Logo -->
+      <div class="flex flex-col items-center gap-3 mb-8">
+        <div class="relative">
+          <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-fluxo-400 to-cyan-400 blur-md opacity-50 animate-glow"></div>
+          <div class="relative h-14 w-14 rounded-2xl bg-gradient-to-br from-fluxo-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-fluxo-500/40">
+            <svg class="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+        </div>
+        <div class="text-center">
+          <span class="block text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-fluxo-300 to-cyan-300">Fluxo Email MKT</span>
+          <span class="text-xs text-gray-500">by Fluxo Digital Tech</span>
+        </div>
+      </div>
+
+      <!-- Heading -->
+      <div class="mb-6">
+        <h1 class="text-xl font-bold text-white text-center">
+          {dgettext("auth", "Sign in.")}
+        </h1>
+        <p class="text-gray-500 text-xs text-center mt-1">
+          {dgettext("auth", "Sign in with your email address and password here.")}
+        </p>
+      </div>
+
+      <!-- Form -->
+      <.form
+        :let={f}
+        for={@changeset}
+        action={Routes.auth_path(@conn, :post_login)}
+        method="post"
+        class="flex flex-col gap-4"
+      >
+        <!-- Email field -->
+        <div class="flex flex-col gap-1.5">
+          {label(f, :email, gettext("Email"), class: "text-xs font-semibold uppercase tracking-wider text-gray-400")}
+          <%= with_validation(f, :email) do %>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                <svg class="w-4 h-4 flex-none text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                </svg>
+              </div>
+              {text_input(f, :email,
+                placeholder: "voce@empresa.com.br",
+                autofocus: true,
+                class: "w-full rounded-xl bg-gray-800/60 border border-gray-700/70 text-white pl-10 pr-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/25 focus:bg-gray-800/80 transition-all placeholder-gray-600 text-sm"
+              )}
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Password field -->
+        <div class="flex flex-col gap-1.5">
+          <div class="flex items-center justify-between">
+            {label(f, :password, gettext("Senha"), class: "text-xs font-semibold uppercase tracking-wider text-gray-400")}
+            <a href={Routes.auth_path(@conn, :reset)} class="text-xs text-gray-600 hover:text-fluxo-400 transition-colors">
+              {dgettext("auth", "Forgot your password?")}
+            </a>
+          </div>
+          <%= with_validation(f, :password) do %>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                <svg class="w-4 h-4 flex-none text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              {password_input(f, :password,
+                class: "w-full rounded-xl bg-gray-800/60 border border-gray-700/70 text-white pl-10 pr-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/25 focus:bg-gray-800/80 transition-all placeholder-gray-600 text-sm"
+              )}
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="relative w-full group mt-1 overflow-hidden rounded-xl bg-gradient-to-r from-fluxo-600 to-fluxo-500 hover:from-fluxo-500 hover:to-cyan-500 text-white font-semibold py-3 px-6 shadow-lg shadow-fluxo-600/30 hover:shadow-fluxo-500/50 transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] text-sm">
+          <span class="relative flex items-center justify-center gap-2">
+            <svg class="w-4 h-4 flex-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+            </svg>
+            {dgettext("auth", "Sign in")}
+          </span>
+          <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+        </button>
+      </.form>
+
+      <!-- Divider -->
+      <div class="flex items-center gap-3 my-5">
+        <div class="flex-grow border-t border-gray-800/80"></div>
+        <span class="text-xs text-gray-700">ou</span>
+        <div class="flex-grow border-t border-gray-800/80"></div>
+      </div>
+
+      <!-- Register link -->
+      <p class="text-center text-sm text-gray-600">
+        {dgettext("auth", "Don't have an account?")}
+        <a href={Routes.auth_path(@conn, :register)} class="text-fluxo-400 hover:text-cyan-400 font-semibold transition-colors ml-1">
+          {dgettext("auth", "Sign up.")}
+        </a>
+      </p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <p class="absolute bottom-4 left-0 right-0 text-center text-xs text-gray-800">
+    © 2026 Fluxo Digital Tech
+  </p>
+</div>

@@ -1,0 +1,165 @@
+<div class="min-h-screen">
+
+  <!-- HEADER -->
+  <div class="container flex py-8 sm:py-11 mb-6">
+    <div class="flex-grow gap-4 flex flex-col sm:flex-row sm:items-center">
+      <div class="flex items-center gap-4 flex-grow">
+        <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-violet-400 to-fluxo-500 flex items-center justify-center shadow-lg">
+          <span class="inline-flex h-6 w-6 text-white">{render_icon(:lightning_bolt)}</span>
+        </div>
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-bold text-white">Automações</h1>
+          <p class="text-sm text-gray-400 mt-1">Receitas prontas que mandam emails sozinhas. Você só ativa.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTOMAÇÕES ATIVAS -->
+  <%= if @automations != [] do %>
+    <div class="container max-w-5xl mb-12">
+      <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+        <span class="inline-block h-2 w-2 rounded-full bg-emerald-500"></span>
+        Rodando agora ({length(@automations)})
+      </h2>
+      <div class="space-y-3">
+        <%= for a <- @automations do %>
+          <div class="bg-gray-900/60 border border-gray-800 rounded-xl p-5 flex items-start gap-4">
+            <div class={"h-10 w-10 rounded-lg flex items-center justify-center text-lg font-bold flex-shrink-0 " <> if a.active, do: "bg-fluxo-500/20 text-fluxo-300", else: "bg-gray-700/50 text-gray-400"}>
+              <%= case Keila.Automations.Recipes.get(a.recipe_slug) do %>
+                <% {:ok, recipe} -> %>{recipe.icon}
+                <% _ -> %>⚡
+              <% end %>
+            </div>
+            <div class="flex-grow min-w-0">
+              <div class="flex items-center gap-2 mb-1">
+                <h3 class="font-bold text-white">{a.name}</h3>
+                <%= if not a.active do %>
+                  <span class="text-xs bg-gray-700 text-gray-400 px-2 py-0.5 rounded font-medium">Pausada</span>
+                <% end %>
+              </div>
+              <div class="text-sm text-gray-400">
+                <%= if a.evo_unit do %>
+                  <span class="text-fluxo-300">{a.evo_unit.name}</span> ·
+                <% else %>
+                  <span class="text-gray-500">Todas as academias</span> ·
+                <% end %>
+                <%= if a.trigger_status do %>
+                  Quando status = <strong class="text-gray-300">{a.trigger_status}</strong> ·
+                <% end %>
+                Cadência: {KeilaWeb.AutomationsLive.step_summary(a.steps)} ·
+                {a.total_runs} envios feitos
+              </div>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+              <button
+                phx-click="toggle-automation"
+                phx-value-id={a.id}
+                class={"px-3 py-1.5 text-xs font-semibold rounded-lg " <> if a.active, do: "text-amber-300 bg-amber-500/10 hover:bg-amber-500/20", else: "text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20"}
+              >{if a.active, do: "Pausar", else: "Retomar"}</button>
+              <button
+                phx-click="delete-automation"
+                phx-value-id={a.id}
+                data-confirm={"Remover automação \"#{a.name}\"?"}
+                class="px-2 py-1.5 text-xs text-red-400 bg-red-500/10 hover:bg-red-500/20 rounded-lg"
+              ><span class="inline-flex h-4 w-4">{render_icon(:trash)}</span></button>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- RECEITAS PRONTAS -->
+  <div class="container max-w-5xl pb-16">
+    <h2 class="text-lg font-semibold text-white mb-2">Receitas prontas</h2>
+    <p class="text-sm text-gray-400 mb-6">Escolha uma receita, escolha a academia, ativa. Pronto.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <%= for recipe <- @recipes do %>
+        <div class="bg-gray-900/60 border border-gray-800 hover:border-fluxo-500/50 rounded-2xl p-6 transition flex flex-col">
+          <div class="text-4xl mb-3">{recipe.icon}</div>
+          <h3 class="text-lg font-bold text-white mb-2">{recipe.title}</h3>
+          <p class="text-sm text-gray-400 mb-4 flex-grow">{recipe.description}</p>
+
+          <div class="flex flex-wrap gap-1.5 mb-5">
+            <%= for step <- recipe.steps do %>
+              <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-800 text-gray-300">
+                <%= cond do %>
+                  <% step.delay_days == 0 -> %>Hoje
+                  <% step.delay_days == 1 -> %>+1 dia
+                  <% true -> %>+{step.delay_days}d
+                <% end %>
+              </span>
+            <% end %>
+          </div>
+
+          <button
+            phx-click="open-recipe"
+            phx-value-slug={recipe.slug}
+            class="button button--cta w-full"
+          >Ativar essa receita →</button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- MODAL DE ATIVAÇÃO -->
+  <%= if @current_recipe do %>
+    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" phx-click="close-recipe">
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-md w-full" onclick="event.stopPropagation()">
+        <form phx-submit="activate-recipe" class="p-6">
+          <input type="hidden" name="slug" value={@current_recipe.slug} />
+
+          <div class="flex justify-between items-start mb-5">
+            <div class="flex items-center gap-3">
+              <div class="text-3xl">{@current_recipe.icon}</div>
+              <div>
+                <h3 class="text-xl font-bold text-white">{@current_recipe.title}</h3>
+                <p class="text-xs text-gray-400 mt-0.5">{length(@current_recipe.steps)} email(s) na cadência</p>
+              </div>
+            </div>
+            <button type="button" phx-click="close-recipe" class="text-gray-400 hover:text-white"><span class="inline-flex h-5 w-5">{render_icon(:x)}</span></button>
+          </div>
+
+          <p class="text-sm text-gray-300 mb-6">{@current_recipe.description}</p>
+
+          <div class="bg-gray-800/40 rounded-lg p-4 mb-5">
+            <p class="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-3">Sequência</p>
+            <ol class="space-y-2">
+              <%= for step <- @current_recipe.steps do %>
+                <li class="flex items-center gap-3 text-sm">
+                  <span class="inline-flex items-center justify-center h-6 w-6 rounded bg-fluxo-500/20 text-fluxo-300 text-xs font-bold">{step.order}</span>
+                  <span class="text-gray-300">
+                    <%= cond do %>
+                      <% step.delay_days == 0 -> %>Hoje
+                      <% step.delay_days == 1 -> %>Amanhã
+                      <% true -> %>Em {step.delay_days} dias
+                    <% end %>
+                  </span>
+                  <span class="text-gray-500">→</span>
+                  <span class="text-gray-300 truncate">{step.template_slug}</span>
+                </li>
+              <% end %>
+            </ol>
+          </div>
+
+          <div class="mb-6">
+            <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Ativar pra qual academia?</label>
+            <select name="evo_unit_id" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 text-sm">
+              <option value="">Todas as academias do projeto</option>
+              <%= for unit <- @units do %>
+                <option value={unit.id}>{unit.name}</option>
+              <% end %>
+            </select>
+            <%= if @units == [] do %>
+              <p class="text-xs text-amber-400 mt-2">⚠ Você ainda não conectou nenhuma academia. <a href="#" class="underline">Conectar agora</a></p>
+            <% end %>
+          </div>
+
+          <button type="submit" class="w-full button button--cta">Ativar receita</button>
+        </form>
+      </div>
+    </div>
+  <% end %>
+</div>

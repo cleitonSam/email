@@ -1,0 +1,43 @@
+<div class="container">
+  <div class="flex flex-col items-center text-center px-4 py-12 sm:py-16 bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl">
+    <!-- Gradient Icon -->
+    <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-fluxo-400 to-cyan-400 flex items-center justify-center shadow-lg shadow-fluxo-500/20 mb-6">
+      <svg class="h-6 w-6 text-gray-900 stroke-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2zM12 3v18M3 9h18M3 15h18" stroke="currentColor"/>
+      </svg>
+    </div>
+
+    <!-- Heading -->
+    <h2 class="text-2xl sm:text-3xl font-bold text-white mb-3">
+      {gettext("Wow, such empty!")}
+    </h2>
+
+    <!-- Description -->
+    <p class="text-gray-400 max-w-md mb-8">
+      {gettext("If you already have an existing audience for your newsletter, you can use the Import Contacts feature. Or manually add new contacts.")}
+    </p>
+
+    <!-- CTA Buttons -->
+    <div class="flex flex-col sm:flex-row gap-4 items-center justify-center">
+      <a
+        class="button button--cta button--large inline-flex items-center gap-2"
+        href={Routes.contact_path(@conn, :import, @current_project.id)}
+      >
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2z"/>
+          <path d="M8 10h8M8 14h8M8 18h8"/>
+        </svg>
+        {gettext("Import contacts")}
+      </a>
+      <a
+        class="button button--cta button--large inline-flex items-center gap-2"
+        href={Routes.contact_path(@conn, :new, @current_project.id)}
+      >
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+        {gettext("Manually create new contact")}
+      </a>
+    </div>
+  </div>
+</div>

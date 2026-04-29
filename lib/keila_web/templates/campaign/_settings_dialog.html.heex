@@ -1,0 +1,195 @@
+<div
+  id="settings-dialogs"
+  style="display: none"
+  class="fixed z-10 inset-0 overflow-y-auto bg-gray-950/80 backdrop-blur-sm flex items-center justify-center"
+  x-on:x-confirm.stop="activeDialog = null"
+  x-show.transition="['settings'].includes(activeDialog)"
+  x-on:x-cancel.stop="activeDialog = null"
+  x-on:x-show.window="activeDialog = ($event.detail && $event.detail.dialog); if (activeDialog) { $nextTick(() => {const el = $el.querySelector(`[data-dialog-for=${activeDialog}] input, [data-dialog-for=${activeDialog}] button`); el.focus()}) }"
+  @change.stop="false"
+  @input.stop="false"
+  @blur.stop="false"
+  phx-hook="CampaignSettingsDialogHook"
+>
+  <div
+    id="campaign-settings-dialog"
+    x-show="activeDialog == 'settings'"
+    class="flex items-center justify-center min-h-screen p-4"
+    @keydown.escape.prevent="$dispatch('x-cancel')"
+    @click.away="$dispatch('x-cancel')"
+    data-dialog-for="settings"
+  >
+    <div
+      class="bg-gray-900/95 backdrop-blur-xl border border-gray-700/50 rounded-2xl shadow-2xl shadow-black/40 transition-all sm:max-w-lg w-full p-8"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-headline"
+    >
+      <div class="flex items-center gap-3 mb-6">
+        <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-gray-500 to-gray-400 flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        </div>
+        <h2 class="text-2xl font-bold text-white">{gettext("Settings")}</h2>
+      </div>
+
+      <.form
+        :let={f}
+        for={@settings_changeset}
+        id="campaign-settings"
+        class="flex flex-col gap-5"
+        phx-submit="update-settings"
+        x-on:change="setUnsavedReminder(true)"
+        x-data="{type: null}"
+        x-init="type = $el.querySelector('[name=\'campaign[settings][type]\']').value"
+      >
+        <div class="flex flex-col gap-1.5">
+          {label(f, :sender_id, gettext("Sender"), class: "text-sm font-medium text-gray-300")}
+          <%= if not Enum.empty?(@senders) do %>
+            <%= with_validation(f, :sender_id) do %>
+              {select(
+                f,
+                :sender_id,
+                if(input_value(f, :sender_id) == nil,
+                  do: [{gettext("Please select a sender"), nil}],
+                  else: []
+                ) ++
+                  Enum.map(
+                    @senders,
+                    &{"#{&1.name} (#{Keila.Mailings.sender_from_line(&1)})", &1.id}
+                  ),
+                class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all"
+              )}
+            <% end %>
+          <% else %>
+            <a
+              href={Routes.sender_path(@socket, :new, @current_project.id)}
+              class="button button--cta"
+            >
+              {gettext("Create your first sender")}
+            </a>
+          <% end %>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <%= inputs_for(f, :settings, fn fs -> %>
+            {label(fs, :type, gettext("Campaign Type"), class: "text-sm font-medium text-gray-300")}
+            {select(
+              fs,
+              :type,
+              [
+                {gettext("Markdown"), "markdown"},
+                {gettext("Text only"), "text"},
+                {gettext("Block Editor"), "block"},
+                {gettext("MJML"), "mjml"}
+              ],
+              x_model: "type",
+              class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all"
+            )}
+          <% end) %>
+        </div>
+
+        <template x-if="type === 'markdown'">
+          <div class="flex items-center gap-3 p-3 rounded-xl bg-gray-800/30 border border-gray-800/50">
+            <%= inputs_for(f, :settings, [skip_hidden: true], fn fs -> %>
+              {checkbox(fs, :enable_wysiwyg, class: "text-fluxo-500 rounded bg-gray-800 border-gray-600")}
+              {label(fs, :enable_wysiwyg, gettext("Enable rich text editor"), class: "text-sm text-gray-300")}
+            <% end) %>
+          </div>
+        </template>
+
+        <template x-if="type === 'markdown' || type === 'block'">
+          <div class="flex flex-col gap-1.5">
+            {label(f, :template_id, gettext("Template"), class: "text-sm font-medium text-gray-300")}
+            <%= with_validation(f, :template_id) do %>
+              {select(
+                f,
+                :template_id,
+                [{gettext("Default"), nil} | Enum.map(@templates, &{&1.name, &1.id})],
+                class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all"
+              )}
+            <% end %>
+          </div>
+        </template>
+
+        <template x-if="type === 'markdown' || type === 'block' || type === 'mjml'">
+          <div class="flex flex-col gap-1.5">
+            {label(f, :preview_text, gettext("Preview Text"), class: "text-sm font-medium text-gray-300")}
+            <p class="text-xs text-gray-500">
+              {gettext("Users see this preview before they open your email. Use up to 50 characters.")}
+            </p>
+            <%= with_validation(f, :preview_text) do %>
+              {textarea(f, :preview_text,
+                placeholder: gettext("Can you summarize your campaign in 50 characters?"),
+                class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-600",
+                autofocus: true,
+                rows: 2
+              )}
+            <% end %>
+          </div>
+        </template>
+
+        <div class="flex flex-col gap-1.5">
+          {label(f, :segment_id, gettext("Segment"), class: "text-sm font-medium text-gray-300")}
+          <%= with_validation(f, :segment_id) do %>
+            {select(
+              f,
+              :segment_id,
+              [{gettext("All Contacts"), nil}] ++ Enum.map(@segments, &{&1.name, &1.id}),
+              class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all"
+            )}
+          <% end %>
+        </div>
+
+        <div class="flex flex-col gap-3 p-4 rounded-xl bg-gray-800/30 border border-gray-800/50">
+          <div class="flex items-center gap-3">
+            <%= inputs_for(f, :settings, [skip_hidden: true], fn fs -> %>
+              {checkbox(fs, :do_not_track, checked_value: "false", unchecked_value: "true", class: "text-fluxo-500 rounded bg-gray-800 border-gray-600")}
+              {label(fs, :do_not_track, gettext("Enable click/open tracking"), class: "text-sm text-gray-300")}
+            <% end) %>
+          </div>
+          <div class="flex items-center gap-3">
+            {checkbox(f, :public_link_enabled, class: "text-fluxo-500 rounded bg-gray-800 border-gray-600")}
+            {label(f, :public_link_enabled, gettext("Enable public link"), class: "text-sm text-gray-300")}
+          </div>
+          <p class="text-xs text-gray-500 ml-7">
+            {gettext("This will allow anyone who has the public link to access your campaign after it's been sent.")}
+          </p>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          {label(f, :segment_id, gettext("Campaign data"), class: "text-sm font-medium text-gray-300")}
+          <p class="text-xs text-gray-500">
+            {gettext("You can add any JSON object as custom data to your campaign.")}
+          </p>
+          <%= with_validation(f, :data) do %>
+            <%= case input_value(f, :data) do %>
+              <% data when is_map(data) -> %>
+                {textarea(f, :data,
+                  value: Jason.encode!(data),
+                  class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white font-mono text-sm px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
+                  rows: 4
+                )}
+              <% _other -> %>
+                {textarea(f, :data,
+                  class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white font-mono text-sm px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
+                  rows: 4
+                )}
+            <% end %>
+          <% end %>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-2 border-t border-gray-800/50">
+          <button class="button button--text" @click.prevent="$dispatch('x-cancel')">
+            {gettext("Cancel")}
+          </button>
+          <button class="button button--cta">
+            {gettext("Ok")}
+          </button>
+        </div>
+      </.form>
+    </div>
+  </div>
+</div>

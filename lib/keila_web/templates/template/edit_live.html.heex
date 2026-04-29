@@ -1,0 +1,116 @@
+<div x-data x-init="Hooks.RememberUnsaved.mounted.call({el: $el})"></div>
+
+<div class="container flex py-8 sm:py-11 sm:mb-4">
+  <div class="flex-grow gap-4 flex flex-col-reverse sm:flex-row sm:items-center">
+    <div class="flex items-center gap-4">
+      <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-fluxo-400 to-cyan-400 flex items-center justify-center shadow-lg shadow-fluxo-500/20">
+        {render_icon(:pencil)}
+      </div>
+      <h1 class="text-2xl md:text-3xl font-bold text-white">
+        {gettext("Edit Template")}
+      </h1>
+    </div>
+    <div class="flex-grow flex flex-row justify-end gap-4 sm:flex-row" x-data>
+      <a
+        class="button button--text button--large"
+        href={Routes.template_path(@socket, :index, @current_project.id)}
+        @click="setUnsavedReminder(false)"
+      >
+        {gettext("Cancel")}
+      </a>
+      <.delete_form
+        struct={@template}
+        as={:template}
+        route={~p"/projects/#{@current_project.id}/templates"}
+      />
+      <.delete_button
+        struct={@template}
+        class="button button--text"
+        @click="setUnsavedReminder(false)"
+      >
+        {gettext("Delete")}
+      </.delete_button>
+      <button
+        class="button button--cta button--large"
+        action="submit"
+        form="template"
+        @click="setUnsavedReminder(false)"
+      >
+        {gettext("Save")}
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="container flex gap-4 tabs" x-data="{ tab: 'settings' }">
+  <.form
+    :let={f}
+    for={@changeset}
+    id="template"
+    action={Routes.template_path(@socket, :post_edit, @current_project.id, @template.id)}
+    phx-change="form_updated"
+    phx-debounce="2000"
+    phx-update="ignore"
+    class="w-1/3"
+    x-on:change="setUnsavedReminder(true)"
+  >
+    <div class="flex gap-1">
+      <a
+        href="#"
+        class="tab-label"
+        x-bind:class="{ 'active': tab === 'settings' }"
+        @click.prevent="tab = 'settings'"
+      >
+        {gettext("Settings")}
+      </a>
+      <a
+        href="#"
+        class="tab-label"
+        x-bind:class="{ 'active': tab === 'style' }"
+        @click.prevent="tab = 'style'"
+      >
+        {gettext("Style")}
+      </a>
+    </div>
+
+    <div class="flex flex-col gap-2 tab-content bg-gray-800/50 border border-gray-700/50 rounded-xl p-4" x-show="tab === 'settings'">
+      <%= with_validation(f, :name) do %>
+        {label(f, :name, gettext("Name"))}
+        {text_input(f, :name, class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-500")}
+      <% end %>
+
+      <%= label(f, :assigns, name: "template[assigns][signature]") do %>
+        <div class="flex flex-col gap-1">
+          <span class="text-sm font-medium text-gray-300">{gettext("Signature")}</span>
+          <div class="text-xs text-gray-400">
+            {gettext_md(
+              "You may use Liquid and Markdown in the signature. Use `[Unsubscribe]({{ unsubscribe_link }})` to include the unsubscribe link."
+            )}
+          </div>
+        </div>
+      <% end %>
+      {textarea(f, :assigns,
+        value: get_field(@changeset, :assigns)["signature"],
+        name: "template[assigns][signature]",
+        id: "template[assigns][signature]",
+        rows: 10,
+        class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-500"
+      )}
+    </div>
+
+    <div class="flex flex-col gap-2 tab-content bg-gray-800/50 border border-gray-700/50 rounded-xl p-4" x-show="tab === 'style'">
+      <h2 class="text-lg font-semibold text-white">
+        {gettext("Style")}
+      </h2>
+      {render_css_form(f, :styles, @style_template)}
+    </div>
+  </.form>
+
+  <div class="flex flex-grow rounded-xl overflow-hidden border border-gray-700/50 shadow-lg">
+    <iframe id="html-preview" src="about:blank" class="bg-gray-100 flex-grow" style="height: 75vh">
+    </iframe>
+    <div id="html-preview-data" phx-hook="HtmlPreview" class="hidden" data-iframe="#html-preview">
+      {@preview}
+    </div>
+  </div>
+</div>

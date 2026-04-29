@@ -1,0 +1,158 @@
+<div class="min-h-screen">
+  <div class="container flex py-8 sm:py-11 mb-6">
+    <div class="flex-grow gap-4 flex flex-col sm:flex-row sm:items-center">
+      <div class="flex items-center gap-4 flex-grow">
+        <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-fluxo-400 to-cyan-400 flex items-center justify-center shadow-lg shadow-fluxo-500/20">
+          <span class="inline-flex h-6 w-6 text-white">{render_icon(:office_building)}</span>
+        </div>
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-bold text-white">Minhas Academias</h1>
+          <p class="text-sm text-gray-400 mt-1">Conecte uma ou mais unidades EVO. Cada email vai com a unidade certa.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <%= if @units != [] do %>
+          <button phx-click="sync-now" disabled={@syncing} class="button button--large group disabled:opacity-50">
+            {if @syncing, do: "Sincronizando...", else: "🔄 Sincronizar agora"}
+          </button>
+        <% end %>
+        <button phx-click="new-unit" class="button button--cta button--large">+ Adicionar academia</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container max-w-5xl pb-16">
+    <%= if @units == [] do %>
+      <div class="bg-gray-900/40 border border-gray-800 rounded-2xl p-12 text-center">
+        <span class="inline-flex h-16 w-16 text-gray-600 mb-4">{render_icon(:office_building)}</span>
+        <h3 class="text-lg font-semibold text-white mb-2">Nenhuma academia conectada ainda</h3>
+        <p class="text-sm text-gray-400 mb-5">Conecte sua primeira unidade EVO pra começar a importar leads.</p>
+        <button phx-click="new-unit" class="button button--cta">+ Adicionar primeira academia</button>
+      </div>
+    <% else %>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <%= for unit <- @units do %>
+          <div class="bg-gray-900/60 border border-gray-800 hover:border-gray-700 rounded-2xl p-6 transition">
+            <div class="flex items-start justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <span class={"inline-block h-3 w-3 rounded-full #{KeilaWeb.UnitsLive.status_color(unit)} ring-2 ring-gray-800"}></span>
+                <div>
+                  <h3 class="text-lg font-bold text-white">{unit.name}</h3>
+                  <p class="text-xs text-gray-400">{KeilaWeb.UnitsLive.status_label(unit)} · {KeilaWeb.UnitsLive.humanize_sync_at(unit.last_sync_at)}</p>
+                </div>
+              </div>
+            </div>
+
+            <dl class="space-y-1.5 mb-5 text-sm">
+              <div class="flex justify-between">
+                <dt class="text-gray-500">Login EVO</dt>
+                <dd class="text-gray-300 font-mono text-xs">{unit.evo_dns}</dd>
+              </div>
+              <%= if unit.branch_label do %>
+                <div class="flex justify-between">
+                  <dt class="text-gray-500">Filial</dt>
+                  <dd class="text-gray-300">{unit.branch_label}</dd>
+                </div>
+              <% end %>
+              <%= if Map.get(unit, :cnpj) do %>
+                <div class="flex justify-between">
+                  <dt class="text-gray-500">CNPJ</dt>
+                  <dd class="text-gray-300 font-mono text-xs">{unit.cnpj}</dd>
+                </div>
+              <% end %>
+              <%= if Map.get(unit, :address) do %>
+                <div class="flex justify-between gap-3">
+                  <dt class="text-gray-500 flex-shrink-0">Endereço</dt>
+                  <dd class="text-gray-300 text-xs text-right">{unit.address}</dd>
+                </div>
+              <% end %>
+              <%= if Map.get(unit, :is_primary) do %>
+                <div class="pt-1">
+                  <span class="text-fluxo-300 text-xs font-semibold">⭐ Unidade principal</span>
+                </div>
+              <% end %>
+              <%= if unit.last_sync_error do %>
+                <div class="bg-red-500/10 border border-red-500/30 rounded p-2 mt-3">
+                  <p class="text-xs text-red-300">⚠ {unit.last_sync_error}</p>
+                </div>
+              <% end %>
+            </dl>
+
+            <div class="flex gap-2 pt-4 border-t border-gray-800">
+              <button phx-click="edit-unit" phx-value-id={unit.id} class="flex-1 px-3 py-2 text-sm font-medium text-gray-300 bg-gray-800/60 hover:bg-gray-700/80 rounded-lg">Editar</button>
+              <button phx-click="toggle-active" phx-value-id={unit.id} class={"flex-1 px-3 py-2 text-sm font-medium rounded-lg " <> if unit.active, do: "text-amber-300 bg-amber-500/10", else: "text-emerald-300 bg-emerald-500/10"}>{if unit.active, do: "Desativar", else: "Ativar"}</button>
+              <button phx-click="delete-unit" phx-value-id={unit.id} data-confirm={"Remover \"#{unit.name}\"?"} class="px-3 py-2 text-sm font-medium text-red-400 bg-red-500/10 rounded-lg">x</button>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <%= if @show_form do %>
+    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" phx-click="close-form">
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-md w-full" onclick="event.stopPropagation()">
+        <form phx-change="validate-form" phx-submit="save-unit" class="p-6">
+          <div class="flex justify-between items-start mb-6">
+            <div>
+              <h3 class="text-xl font-bold text-white">{if @editing, do: "Editar academia", else: "Adicionar academia"}</h3>
+              <p class="text-sm text-gray-400 mt-1">Preencha os dados da unidade.</p>
+            </div>
+            <button type="button" phx-click="close-form" class="text-gray-400 hover:text-white">x</button>
+          </div>
+
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Nome da academia</label>
+              <input type="text" name="unit[name]" value={Ecto.Changeset.get_field(@form_changeset, :name)} placeholder="Ex: Unidade Centro" class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-3 text-sm" required />
+            </div>
+            <div>
+              <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Login EVO</label>
+              <input type="text" name="unit[evo_dns]" value={Ecto.Changeset.get_field(@form_changeset, :evo_dns)} placeholder="seu-dns-evo" autocomplete="off" class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-3 text-sm font-mono" required />
+            </div>
+            <div>
+              <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Senha EVO</label>
+              <input type="password" name="unit[evo_secret_key]" value={Ecto.Changeset.get_field(@form_changeset, :evo_secret_key)} placeholder="••••••••" autocomplete="new-password" class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-3 text-sm font-mono" required />
+              <p class="text-xs text-gray-500 mt-2">Secret Key do painel EVO em Integrações → API.</p>
+            </div>
+
+            <div class="pt-4 mt-2 border-t border-gray-800">
+              <p class="text-xs text-gray-500 mb-3 uppercase tracking-wider font-semibold">Dados da unidade (rodapé do email)</p>
+              <div class="space-y-3">
+                <div>
+                  <label class="block text-xs text-gray-400 mb-1">CNPJ</label>
+                  <input type="text" name="unit[cnpj]" value={Ecto.Changeset.get_field(@form_changeset, :cnpj)} placeholder="00.000.000/0001-00" class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-2.5 text-sm" />
+                </div>
+                <div>
+                  <label class="block text-xs text-gray-400 mb-1">Endereço completo</label>
+                  <input type="text" name="unit[address]" value={Ecto.Changeset.get_field(@form_changeset, :address)} placeholder="Rua X, 123 — Centro, Cidade/UF" class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-2.5 text-sm" />
+                </div>
+                <div>
+                  <label class="block text-xs text-gray-400 mb-1">Telefone</label>
+                  <input type="text" name="unit[phone]" value={Ecto.Changeset.get_field(@form_changeset, :phone)} placeholder="(11) 99999-9999" class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-2.5 text-sm" />
+                </div>
+                <label class="flex items-start gap-2 cursor-pointer pt-1">
+                  <input type="checkbox" name="unit[is_primary]" value="true" checked={Ecto.Changeset.get_field(@form_changeset, :is_primary)} class="mt-1" />
+                  <span class="text-xs text-gray-300"><strong class="text-white">Unidade principal</strong> — usar dados desta unidade no rodapé.</span>
+                </label>
+              </div>
+            </div>
+
+            <%= case @test_result do %>
+              <% nil -> %>
+              <% {:ok, msg} -> %>
+                <div class="rounded-lg p-3 text-sm bg-emerald-500/10 border border-emerald-500/30 text-emerald-200">{msg}</div>
+              <% {:error, msg} -> %>
+                <div class="rounded-lg p-3 text-sm bg-red-500/10 border border-red-500/30 text-red-200">{msg}</div>
+            <% end %>
+          </div>
+
+          <div class="flex gap-2 mt-6">
+            <button type="button" phx-click="close-form" class="flex-1 button">Cancelar</button>
+            <button type="submit" class="flex-1 button button--cta">{if @editing, do: "Salvar", else: "Conectar e salvar"}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,47 @@
+<div class="container py-8 sm:py-11 mb-8">
+  <div class="flex items-center gap-6 mb-6">
+    <div class="h-12 w-12 rounded-2xl bg-gradient-to-br from-green-400 to-cyan-400 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+      <%= render_icon(:user_add) %>
+    </div>
+    <div class="flex-grow">
+      <h1 class="text-3xl sm:text-4xl font-bold text-white">
+        {gettext("New User")}
+      </h1>
+    </div>
+    <button form="form" class="button button--cta button--large">
+      {render_icon(:save)} {gettext("Save")}
+    </button>
+  </div>
+</div>
+
+<div class="container mb-8">
+  <div class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-8 max-w-md">
+    <.form
+      :let={f}
+      id="form"
+      for={@changeset}
+      as="user"
+      action="/admin/users"
+      class="flex flex-col gap-6"
+      phx-change="validate"
+    >
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium text-gray-300">{label(f, :email, gettext("Email"))}</label>
+        <%= with_validation(f, :email) do %>
+          {text_input(f, :email,
+            placeholder: gettext("you@fluxodigitaltech.com.br"),
+            class: "rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all",
+            autofocus: true
+          )}
+        <% end %>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium text-gray-300">{label(f, :password, gettext("Password"))}</label>
+        <%= with_validation(f, :password) do %>
+          {password_input(f, :password, class: "rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
+        <% end %>
+      </div>
+    </.form>
+  </div>
+</div>

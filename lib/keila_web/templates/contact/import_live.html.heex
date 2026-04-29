@@ -1,0 +1,253 @@
+<div class="container flex py-8 sm:py-11 mb-4">
+  <div class="flex-grow gap-4 flex flex-col sm:flex-row sm:items-center">
+    <div class="flex items-center gap-3">
+      <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-fluxo-400 to-cyan-400 flex items-center justify-center shadow-lg shadow-fluxo-500/20">
+        <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+        </svg>
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-bold text-white">
+        {gettext("Import Contacts")}
+      </h1>
+    </div>
+  </div>
+</div>
+
+<div class="container flex flex-col lg:flex-row gap-6">
+  <!-- Upload Card -->
+  <div class="flex-1 bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6">
+    <div class="flex items-center gap-2 mb-5">
+      <svg class="w-5 h-5 text-fluxo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+      </svg>
+      <h2 class="text-lg font-semibold text-white">{gettext("Import")}</h2>
+    </div>
+
+    <%= cond do %>
+      <% @import_total == 0 -> %>
+        <.form
+          :let={f}
+          for={%{}}
+          as={:import}
+          id="import-form"
+          phx-submit="import"
+          phx-change="validate"
+          class="flex flex-col gap-5"
+        >
+          <!-- Drop Zone -->
+          <label class="group relative flex flex-col items-center justify-center gap-3 py-10 px-6 rounded-xl border-2 border-dashed border-gray-700/60 hover:border-fluxo-500/50 bg-gray-800/20 hover:bg-fluxo-500/5 transition-all duration-300 cursor-pointer">
+            <div class="h-14 w-14 rounded-2xl bg-gradient-to-br from-fluxo-500/20 to-cyan-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-7 h-7 text-fluxo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+              </svg>
+            </div>
+            <div class="text-center">
+              <span class="text-sm font-medium text-white">{gettext("Select a file")}</span>
+              <p class="text-xs text-gray-500 mt-1">CSV (UTF-8, comma-separated)</p>
+            </div>
+            <.live_file_input upload={@uploads.csv} class="hidden" />
+            <%= for entry <- @uploads.csv.entries do %>
+              <div class="flex items-center gap-2 bg-fluxo-500/10 border border-fluxo-500/20 rounded-lg px-3 py-2 mt-2">
+                <svg class="w-4 h-4 text-fluxo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <span class="text-sm text-fluxo-300">{entry.client_name}</span>
+                <span class="text-xs text-gray-500">{entry.progress}%</span>
+              </div>
+            <% end %>
+          </label>
+
+          <%= if not Enum.empty?(@uploads.csv.entries) do %>
+            <button class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-fluxo-500 to-fluxo-400 hover:from-fluxo-400 hover:to-cyan-500 shadow-lg shadow-fluxo-500/25 hover:shadow-fluxo-500/40 transition-all duration-200 hover:scale-[1.02]" type="submit">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {gettext("Start Import")}
+            </button>
+          <% end %>
+
+          <label class="flex items-center gap-3 text-sm text-gray-400 cursor-pointer select-none">
+            {checkbox(f, :replace,
+              checked: @import_replace,
+              class: "w-4 h-4 rounded bg-gray-800 border-gray-600 text-fluxo-500 focus:ring-fluxo-500/20 focus:ring-offset-0 cursor-pointer"
+            )}
+            {gettext("Replace duplicates")}
+          </label>
+        </.form>
+
+      <% @import_total > @import_progress -> %>
+        <!-- Progress State -->
+        <div class="flex flex-col items-center gap-5 py-6">
+          <div class="h-16 w-16 rounded-2xl bg-gradient-to-br from-fluxo-500/20 to-cyan-500/20 flex items-center justify-center">
+            <svg class="w-8 h-8 text-fluxo-400 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </div>
+          <div class="text-center">
+            <h3 class="text-xl font-semibold text-white mb-1">
+              Importing Contacts
+            </h3>
+            <p class="text-sm text-gray-400">{@import_progress} / {@import_total}</p>
+          </div>
+          <div class="w-full max-w-sm">
+            <div class="h-2 w-full rounded-full bg-gray-800 overflow-hidden">
+              <div
+                class="h-full bg-gradient-to-r from-fluxo-500 to-cyan-400 rounded-full transition-all duration-500 ease-out"
+                style={
+                  "width:#{@import_progress / case @import_total do
+                    0 -> 1
+                    other -> other
+                  end * 100}%"
+                }
+              >
+              </div>
+            </div>
+          </div>
+        </div>
+
+      <% @import_total == @import_progress -> %>
+        <!-- Success State -->
+        <div class="flex flex-col items-center gap-5 py-6">
+          <div class="h-16 w-16 rounded-2xl bg-gradient-to-br from-fluxo-500/20 to-cyan-500/20 flex items-center justify-center">
+            <svg class="w-8 h-8 text-fluxo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div class="text-center">
+            <h3 class="text-xl font-semibold text-white mb-1">
+              {gettext("You have successfully imported %{number} contacts!", number: @import_total)}
+            </h3>
+          </div>
+          <a
+            class="inline-flex items-center gap-2 text-sm font-medium text-fluxo-400 hover:text-fluxo-300 px-4 py-2 rounded-xl hover:bg-fluxo-500/5 transition-all duration-200"
+            href={Routes.contact_path(@socket, :index, @current_project.id)}
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            {gettext("Back to Contacts overview")}
+          </a>
+        </div>
+    <% end %>
+
+    <%= if @import_error do %>
+      <div class="flex items-start gap-3 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 mt-4">
+        <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <div>
+          <p class="font-medium">{gettext("There was an error importing your contacts.")}</p>
+          <p class="text-red-400/70 mt-1">{@import_error}</p>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Instructions Card -->
+  <div class="flex-1 bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6">
+    <div class="flex items-center gap-2 mb-5">
+      <svg class="w-5 h-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <h2 class="text-lg font-semibold text-white">{gettext("Instructions")}</h2>
+    </div>
+
+    <p class="text-sm text-gray-400 mb-4 with-ol with-ul">
+      {gettext_md("""
+      Please follow the **exact** instructions on this page.
+      Incorrectly formatted files can not be imported.
+      """)}
+    </p>
+
+    <div x-data="{ tab: 'excel' }" phx-update="ignore" id="tabs">
+      <!-- Tab Buttons -->
+      <div class="flex gap-1 p-1 bg-gray-800/50 rounded-xl mb-4">
+        <button
+          type="button"
+          class="flex-1 text-sm font-medium py-2 px-3 rounded-lg transition-all duration-200"
+          x-bind:class="tab === 'excel' ? 'bg-gray-700/80 text-white shadow-sm' : 'text-gray-400 hover:text-gray-300'"
+          @click="tab = 'excel'"
+        >
+          Excel
+        </button>
+        <button
+          type="button"
+          class="flex-1 text-sm font-medium py-2 px-3 rounded-lg transition-all duration-200"
+          x-bind:class="tab === 'libreoffice' ? 'bg-gray-700/80 text-white shadow-sm' : 'text-gray-400 hover:text-gray-300'"
+          @click="tab = 'libreoffice'"
+        >
+          LibreOffice
+        </button>
+        <button
+          type="button"
+          class="flex-1 text-sm font-medium py-2 px-3 rounded-lg transition-all duration-200"
+          x-bind:class="tab === 'code' ? 'bg-gray-700/80 text-white shadow-sm' : 'text-gray-400 hover:text-gray-300'"
+          @click="tab = 'code'"
+        >
+          Code
+        </button>
+      </div>
+
+      <!-- Tab Content -->
+      <div x-show="tab === 'excel'" class="text-sm text-gray-300 with-ol with-ul space-y-3">
+        {gettext_md("""
+        1. Download the template.
+        2. Fill in the template in the same way that the sample data is filled in.
+        3. Click on *File*, then *Save as*.
+            Select _CSV UTF-8 (comma delimited) (*.csv)_ and save the file.
+        """)}
+        <a
+          href={Routes.static_path(@socket, "/downloads/keila_import_template.ods")}
+          class="inline-flex items-center gap-2 text-sm font-medium text-fluxo-400 hover:text-fluxo-300 px-4 py-2 rounded-xl border border-fluxo-500/20 hover:border-fluxo-500/40 hover:bg-fluxo-500/5 transition-all duration-200 mt-3"
+        >
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          {gettext("Download template")}
+        </a>
+      </div>
+
+      <div x-show="tab === 'libreoffice'" class="text-sm text-gray-300 with-ol with-ul space-y-3">
+        {gettext_md("""
+        1. Download the template.
+        2. Fill in the template in the same way that the sample data is filled in.
+        3. Click on *File*, then *Save as*. Select *Text CSV (.csv)* and save the file.
+            In the following dialogue pick:
+            - **Character set:** *Unicode (UTF-8)*
+            - **Field delimiter:** *, (Comma)*
+            - **String delimiter:** *" (Double Quote)*
+        """)}
+        <a
+          href={Routes.static_path(@socket, "/downloads/keila_import_template.ods")}
+          class="inline-flex items-center gap-2 text-sm font-medium text-fluxo-400 hover:text-fluxo-300 px-4 py-2 rounded-xl border border-fluxo-500/20 hover:border-fluxo-500/40 hover:bg-fluxo-500/5 transition-all duration-200 mt-3"
+        >
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          {gettext("Download template")}
+        </a>
+      </div>
+
+      <div x-show="tab === 'code'" class="text-sm text-gray-300 with-ol with-ul space-y-3">
+        {gettext_md("""
+        1. Download the template.
+        2. Fill in the template in the same way that the sample data is filled in.
+        3. In order to successfully import contacts, your CSV file needs be RFC 4180 compliant:
+            - Comma-separated
+            - UTF-8 encoding
+        """)}
+        <a
+          href={Routes.static_path(@socket, "/downloads/keila_import_template.csv")}
+          class="inline-flex items-center gap-2 text-sm font-medium text-fluxo-400 hover:text-fluxo-300 px-4 py-2 rounded-xl border border-fluxo-500/20 hover:border-fluxo-500/40 hover:bg-fluxo-500/5 transition-all duration-200 mt-3"
+        >
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          {gettext("Download template")}
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

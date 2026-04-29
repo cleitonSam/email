@@ -1,0 +1,134 @@
+<div class="container mt-8" x-data x-init="Hooks.RememberUnsaved.mounted.call({el: $el})">
+  <!-- Page Header -->
+  <div class="flex items-center gap-3 mb-8">
+    <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-fluxo-400 to-purple-500 flex items-center justify-center shadow-lg shadow-fluxo-500/20">
+      <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+    </div>
+    <h1 class="text-2xl md:text-3xl font-bold text-white">{gettext("Account Settings")}</h1>
+  </div>
+
+  <%= Keila.if_cloud do %>
+    <.subscription_status account={@account} current_user={@current_user} />
+  <% end %>
+
+  <%= if Keila.Accounts.credits_enabled?() do %>
+    <!-- Sending Quota Card -->
+    <div class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6 mb-6 max-w-3xl">
+      <div class="flex items-center gap-2 mb-4">
+        <svg class="w-5 h-5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        </svg>
+        <h2 class="text-lg font-semibold text-white">{gettext("Sending Quota")}</h2>
+      </div>
+
+      <div class="h-2.5 w-full rounded-full bg-gray-800 overflow-hidden mb-3">
+        <div
+          class="h-full bg-gradient-to-r from-fluxo-500 to-cyan-400 rounded-full transition-all duration-500"
+          style={
+            "width:#{elem(@credits, 1) / case elem(@credits, 0) do
+              0 -> 1
+              other -> other
+            end * 100}%"
+          }
+        >
+        </div>
+      </div>
+
+      <p class="text-sm text-gray-400">
+        {gettext("%{remaining} / %{total} emails remaining",
+          total: elem(@credits, 0),
+          remaining: elem(@credits, 1)
+        )}
+      </p>
+    </div>
+  <% end %>
+
+  <div class="flex flex-col lg:flex-row gap-6 max-w-3xl">
+    <!-- Change Password Card -->
+    <.form
+      :let={f}
+      for={@changeset}
+      action={Routes.account_path(@conn, :post_edit)}
+      class="flex-1 bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6 flex flex-col gap-4"
+      @change="setUnsavedReminder(true)"
+    >
+      <div class="flex items-center gap-2 mb-1">
+        <svg class="w-5 h-5 text-fluxo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        </svg>
+        <h2 class="text-lg font-semibold text-white">{gettext("Change Password")}</h2>
+      </div>
+      <p class="text-sm text-gray-400">
+        {gettext("Atualize sua senha do Fluxo Email MKT.")}
+      </p>
+
+      <div class="flex flex-col gap-1.5">
+        {label(f, :email, gettext("Email"), class: "text-sm font-medium text-gray-300")}
+        <%= with_validation(f, :email) do %>
+          {text_input(f, :email,
+            placeholder: gettext("voce@suaempresa.com.br"),
+            class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-gray-500 px-4 py-3 transition-all cursor-not-allowed",
+            disabled: true
+          )}
+        <% end %>
+      </div>
+      <div class="flex flex-col gap-1.5">
+        {label(f, :password, gettext("New Password"), class: "text-sm font-medium text-gray-300")}
+        <%= with_validation(f, :password) do %>
+          {password_input(f, :password, class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all")}
+        <% end %>
+      </div>
+      <div class="flex justify-end pt-2">
+        <button
+          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-fluxo-500 to-fluxo-400 hover:from-fluxo-400 hover:to-cyan-500 shadow-lg shadow-fluxo-500/25 hover:shadow-fluxo-500/40 transition-all duration-200 hover:scale-[1.02]"
+          @click="setUnsavedReminder(false)"
+        >
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+          {gettext("Update password")}
+        </button>
+      </div>
+    </.form>
+
+    <!-- Change Language Card -->
+    <.form
+      :let={f}
+      for={@changeset}
+      action={Routes.account_path(@conn, :post_edit)}
+      class="flex-1 bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6 flex flex-col gap-4"
+      @change="setUnsavedReminder(true)"
+    >
+      <div class="flex items-center gap-2 mb-1">
+        <svg class="w-5 h-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+        </svg>
+        <h2 class="text-lg font-semibold text-white">{gettext("Change Language")}</h2>
+      </div>
+      <p class="text-sm text-gray-400">
+        {gettext("Altere o idioma da interface do Fluxo Email MKT.")}
+      </p>
+
+      <div class="flex flex-col gap-1.5">
+        {label(f, :locale, gettext("Language"), class: "text-sm font-medium text-gray-300")}
+        <%= with_validation(f, :locale) do %>
+          {select(f, :locale, KeilaWeb.Gettext.available_locales(), class: "w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all appearance-none cursor-pointer")}
+        <% end %>
+      </div>
+      <div class="flex justify-end pt-2">
+        <button
+          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-fluxo-500 to-fluxo-400 hover:from-fluxo-400 hover:to-cyan-500 shadow-lg shadow-fluxo-500/25 hover:shadow-fluxo-500/40 transition-all duration-200 hover:scale-[1.02]"
+          @click="setUnsavedReminder(false)"
+        >
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+          {gettext("Update language settings")}
+        </button>
+      </div>
+    </.form>
+  </div>
+</div>

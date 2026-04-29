@@ -1,0 +1,113 @@
+<div class="container py-8 sm:py-11 mb-8">
+  <div class="flex items-center gap-6 mb-6">
+    <div class="h-12 w-12 rounded-2xl bg-gradient-to-br from-fluxo-400 to-purple-500 flex items-center justify-center shadow-lg shadow-fluxo-500/20">
+      <%= render_icon(:user_group) %>
+    </div>
+    <div class="flex-grow">
+      <h1 class="text-3xl sm:text-4xl font-bold text-white">
+        {gettext("Administer Users")}
+      </h1>
+    </div>
+    <a href={Routes.user_admin_path(@conn, :new)} class="button button--cta button--large">
+      {render_icon(:plus)} {gettext("Add user")}
+    </a>
+  </div>
+
+  <p class="text-gray-400">
+    {dgettext("admin", "Here you can manage other users on your Fluxo Email MKT instance.")}
+  </p>
+</div>
+
+<%= if @users.page_count > 0 do %>
+  <div class="container">
+    <div class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl overflow-hidden">
+      <table class="w-full">
+        <thead>
+          <tr class="text-left border-b border-gray-800/30 bg-gray-800/20">
+            <th class="px-6 py-4 text-sm font-semibold text-gray-300">{dgettext("admin", "Email")}</th>
+            <th class="px-6 py-4 text-sm font-semibold text-gray-300">{dgettext("admin", "Sign-up")}</th>
+            <th class="px-6 py-4 text-sm font-semibold text-gray-300">{dgettext("admin", "Activation")}</th>
+            <%= if @user_credits do %>
+              <th class="px-6 py-4 text-sm font-semibold text-gray-300">{dgettext("admin", "Credits")}</th>
+            <% end %>
+            <th class="px-6 py-4 text-sm font-semibold text-gray-300"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-800/30">
+          <%= for user <- @users.data do %>
+            <tr class="hover:bg-gray-800/30 transition-colors">
+              <td class="px-6 py-4 text-gray-100">
+                {user.email}
+              </td>
+              <td class="px-6 py-4 text-gray-100">
+                {Calendar.strftime(user.inserted_at, "%c")}
+              </td>
+              <td class="px-6 py-4 text-gray-100 flex gap-2">
+                <%= if user.activated_at do %>
+                  {Calendar.strftime(user.activated_at, "%c")}
+                <% end %>
+              </td>
+              <%= if @user_credits do %>
+                <td class="px-6 py-4 text-gray-100">
+                  {@user_credits[user.id] |> elem(1)}/{@user_credits[user.id] |> elem(0)}
+                </td>
+              <% end %>
+              <td class="px-6 py-4">
+                <div class="flex gap-2">
+                  {if @user_credits do
+                    content_tag(:a,
+                      href: Routes.user_admin_path(@conn, :show_credits, user.id),
+                      title: dgettext("admin", "Add credits"),
+                      class: "button button--text button--sm"
+                    ) do
+                      render_icon(:plus_circle)
+                    end
+                  end}
+
+                  {Keila.if_cloud do
+                    content_tag(:a,
+                      href: Routes.cloud_admin_path(@conn, :show_user_account_status, user.id),
+                      title: dgettext("cloud", "Account status"),
+                      class: "button button--text button--sm"
+                    ) do
+                      if @user_accounts[user.id].status == :active do
+                        render_icon(:shield_check)
+                      else
+                        render_icon(:shield_exclamation)
+                      end
+                    end
+                  end}
+                  <%= if user.id != @current_user.id do %>
+                    <a
+                      href={~p"/admin/users/#{user.id}/impersonate"}
+                      title={dgettext("admin", "Login as")}
+                      class="button button--text button--sm"
+                    >
+                      {render_icon(:login)}
+                    </a>
+                    <.delete_form
+                      struct={user}
+                      as={:user}
+                      route={~p"/admin/users"}
+                    />
+                    <.delete_button
+                      struct={user}
+                      icon={:trash}
+                      class="button button--text button--sm"
+                    />
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+      <%= if @users.page_count > 1 do %>
+        <div class="flex gap-3 justify-center py-8 px-6 border-t border-gray-800/30 bg-gray-800/10">
+          <.pagination_nav pagination={@users} href={&~p"/admin/users?page=#{&1 + 1}"} />
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

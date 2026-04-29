@@ -1,0 +1,226 @@
+<mjml>
+  <mj-head>
+    <mj-title>{{ first_name }}, indica um amigo e ganhem juntos</mj-title>
+    <mj-preview>Treinar com quem você ama. E ganhar prêmio nos dois lados.</mj-preview>
+    <mj-attributes>
+      <mj-all font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" />
+      <mj-text color="#0A0E27" font-size="16px" line-height="1.65" />
+      <mj-button background-color="{{ brand.color_primary | default: '#FF5A1F' }}" color="#FFFFFF" font-size="15px" font-weight="700" padding="0" inner-padding="18px 36px" border-radius="999px" />
+      <mj-section padding="0" />
+      <mj-class name="eyebrow" font-size="11px" font-weight="700" letter-spacing="2.5px" text-transform="uppercase" />
+      <mj-class name="display" font-size="56px" font-weight="800" line-height="1.05" letter-spacing="-1.5px" />
+      <mj-class name="h2" font-size="32px" font-weight="700" line-height="1.2" letter-spacing="-0.5px" />
+      <mj-class name="lead" font-size="18px" line-height="1.6" color="#4A5167" />
+      <mj-class name="caption" font-size="13px" color="#8B92A8" line-height="1.5" />
+    </mj-attributes>
+    <mj-style>
+      .pill { display: inline-block; padding: 8px 16px; border-radius: 999px; background: #C4FF00; font-size: 11px; font-weight: 700; color: #0A0E27; letter-spacing: 0.5px; text-transform: uppercase; }
+      .reward-box { border-radius: 12px; padding: 32px; text-align: center; }
+      .reward-number { font-size: 56px; font-weight: 800; line-height: 1; margin-bottom: 8px; }
+      .reward-label { font-size: 13px; font-weight: 700; color: #8B92A8; letter-spacing: 2px; text-transform: uppercase; }
+      @media only screen and (max-width: 600px) {
+        .display-mobile { font-size: 38px !important; line-height: 1.1 !important; }
+        .h2-mobile { font-size: 24px !important; }
+        .reward-number { font-size: 42px !important; }
+      }
+    </mj-style>
+  </mj-head>
+
+  <mj-body background-color="#F4EFEA" width="600px">
+
+    <!-- HEADER -->
+    <mj-section background-color="#FFFFFF" padding="20px 24px">
+      <mj-column width="100%">
+        <mj-image src="{{ brand.logo_url | default: 'https://placehold.co/140x44/0A0E27/FFFFFF/png?text=ACADEMIA' }}" alt="{{ brand.name }}" width="140px" align="left" padding="0" />
+      </mj-column>
+    </mj-section>
+
+    <!-- HERO IMAGE FULL-BLEED -->
+    <mj-section padding="0">
+      <mj-column>
+        <mj-image src="{{ hero_image | default: 'https://images.unsplash.com/photo-1551818255-e6e10975bc17?w=1280&q=85' }}" alt="" padding="0" fluid-on-mobile="true" />
+      </mj-column>
+    </mj-section>
+
+    <!-- HERO TEXT SECTION -->
+    <mj-section background-color="#0A0E27" padding="40px 24px 48px">
+      <mj-column>
+        <mj-text mj-class="eyebrow" color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="0 0 20px">
+          ▸ Programa de indicação
+        </mj-text>
+        <mj-text mj-class="display" css-class="display-mobile" color="#FFFFFF" padding="0 0 24px">
+          Treina com quem você ama.
+        </mj-text>
+        <mj-text font-size="18px" color="#C8CCDB" line-height="1.65" padding="0">
+          {{ first_name }}, a gente quer que você traga seu time pro treino. Vocês dois ganham. Sem pressa, sem stress.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- DUAL REWARD SECTION -->
+    <mj-section background-color="#F4EFEA" padding="40px 24px 32px">
+      <mj-column>
+        <mj-text mj-class="eyebrow" color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="0 0 16px">
+          Prêmio pro casal
+        </mj-text>
+        <mj-text mj-class="h2" css-class="h2-mobile" padding="0 0 48px">
+          Vocês ganham nos dois lados.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#F4EFEA" padding="0 24px 32px">
+      <mj-column width="50%" padding="0 12px 0 0">
+        <mj-table width="100%">
+          <tr>
+            <td style="background:#FFF8F0;border-radius:12px;padding:24px 16px;text-align:center;border-bottom:4px solid {{ brand.color_primary | default: '#FF5A1F' }}">
+              <div style="font-size:13px;font-weight:700;color:#8B92A8;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px">Você ganha</div>
+              <div style="font-size:38px;font-weight:800;line-height:1.1;word-wrap:break-word;color:{{ brand.color_primary | default: '#FF5A1F' }};margin-bottom:4px">1 mês</div>
+              <div style="font-size:18px;font-weight:700;color:#0A0E27;margin-bottom:16px">grátis</div>
+              <div style="font-size:13px;color:#4A5167;line-height:1.55">Cada amigo que matricular = 1 mês grátis na sua mensalidade. Sem limite.</div>
+            </td>
+          </tr>
+        </mj-table>
+      </mj-column>
+      <mj-column width="50%" padding="0 0 0 12px">
+        <mj-table width="100%">
+          <tr>
+            <td style="background:#FFF8F0;border-radius:12px;padding:24px 16px;text-align:center;border-bottom:4px solid #C4FF00">
+              <div style="font-size:13px;font-weight:700;color:#8B92A8;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px">Seu amigo ganha</div>
+              <div style="font-size:38px;font-weight:800;line-height:1.1;word-wrap:break-word;color:#C4FF00;margin-bottom:4px">50%</div>
+              <div style="font-size:18px;font-weight:700;color:#0A0E27;margin-bottom:16px">off matrícula</div>
+              <div style="font-size:13px;color:#4A5167;line-height:1.55">Desconto no primeiro mês. Depois entra na mensalidade normal.</div>
+            </td>
+          </tr>
+        </mj-table>
+      </mj-column>
+    </mj-section>
+
+    <!-- HOW IT WORKS -->
+    <mj-section background-color="#FFFFFF" padding="40px 24px 32px">
+      <mj-column>
+        <mj-text mj-class="eyebrow" color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="0 0 16px">
+          Como funciona
+        </mj-text>
+        <mj-text mj-class="h2" css-class="h2-mobile" padding="0 0 12px">
+          Três passos bem simples.
+        </mj-text>
+        <mj-text mj-class="lead" padding="0 0 48px">
+          A gente cuida da burocracia. Você só indica.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#FFFFFF" padding="0 24px 32px">
+      <mj-column>
+        <mj-table width="100%">
+          <tr style="border-bottom:2px solid #E8EAED">
+            <td style="padding:24px 0;vertical-align:top;width:60px">
+              <div style="width:48px;height:48px;line-height:48px;text-align:center;border-radius:50%;background:{{ brand.color_primary | default: '#FF5A1F' }};color:#FFFFFF;font-size:20px;font-weight:800">01</div>
+            </td>
+            <td style="padding:24px 0 24px 20px;vertical-align:middle">
+              <div style="font-size:16px;font-weight:700;color:#0A0E27;margin-bottom:4px">Você manda o contato</div>
+              <div style="font-size:13px;color:#8B92A8;line-height:1.55">Nome e WhatsApp do seu amigo. É só. A gente já monta tudo.</div>
+            </td>
+          </tr>
+          <tr style="border-bottom:2px solid #E8EAED">
+            <td style="padding:24px 0;vertical-align:top;width:60px">
+              <div style="width:48px;height:48px;line-height:48px;text-align:center;border-radius:50%;background:#C4FF00;color:#0A0E27;font-size:20px;font-weight:800">02</div>
+            </td>
+            <td style="padding:24px 0 24px 20px;vertical-align:middle">
+              <div style="font-size:16px;font-weight:700;color:#0A0E27;margin-bottom:4px">A gente convida</div>
+              <div style="font-size:13px;color:#8B92A8;line-height:1.55">Mandamos um WhatsApp pro seu amigo, dizendo que veio de você. Com desconto já aplicado.</div>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:24px 0;vertical-align:top;width:60px">
+              <div style="width:48px;height:48px;line-height:48px;text-align:center;border-radius:50%;background:#8B92A8;color:#FFFFFF;font-size:20px;font-weight:800">03</div>
+            </td>
+            <td style="padding:24px 0 24px 20px;vertical-align:middle">
+              <div style="font-size:16px;font-weight:700;color:#0A0E27;margin-bottom:4px">Vocês ganham</div>
+              <div style="font-size:13px;color:#8B92A8;line-height:1.55">Quando ele(a) matricula, seu mês grátis cai automático na próxima fatura.</div>
+            </td>
+          </tr>
+        </mj-table>
+      </mj-column>
+    </mj-section>
+
+    <!-- SOCIAL PROOF -->
+    <mj-section background-color="#0A0E27" padding="40px 24px">
+      <mj-column>
+        <mj-text align="center" font-size="32px" font-weight="800" color="#FFFFFF" padding="0 0 16px">
+          +340 indicações
+        </mj-text>
+        <mj-text align="center" font-size="14px" color="#8B92A8" padding="0 0 32px">
+          esse mês. Você sabe que funciona.
+        </mj-text>
+        <mj-divider border-color="#1E2749" border-width="1px" padding="0" />
+        <mj-text align="center" font-size="16px" color="#C8CCDB" line-height="1.65" padding="32px 0 0">
+          "Chamei meu colega e já virou nosso ritual de segunda. Além de pagar menos, tá muito mais legal treinar com gente que você conhece."
+        </mj-text>
+        <mj-table style="margin-top:24px;width:100%">
+          <tr>
+            <td align="center">
+              <img src="https://i.pravatar.cc/96?img=45" width="48" height="48" style="border-radius:50%;display:block;margin:0 auto" alt="" />
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding-top:12px">
+              <div style="font-size:14px;font-weight:700;color:#FFFFFF">Gustavo P.</div>
+              <div style="font-size:12px;color:#8B92A8">Aluno indicador · {{ unidade }}</div>
+            </td>
+          </tr>
+        </mj-table>
+      </mj-column>
+    </mj-section>
+
+    <!-- CTA SECTION -->
+    <mj-section background-color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="40px 24px">
+      <mj-column>
+        <mj-text mj-class="eyebrow" color="#FFFFFF" padding="0 0 16px">
+          Próximo passo
+        </mj-text>
+        <mj-text font-size="38px" font-weight="800" color="#FFFFFF" line-height="1.1" letter-spacing="-1px" padding="0 0 24px">
+          Pega seu link de indicação.
+        </mj-text>
+        <mj-text font-size="16px" color="#FFFFFF" line-height="1.6" padding="0 0 32px">
+          Manda pro seu amigo, ele se matricula com desconto. Você ganha 1 mês grátis.
+        </mj-text>
+        <mj-button href="{{ link_indicacao }}" align="left" background-color="#0A0E27" color="#FFFFFF">
+          Pegar meu link de indicação →
+        </mj-button>
+        <mj-text font-size="13px" color="#FFE5D6" padding="20px 0 0">
+          Ou me manda o contato: <a href="{{ brand.whatsapp_url }}" style="color:#FFFFFF;text-decoration:underline;font-weight:600">whatsapp</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- TERMS -->
+    <mj-section background-color="#0A0E27" padding="32px 24px 24px">
+      <mj-column>
+        <mj-divider border-color="#1E2749" border-width="1px" padding="0 0 24px" />
+        <mj-text color="#8B92A8" font-size="11px" line-height="1.6" padding="0">
+          <strong style="color:#FFFFFF">Regras:</strong> Indicação válida só pra novos alunos de {{ unidade }}. Bônus creditado na fatura do mês seguinte à matrícula. Cada CPF só pode ser indicado uma vez.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- FOOTER -->
+    <mj-section background-color="#1E2749" padding="32px 24px 24px">
+      <mj-column>
+        <mj-image src="{{ brand.logo_url_white | default: 'https://placehold.co/140x44/0A0E27/FFFFFF/png?text=ACADEMIA' }}" alt="{{ brand.name }}" width="120px" align="left" padding="0 0 20px" />
+        <mj-text color="#8B92A8" font-size="13px" line-height="1.65" padding="0 0 16px">
+          <strong style="color:#FFFFFF">{{ brand.name }}</strong> — {{ unidade }}<br/>
+          {{ brand.address }}<br/>
+          CNPJ {{ brand.cnpj }}
+        </mj-text>
+        <mj-divider border-color="#1E2749" border-width="1px" padding="8px 0 16px" />
+        <mj-text color="#5A6378" font-size="11px" line-height="1.6" padding="0">
+          Você recebeu este email porque é aluno(a) de {{ unidade }}.<br/>
+          <a href="{{ link_unsubscribe }}" style="color:#8B92A8;text-decoration:underline">Descadastrar</a> · <a href="{{ brand.privacy_url }}" style="color:#8B92A8;text-decoration:underline">Privacidade</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+  </mj-body>
+</mjml>

@@ -1,0 +1,52 @@
+<div class="container grid gap-3 sm:grid-cols-3 mb-6">
+  <a
+    href={Routes.contact_path(@conn, :index, @current_project.id)}
+    class={
+      "group rounded-xl p-5 flex items-center gap-4 transition-all duration-300 border #{if @contacts_status == :active, do: "bg-fluxo-600/15 border-fluxo-500/40 ring-1 ring-fluxo-500/20 shadow-lg shadow-fluxo-500/10", else: "bg-gray-900/60 border-gray-800/50 hover:border-fluxo-500/30 hover:bg-gray-800/40 hover:-translate-y-0.5"}"
+    }
+  >
+    <div class={"h-11 w-11 rounded-xl flex items-center justify-center shrink-0 #{if @contacts_status == :active, do: "bg-fluxo-500/20", else: "bg-gray-800/80 group-hover:bg-fluxo-500/10"} transition-colors"}>
+      <svg class={"w-5 h-5 #{if @contacts_status == :active, do: "text-fluxo-300", else: "text-gray-500 group-hover:text-fluxo-400"} transition-colors"} fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    </div>
+    <div>
+      <span class="block text-2xl font-bold text-white">{@contacts_stats.active}</span>
+      <span class="text-xs text-gray-400">{gettext("active subscribers")}</span>
+    </div>
+  </a>
+
+  <a
+    href={Routes.contact_path(@conn, :index_unsubscribed, @current_project.id)}
+    class={
+      "group rounded-xl p-5 flex items-center gap-4 transition-all duration-300 border #{if @contacts_status == :unsubscribed, do: "bg-amber-600/15 border-amber-500/40 ring-1 ring-amber-500/20 shadow-lg shadow-amber-500/10", else: "bg-gray-900/60 border-gray-800/50 hover:border-amber-500/30 hover:bg-gray-800/40 hover:-translate-y-0.5"}"
+    }
+  >
+    <div class={"h-11 w-11 rounded-xl flex items-center justify-center shrink-0 #{if @contacts_status == :unsubscribed, do: "bg-amber-500/20", else: "bg-gray-800/80 group-hover:bg-amber-500/10"} transition-colors"}>
+      <svg class={"w-5 h-5 #{if @contacts_status == :unsubscribed, do: "text-amber-300", else: "text-gray-500 group-hover:text-amber-400"} transition-colors"} fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+      </svg>
+    </div>
+    <div>
+      <span class="block text-2xl font-bold text-white">{@contacts_stats.unsubscribed}</span>
+      <span class="text-xs text-gray-400">{gettext("unsubscribed contacts")}</span>
+    </div>
+  </a>
+
+  <a
+    href={Routes.contact_path(@conn, :index_unreachable, @current_project.id)}
+    class={
+      "group rounded-xl p-5 flex items-center gap-4 transition-all duration-300 border #{if @contacts_status == :unreachable, do: "bg-red-600/15 border-red-500/40 ring-1 ring-red-500/20 shadow-lg shadow-red-500/10", else: "bg-gray-900/60 border-gray-800/50 hover:border-red-500/30 hover:bg-gray-800/40 hover:-translate-y-0.5"}"
+    }
+  >
+    <div class={"h-11 w-11 rounded-xl flex items-center justify-center shrink-0 #{if @contacts_status == :unreachable, do: "bg-red-500/20", else: "bg-gray-800/80 group-hover:bg-red-500/10"} transition-colors"}>
+      <svg class={"w-5 h-5 #{if @contacts_status == :unreachable, do: "text-red-300", else: "text-gray-500 group-hover:text-red-400"} transition-colors"} fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+    </div>
+    <div>
+      <span class="block text-2xl font-bold text-white">{@contacts_stats.unreachable}</span>
+      <span class="text-xs text-gray-400">{gettext("unreachable contacts")}</span>
+    </div>
+  </a>
+</div>

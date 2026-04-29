@@ -1,0 +1,214 @@
+<mjml>
+  <mj-head>
+    <mj-title>{{ mes_referencia }} em {{ unidade }} — tudo que rolou este mês</mj-title>
+    <mj-preview>Novidades, eventos e dicas do nosso time. Edição {{ mes_referencia }}.</mj-preview>
+    <mj-attributes>
+      <mj-all font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" />
+      <mj-text color="#0A0E27" font-size="16px" line-height="1.65" />
+      <mj-button background-color="{{ brand.color_primary | default: '#FF5A1F' }}" color="#FFFFFF" font-size="15px" font-weight="700" padding="0" inner-padding="18px 36px" border-radius="999px" />
+      <mj-section padding="0" />
+      <mj-class name="eyebrow" font-size="11px" font-weight="700" letter-spacing="2.5px" text-transform="uppercase" />
+      <mj-class name="display" font-size="56px" font-weight="800" line-height="1.05" letter-spacing="-1.5px" />
+      <mj-class name="h2" font-size="32px" font-weight="700" line-height="1.2" letter-spacing="-0.5px" />
+      <mj-class name="lead" font-size="18px" line-height="1.6" color="#4A5167" />
+      <mj-class name="caption" font-size="13px" color="#8B92A8" line-height="1.5" />
+    </mj-attributes>
+    <mj-style>
+      .gradient-overlay { background: linear-gradient(180deg, rgba(10,14,39,0) 0%, rgba(10,14,39,0.85) 100%); }
+      .pill { display: inline-block; padding: 6px 14px; border-radius: 999px; background: #F4EFEA; font-size: 12px; font-weight: 600; color: #0A0E27; letter-spacing: 0.3px; }
+      .card-highlight { background: #FFF8F0; border-radius: 12px; padding: 24px; border-left: 4px solid {{ brand.color_primary | default: '#FF5A1F' }}; }
+      .badge-number { display: inline-block; width: 48px; height: 48px; line-height: 48px; text-align: center; border-radius: 50%; background: {{ brand.color_primary | default: '#FF5A1F' }}; color: #FFFFFF; font-size: 20px; font-weight: 800; margin-bottom: 12px; }
+      @media only screen and (max-width: 600px) {
+        .display-mobile { font-size: 38px !important; line-height: 1.1 !important; }
+        .h2-mobile { font-size: 24px !important; }
+      }
+    </mj-style>
+  </mj-head>
+
+  <mj-body background-color="#F4EFEA" width="600px">
+
+    <!-- HEADER -->
+    <mj-section background-color="#FFFFFF" padding="20px 24px">
+      <mj-column width="70%">
+        <mj-image src="{{ brand.logo_url | default: 'https://placehold.co/140x44/0A0E27/FFFFFF/png?text=ACADEMIA' }}" alt="{{ brand.name }}" width="140px" align="left" padding="0" />
+      </mj-column>
+      <mj-column width="30%">
+        <mj-text align="right" font-size="11px" color="#8B92A8" font-weight="700" letter-spacing="2px" padding="12px 0 0" text-transform="uppercase">
+          {{ mes_referencia }}
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- HERO IMAGE FULL-BLEED -->
+    <mj-section padding="0">
+      <mj-column>
+        <mj-image src="{{ hero_image | default: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1280&q=85' }}" alt="" padding="0" fluid-on-mobile="true" />
+      </mj-column>
+    </mj-section>
+
+    <!-- HERO TEXT SECTION -->
+    <mj-section background-color="#0A0E27" padding="40px 24px 48px">
+      <mj-column>
+        <mj-text mj-class="eyebrow" color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="0 0 20px">
+          ▸ Seu resumo do mês
+        </mj-text>
+        <mj-text mj-class="display" css-class="display-mobile" color="#FFFFFF" padding="0 0 24px">
+          {{ mes_referencia }}: tudo que rolou.
+        </mj-text>
+        <mj-text font-size="18px" color="#C8CCDB" line-height="1.65" padding="0">
+          Novidades na academia, eventos que chegam e dica direto do nosso time pra você não ficar pra trás.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- 3 HIGHLIGHTS CARDS -->
+    <mj-section background-color="#F4EFEA" padding="80px 40px">
+      <mj-column>
+        <mj-text mj-class="eyebrow" color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="0 0 16px">
+          Destaque
+        </mj-text>
+        <mj-text mj-class="h2" css-class="h2-mobile" padding="0 0 12px">
+          Três coisas que bombaram esse mês.
+        </mj-text>
+        <mj-text mj-class="lead" padding="0 0 48px">
+          Aula nova, evento que lotou e a cliente que mais evoluiu aqui com a gente.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#F4EFEA" padding="0 24px 16px">
+      <mj-column width="33%" padding="0 12px 0 0">
+        <mj-text style="background:#FFF8F0;border-radius:12px;padding:24px;border-left:4px solid {{ brand.color_primary | default: '#FF5A1F' }}">
+          <div style="display:inline-block;width:48px;height:48px;line-height:48px;text-align:center;border-radius:50%;background:{{ brand.color_primary | default: '#FF5A1F' }};color:#FFFFFF;font-size:20px;font-weight:800;margin-bottom:12px">01</div>
+          <div style="font-size:17px;font-weight:700;color:#0A0E27;margin-bottom:8px">Nova aula</div>
+          <div style="font-size:14px;color:#4A5167;line-height:1.55">{{ destaque1_titulo | default: 'Functional training começou nesse mês. Turmas de manhã e noite.' }}</div>
+        </mj-text>
+      </mj-column>
+      <mj-column width="33%" padding="0 12px">
+        <mj-text style="background:#FFF8F0;border-radius:12px;padding:24px;border-left:4px solid #C4FF00">
+          <div style="display:inline-block;width:48px;height:48px;line-height:48px;text-align:center;border-radius:50%;background:#C4FF00;color:#0A0E27;font-size:20px;font-weight:800;margin-bottom:12px">02</div>
+          <div style="font-size:17px;font-weight:700;color:#0A0E27;margin-bottom:8px">Evento em destaque</div>
+          <div style="font-size:14px;color:#4A5167;line-height:1.55">{{ destaque2_titulo | default: 'Desafio de 30 dias no final do mês. Prêmio pra quem completar.' }}</div>
+        </mj-text>
+      </mj-column>
+      <mj-column width="33%" padding="0 0 0 12px">
+        <mj-text style="background:#FFF8F0;border-radius:12px;padding:24px;border-left:4px solid #8B92A8">
+          <div style="display:inline-block;width:48px;height:48px;line-height:48px;text-align:center;border-radius:50%;background:#8B92A8;color:#FFFFFF;font-size:20px;font-weight:800;margin-bottom:12px">03</div>
+          <div style="font-size:17px;font-weight:700;color:#0A0E27;margin-bottom:8px">Evolução do mês</div>
+          <div style="font-size:14px;color:#4A5167;line-height:1.55">{{ destaque3_titulo | default: 'Mariana T. ganhou 2kg de músculo e perdeu 3kg de gordura.' }}</div>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- TRAINER TIP SECTION -->
+    <mj-section background-color="#0A0E27" padding="40px 24px">
+      <mj-column>
+        <mj-text mj-class="eyebrow" color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="0 0 16px">
+          ▸ Dica de quem entende
+        </mj-text>
+        <mj-text font-size="28px" font-weight="600" color="#FFFFFF" line-height="1.4" letter-spacing="-0.4px" padding="0 0 32px">
+          "{{ dica_texto | default: 'Descida lenta, subida controlada. A maioria tá fazendo errado.' }}"
+        </mj-text>
+        <mj-table>
+          <tr>
+            <td width="64" style="vertical-align:middle;padding-right:16px">
+              <img src="https://i.pravatar.cc/96?img=25" width="64" height="64" style="border-radius:50%;display:block" alt="" />
+            </td>
+            <td style="vertical-align:middle">
+              <div style="font-size:15px;font-weight:700;color:#FFFFFF">{{ dica_autor | default: 'Lucas M.' }}</div>
+              <div style="font-size:12px;color:#8B92A8">{{ dica_cargo | default: 'Personal trainer · 8 anos de experiência' }}</div>
+            </td>
+          </tr>
+        </mj-table>
+      </mj-column>
+    </mj-section>
+
+    <!-- EVENTS CALENDAR -->
+    <mj-section background-color="#FFFFFF" padding="80px 40px 64px">
+      <mj-column>
+        <mj-text mj-class="eyebrow" color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="0 0 16px">
+          Agenda
+        </mj-text>
+        <mj-text mj-class="h2" css-class="h2-mobile" padding="0 0 12px">
+          O que vem chegando.
+        </mj-text>
+        <mj-text mj-class="lead" padding="0 0 48px">
+          Eventos, workshops e aulas especiais que rodam por aqui.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#FFFFFF" padding="0 24px 40px">
+      <mj-column>
+        <mj-table width="100%">
+          <tr style="border-bottom:2px solid #E8EAED;padding:20px 0">
+            <td style="padding:20px 0;vertical-align:middle;width:20%">
+              <div style="font-size:13px;font-weight:700;color:#0A0E27">Data</div>
+              <div style="font-size:16px;font-weight:800;color:{{ brand.color_primary | default: '#FF5A1F' }};margin-top:4px">{{ evento1_data | default: '15/04' }}</div>
+            </td>
+            <td style="padding:20px 0 20px 20px;vertical-align:middle">
+              <div style="font-size:16px;font-weight:700;color:#0A0E27;margin-bottom:6px">{{ evento1_titulo | default: 'Aula aberta de BoxeClass' }}</div>
+              <div style="font-size:13px;color:#8B92A8">{{ evento1_horario | default: '18h · 30 vagas disponíveis' }}</div>
+            </td>
+          </tr>
+          <tr style="border-bottom:2px solid #E8EAED;padding:20px 0">
+            <td style="padding:20px 0;vertical-align:middle;width:20%">
+              <div style="font-size:13px;font-weight:700;color:#0A0E27">Data</div>
+              <div style="font-size:16px;font-weight:800;color:{{ brand.color_primary | default: '#FF5A1F' }};margin-top:4px">{{ evento2_data | default: '22/04' }}</div>
+            </td>
+            <td style="padding:20px 0 20px 20px;vertical-align:middle">
+              <div style="font-size:16px;font-weight:700;color:#0A0E27;margin-bottom:6px">{{ evento2_titulo | default: 'Workshop: Recuperação muscular' }}</div>
+              <div style="font-size:13px;color:#8B92A8">{{ evento2_horario | default: '19h30 · com nutricionista' }}</div>
+            </td>
+          </tr>
+          <tr style="padding:20px 0">
+            <td style="padding:20px 0;vertical-align:middle;width:20%">
+              <div style="font-size:13px;font-weight:700;color:#0A0E27">Data</div>
+              <div style="font-size:16px;font-weight:800;color:{{ brand.color_primary | default: '#FF5A1F' }};margin-top:4px">{{ evento3_data | default: '29/04' }}</div>
+            </td>
+            <td style="padding:20px 0 20px 20px;vertical-align:middle">
+              <div style="font-size:16px;font-weight:700;color:#0A0E27;margin-bottom:6px">{{ evento3_titulo | default: 'Desafio de força: levantamento máximo' }}</div>
+              <div style="font-size:13px;color:#8B92A8">{{ evento3_horario | default: '17h · inscrição aberta' }}</div>
+            </td>
+          </tr>
+        </mj-table>
+      </mj-column>
+    </mj-section>
+
+    <!-- CTA SECTION -->
+    <mj-section background-color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="40px 24px">
+      <mj-column>
+        <mj-text mj-class="eyebrow" color="#FFFFFF" padding="0 0 16px">
+          Próximo passo
+        </mj-text>
+        <mj-text font-size="38px" font-weight="800" color="#FFFFFF" line-height="1.1" letter-spacing="-1px" padding="0 0 24px">
+          Quer saber mais?
+        </mj-text>
+        <mj-text font-size="16px" color="#FFFFFF" line-height="1.6" padding="0 0 32px">
+          Todos os eventos têm inscrição no app ou na recepção. Vem com a gente!
+        </mj-text>
+        <mj-button href="{{ link_agendamento }}" align="left" background-color="#0A0E27" color="#FFFFFF">
+          Ver todos os eventos →
+        </mj-button>
+      </mj-column>
+    </mj-section>
+
+    <!-- FOOTER -->
+    <mj-section background-color="#0A0E27" padding="32px 24px 24px">
+      <mj-column>
+        <mj-image src="{{ brand.logo_url_white | default: 'https://placehold.co/140x44/0A0E27/FFFFFF/png?text=ACADEMIA' }}" alt="{{ brand.name }}" width="120px" align="left" padding="0 0 20px" />
+        <mj-text color="#8B92A8" font-size="13px" line-height="1.65" padding="0 0 16px">
+          <strong style="color:#FFFFFF">{{ brand.name }}</strong> — {{ unidade }}<br/>
+          {{ brand.address }}<br/>
+          CNPJ {{ brand.cnpj }}
+        </mj-text>
+        <mj-divider border-color="#1E2749" border-width="1px" padding="8px 0 16px" />
+        <mj-text color="#5A6378" font-size="11px" line-height="1.6" padding="0">
+          Você recebeu este email porque é aluno(a) de {{ unidade }}.<br/>
+          <a href="{{ link_unsubscribe }}" style="color:#8B92A8;text-decoration:underline">Descadastrar</a> · <a href="{{ brand.privacy_url }}" style="color:#8B92A8;text-decoration:underline">Privacidade</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+  </mj-body>
+</mjml>

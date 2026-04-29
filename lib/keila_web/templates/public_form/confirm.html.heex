@@ -1,0 +1,14 @@
+<div
+  class="contact-form container max-w-md mx-auto bg-white rounded-3xl py-8 pb-10 px-7 md:py-10 md:px-10 flex flex-col gap-6"
+  style={build_form_styles(@form)}
+>
+  {render_h1(@form)}
+
+  <KeilaWeb.PostConfirmation.post_confirmation
+    message={@confirmation_message}
+    action_message={@confirmation_action_message}
+    action_cta={@confirmation_action_cta}
+  />
+
+  {render_fine_print(@form)}
+</div>

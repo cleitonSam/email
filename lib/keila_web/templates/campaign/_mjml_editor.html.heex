@@ -1,0 +1,459 @@
+<div x-data="{mode: 'simple', ...imagePicker()}">
+<div id="mjml-editor-toolbar" class="w-full sticky top-0 z-10" phx-update="ignore">
+  <!-- TABS Simples / Avancado -->
+  <div class="flex bg-gray-900 border border-gray-800 rounded-t-xl mt-4 overflow-hidden">
+    <button type="button"
+      x-on:click.prevent="mode = 'simple'"
+      x-bind:class="mode === 'simple' ? 'bg-fluxo-500 text-white' : 'bg-gray-900 text-gray-300 hover:bg-gray-800'"
+      class="flex-1 flex items-center justify-center gap-2 px-4 h-11 text-sm font-semibold transition-colors">
+      <span class="text-base">✨</span>
+      <span>Simples</span>
+    </button>
+    <button type="button"
+      x-on:click.prevent="mode = 'advanced'"
+      x-bind:class="mode === 'advanced' ? 'bg-fluxo-500 text-white' : 'bg-gray-900 text-gray-300 hover:bg-gray-800'"
+      class="flex-1 flex items-center justify-center gap-2 px-4 h-11 text-sm font-semibold transition-colors border-l border-gray-800">
+      <span class="text-base">{}</span>
+      <span>Avancado (codigo)</span>
+    </button>
+  </div>
+
+  <!-- BARRA DE FERRAMENTAS (so no avancado) -->
+  <div x-show="mode === 'advanced'" x-cloak class="wysiwyg--menu bg-gray-800 relative shadow-lg z-10 flex overflow-x-auto border-l border-r border-gray-700/50">
+    <button
+      type="button"
+      title="Inserir imagem da biblioteca"
+      data-project-id={@current_project.id}
+      x-on:click.prevent="open('/projects/' + $el.dataset.projectId + '/media/list.json')"
+      class="flex items-center gap-1.5 px-3 h-10 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors text-xs font-medium"
+    >
+      <span class="inline-flex h-4 w-4 flex-shrink-0">{render_icon(:photograph)}</span>
+      <span>Inserir imagem</span>
+    </button>
+    <a
+      title="Gerenciar biblioteca de imagens"
+      href={"/projects/" <> @current_project.id <> "/media"}
+      target="_blank"
+      class="flex items-center gap-1.5 px-3 h-10 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors text-xs font-medium border-l border-gray-700/50"
+    >
+      <span class="inline-flex h-4 w-4 flex-shrink-0">{render_icon(:cog)}</span>
+      <span>Gerenciar</span>
+    </a>
+    <button
+      type="button"
+      title="Ajustar email com IA"
+      onclick={"document.getElementById('ai-modal-" <> @current_project.id <> "').classList.remove('hidden')"}
+      class="flex items-center gap-1.5 px-3 h-10 bg-gradient-to-r from-fluxo-500/20 to-cyan-500/20 hover:from-fluxo-500/30 hover:to-cyan-500/30 text-fluxo-200 transition-colors text-xs font-bold border-l border-gray-700/50"
+    >
+      <span class="text-base">[IA]</span>
+      <span>Ajustar com IA</span>
+    </button>
+    <button
+      type="button"
+      title={gettext("Expand editor")}
+      class="flex w-10 h-10 p-2 items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors flex-shrink-0"
+      @click.prevent="$dispatch('x-toggle-expand-editor')"
+    >
+      <span class="inline-flex h-4 w-4">{render_icon(:arrows_expand)}</span>
+    </button>
+
+    <div class="flex-grow"></div>
+
+    <button
+      type="button"
+      title={gettext("Preview")}
+      class="flex w-10 h-10 p-2 items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors flex-shrink-0"
+      @click.prevent="$dispatch('x-toggle-preview')"
+    >
+      <span class="inline-flex h-4 w-4">{render_icon(:eye)}</span>
+    </button>
+  </div>
+
+  <!-- BARRA DE FERRAMENTAS SIMPLES -->
+  <div x-show="mode === 'simple'" x-cloak class="bg-gray-800 flex overflow-x-auto border-l border-r border-gray-700/50">
+    <button
+      type="button"
+      title="Ajustar email com IA"
+      onclick={"document.getElementById('ai-modal-" <> @current_project.id <> "').classList.remove('hidden')"}
+      class="flex items-center gap-1.5 px-3 h-10 bg-gradient-to-r from-fluxo-500/20 to-cyan-500/20 hover:from-fluxo-500/30 hover:to-cyan-500/30 text-fluxo-200 transition-colors text-xs font-bold"
+    >
+      <span class="text-base">[IA]</span>
+      <span>Ajustar com IA</span>
+    </button>
+    <a
+      title="Gerenciar biblioteca de imagens"
+      href={"/projects/" <> @current_project.id <> "/media"}
+      target="_blank"
+      class="flex items-center gap-1.5 px-3 h-10 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors text-xs font-medium border-l border-gray-700/50"
+    >
+      <span class="inline-flex h-4 w-4 flex-shrink-0">{render_icon(:photograph)}</span>
+      <span>Galeria de imagens</span>
+    </a>
+    <div class="flex-grow"></div>
+    <button
+      type="button"
+      title="Preview ao vivo"
+      class="flex w-10 h-10 p-2 items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors flex-shrink-0"
+      @click.prevent="$dispatch('x-toggle-preview')"
+    >
+      <span class="inline-flex h-4 w-4">{render_icon(:eye)}</span>
+    </button>
+  </div>
+
+  <!-- MODAL DO PICKER (inline, mesma tela) -->
+  <div
+    x-show="isOpen"
+    x-cloak
+    x-on:keydown.escape.window="close()"
+    class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+    x-on:click.self="close()"
+  >
+    <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-4xl w-full max-h-[85vh] overflow-hidden flex flex-col shadow-2xl">
+      <!-- Header -->
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-800">
+        <div>
+          <h3 class="text-lg font-bold text-white" x-text="targetField ? 'Trocar imagem' : 'Inserir imagem'"></h3>
+          <p class="text-xs text-gray-400 mt-0.5" x-text="targetField ? `Clica numa imagem pra usar no campo` : `${assets.length} imagens disponiveis - clique pra copiar URL`"></p>
+        </div>
+        <button type="button" x-on:click="close()" class="text-gray-400 hover:text-white"><span class="inline-flex h-5 w-5">{render_icon(:x)}</span></button>
+      </div>
+
+      <!-- Loading -->
+      <div x-show="loading" class="flex-1 flex items-center justify-center p-12">
+        <div class="text-gray-400">Carregando imagens...</div>
+      </div>
+
+      <!-- Empty state -->
+      <div x-show="!loading && assets.length === 0" class="flex-1 flex flex-col items-center justify-center p-12 text-center">
+        <span class="text-5xl mb-4">[img]</span>
+        <p class="text-white font-semibold mb-2">Nenhuma imagem na biblioteca ainda</p>
+        <p class="text-sm text-gray-400 mb-5">Faca o upload primeiro pra usar nos emails.</p>
+        <a
+          href={"/projects/" <> @current_project.id <> "/media"}
+          target="_blank"
+          class="px-4 py-2 bg-fluxo-500 hover:bg-fluxo-600 text-white rounded-lg text-sm font-semibold"
+        >
+          Abrir biblioteca
+        </a>
+      </div>
+
+      <!-- Grid de imagens -->
+      <div x-show="!loading && assets.length > 0" class="flex-1 overflow-y-auto p-6">
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+          <template x-for="asset in assets" x-bind:key="asset.id">
+            <button
+              type="button"
+              x-on:click="pick(asset.url, asset.filename)"
+              class="group relative aspect-square bg-gray-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-fluxo-500 transition"
+            >
+              <img x-bind:src="asset.thumbnail_url" x-bind:alt="asset.filename" loading="lazy" class="w-full h-full object-cover" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent opacity-0 group-hover:opacity-100 transition flex flex-col justify-end p-2.5">
+                <div class="text-xs font-semibold text-white truncate" x-text="asset.filename"></div>
+                <div class="text-[10px] text-fluxo-300 mt-0.5" x-text="targetField ? 'Clique pra usar' : 'Clique pra copiar URL'"></div>
+              </div>
+              <span x-show="asset.folder !== 'geral'" class="absolute top-1.5 right-1.5 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-black/70 text-white rounded" x-text="asset.folder"></span>
+            </button>
+          </template>
+        </div>
+      </div>
+
+      <!-- Footer com mensagem de copia -->
+      <div x-show="copiedUrl" x-transition class="px-6 py-3 bg-fluxo-500/20 border-t border-fluxo-500/30 text-fluxo-200 text-sm flex items-center gap-2">
+        <span class="text-lg">OK</span>
+        <span x-text="targetField ? 'Imagem trocada! O preview atualiza em segundos.' : 'URL copiada! Cola no codigo MJML.'"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MODO SIMPLES ============ -->
+  <div x-show="mode === 'simple'" x-cloak class="border-l border-r border-b border-gray-700/50 bg-gray-950 rounded-b-xl p-4 sm:p-6 max-h-[80vh] overflow-y-auto">
+    <div class="bg-fluxo-500/10 border border-fluxo-500/30 rounded-xl p-4 mb-5 flex items-start gap-3">
+      <span class="text-2xl">[?]</span>
+      <div>
+        <h3 class="font-semibold text-white text-sm">Modo Simples</h3>
+        <p class="text-xs text-gray-300 mt-0.5">Edita os textos, botoes e imagens do email sem mexer no codigo. Mudancas aparecem no preview ao lado em segundos. Usa a aba "Avancado" se precisar de controle total.</p>
+      </div>
+    </div>
+
+    <% simple_fields = assigns[:simple_fields] || [] %>
+    <%= if simple_fields == [] do %>
+      <div class="bg-gray-900/40 border border-gray-800 rounded-xl p-8 text-center text-gray-400 text-sm">
+        Nenhum campo editavel encontrado neste email. Use o modo Avancado para editar o codigo MJML diretamente.
+      </div>
+    <% else %>
+      <div class="space-y-4">
+        <%= for field <- simple_fields do %>
+          <div class="bg-gray-900/60 border border-gray-800 rounded-xl p-4">
+            <label class="block text-xs uppercase tracking-wider text-fluxo-300 font-semibold mb-2">
+              {field.label}
+            </label>
+            <%= case field.type do %>
+              <% :text -> %>
+                <textarea name={"simple[" <> field.id <> "]"} rows="3" phx-debounce="800"
+                  class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-3 py-2 text-sm font-mono"><%= field.value %></textarea>
+                <p class="text-[10px] text-gray-500 mt-1">
+                  Pode usar &lt;br/&gt; pra quebrar linha, &lt;strong&gt; pra negrito, ou variaveis &#123;&#123; first_name &#125;&#125;
+                </p>
+
+              <% :button -> %>
+                <input type="text" name={"simple[" <> field.id <> "]"} value={String.trim(field.value)} phx-debounce="800"
+                  class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-3 py-2 text-sm" />
+
+              <% :button_link -> %>
+                <input type="text" name={"simple[" <> field.id <> "]"} value={field.value} phx-debounce="800"
+                  placeholder="https://..."
+                  class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-3 py-2 text-sm font-mono" />
+                <p class="text-[10px] text-gray-500 mt-1">Use a URL completa (https://...) ou uma variavel &#123;&#123; link_xxx &#125;&#125;</p>
+
+              <% :image_src -> %>
+                <div class="flex items-start gap-3">
+                  <div class="w-24 h-24 bg-gray-800 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center">
+                    <%= cond do %>
+                      <% String.starts_with?(field.value, "{{") -> %>
+                        <div class="text-center text-[10px] text-gray-400 px-2">Variavel<br/>da marca</div>
+                      <% String.starts_with?(field.value, "http") -> %>
+                        <img src={field.value} alt="" class="max-w-full max-h-full object-contain" />
+                      <% true -> %>
+                        <div class="text-center text-[10px] text-gray-500">sem<br/>preview</div>
+                    <% end %>
+                  </div>
+                  <div class="flex-1 space-y-2">
+                    <input type="text" name={"simple[" <> field.id <> "]"} value={field.value} phx-debounce="800"
+                      class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-3 py-2 text-xs font-mono" />
+                    <button type="button"
+                      data-target={field.id}
+                      data-project-id={@current_project.id}
+                      x-on:click.prevent="openForField($el.dataset.target, '/projects/' + $el.dataset.projectId + '/media/list.json')"
+                      class="text-xs text-fluxo-300 hover:text-fluxo-200 font-semibold flex items-center gap-1.5">
+                      <span class="inline-flex h-3 w-3">{render_icon(:photograph)}</span>
+                      Escolher da biblioteca
+                    </button>
+                  </div>
+                </div>
+
+              <% :image_alt -> %>
+                <input type="text" name={"simple[" <> field.id <> "]"} value={field.value} phx-debounce="800"
+                  placeholder="Descricao da imagem"
+                  class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-3 py-2 text-sm" />
+                <p class="text-[10px] text-gray-500 mt-1">Texto que aparece se a imagem nao carregar (acessibilidade)</p>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script>
+  function imagePicker() {
+    return {
+      isOpen: false,
+      loading: false,
+      assets: [],
+      copiedUrl: false,
+      targetField: null,
+      open(url) {
+        this.targetField = null;
+        this.isOpen = true;
+        this.loading = true;
+        this.assets = [];
+        this.copiedUrl = false;
+        fetch(url)
+          .then(r => r.json())
+          .then(data => { this.assets = data.assets || []; this.loading = false; })
+          .catch(e => { console.error(e); this.loading = false; });
+      },
+      openForField(fieldId, url) {
+        this.open(url);
+        this.targetField = fieldId;
+      },
+      close() {
+        this.isOpen = false;
+        this.copiedUrl = false;
+        this.targetField = null;
+      },
+      pick(url, filename) {
+        if (this.targetField) {
+          // Modo Simples: troca o valor do input correspondente e dispara change
+          const input = document.querySelector('input[name="simple[' + this.targetField + ']"]');
+          if (input) {
+            input.value = url;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+            this.copiedUrl = true;
+            setTimeout(() => { this.close(); }, 800);
+          }
+        } else {
+          // Modo Avancado: copia URL pro clipboard
+          navigator.clipboard.writeText(url).then(() => {
+            this.copiedUrl = true;
+            setTimeout(() => { this.copiedUrl = false; }, 3000);
+          });
+        }
+      }
+    }
+  }
+</script>
+
+<!-- Modal IA: ajustar MJML com prompt em linguagem natural -->
+<!-- phx-update=ignore IMPEDE o LiveView de re-renderizar e perder o estado do modal/textarea -->
+<div id="ai-modal-wrapper" phx-update="ignore">
+<div id={"ai-modal-" <> @current_project.id} class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl">
+    <div class="flex justify-between items-start mb-5">
+      <div>
+        <h3 class="text-xl font-bold text-white flex items-center gap-2">
+          <span class="text-2xl">[IA]</span> Ajustar com IA
+        </h3>
+        <p class="text-sm text-gray-400 mt-1">Descreve em portugues o que voce quer mudar.</p>
+      </div>
+      <button type="button" onclick={"document.getElementById('ai-modal-" <> @current_project.id <> "').classList.add('hidden')"} class="text-gray-400 hover:text-white text-2xl">x</button>
+    </div>
+
+    <textarea
+      id={"ai-prompt-" <> @current_project.id}
+      rows="4"
+      placeholder="Ex: deixa o tom mais informal, encurta o email pela metade, troca o titulo por algo sobre Black Friday, adiciona urgencia no CTA..."
+      class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-3 text-sm mb-3"
+    ></textarea>
+
+    <p class="text-xs text-gray-500 mb-3">Sugestoes rapidas:</p>
+    <div id={"ai-suggestions-" <> @current_project.id} class="flex flex-wrap gap-2 mb-5">
+      <%= for s <- ["Encurtar pela metade", "Tom mais informal", "Adicionar urgencia", "Trocar todas as cores pra mais vibrantes", "Adicionar emoji nos titulos", "Reescrever em pt-BR mais coloquial"] do %>
+        <button
+          type="button"
+          onclick={"document.getElementById('ai-prompt-" <> @current_project.id <> "').value='" <> s <> "'"}
+          class="px-3 py-1.5 text-xs bg-gray-800 hover:bg-fluxo-500/20 hover:text-fluxo-300 text-gray-300 rounded-lg border border-gray-700 transition"
+        >{s}</button>
+      <% end %>
+    </div>
+
+    <div id={"ai-status-" <> @current_project.id} class="hidden text-sm text-fluxo-300 mb-3">IA pensando... (pode levar 5-15 segundos)</div>
+    <div id={"ai-error-" <> @current_project.id} class="hidden bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-sm text-red-300 mb-3"></div>
+
+    <div class="flex gap-3">
+      <button
+        type="button"
+        onclick={"document.getElementById('ai-modal-" <> @current_project.id <> "').classList.add('hidden')"}
+        class="button"
+      >Cancelar</button>
+      <button
+        id={"ai-submit-" <> @current_project.id}
+        type="button"
+        data-project-id={@current_project.id}
+        onclick="window.runAIEdit(this)"
+        class="flex-1 button button--cta"
+      >Ajustar email</button>
+    </div>
+
+    <p class="text-xs text-gray-500 mt-4 text-center">
+      ~$0.005 por edicao - Modelo: Gemini 2.5 Flash
+    </p>
+  </div>
+</div>
+</div>
+
+<script>
+  window.runAIEdit = async function(btn) {
+    const projectId = btn.dataset.projectId;
+    const promptEl = document.getElementById('ai-prompt-' + projectId);
+    const statusEl = document.getElementById('ai-status-' + projectId);
+    const errorEl = document.getElementById('ai-error-' + projectId);
+    const modalEl = document.getElementById('ai-modal-' + projectId);
+
+    const instruction = promptEl.value.trim();
+    if (!instruction) { errorEl.textContent = 'Diz o que voce quer mudar'; errorEl.classList.remove('hidden'); return; }
+
+    const textarea = document.querySelector('textarea[name="campaign[mjml_body]"]');
+    if (!textarea) { errorEl.textContent = 'Editor MJML nao encontrado.'; errorEl.classList.remove('hidden'); return; }
+
+    statusEl.classList.remove('hidden');
+    errorEl.classList.add('hidden');
+    btn.disabled = true; btn.textContent = 'Processando...';
+
+    try {
+      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+      const resp = await fetch(`/projects/${projectId}/ai/edit-mjml`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-csrf-token': csrfToken,
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ mjml: textarea.value, instruction })
+      });
+
+      const data = await resp.json();
+
+      if (!resp.ok) {
+        errorEl.textContent = data.error || 'Erro desconhecido';
+        errorEl.classList.remove('hidden');
+        statusEl.classList.add('hidden');
+        btn.disabled = false; btn.textContent = 'Ajustar email';
+        return;
+      }
+
+      textarea.value = data.mjml;
+      textarea.dispatchEvent(new Event('input', { bubbles: true }));
+      textarea.dispatchEvent(new Event('change', { bubbles: true }));
+
+      const cm = document.querySelector('.CodeMirror');
+      if (cm && cm.CodeMirror) cm.CodeMirror.setValue(data.mjml);
+
+      modalEl.classList.add('hidden');
+      promptEl.value = '';
+      btn.disabled = false; btn.textContent = 'Ajustar email';
+      statusEl.classList.add('hidden');
+      alert('Email ajustado pela IA. Confere o preview e salva.');
+    } catch (e) {
+      errorEl.textContent = 'Erro: ' + e.message;
+      errorEl.classList.remove('hidden');
+      statusEl.classList.add('hidden');
+      btn.disabled = false; btn.textContent = 'Ajustar email';
+    }
+  };
+</script>
+
+<!-- Editor avancado de codigo + preview iframe -->
+<div x-show="mode === 'advanced'" x-cloak>
+<div id="mjml-editor-wrapper" phx-update="ignore">
+  <div
+    class="flex"
+    x-data="{editorExpanded: false}"
+    x-on:x-toggle-expand-editor.document="editorExpanded = !editorExpanded"
+  >
+    <%!--
+    NOTE: using width: 0 for the editor is a weird hack here because otherwise the editor kept
+    causing the entire page to overflow.
+    The width of the editor is controlled via the (inverse) width of the iframe instead.
+   --%>
+    <div class="flex-grow transition-all" style="width: 0">
+      <div id="mjml-editor" class="editor"></div>
+    </div>
+    <iframe
+      id="html-inline-preview"
+      src="about:blank"
+      class="transition-all"
+      x-bind:class="editorExpanded ? 'w-0' : 'w-3/5'"
+    >
+    </iframe>
+  </div>
+</div>
+</div>
+
+<.form :let={f} for={@changeset}>
+  {textarea(f, :mjml_body,
+    rows: 20,
+    class: "hidden",
+    phx_debounce: "1000"
+  )}
+</.form>
+<div
+  id="html-preview-data"
+  phx-hook="HtmlPreview"
+  class="hidden"
+  data-iframe="#html-inline-preview, #html-preview"
+>
+  {@preview}
+</div>
+</div>

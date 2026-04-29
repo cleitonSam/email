@@ -1,0 +1,186 @@
+<mjml>
+  <mj-head>
+    <mj-title>{{ first_name }}, está na hora de medir sua evolução</mj-title>
+    <mj-preview>Avaliação física gratuita — descubra onde você está pra ir mais longe.</mj-preview>
+    <mj-attributes>
+      <mj-all font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" />
+      <mj-text color="#0A0E27" font-size="16px" line-height="1.65" />
+      <mj-button background-color="{{ brand.color_primary | default: '#FF5A1F' }}" color="#FFFFFF" font-size="15px" font-weight="700" padding="0" inner-padding="18px 36px" border-radius="999px" />
+      <mj-section padding="0" />
+      <mj-class name="eyebrow" font-size="11px" font-weight="700" letter-spacing="2.5px" text-transform="uppercase" />
+      <mj-class name="display" font-size="56px" font-weight="800" line-height="1.05" letter-spacing="-1.5px" />
+      <mj-class name="h2" font-size="32px" font-weight="700" line-height="1.2" letter-spacing="-0.5px" />
+      <mj-class name="lead" font-size="18px" line-height="1.6" color="#4A5167" />
+      <mj-class name="caption" font-size="13px" color="#8B92A8" line-height="1.5" />
+    </mj-attributes>
+    <mj-style>
+      .stat-card { background: #FFF8F0; border-radius: 12px; padding: 32px; border-top: 4px solid {{ brand.color_primary | default: '#FF5A1F' }}; }
+      .stat-value { font-size: 48px; font-weight: 800; color: {{ brand.color_primary | default: '#FF5A1F' }}; line-height: 1; margin-bottom: 8px; }
+      .stat-label { font-size: 13px; font-weight: 700; color: #8B92A8; letter-spacing: 1px; text-transform: uppercase; }
+      @media only screen and (max-width: 600px) {
+        .display-mobile { font-size: 38px !important; line-height: 1.1 !important; }
+        .h2-mobile { font-size: 24px !important; }
+        .stat-value { font-size: 36px !important; }
+      }
+    </mj-style>
+  </mj-head>
+
+  <mj-body background-color="#F4EFEA" width="600px">
+
+    <!-- HEADER -->
+    <mj-section background-color="#FFFFFF" padding="20px 24px">
+      <mj-column width="100%">
+        <mj-image src="{{ brand.logo_url | default: 'https://placehold.co/140x44/0A0E27/FFFFFF/png?text=ACADEMIA' }}" alt="{{ brand.name }}" width="140px" align="left" padding="0" />
+      </mj-column>
+    </mj-section>
+
+    <!-- HERO IMAGE FULL-BLEED -->
+    <mj-section padding="0">
+      <mj-column>
+        <mj-image src="{{ hero_image | default: 'https://images.unsplash.com/photo-1517963879433-6ad2b056d712?w=1280&q=85' }}" alt="" padding="0" fluid-on-mobile="true" />
+      </mj-column>
+    </mj-section>
+
+    <!-- HERO TEXT SECTION -->
+    <mj-section background-color="#0A0E27" padding="40px 24px 48px">
+      <mj-column>
+        <mj-text mj-class="eyebrow" color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="0 0 20px">
+          ▸ Avaliação física
+        </mj-text>
+        <mj-text mj-class="display" css-class="display-mobile" color="#FFFFFF" padding="0 0 24px">
+          {{ first_name }}, está na hora.
+        </mj-text>
+        <mj-text font-size="18px" color="#C8CCDB" line-height="1.65" padding="0">
+          Faz um tempo. Você mudou. A gente quer entender aonde você tá pra desenhar a próxima fase do seu treino com precisão.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- 3 STATS -->
+    <mj-section background-color="#0A0E27" padding="0 24px 40px">
+      <mj-column width="33%" padding="0 12px 0 0">
+        <mj-table width="100%">
+          <tr>
+            <td style="background:#FFF8F0;border-radius:12px;padding:32px;border-top:4px solid {{ brand.color_primary | default: '#FF5A1F' }}">
+              <div style="font-size:30px;font-weight:800;word-wrap:break-word;color:{{ brand.color_primary | default: '#FF5A1F' }};line-height:1;margin-bottom:8px">{{ composicao_percentual | default: '+3.2%' }}</div>
+              <div style="font-size:13px;font-weight:700;color:#8B92A8;letter-spacing:1px;text-transform:uppercase">Massa magra</div>
+            </td>
+          </tr>
+        </mj-table>
+      </mj-column>
+      <mj-column width="33%" padding="0 12px">
+        <mj-table width="100%">
+          <tr>
+            <td style="background:#FFF8F0;border-radius:12px;padding:32px;border-top:4px solid #C4FF00">
+              <div style="font-size:30px;font-weight:800;word-wrap:break-word;color:#C4FF00;line-height:1;margin-bottom:8px">{{ forca_percentual | default: '+12%' }}</div>
+              <div style="font-size:13px;font-weight:700;color:#8B92A8;letter-spacing:1px;text-transform:uppercase">Força</div>
+            </td>
+          </tr>
+        </mj-table>
+      </mj-column>
+      <mj-column width="33%" padding="0 0 0 12px">
+        <mj-table width="100%">
+          <tr>
+            <td style="background:#FFF8F0;border-radius:12px;padding:32px;border-top:4px solid #8B92A8">
+              <div style="font-size:30px;font-weight:800;word-wrap:break-word;color:#8B92A8;line-height:1;margin-bottom:8px">{{ condicionamento_percentual | default: '+8%' }}</div>
+              <div style="font-size:13px;font-weight:700;color:#8B92A8;letter-spacing:1px;text-transform:uppercase">Condicionamento</div>
+            </td>
+          </tr>
+        </mj-table>
+      </mj-column>
+    </mj-section>
+
+    <!-- WHAT WE MEASURE -->
+    <mj-section background-color="#FFFFFF" padding="80px 40px 64px">
+      <mj-column>
+        <mj-text mj-class="eyebrow" color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="0 0 16px">
+          O que a gente acompanha
+        </mj-text>
+        <mj-text mj-class="h2" css-class="h2-mobile" padding="0 0 12px">
+          Dos números que importam.
+        </mj-text>
+        <mj-text mj-class="lead" padding="0 0 48px">
+          Composição corporal, força, flexibilidade, resistência. Tudo que o espelho não conta.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#FFFFFF" padding="0 24px 16px">
+      <mj-column width="33%" padding="0 12px 0 0">
+        <mj-text css-class="number-mega" padding="0 0 16px">01</mj-text>
+        <mj-text font-size="17px" font-weight="700" color="#0A0E27" padding="0 0 8px">Composição corporal</mj-text>
+        <mj-text font-size="14px" color="#4A5167" line-height="1.55" padding="0">Percentual de gordura, massa magra, hidratação. O que muda de verdade.</mj-text>
+      </mj-column>
+      <mj-column width="33%" padding="0 12px">
+        <mj-text css-class="number-mega" padding="0 0 16px">02</mj-text>
+        <mj-text font-size="17px" font-weight="700" color="#0A0E27" padding="0 0 8px">Força funcional</mj-text>
+        <mj-text font-size="14px" color="#4A5167" line-height="1.55" padding="0">Quanto você consegue levantar, como seus músculos respondem, onde tá fraco.</mj-text>
+      </mj-column>
+      <mj-column width="33%" padding="0 0 0 12px">
+        <mj-text css-class="number-mega" padding="0 0 16px">03</mj-text>
+        <mj-text font-size="17px" font-weight="700" color="#0A0E27" padding="0 0 8px">Resistência cardio</mj-text>
+        <mj-text font-size="14px" color="#4A5167" line-height="1.55" padding="0">Capacidade aeróbica, zona ideal de treino, recuperação, potência máxima.</mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- TESTIMONIAL SECTION -->
+    <mj-section background-color="#0A0E27" padding="40px 24px">
+      <mj-column>
+        <mj-divider border-color="#1E2749" border-width="1px" padding="0 0 48px" />
+        <mj-text font-size="28px" font-weight="600" color="#FFFFFF" line-height="1.4" letter-spacing="-0.4px" padding="0 0 32px">
+          "Saí da avaliação com um plano que finalmente fazia sentido pra minha rotina. Não sabia que eu tava tão fraco nos membros inferiores."
+        </mj-text>
+        <mj-table>
+          <tr>
+            <td width="48" style="vertical-align:middle;padding-right:12px">
+              <img src="https://i.pravatar.cc/96?img=32" width="48" height="48" style="border-radius:50%;display:block" alt="" />
+            </td>
+            <td style="vertical-align:middle">
+              <div style="font-size:14px;font-weight:700;color:#FFFFFF">Renata S.</div>
+              <div style="font-size:12px;color:#8B92A8">Aluna há 8 meses · {{ unidade }}</div>
+            </td>
+          </tr>
+        </mj-table>
+      </mj-column>
+    </mj-section>
+
+    <!-- CTA SECTION -->
+    <mj-section background-color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="40px 24px">
+      <mj-column>
+        <mj-text mj-class="eyebrow" color="#FFFFFF" padding="0 0 16px">
+          Próximo passo
+        </mj-text>
+        <mj-text font-size="38px" font-weight="800" color="#FFFFFF" line-height="1.1" letter-spacing="-1px" padding="0 0 24px">
+          Vamos medir seu progresso?
+        </mj-text>
+        <mj-text font-size="16px" color="#FFFFFF" line-height="1.6" padding="0 0 32px">
+          30 minutos, resultado em mãos, novo plano de treino. Sem fila, sem espera.
+        </mj-text>
+        <mj-button href="{{ link_avaliacao }}" align="left" background-color="#0A0E27" color="#FFFFFF">
+          Agendar avaliação física →
+        </mj-button>
+        <mj-text font-size="13px" color="#FFE5D6" padding="20px 0 0">
+          Ou whatsapp: <a href="{{ brand.whatsapp_url }}" style="color:#FFFFFF;text-decoration:underline;font-weight:600">clica aqui</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- FOOTER -->
+    <mj-section background-color="#0A0E27" padding="32px 24px 24px">
+      <mj-column>
+        <mj-image src="{{ brand.logo_url_white | default: 'https://placehold.co/140x44/0A0E27/FFFFFF/png?text=ACADEMIA' }}" alt="{{ brand.name }}" width="120px" align="left" padding="0 0 20px" />
+        <mj-text color="#8B92A8" font-size="13px" line-height="1.65" padding="0 0 16px">
+          <strong style="color:#FFFFFF">{{ brand.name }}</strong> — {{ unidade }}<br/>
+          {{ brand.address }}<br/>
+          CNPJ {{ brand.cnpj }}
+        </mj-text>
+        <mj-divider border-color="#1E2749" border-width="1px" padding="8px 0 16px" />
+        <mj-text color="#5A6378" font-size="11px" line-height="1.6" padding="0">
+          Você recebeu este email porque é aluno(a) de {{ unidade }}.<br/>
+          <a href="{{ link_unsubscribe }}" style="color:#8B92A8;text-decoration:underline">Descadastrar</a> · <a href="{{ brand.privacy_url }}" style="color:#8B92A8;text-decoration:underline">Privacidade</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+  </mj-body>
+</mjml>

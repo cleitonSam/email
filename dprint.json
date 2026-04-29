@@ -1,0 +1,24 @@
+{
+  "typescript": {
+    "semiColons": "asi",
+    "trailingCommas": "never"
+  },
+  "json": {},
+  "includes": ["**/*.{ts,tsx,js,jsx,cjs,mjs,json}"],
+  "excludes": [
+    "**/node_modules",
+    "**/*-lock.json",
+    "**/dist",
+    "deps",
+    "assets/static/vendor",
+    "priv/vendor",
+    "priv/static",
+    "**/priv/cldr",
+    "**/.elixir_ls",
+    "**/phoenix-colocated"
+  ],
+  "plugins": [
+    "https://plugins.dprint.dev/typescript-0.95.13.wasm",
+    "https://plugins.dprint.dev/json-0.21.1.wasm"
+  ]
+}

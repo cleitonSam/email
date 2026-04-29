@@ -1,0 +1,12 @@
+/*
+This is the main entrypoint for Tailwind/PostCSS.
+*/
+
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@import "./phoenix.css";
+
+@import "./styles.scss";
+@import "./_markdown_wysiwyg.scss";

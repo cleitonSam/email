@@ -1,0 +1,151 @@
+<div class="container flex py-8 sm:py-11 mb-6">
+  <div class="flex-grow gap-4 flex flex-col sm:flex-row sm:items-center">
+    <div class="flex items-center gap-4 flex-grow">
+      <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-fluxo-400 to-pink-400 flex items-center justify-center shadow-lg">
+        <span class="text-2xl">🎂</span>
+      </div>
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-bold text-white">Aniversariantes</h1>
+        <p class="text-sm text-gray-400 mt-1">Mensagem afetiva automática pros alunos no dia.</p>
+      </div>
+    </div>
+    <form action={"/projects/" <> @current_project.id <> "/aniversariantes/sync"} method="post" class="flex-shrink-0">
+      <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
+      <button type="submit" class="button button--cta">🔄 Sincronizar EVO agora</button>
+    </form>
+  </div>
+</div>
+
+<div class="container max-w-5xl pb-16">
+  <div class="bg-fluxo-500/10 border border-fluxo-500/30 rounded-xl p-4 mb-6">
+    <div class="flex items-start gap-3">
+      <span class="text-xl flex-shrink-0">💡</span>
+      <div class="text-sm text-gray-200 leading-relaxed">
+        <strong class="text-white">Como funciona o aniversário na EVO:</strong>
+        a data de nascimento <strong class="text-fluxo-300">só vem dos Members</strong> (alunos matriculados).
+        <strong class="text-amber-300">Oportunidades/Prospects não têm aniversário</strong> — são leads que ainda não viraram aluno.
+        Pra ter aniversariante, precisa ter Member ativo na EVO.
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+    <div class="bg-gray-900/60 border border-gray-800 rounded-xl p-4">
+      <p class="text-2xl font-bold text-fluxo-300">{@total_members}</p>
+      <p class="text-[11px] text-gray-400 uppercase tracking-wider mt-1">Members (alunos)</p>
+      <p class="text-[10px] text-gray-500 mt-1">com birth_date</p>
+    </div>
+    <div class="bg-gray-900/60 border border-gray-800 rounded-xl p-4">
+      <p class="text-2xl font-bold text-amber-300">{@total_prospects}</p>
+      <p class="text-[11px] text-gray-400 uppercase tracking-wider mt-1">Oportunidades</p>
+      <p class="text-[10px] text-gray-500 mt-1">sem birth_date</p>
+    </div>
+    <div class="bg-gray-900/60 border border-gray-800 rounded-xl p-4">
+      <p class="text-2xl font-bold text-pink-300">{@members_with_birthday}</p>
+      <p class="text-[11px] text-gray-400 uppercase tracking-wider mt-1">Com data nascimento</p>
+      <p class="text-[10px] text-gray-500 mt-1">de {@total_members} members</p>
+    </div>
+    <div class="bg-gray-900/60 border border-gray-800 rounded-xl p-4">
+      <p class={"text-2xl font-bold " <> if @automation_active, do: "text-emerald-300", else: "text-amber-300"}>
+        {if @automation_active, do: "Ativa", else: "Pausada"}
+      </p>
+      <p class="text-[11px] text-gray-400 uppercase tracking-wider mt-1">Automação</p>
+      <%= if not @automation_active do %>
+        <a href={"/projects/" <> @current_project.id <> "/automacoes"} class="text-[10px] text-fluxo-400 hover:underline mt-1 block">→ Ativar receita</a>
+      <% else %>
+        <p class="text-[10px] text-gray-500 mt-1">9h da manhã todo dia</p>
+      <% end %>
+    </div>
+  </div>
+
+  <%= if @today_birthdays != [] do %>
+    <div class="bg-gradient-to-r from-pink-500/10 to-fluxo-500/10 border border-pink-500/30 rounded-2xl p-6 mb-6">
+      <h2 class="text-lg font-bold text-white mb-3 flex items-center gap-2">
+        <span class="text-xl">🎉</span> Aniversariantes hoje ({length(@today_birthdays)})
+      </h2>
+      <div class="space-y-2">
+        <%= for c <- @today_birthdays do %>
+          <div class="flex items-center gap-3 bg-gray-900/40 rounded-lg p-3">
+            <div class="h-10 w-10 rounded-full bg-pink-500/30 flex items-center justify-center text-pink-200 font-bold flex-shrink-0">
+              {String.first(c.first_name || c.email) |> String.upcase()}
+            </div>
+            <div class="flex-grow min-w-0">
+              <div class="text-white font-medium truncate">{c.first_name} {c.last_name}</div>
+              <div class="text-xs text-gray-400 truncate">{c.email}</div>
+            </div>
+            <span class="text-xs px-2 py-1 rounded bg-fluxo-500/20 text-fluxo-300 font-semibold">Hoje</span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <h2 class="text-lg font-bold text-white mb-4">Próximos 30 dias</h2>
+
+  <%= if @upcoming == [] and @today_birthdays == [] do %>
+    <div class="bg-gray-900/40 border border-gray-800 rounded-2xl p-8 text-center">
+      <span class="text-4xl block mb-3">🎂</span>
+      <p class="text-white font-semibold mb-2">Nenhum aniversariante nos próximos 30 dias</p>
+
+      <%= cond do %>
+        <% @total_members == 0 and @total_prospects > 0 -> %>
+          <div class="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 mt-3 mb-4 text-left">
+            <p class="text-sm text-amber-300 font-semibold mb-2">⚠️ Você tem {@total_prospects} oportunidades, mas 0 members.</p>
+            <p class="text-sm text-gray-300 leading-relaxed mb-3">
+              Oportunidades são leads que ainda não viraram aluno — por isso não têm aniversário cadastrado na EVO.
+              Pra ter aniversariantes, você precisa de <strong class="text-white">members ativos</strong> (alunos matriculados).
+            </p>
+            <p class="text-xs text-gray-400">
+              Possíveis causas:<br/>
+              • A unidade EVO ainda não tem membros ativos cadastrados<br/>
+              • Os membros foram cadastrados mas sem o campo birthDate preenchido<br/>
+              • O secret_key da EVO não tem permissão pra ler endpoint /members
+            </p>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-3 justify-center">
+            <form action={"/projects/" <> @current_project.id <> "/aniversariantes/sync"} method="post">
+              <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
+              <button type="submit" class="button button--cta">🔄 Sincronizar EVO de novo</button>
+            </form>
+            <a href={"/projects/" <> @current_project.id <> "/contacts/import"} class="button">📥 Importar via planilha CSV</a>
+          </div>
+        <% @total_members > 0 and @members_with_birthday == 0 -> %>
+          <div class="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 mt-3 mb-4 text-left">
+            <p class="text-sm text-amber-300 font-semibold mb-2">⚠️ {@total_members} members importados, mas 0 com data de nascimento.</p>
+            <p class="text-sm text-gray-300 leading-relaxed">A API da EVO retornou os members sem o campo birthDate. Verifique se na EVO os cadastros dos alunos têm a data de nascimento preenchida.</p>
+          </div>
+          <a href={"/projects/" <> @current_project.id <> "/contacts/import"} class="text-fluxo-400 hover:underline text-sm">→ Ou importar dados via planilha CSV</a>
+        <% @total_contacts == 0 -> %>
+          <p class="text-sm text-gray-400 mb-5">Sua base está vazia. Sincroniza com a EVO ou importa um CSV.</p>
+          <div class="flex flex-col sm:flex-row gap-3 justify-center">
+            <form action={"/projects/" <> @current_project.id <> "/aniversariantes/sync"} method="post">
+              <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
+              <button type="submit" class="button button--cta">🔄 Sincronizar EVO</button>
+            </form>
+            <a href={"/projects/" <> @current_project.id <> "/contacts/import"} class="button">📥 Importar CSV</a>
+          </div>
+        <% true -> %>
+          <p class="text-sm text-gray-400 mb-5">Você tem {@members_with_birthday} alunos com data cadastrada — mas nenhum faz aniversário nos próximos 30 dias.</p>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="space-y-2">
+      <%= for day <- @upcoming do %>
+        <div class="bg-gray-900/60 border border-gray-800 rounded-xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <div class="text-white font-bold">{KeilaWeb.BirthdaysView.format_birth_md(day.md)}</div>
+            <div class="text-xs text-gray-400">{KeilaWeb.BirthdaysView.days_until(day.iso)} · {length(day.contacts)} {if length(day.contacts) == 1, do: "pessoa", else: "pessoas"}</div>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <%= for c <- day.contacts do %>
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-800 text-sm text-gray-300 rounded-lg">
+                <span class="h-5 w-5 rounded-full bg-pink-500/30 flex items-center justify-center text-pink-200 text-xs font-bold">{String.first(c.first_name || c.email) |> String.upcase()}</span>
+                {c.first_name || c.email}
+              </span>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

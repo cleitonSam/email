@@ -1,0 +1,113 @@
+a {
+    color: #1d4ed8;
+    text-decoration: underline;
+}
+
+h1 {
+    margin: 0 0 10px 0;
+    color: #4b5563;
+    font-family: inherit;
+    font-style: normal;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 30px;
+    line-height: 36px
+}
+
+h2 {
+    margin: 0 0 15px 0;
+    color: #4b5563;
+    font-family: inherit;
+    font-style: normal;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 25px;
+    line-height: 30px
+}
+
+h3 {
+    margin: 0 0 20px 0;
+    color: #4b5563;
+    font-family: inherit;
+    font-style: normal;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 18px;
+    line-height: 22px
+}
+
+ul {
+    padding: 0;
+    margin: 0 0 10px 0;
+    list-style-type: disc;
+}
+
+ul > li {
+    margin: 0 0 10px 30px
+}
+
+h4 {
+    margin: 20px 0;
+}
+
+h4 > a, div.keila-button {
+    background-color: #1d4ed8;
+    display: block;
+    cursor: pointer;
+    text-align: center;
+    border-radius: 5px;
+    line-height: 40px;
+    margin: 20px 0;
+}
+
+h4 > a, div.keila-button a {
+    display: block;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 0 10px;
+}
+
+div.keila-button {
+    mso-line-height-rule: exactly;
+    mso-text-raise: 7px;
+    mso-padding-alt: 0 10px;
+}
+
+body, #center-wrapper, #table-wrapper {
+    background-color: #f3f4f6;
+    font-family: Verdana, sans-serif;
+}
+
+#content {
+    font-family: inherit;
+    background-color: #ffffff;
+    color: #1f2937;
+}
+
+#content img {
+    display: inline-block;
+    width: 100%;
+    max-width: 600px;
+}
+
+#signature td {
+    color: #4b5563;
+    font-family: inherit;
+    font-style: normal;
+    font-weight: bold;
+    text-decoration: none;
+    text-align: left;
+}
+
+#signature td a {
+    color: #374151;
+    text-decoration: underline;
+}
+
+hr {
+    border-width: 1px;
+    border-style: solid;
+    border-color: inherit;
+    opacity: 0.1;
+    margin: 30px 0;
+}

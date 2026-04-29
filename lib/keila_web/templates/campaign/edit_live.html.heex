@@ -1,0 +1,233 @@
+<div
+  x-data="{activeDialog: null, showSendMenu: false}"
+  x-init="Hooks.RememberUnsaved.mounted.call({el: $el})"
+>
+  <!-- Modern Campaign Editor Header -->
+  <div class="container py-6 sm:py-8">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div class="flex items-center gap-4">
+        <div class="h-11 w-11 rounded-xl bg-gradient-to-br from-fluxo-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-fluxo-500/20 shrink-0">
+          <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-bold text-white">
+          {gettext("Edit Campaign")}
+        </h1>
+      </div>
+      <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+        <a
+          class="button button--text"
+          href={Routes.campaign_path(@socket, :index, @current_project.id)}
+          @click="setUnsavedReminder(false)"
+        >
+          {gettext("Cancel")}
+        </a>
+        <.delete_form
+          struct={@campaign}
+          as={:campaign}
+          route={~p"/projects/#{@current_project.id}/campaigns"}
+        >
+        </.delete_form>
+        <.delete_button
+          struct={@campaign}
+          class="button button--text text-red-400 hover:text-red-300"
+          @click="setUnsavedReminder(false)"
+        >
+          {gettext("Delete")}
+        </.delete_button>
+        <button
+          class="button"
+          type="submit"
+          form="campaign"
+          @click="setUnsavedReminder(false)"
+        >
+          {render_icon(:save)}
+          {gettext("Save")}
+        </button>
+        <button
+          class="button"
+          action="button"
+          @click.prevent="$dispatch('x-show', { dialog: 'settings' })"
+        >
+          {render_icon(:cog)}
+          {gettext("Settings")}
+        </button>
+        <%= if is_nil(get_field(@changeset, :scheduled_for)) do %>
+          <div class="relative">
+            <a
+              href="#"
+              class="button button--cta relative"
+              @click.prevent="showSendMenu = true"
+            >
+              {render_icon(:paper_airplane)}{gettext("Send & Schedule")}
+            </a>
+            <div
+              class="absolute bg-gray-900/95 backdrop-blur-xl border border-gray-700/50 shadow-2xl shadow-black/40 top-full mt-2 rounded-xl right-0 min-w-[14rem] p-2 z-50 flex flex-col gap-1"
+              x-on:click.away="showSendMenu = false"
+              x-show.transition="showSendMenu"
+              style="display: none"
+            >
+              <button
+                class="flex items-center gap-3 w-full px-4 py-2.5 rounded-lg text-white hover:bg-fluxo-500/10 hover:text-fluxo-400 transition-colors text-left"
+                @click.prevent="showSendMenu = false; $dispatch('x-show', { dialog: 'send' })"
+              >
+                <span class="inline-flex h-5 w-5 text-fluxo-400">{render_icon(:paper_airplane)}</span>
+                {gettext("Send")}
+              </button>
+              <button
+                class="flex items-center gap-3 w-full px-4 py-2.5 rounded-lg text-white hover:bg-cyan-500/10 hover:text-cyan-400 transition-colors text-left"
+                @click.prevent="showSendMenu = false; $dispatch('x-show', { dialog: 'preview' })"
+              >
+                <span class="inline-flex h-5 w-5 text-cyan-400">{render_icon(:eye)}</span>
+                {gettext("Send preview")}
+              </button>
+              <button
+                class="flex items-center gap-3 w-full px-4 py-2.5 rounded-lg text-white hover:bg-purple-500/10 hover:text-purple-400 transition-colors text-left"
+                @click.prevent="showSendMenu = false; $dispatch('x-show', { dialog: 'schedule' })"
+              >
+                <span class="inline-flex h-5 w-5 text-purple-400">{render_icon(:clock)}</span>
+                {gettext("Schedule")}
+              </button>
+            </div>
+          </div>
+        <% else %>
+          <button
+            class="button button--cta"
+            @click.prevent="$dispatch('x-show', { dialog: 'schedule' })"
+          >
+            {render_icon(:clock)}
+            {gettext("Schedule")}
+          </button>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sender Status Banner -->
+  <% sender_id = Ecto.Changeset.get_field(@changeset, :sender_id) %>
+  <% selected_sender = Enum.find(@senders, &(&1.id == sender_id)) %>
+  <%= cond do %>
+    <% is_nil(selected_sender) && Enum.empty?(@senders) -> %>
+      <div class="container mb-4">
+        <div class="flex items-center gap-3 bg-red-500/10 border border-red-500/20 text-red-200 rounded-xl px-5 py-3.5 text-sm">
+          <svg class="w-5 h-5 text-red-400 shrink-0 flex-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <span class="flex-grow">{gettext("You don't have any senders configured. You need a sender to send campaigns.")}</span>
+          <a href={Routes.sender_path(@socket, :new, @current_project.id)} class="ml-2 shrink-0 text-red-300 hover:text-white underline font-medium transition-colors">
+            {gettext("Configure a sender →")}
+          </a>
+        </div>
+      </div>
+    <% is_nil(selected_sender) -> %>
+      <div class="container mb-4">
+        <div class="flex items-center gap-3 bg-amber-500/10 border border-amber-500/20 text-amber-200 rounded-xl px-5 py-3.5 text-sm">
+          <svg class="w-5 h-5 text-amber-400 shrink-0 flex-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <span class="flex-grow">{gettext("No sender selected. Select a sender in Settings before sending this campaign.")}</span>
+          <button class="ml-2 shrink-0 text-amber-300 hover:text-white underline font-medium transition-colors" @click.prevent="$dispatch('x-show', { dialog: 'settings' })">
+            {gettext("Open Settings →")}
+          </button>
+        </div>
+      </div>
+    <% true -> %>
+      <div class="container mb-4">
+        <div class="flex items-center gap-3 bg-fluxo-500/10 border border-fluxo-500/20 text-fluxo-200 rounded-xl px-5 py-3.5 text-sm">
+          <svg class="w-4 h-4 text-fluxo-400 shrink-0 flex-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>
+            {gettext("Sending from:")}
+            <span class="font-semibold text-white ml-1">{Keila.Mailings.sender_from_line(selected_sender)}</span>
+          </span>
+          <span class="text-emerald-500/60 mx-1">·</span>
+          <span class="text-fluxo-400/70">{gettext("to")} <span class="font-semibold text-white">{@recipient_count}</span> {gettext("contacts")}</span>
+        </div>
+      </div>
+  <% end %>
+
+  <!-- Error Alerts -->
+  <%= if @changeset.errors[:sender_id] do %>
+    <div class="container mb-4">
+      <div class="flex items-center gap-3 bg-red-500/10 border border-red-500/20 text-red-300 rounded-xl px-5 py-4">
+        <svg class="w-5 h-5 text-red-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+        </svg>
+        <span>{gettext("You must specify a sender before sending/scheduling a campaign.")}</span>
+        <button
+          class="ml-auto text-red-400 hover:text-white underline text-sm font-medium transition-colors"
+          @click.prevent="$dispatch('x-show', { dialog: 'settings' })"
+        >
+          {gettext("Settings")}
+        </button>
+      </div>
+    </div>
+  <% end %>
+  <%= if @changeset.errors[:scheduled_for] do %>
+    <div class="container mb-4">
+      <div class="flex items-center gap-3 bg-red-500/10 border border-red-500/20 text-red-300 rounded-xl px-5 py-4">
+        <svg class="w-5 h-5 text-red-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+        </svg>
+        {with_errors(@changeset, :scheduled_for) do
+          [gettext("There was an error scheduling your campaign:")]
+        end}
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Campaign Editor Form -->
+  <div class="container pb-8">
+    <.form
+      :let={f}
+      for={@changeset}
+      id="campaign"
+      class="flex flex-col gap-4 w-full"
+      phx-change="update"
+      phx-submit="save"
+      x-on:change="setUnsavedReminder(true)"
+    >
+      <div class="flex flex-row items-center gap-2">
+        <%= with_validation(f, :subject) do %>
+          {text_input(f, :subject,
+            placeholder: gettext("Your Campaign Subject"),
+            class: "flex-grow rounded-xl bg-gray-800/50 border border-gray-700/50 text-white text-lg px-5 py-3.5 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all placeholder-gray-600"
+          )}
+        <% end %>
+      </div>
+
+      <div class="flex flex-col w-full">
+        <% type = Ecto.Changeset.get_field(@changeset, :settings).type %>
+        <% enable_wysiwyg? = Ecto.Changeset.get_field(@changeset, :settings).enable_wysiwyg %>
+        <%= cond do %>
+          <% (type == :markdown && enable_wysiwyg?) -> %>
+            {textarea(f, :text_body, class: "hidden")}
+            <div
+              id="wysiwyg-container"
+              phx-hook="MarkdownEditor"
+              class="flex-grow bg-white mt-4 min-h-10 rounded-xl overflow-hidden shadow-lg"
+            >
+              {render("_wysiwyg_editor.html", assigns)}
+            </div>
+          <% (type == :block) -> %>
+            {render("_block_editor.html", assigns)}
+          <% (type == :mjml) -> %>
+            <div id="mjml-container" phx-hook="MjmlEditor">
+              {render("_mjml_editor.html", assigns)}
+            </div>
+          <% true -> %>
+            <div id="markdown-simple-container" phx-hook="MarkdownSimpleEditor">
+              {render("_markdown_editor.html", assigns)}
+            </div>
+        <% end %>
+      </div>
+    </.form>
+  </div>
+  {render("_send_dialogs.html", assigns)}
+  {render("_settings_dialog.html", assigns)}
+  {render("_preview_dialog.html", assigns)}
+</div>
+
+{render("_wysiwyg_dialogs.html", assigns)}

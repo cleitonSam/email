@@ -1,0 +1,80 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  test-agplv3:
+    uses: ./.github/workflows/test.yml
+
+  test-with-extra:
+    uses: ./.github/workflows/test.yml
+    with:
+      with_extra: "1"
+
+  test-cloud:
+    uses: ./.github/workflows/test.yml
+    secrets:
+      KEILA_CLOUD_LICENSE: ${{ secrets.KEILA_CLOUD_LICENSE }}
+    with:
+      with_extra: "1"
+      keila_cloud: "1"
+
+  build:
+    name: Build and Release
+    needs:
+      - test-agplv3
+      - test-with-extra
+      - test-cloud
+    runs-on: ubuntu-latest
+    environment: build
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4
+      - uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4
+        with:
+          username: ${{ secrets.DOCKER_HUB_USER }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+      - id: meta
+        run: |
+          VERSION=$(echo "${GITHUB_REF}" | grep -oE "([0-9]+)\.([0-9]+)\.([0-9]+)")
+          MINOR_VERSION=$(echo "${VERSION}" | grep -oE "^([0-9]+)\.([0-9]+)")
+          MAJOR_VERSION=$(echo "${VERSION}" | grep -oE "^([0-9]+)")
+          echo "version=${VERSION}" >> "${GITHUB_OUTPUT}"
+          echo "minor_version=${MINOR_VERSION}" >> "${GITHUB_OUTPUT}"
+          echo "major_version=${MAJOR_VERSION}" >> "${GITHUB_OUTPUT}"
+          awk -v version="${VERSION}" '/## Version / {printit = $3 == version}; printit;' CHANGELOG.md > __CHANGELOG__.md
+          cat __CHANGELOG__.md
+      - uses: docker/build-push-action@0a97817b6ade9f46837855d676c4cca3a2471fc9 # v4
+        with:
+          context: .
+          file: ./ops/Dockerfile
+          build-args: |
+            WITH_EXTRA=1
+          tags: |
+            pentacent/keila:latest
+            pentacent/keila:${{ steps.meta.outputs.version }}
+            pentacent/keila:${{ steps.meta.outputs.major_version }}
+            pentacent/keila:${{ steps.meta.outputs.minor_version }}
+          labels: |
+            service=keila
+          push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_VERSION: ${{ steps.meta.outputs.version }}
+        run: |
+          gh release create "v${RELEASE_VERSION}" \
+            --title "Keila v${RELEASE_VERSION}" \
+            --notes-file __CHANGELOG__.md

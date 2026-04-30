@@ -66,9 +66,9 @@ defmodule Keila.Integrations.Evo.Unit do
     |> validate_required([:project_id, :name, :evo_dns, :evo_secret_key])
     |> validate_length(:name, min: 1, max: 80)
     |> validate_length(:evo_dns, min: 1, max: 200)
-    |> unique_constraint(:evo_dns,
-      name: :evo_units_project_id_evo_dns_index,
-      message: "Esta unidade EVO já está cadastrada neste projeto."
+    |> unique_constraint(:name,
+      name: :evo_units_project_id_name_index,
+      message: "Já existe uma unidade com este nome neste projeto."
     )
   end
 
@@ -80,9 +80,9 @@ defmodule Keila.Integrations.Evo.Unit do
     |> trim_field(:evo_secret_key)
     |> validate_required([:name, :evo_dns, :evo_secret_key])
     |> validate_length(:name, min: 1, max: 80)
-    |> unique_constraint(:evo_dns,
-      name: :evo_units_project_id_evo_dns_index,
-      message: "Esta unidade EVO já está cadastrada neste projeto."
+    |> unique_constraint(:name,
+      name: :evo_units_project_id_name_index,
+      message: "Já existe uma unidade com este nome neste projeto."
     )
   end
 

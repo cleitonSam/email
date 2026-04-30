@@ -12,6 +12,7 @@ defmodule KeilaWeb.UnitsLive do
   Botão "Testar conexão" valida na hora antes de salvar.
   """
   use KeilaWeb, :live_view
+  require Logger
 
   alias Keila.Integrations.Evo.Units
   alias Keila.Integrations.Evo.Unit

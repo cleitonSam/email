@@ -33,7 +33,7 @@ defmodule KeilaWeb.SegmentIndexLive do
           campaign.html_body
 
         campaign && campaign.mjml_body && campaign.mjml_body != "" ->
-          case Keila.Mailings.Builder.Mjml.compile(campaign.mjml_body) do
+          case Mjml.to_html(campaign.mjml_body) do
             {:ok, html} -> html
             _ -> "<p style='padding:40px;color:#999;text-align:center'>Não foi possível compilar o preview.</p>"
           end

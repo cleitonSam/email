@@ -109,37 +109,6 @@ defmodule KeilaWeb.UnitsLive do
     end
   end
 
-  defp do_save(socket, params, project_id) do
-    result =
-      case socket.assigns.editing do
-        nil ->
-          Logger.info("[Units] Creating new unit for project #{project_id}")
-          params = Map.put(params, "project_id", project_id)
-          Units.create_unit(params)
-
-        unit ->
-          Logger.info("[Units] Updating unit #{unit.id}")
-          Units.update_unit(unit, params)
-      end
-
-    case result do
-      {:ok, unit} ->
-        Logger.info("[Units] Successfully saved unit #{unit.id}")
-        socket =
-          socket
-          |> assign(:units, Units.list_units(project_id))
-          |> assign(:show_form, false)
-          |> assign(:editing, nil)
-          |> put_flash(:info, "Academia salva e conectada!")
-
-        {:noreply, socket}
-
-      {:error, changeset} ->
-        Logger.error("[Units] Failed to save unit: #{inspect(changeset.errors)}")
-        {:noreply, assign(socket, form_changeset: changeset)}
-    end
-  end
-
   def handle_event("toggle-active", %{"id" => id}, socket) do
     unit = Units.get_unit(id)
 
@@ -193,6 +162,37 @@ defmodule KeilaWeb.UnitsLive do
 
   def handle_info(_msg, socket), do: {:noreply, socket}
 
+  defp do_save(socket, params, project_id) do
+    result =
+      case socket.assigns.editing do
+        nil ->
+          Logger.info("[Units] Creating new unit for project #{project_id}")
+          params = Map.put(params, "project_id", project_id)
+          Units.create_unit(params)
+
+        unit ->
+          Logger.info("[Units] Updating unit #{unit.id}")
+          Units.update_unit(unit, params)
+      end
+
+    case result do
+      {:ok, unit} ->
+        Logger.info("[Units] Successfully saved unit #{unit.id}")
+        socket =
+          socket
+          |> assign(:units, Units.list_units(project_id))
+          |> assign(:show_form, false)
+          |> assign(:editing, nil)
+          |> put_flash(:info, "Academia salva e conectada!")
+
+        {:noreply, socket}
+
+      {:error, changeset} ->
+        Logger.error("[Units] Failed to save unit: #{inspect(changeset.errors)}")
+        {:noreply, assign(socket, form_changeset: changeset)}
+    end
+  end
+
   defp empty_changeset(project_id) do
     %Unit{}
     |> Ecto.Changeset.change(%{
@@ -204,30 +204,19 @@ defmodule KeilaWeb.UnitsLive do
     })
   end
 
-  @doc false
-  def status_color(%Unit{active: false}), do: "bg-gray-500"
-  def status_color(%Unit{last_sync_status: "ok"}), do: "bg-emerald-500"
-  def status_color(%Unit{last_sync_status: "error"}), do: "bg-red-500"
-  def status_color(%Unit{}), do: "bg-amber-500"
+  def status_color(%{active: false}), do: "bg-gray-500"
+  def status_color(%{last_sync_status: "success"}), do: "bg-emerald-500 shadow-sm shadow-emerald-500/50"
+  def status_color(%{last_sync_status: "error"}), do: "bg-red-500 animate-pulse"
+  def status_color(_), do: "bg-gray-400"
 
-  @doc false
-  def status_label(%Unit{active: false}), do: "Desativada"
-  def status_label(%Unit{last_sync_status: "ok"}), do: "Conectada"
-  def status_label(%Unit{last_sync_status: "error"}), do: "Erro"
-  def status_label(%Unit{last_sync_at: nil}), do: "Nunca sincronizou"
-  def status_label(%Unit{}), do: "Pendente"
+  def status_label(%{active: false}), do: "Desativada"
+  def status_label(%{last_sync_status: "success"}), do: "Conectada"
+  def status_label(%{last_sync_status: "error"}), do: "Erro de conexão"
+  def status_label(_), do: "Aguardando"
 
-  @doc false
   def humanize_sync_at(nil), do: "Nunca sincronizado"
 
-  def humanize_sync_at(%DateTime{} = dt) do
-    diff = DateTime.diff(DateTime.utc_now(), dt, :second)
-
-    cond do
-      diff < 60 -> "Agora há pouco"
-      diff < 3600 -> "Há #{div(diff, 60)} min"
-      diff < 86_400 -> "Há #{div(diff, 3600)}h"
-      true -> "Há #{div(diff, 86_400)} dia(s)"
-    end
+  def humanize_sync_at(datetime) do
+    "Há " <> KeilaWeb.BirthdaysController.humanize_relative_time(datetime)
   end
 end

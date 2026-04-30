@@ -105,21 +105,21 @@
             <div>
               <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Nome da academia</label>
               <input type="text" name="unit[name]" value={Ecto.Changeset.get_field(@form_changeset, :name)} placeholder="Ex: Unidade Centro" class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-3 text-sm" required />
-              <%= for error <- @form_changeset.errors[:name] || [] do %>
+              <%= for error <- Keyword.get_values(@form_changeset.errors, :name) do %>
                 <p class="text-xs text-red-500 mt-1">{translate_error(error)}</p>
               <% end %>
             </div>
             <div>
               <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Login EVO</label>
               <input type="text" name="unit[evo_dns]" value={Ecto.Changeset.get_field(@form_changeset, :evo_dns)} placeholder="seu-dns-evo" autocomplete="off" class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-3 text-sm font-mono" required />
-              <%= for error <- @form_changeset.errors[:evo_dns] || [] do %>
+              <%= for error <- Keyword.get_values(@form_changeset.errors, :evo_dns) do %>
                 <p class="text-xs text-red-500 mt-1">{translate_error(error)}</p>
               <% end %>
             </div>
             <div>
               <label class="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">Senha EVO</label>
               <input type="password" name="unit[evo_secret_key]" value={Ecto.Changeset.get_field(@form_changeset, :evo_secret_key)} placeholder="••••••••" autocomplete="new-password" class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-3 text-sm font-mono" required />
-              <%= for error <- @form_changeset.errors[:evo_secret_key] || [] do %>
+              <%= for error <- Keyword.get_values(@form_changeset.errors, :evo_secret_key) do %>
                 <p class="text-xs text-red-500 mt-1">{translate_error(error)}</p>
               <% end %>
               <p class="text-xs text-gray-500 mt-2">Secret Key do painel EVO em Integrações → API.</p>
@@ -131,21 +131,21 @@
                 <div>
                   <label class="block text-xs text-gray-400 mb-1">CNPJ</label>
                   <input type="text" name="unit[cnpj]" value={Ecto.Changeset.get_field(@form_changeset, :cnpj)} placeholder="00.000.000/0001-00" class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-2.5 text-sm" />
-                  <%= for error <- @form_changeset.errors[:cnpj] || [] do %>
+                  <%= for error <- Keyword.get_values(@form_changeset.errors, :cnpj) do %>
                     <p class="text-xs text-red-500 mt-1">{translate_error(error)}</p>
                   <% end %>
                 </div>
                 <div>
                   <label class="block text-xs text-gray-400 mb-1">Endereço completo</label>
                   <input type="text" name="unit[address]" value={Ecto.Changeset.get_field(@form_changeset, :address)} placeholder="Rua X, 123 — Centro, Cidade/UF" class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-2.5 text-sm" />
-                  <%= for error <- @form_changeset.errors[:address] || [] do %>
+                  <%= for error <- Keyword.get_values(@form_changeset.errors, :address) do %>
                     <p class="text-xs text-red-500 mt-1">{translate_error(error)}</p>
                   <% end %>
                 </div>
                 <div>
                   <label class="block text-xs text-gray-400 mb-1">Telefone</label>
                   <input type="text" name="unit[phone]" value={Ecto.Changeset.get_field(@form_changeset, :phone)} placeholder="(11) 99999-9999" class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-2.5 text-sm" />
-                  <%= for error <- @form_changeset.errors[:phone] || [] do %>
+                  <%= for error <- Keyword.get_values(@form_changeset.errors, :phone) do %>
                     <p class="text-xs text-red-500 mt-1">{translate_error(error)}</p>
                   <% end %>
                 </div>

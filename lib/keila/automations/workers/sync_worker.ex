@@ -165,10 +165,7 @@ defmodule Keila.Automations.Workers.SyncWorker do
       }
     }
 
-    case Contacts.create_contact(project_id, contact_params) do
-      {:ok, _contact} -> :ok
-      {:error, _} -> :ok
-    end
+    upsert_contact(project_id, contact_params)
   end
 
   defp handle_prospect(project_id, prospect) do
@@ -184,21 +181,27 @@ defmodule Keila.Automations.Workers.SyncWorker do
         "evo_unit_id" => Map.get(prospect, :evo_unit_id),
         "evo_unit_name" => Map.get(prospect, :evo_unit_name),
         "evo_id" => prospect.id_evo,
-        "evo_register_date" => prospect.register_date
+        "evo_register_date" => prospect.register_date,
+        "evo_type" => "prospect"
       }
     }
 
-    case Contacts.create_contact(project_id, contact_params) do
+    case upsert_contact(project_id, contact_params) do
       {:ok, contact} -> trigger_automations(project_id, prospect, contact.id)
-      # já existe — busca pelo email e mesmo assim avalia automações
-      {:error, _} -> maybe_trigger_for_existing(project_id, prospect)
+      _ -> :ok
     end
   end
 
-  defp maybe_trigger_for_existing(project_id, prospect) do
-    case Contacts.get_project_contact_by_email(project_id, prospect.email) do
-      nil -> :ok
-      contact -> trigger_automations(project_id, prospect, contact.id)
+  defp upsert_contact(project_id, params) do
+    case Contacts.get_project_contact_by_email(project_id, params["email"]) do
+      nil ->
+        Contacts.create_contact(project_id, params)
+
+      contact ->
+        # Merge data to avoid losing existing fields
+        new_data = Map.merge(contact.data || %{}, params["data"])
+        updated_params = Map.put(params, "data", new_data)
+        Contacts.update_contact(contact.id, updated_params)
     end
   end
 

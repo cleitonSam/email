@@ -280,13 +280,14 @@ defmodule Keila.Integrations.Evo do
   defp date_range(opts) do
     start_date = Keyword.get(opts, :register_date_start)
     end_date = Keyword.get(opts, :register_date_end)
+
     if start_date && end_date do
       {start_date, end_date}
     else
       today = Date.utc_today()
-      first_day = %{today | day: 1}
-      last_day = Date.end_of_month(today)
-      {Date.to_iso8601(first_day), Date.to_iso8601(last_day)}
+      # Default: last 60 days until today
+      start = Date.add(today, -60)
+      {Date.to_iso8601(start), Date.to_iso8601(today)}
     end
   end
 

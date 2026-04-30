@@ -180,13 +180,14 @@ defmodule KeilaWeb.EvoLive do
             "evo_status" => prospect.status,
             "evo_branch" => prospect.branch,
             "evo_id" => prospect.id_evo,
-            "evo_register_date" => prospect.register_date
+            "evo_register_date" => prospect.register_date,
+            "evo_type" => "prospect"
           }
         }
 
-        case Contacts.create_contact(project_id, params) do
+        case upsert_contact(project_id, params) do
           {:ok, _contact} -> count + 1
-          {:error, _changeset} -> count
+          _ -> count
         end
       end)
 
@@ -200,6 +201,19 @@ defmodule KeilaWeb.EvoLive do
       |> assign(:imported_count, imported)
 
     {:noreply, socket}
+  end
+
+  defp upsert_contact(project_id, params) do
+    case Contacts.get_project_contact_by_email(project_id, params["email"]) do
+      nil ->
+        Contacts.create_contact(project_id, params)
+
+      contact ->
+        # Merge data to avoid losing existing fields
+        new_data = Map.merge(contact.data || %{}, params["data"])
+        updated_params = Map.put(params, "data", new_data)
+        Contacts.update_contact(contact.id, updated_params)
+    end
   end
 
   def handle_info(_msg, socket), do: {:noreply, socket}

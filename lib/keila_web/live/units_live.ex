@@ -186,12 +186,13 @@ defmodule KeilaWeb.UnitsLive do
   def handle_info(_msg, socket), do: {:noreply, socket}
 
   defp empty_changeset(project_id) do
-    Unit.creation_changeset(%{
-      "project_id" => project_id,
-      "name" => "",
-      "evo_dns" => "",
-      "evo_secret_key" => "",
-      "active" => true
+    %Unit{}
+    |> Ecto.Changeset.change(%{
+      project_id: project_id,
+      name: "",
+      evo_dns: "",
+      evo_secret_key: "",
+      active: true
     })
   end
 

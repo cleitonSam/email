@@ -82,15 +82,19 @@ defmodule KeilaWeb.UnitsLive do
 
   def handle_event("save-unit", %{"unit" => params}, socket) do
     project_id = socket.assigns.current_project.id
+    dns = String.trim(params["evo_dns"] || "")
+    secret = String.trim(params["evo_secret_key"] || "")
 
     # Testa conexão antes de salvar (UX mais segura — não salva credencial errada)
     test_unit = %Unit{
-      evo_dns: params["evo_dns"] || "",
-      evo_secret_key: params["evo_secret_key"] || ""
+      evo_dns: dns,
+      evo_secret_key: secret
     }
 
     case Units.test_connection(test_unit) do
       :ok ->
+        # Use trimmed params for saving as well
+        params = Map.merge(params, %{"evo_dns" => dns, "evo_secret_key" => secret})
         do_save(socket, params, project_id)
 
       {:error, reason} ->

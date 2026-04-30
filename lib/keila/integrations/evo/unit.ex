@@ -61,6 +61,8 @@ defmodule Keila.Integrations.Evo.Unit do
   def creation_changeset(params) do
     %__MODULE__{}
     |> cast(params, @creation_fields)
+    |> trim_field(:evo_dns)
+    |> trim_field(:evo_secret_key)
     |> validate_required([:project_id, :name, :evo_dns, :evo_secret_key])
     |> validate_length(:name, min: 1, max: 80)
     |> validate_length(:evo_dns, min: 1, max: 200)
@@ -73,10 +75,19 @@ defmodule Keila.Integrations.Evo.Unit do
   def update_changeset(struct, params) do
     struct
     |> cast(params, @update_fields)
+    |> trim_field(:evo_dns)
+    |> trim_field(:evo_secret_key)
     |> validate_required([:name, :evo_dns, :evo_secret_key])
     |> validate_length(:name, min: 1, max: 80)
     |> unique_constraint([:project_id, :evo_dns],
       message: "Esta unidade EVO já está cadastrada neste projeto."
     )
+  end
+
+  defp trim_field(changeset, field) do
+    update_change(changeset, field, fn
+      val when is_binary(val) -> String.trim(val)
+      val -> val
+    end)
   end
 end

@@ -1,0 +1,141 @@
+<div class="container flex py-8 sm:py-11 mb-4">
+  <div class="flex-grow gap-4 flex flex-col sm:flex-row sm:items-center">
+    <div class="flex items-center gap-3">
+      <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-fluxo-400 to-cyan-400 flex items-center justify-center shadow-lg shadow-fluxo-500/20">
+        <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+        </svg>
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-bold text-white">
+        {gettext("Segments")}
+      </h1>
+    </div>
+    <div class="flex-grow flex flex-row-reverse justify-end gap-4 sm:flex-row">
+      <a href={Routes.segment_path(@socket, :new, @current_project.id)} class="button button--cta">
+        {render_icon(:document_add)}
+        {gettext("Create a new segment")}
+      </a>
+    </div>
+  </div>
+</div>
+
+<%= if Enum.empty?(@segments) do %>
+  {render("_empty_state.html", assigns)}
+<% end %>
+
+<div class="container grid gap-4 md:grid-cols-2 md:gap-6">
+  <%= for segment <- @segments do %>
+    <div class="group bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6 hover:border-fluxo-500/30 hover:shadow-lg hover:shadow-fluxo-500/5 transition-all duration-300 flex flex-col">
+      <div class="flex-grow">
+        <h2 class="font-semibold text-xl text-white flex items-center gap-2 mb-1">
+          {segment.name}
+        </h2>
+        <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-4">
+          {gettext("Updated at:")} {local_datetime_tag(segment.updated_at)}
+        </p>
+
+        <!-- Linked Emails Mini Section -->
+        <div class="mt-4">
+          <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            {gettext("Linked Emails")}
+          </p>
+          
+          <% segment_campaigns = Map.get(@campaigns_map, segment.id, []) %>
+          <%= if segment_campaigns == [] do %>
+            <p class="text-xs text-gray-600 italic">{gettext("No linked emails")}</p>
+          <% else %>
+            <div class="space-y-2">
+              <%= for campaign <- Enum.take(segment_campaigns, 3) do %>
+                <div class="flex items-center justify-between bg-gray-800/30 rounded-lg px-3 py-2 border border-gray-700/30 group/item hover:bg-gray-800/50 transition-colors">
+                  <div class="flex flex-col min-w-0">
+                    <span class="text-xs font-medium text-gray-300 truncate">{campaign.subject || campaign.title}</span>
+                    <span class="text-[9px] text-gray-500 uppercase">{campaign.status}</span>
+                  </div>
+                  <button
+                    type="button"
+                    phx-click="preview-email"
+                    phx-value-id={campaign.id}
+                    class="ml-2 p-1.5 text-gray-500 hover:text-emerald-400 transition-colors"
+                    title={gettext("Preview")}
+                  >
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  </button>
+                </div>
+              <% end %>
+              <%= if length(segment_campaigns) > 3 do %>
+                <p class="text-[10px] text-gray-500 pl-1">+ {length(segment_campaigns) - 3} {gettext("more")}</p>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="flex justify-end mt-6 pt-4 border-t border-gray-800/50">
+        <a href={Routes.segment_path(@socket, :edit, @current_project.id, segment.id)} class="button button--cta button--small">
+          {render_icon(:pencil_alt)}
+          {gettext("Edit Segment")}
+        </a>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<!-- Email Preview Modal (Global) -->
+<%= if @preview_html do %>
+  <div class="fixed inset-0 z-[60] flex flex-col bg-gray-950/95 backdrop-blur-md" x-data="{device: 'desktop'}">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-800/50 bg-gray-900/50">
+      <div class="flex items-center gap-4">
+        <h3 class="text-lg font-bold text-white">{gettext("Email Preview")}</h3>
+        <div class="flex items-center gap-1 p-1 bg-gray-800/50 rounded-xl ml-4">
+          <button
+            title={gettext("Desktop preview")}
+            class="flex items-center justify-center w-9 h-9 rounded-lg text-gray-400 hover:text-white transition-colors"
+            x-bind:class="device == 'desktop' && 'bg-gray-700 text-white shadow-sm'"
+            x-on:click="device = 'desktop'"
+          >
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </button>
+          <button
+            title={gettext("Mobile preview")}
+            class="flex items-center justify-center w-9 h-9 rounded-lg text-gray-400 hover:text-white transition-colors"
+            x-bind:class="device == 'mobile' && 'bg-gray-700 text-white shadow-sm'"
+            x-on:click="device = 'mobile'"
+          >
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <button
+        phx-click="close-preview"
+        class="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-xl transition-all"
+      >
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    
+    <div class="flex-grow flex items-center justify-center p-4 sm:p-8 overflow-hidden">
+      <div 
+        class="bg-white shadow-2xl transition-all duration-300 h-full overflow-hidden rounded-t-xl"
+        x-bind:class="device == 'desktop' ? 'w-full' : 'w-[375px]'"
+      >
+        <iframe
+          srcdoc={@preview_html}
+          class="w-full h-full border-none"
+          title="Email content"
+        ></iframe>
+      </div>
+    </div>
+  </div>
+<% end %>

@@ -6,13 +6,13 @@ defmodule KeilaWeb.SegmentController do
 
   plug(:authorize when action not in [:index, :new, :create, :delete])
 
-  @spec index(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def index(conn, _params) do
-    segments = Contacts.get_project_segments(current_project(conn).id)
-
-    conn
-    |> assign(:segments, segments)
-    |> render("index.html")
+    live_render(conn, KeilaWeb.SegmentIndexLive,
+      session: %{
+        "current_project" => current_project(conn),
+        "locale" => Gettext.get_locale()
+      }
+    )
   end
 
   def new(conn, _params) do

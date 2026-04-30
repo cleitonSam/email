@@ -3,7 +3,7 @@ defmodule Keila.Integrations.Evo do
 
   require Logger
 
-  @prospects_url "https://evo-integracao-api.w12app.com.br/api/v1/prospects"
+  @prospects_url "https://evo-integracao.w12app.com.br/api/v1/prospects"
   @members_excel_url "https://evo-integracao.w12app.com.br/api/v1/members/summary-excel"
   @page_size 50
 

@@ -167,7 +167,7 @@
 
           <div class="flex gap-2 mt-6">
             <button type="button" phx-click="close-form" class="flex-1 button">Cancelar</button>
-            <button type="submit" class="flex-1 button button--cta">{if @editing, do: "Salvar", else: "Conectar e salvar"}</button>
+            <button type="submit" phx-disable-with="Conectando..." class="flex-1 button button--cta">{if @editing, do: "Salvar", else: "Conectar e salvar"}</button>
           </div>
         </form>
       </div>

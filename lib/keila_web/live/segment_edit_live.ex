@@ -82,17 +82,25 @@ defmodule KeilaWeb.SegmentEditLive do
     Gettext.put_locale(session["locale"])
 
     campaigns = Mailings.get_project_campaigns(session["current_project"].id)
+    segment = session["segment"]
+
+    # Campanhas vinculadas a este segmento específico
+    segment_campaigns =
+      Enum.filter(campaigns, fn c -> c.segment_id == segment.id end)
 
     socket =
       socket
       |> assign(:current_project, session["current_project"])
-      |> assign(:segment, session["segment"])
-      |> assign(:changeset, Ecto.Changeset.change(session["segment"]))
+      |> assign(:segment, segment)
+      |> assign(:changeset, Ecto.Changeset.change(segment))
       |> assign(:fields, fields())
       |> assign(:widgets, widgets())
       |> assign(:campaigns, campaigns)
+      |> assign(:segment_campaigns, segment_campaigns)
+      |> assign(:preview_campaign_id, nil)
+      |> assign(:preview_html, nil)
       |> assign(:page, 0)
-      |> put_filter(session["segment"].filter || %{})
+      |> put_filter(segment.filter || %{})
       |> update_assigns()
 
     {:ok, socket}
@@ -186,6 +194,39 @@ defmodule KeilaWeb.SegmentEditLive do
       |> assign(:use_editor, use_editor?)
 
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("preview-email", %{"id" => campaign_id}, socket) do
+    campaign = Mailings.get_campaign(campaign_id)
+
+    preview_html =
+      cond do
+        campaign && campaign.html_body && campaign.html_body != "" ->
+          campaign.html_body
+
+        campaign && campaign.mjml_body && campaign.mjml_body != "" ->
+          case Keila.Mailings.Builder.Mjml.compile(campaign.mjml_body) do
+            {:ok, html} -> html
+            _ -> "<p style='padding:40px;color:#999;text-align:center'>Não foi possível compilar o preview.</p>"
+          end
+
+        true ->
+          "<p style='padding:40px;color:#999;text-align:center'>Este email ainda não tem conteúdo.</p>"
+      end
+
+    {:noreply,
+     socket
+     |> assign(:preview_campaign_id, campaign_id)
+     |> assign(:preview_html, preview_html)}
+  end
+
+  @impl true
+  def handle_event("close-preview", _params, socket) do
+    {:noreply,
+     socket
+     |> assign(:preview_campaign_id, nil)
+     |> assign(:preview_html, nil)}
   end
 
   @impl true

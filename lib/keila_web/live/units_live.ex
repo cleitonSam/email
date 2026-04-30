@@ -81,6 +81,7 @@ defmodule KeilaWeb.UnitsLive do
   end
 
   def handle_event("save-unit", %{"unit" => params}, socket) do
+    Logger.info("[Units] Attempting to save unit: #{inspect(params)}")
     project_id = socket.assigns.current_project.id
     dns = String.trim(params["evo_dns"] || "")
     secret = String.trim(params["evo_secret_key"] || "")
@@ -93,11 +94,13 @@ defmodule KeilaWeb.UnitsLive do
 
     case Units.test_connection(test_unit) do
       :ok ->
+        Logger.info("[Units] Connection test successful for #{dns}")
         # Use trimmed params for saving as well
         params = Map.merge(params, %{"evo_dns" => dns, "evo_secret_key" => secret})
         do_save(socket, params, project_id)
 
       {:error, reason} ->
+        Logger.warning("[Units] Connection test failed for #{dns}: #{inspect(reason)}")
         {:noreply,
          socket
          |> assign(:test_result, {:error, "Não consegui conectar: #{reason}. Confere o login e a senha."})
@@ -109,15 +112,18 @@ defmodule KeilaWeb.UnitsLive do
     result =
       case socket.assigns.editing do
         nil ->
+          Logger.info("[Units] Creating new unit for project #{project_id}")
           params = Map.put(params, "project_id", project_id)
           Units.create_unit(params)
 
         unit ->
+          Logger.info("[Units] Updating unit #{unit.id}")
           Units.update_unit(unit, params)
       end
 
     case result do
-      {:ok, _unit} ->
+      {:ok, unit} ->
+        Logger.info("[Units] Successfully saved unit #{unit.id}")
         socket =
           socket
           |> assign(:units, Units.list_units(project_id))
@@ -128,6 +134,7 @@ defmodule KeilaWeb.UnitsLive do
         {:noreply, socket}
 
       {:error, changeset} ->
+        Logger.error("[Units] Failed to save unit: #{inspect(changeset.errors)}")
         {:noreply, assign(socket, form_changeset: changeset)}
     end
   end

@@ -367,8 +367,8 @@
             <button
               title={gettext("Desktop preview")}
               class="flex items-center justify-center w-9 h-9 rounded-lg text-gray-400 hover:text-white transition-colors"
-              :class="device == 'desktop' && 'bg-gray-700 text-white shadow-sm'"
-              @click="device = 'desktop'"
+              x-bind:class="device == 'desktop' && 'bg-gray-700 text-white shadow-sm'"
+              x-on:click="device = 'desktop'"
             >
               <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -377,8 +377,8 @@
             <button
               title={gettext("Mobile preview")}
               class="flex items-center justify-center w-9 h-9 rounded-lg text-gray-400 hover:text-white transition-colors"
-              :class="device == 'mobile' && 'bg-gray-700 text-white shadow-sm'"
-              @click="device = 'mobile'"
+              x-bind:class="device == 'mobile' && 'bg-gray-700 text-white shadow-sm'"
+              x-on:click="device = 'mobile'"
             >
               <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
@@ -399,7 +399,7 @@
       <div class="flex-grow flex items-center justify-center p-4 sm:p-8 overflow-hidden">
         <div 
           class="bg-white shadow-2xl transition-all duration-300 h-full overflow-hidden rounded-t-xl"
-          :class="device == 'desktop' ? 'w-full' : 'w-[375px]'"
+          x-bind:class="device == 'desktop' ? 'w-full' : 'w-[375px]'"
         >
           <iframe
             srcdoc={@preview_html}

@@ -217,6 +217,13 @@ defmodule KeilaWeb.UnitsLive do
   def humanize_sync_at(nil), do: "Nunca sincronizado"
 
   def humanize_sync_at(datetime) do
-    "Há " <> KeilaWeb.BirthdaysController.humanize_relative_time(datetime)
+    diff = DateTime.diff(DateTime.utc_now(), datetime)
+
+    cond do
+      diff < 60 -> "agora há pouco"
+      diff < 3600 -> "há #{div(diff, 60)} min"
+      diff < 86_400 -> "há #{div(diff, 3600)} h"
+      true -> "há #{div(diff, 86_400)} dia(s)"
+    end
   end
 end

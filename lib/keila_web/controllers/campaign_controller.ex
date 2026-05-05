@@ -242,14 +242,38 @@ defmodule KeilaWeb.CampaignController do
   def view(conn, _params) do
     project = current_project(conn)
     campaign = conn.assigns.campaign
-    email = Keila.Mailings.Builder.build_preview(campaign)
-    preview = email.html_body || KeilaWeb.CampaignView.plain_text_preview(email.text_body)
+
+    preview =
+      cond do
+        is_binary(campaign.html_body) and campaign.html_body != "" ->
+          campaign.html_body
+
+        is_binary(campaign.text_body) and campaign.text_body != "" ->
+          KeilaWeb.CampaignView.plain_text_preview(campaign.text_body)
+
+        true ->
+          safe_build_preview(campaign)
+      end
 
     render(conn, "view.html", %{
       current_project: project,
       campaign: campaign,
       preview: preview
     })
+  end
+
+  defp safe_build_preview(campaign) do
+    email = Keila.Mailings.Builder.build_preview(campaign)
+    email.html_body || KeilaWeb.CampaignView.plain_text_preview(email.text_body)
+  rescue
+    e ->
+      require Logger
+      Logger.error("Failed to build campaign preview: #{Exception.format(:error, e, __STACKTRACE__)}")
+
+      "<div style=\"padding:24px;font-family:sans-serif;color:#444\">" <>
+        "<p><strong>Não foi possível gerar a pré-visualização desta campanha.</strong></p>" <>
+        "<p>O corpo do email não está disponível ou o template foi removido.</p>" <>
+        "</div>"
   end
 
   def share(conn, _params) do

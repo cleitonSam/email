@@ -12,6 +12,7 @@ COPY mix.exs mix.lock ./
 COPY config .
 RUN mix local.hex --force && \
     mix local.rebar --force && \
+    mix deps.unlock xlsx_reader && \
     mix deps.get && \
     mix deps.compile
 

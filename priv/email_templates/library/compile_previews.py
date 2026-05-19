@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Compila os 8 templates MJML para HTML preview com dados de exemplo
-de uma academia fictícia (Academia Movimento - Unidade Centro).
+Compila os templates MJML para HTML preview com dados de exemplo
+genéricos (academia + e-commerce + SaaS + serviços + newsletter).
 
 Uso: python3 compile_previews.py
 """
@@ -13,7 +13,9 @@ from pathlib import Path
 
 LIBRARY_DIR = Path(__file__).parent
 PREVIEW_DIR = LIBRARY_DIR / "preview"
-MJML_BIN = LIBRARY_DIR / "node_modules" / ".bin" / "mjml"
+# Invoke the JS entrypoint directly via `node` to avoid the .bin shim
+# (POSIX symlinks aren't executable from Windows subprocess).
+MJML_SCRIPT = LIBRARY_DIR / "node_modules" / "mjml" / "bin" / "mjml"
 
 # Sample data — academia fictícia "Academia Movimento" (Cleiton pode ajustar)
 SAMPLE_DATA = {
@@ -91,10 +93,12 @@ def render_liquid(content: str, data: dict) -> str:
 def compile_mjml(mjml_content: str) -> str:
     """Compile MJML string to HTML using local mjml binary."""
     proc = subprocess.run(
-        [str(MJML_BIN), "-i", "-s"],
+        ["node", str(MJML_SCRIPT), "-i", "-s"],
         input=mjml_content,
         text=True,
         capture_output=True,
+        shell=False,
+        encoding="utf-8",
     )
     if proc.returncode != 0:
         raise RuntimeError(f"MJML compile failed: {proc.stderr}")

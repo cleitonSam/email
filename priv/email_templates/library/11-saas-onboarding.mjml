@@ -1,0 +1,157 @@
+<mjml>
+  <mj-head>
+    <mj-title>Bem-vindo(a) ao {{ brand.name }}, {{ first_name }} — vamos começar?</mj-title>
+    <mj-preview>3 passos pra você tirar o máximo do {{ brand.name }} na primeira semana.</mj-preview>
+    <mj-attributes>
+      <mj-all font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" />
+      <mj-text color="#0A0E27" font-size="16px" line-height="1.65" />
+      <mj-button background-color="{{ brand.color_primary | default: '#FF5A1F' }}" color="#FFFFFF" font-size="15px" font-weight="700" padding="0" inner-padding="16px 32px" border-radius="10px" />
+      <mj-section padding="0" />
+      <mj-class name="eyebrow" font-size="11px" font-weight="700" letter-spacing="2.5px" text-transform="uppercase" />
+      <mj-class name="display" font-size="42px" font-weight="800" line-height="1.1" letter-spacing="-1.2px" />
+      <mj-class name="h2" font-size="24px" font-weight="700" line-height="1.25" />
+      <mj-class name="lead" font-size="17px" line-height="1.6" color="#4A5167" />
+    </mj-attributes>
+    <mj-style>
+      .step-num { width: 36px; height: 36px; border-radius: 999px; background: {{ brand.color_primary | default: '#FF5A1F' }}; color: #FFFFFF; font-size: 16px; font-weight: 800; line-height: 36px; text-align: center; display: inline-block; }
+      .progress-bar { height: 6px; background: #E8E1D8; border-radius: 999px; overflow: hidden; }
+      .progress-fill { height: 100%; background: {{ brand.color_primary | default: '#FF5A1F' }}; width: 0%; border-radius: 999px; }
+      @media only screen and (max-width: 600px) {
+        .display-mobile { font-size: 30px !important; }
+      }
+    </mj-style>
+  </mj-head>
+
+  <mj-body background-color="#FFFFFF" width="600px">
+
+    <!-- HEADER -->
+    <mj-section background-color="#FFFFFF" padding="32px 32px 8px">
+      <mj-column>
+        <mj-image src="{{ brand.logo_url | default: 'https://placehold.co/140x44/0A0E27/FFFFFF/png?text=ACADEMIA' }}" alt="{{ brand.name }}" width="140px" align="left" padding="0" />
+      </mj-column>
+    </mj-section>
+
+    <!-- WELCOME -->
+    <mj-section background-color="#FFFFFF" padding="32px 32px 24px">
+      <mj-column>
+        <mj-text mj-class="eyebrow" color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="0 0 16px">
+          Bem-vindo(a) ao time
+        </mj-text>
+        <mj-text mj-class="display" css-class="display-mobile" padding="0 0 16px">
+          Oi, {{ first_name }} 👋<br/>Vamos te deixar pronto.
+        </mj-text>
+        <mj-text mj-class="lead" padding="0 0 24px">
+          Você não veio aqui pra ler tutorial. Em 3 passos rápidos você já tá usando o {{ brand.name }} de verdade.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- PROGRESS BAR -->
+    <mj-section background-color="#FFFFFF" padding="0 32px 32px">
+      <mj-column>
+        <mj-raw>
+          <div style="font-size:12px;color:#4A5167;margin-bottom:8px"><strong style="color:#0A0E27">Seu progresso:</strong> 0 de 3 passos</div>
+          <div class="progress-bar"><div class="progress-fill"></div></div>
+        </mj-raw>
+      </mj-column>
+    </mj-section>
+
+    <!-- STEP 1 -->
+    <mj-section background-color="#F4EFEA" padding="32px 32px 24px">
+      <mj-column>
+        <mj-raw>
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+            <span class="step-num">1</span>
+            <strong style="font-size:18px;color:#0A0E27">Complete seu perfil</strong>
+          </div>
+        </mj-raw>
+        <mj-text font-size="15px" color="#4A5167" line-height="1.6" padding="0 0 20px">
+          Leva 2 minutos. Quanto mais a gente sabe de você, melhor o {{ brand.name }} se ajusta ao teu fluxo.
+        </mj-text>
+        <mj-button href="{{ link_perfil | default: '#' }}" align="left">
+          Completar perfil →
+        </mj-button>
+      </mj-column>
+    </mj-section>
+
+    <!-- STEP 2 -->
+    <mj-section background-color="#FFFFFF" padding="32px 32px 24px">
+      <mj-column>
+        <mj-raw>
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+            <span class="step-num" style="background:#8B92A8">2</span>
+            <strong style="font-size:18px;color:#0A0E27">Importe seus dados</strong>
+          </div>
+        </mj-raw>
+        <mj-text font-size="15px" color="#4A5167" line-height="1.6" padding="0 0 20px">
+          Sobe uma planilha CSV/XLSX e a gente faz o parse automático. Sem perder seu histórico de outras ferramentas.
+        </mj-text>
+        <mj-button href="{{ link_import | default: '#' }}" align="left" background-color="#0A0E27">
+          Importar dados →
+        </mj-button>
+      </mj-column>
+    </mj-section>
+
+    <!-- STEP 3 -->
+    <mj-section background-color="#F4EFEA" padding="32px 32px 32px">
+      <mj-column>
+        <mj-raw>
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+            <span class="step-num" style="background:#8B92A8">3</span>
+            <strong style="font-size:18px;color:#0A0E27">Crie sua primeira campanha</strong>
+          </div>
+        </mj-raw>
+        <mj-text font-size="15px" color="#4A5167" line-height="1.6" padding="0 0 20px">
+          A parte boa. Escolhe um modelo pronto, ajusta as cores da marca e dispara pro teu primeiro segmento.
+        </mj-text>
+        <mj-button href="{{ link_campanha | default: '#' }}" align="left" background-color="#0A0E27">
+          Criar primeira campanha →
+        </mj-button>
+      </mj-column>
+    </mj-section>
+
+    <!-- HELP -->
+    <mj-section background-color="#0A0E27" padding="40px 32px">
+      <mj-column>
+        <mj-text mj-class="eyebrow" color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="0 0 12px">
+          Precisa de ajuda?
+        </mj-text>
+        <mj-text font-size="22px" font-weight="700" color="#FFFFFF" line-height="1.3" padding="0 0 16px">
+          A gente responde rápido. Sério.
+        </mj-text>
+        <mj-text font-size="15px" color="#C8CCDB" line-height="1.6" padding="0 0 24px">
+          Tem dúvida? Manda no WhatsApp — pessoa de verdade, não bot. Média de resposta: 12 minutos em horário comercial.
+        </mj-text>
+        <mj-button href="{{ brand.whatsapp_url | default: '#' }}" align="left" background-color="#C4FF00" color="#0A0E27">
+          Falar com a gente no WhatsApp
+        </mj-button>
+      </mj-column>
+    </mj-section>
+
+    <!-- TIP / VALUE -->
+    <mj-section background-color="#FFFFFF" padding="40px 32px">
+      <mj-column>
+        <mj-text font-size="13px" color="#4A5167" line-height="1.6" padding="0">
+          💡 <strong>Dica de quem usa:</strong> os primeiros 7 dias são os que mais retornam. Se você travar em algum passo, fala com a gente que destravamos junto.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- FOOTER -->
+    <mj-section background-color="#0A0E27" padding="32px 24px 24px">
+      <mj-column>
+        <mj-image src="{{ brand.logo_url_white | default: 'https://placehold.co/140x44/0A0E27/FFFFFF/png?text=ACADEMIA' }}" alt="{{ brand.name }}" width="120px" align="left" padding="0 0 20px" />
+        <mj-text color="#8B92A8" font-size="13px" line-height="1.65" padding="0 0 16px">
+          <strong style="color:#FFFFFF">{{ brand.name }}</strong><br/>
+          {{ brand.address }}
+        </mj-text>
+        <mj-divider border-color="#1E2749" border-width="1px" padding="8px 0 16px" />
+        <mj-text color="#5A6378" font-size="11px" line-height="1.6" padding="0">
+          Você criou conta no {{ brand.name }} em {{ data_signup | default: 'recentemente' }}.<br/>
+          <a href="{{ link_unsubscribe }}" style="color:#8B92A8;text-decoration:underline">Descadastrar emails</a> · <a href="{{ brand.privacy_url }}" style="color:#8B92A8;text-decoration:underline">Privacidade</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+  </mj-body>
+</mjml>

@@ -1,0 +1,187 @@
+<mjml>
+  <mj-head>
+    <mj-title>Newsletter {{ mes_referencia | default: 'do mês' }} — o que rolou e o que tá vindo</mj-title>
+    <mj-preview>{{ destaque_1_titulo | default: 'Resumo do mês' }} + curadoria do que importa.</mj-preview>
+    <mj-attributes>
+      <mj-all font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" />
+      <mj-text color="#0A0E27" font-size="16px" line-height="1.7" />
+      <mj-button background-color="{{ brand.color_primary | default: '#FF5A1F' }}" color="#FFFFFF" font-size="14px" font-weight="600" padding="0" inner-padding="14px 28px" border-radius="8px" />
+      <mj-section padding="0" />
+      <mj-class name="eyebrow" font-size="11px" font-weight="700" letter-spacing="2.5px" text-transform="uppercase" />
+      <mj-class name="display" font-size="40px" font-weight="800" line-height="1.1" letter-spacing="-1.2px" />
+      <mj-class name="h2" font-size="22px" font-weight="700" line-height="1.3" />
+      <mj-class name="lead" font-size="17px" line-height="1.6" color="#4A5167" />
+    </mj-attributes>
+    <mj-style>
+      .link-card { text-decoration: none; color: #0A0E27; }
+      .link-arrow { color: {{ brand.color_primary | default: '#FF5A1F' }}; font-weight: 700; }
+      @media only screen and (max-width: 600px) {
+        .display-mobile { font-size: 30px !important; }
+      }
+    </mj-style>
+  </mj-head>
+
+  <mj-body background-color="#F4EFEA" width="600px">
+
+    <!-- HEADER -->
+    <mj-section background-color="#FFFFFF" padding="24px 32px">
+      <mj-column width="60%">
+        <mj-image src="{{ brand.logo_url | default: 'https://placehold.co/140x44/0A0E27/FFFFFF/png?text=ACADEMIA' }}" alt="{{ brand.name }}" width="140px" align="left" padding="0" />
+      </mj-column>
+      <mj-column width="40%" vertical-align="middle">
+        <mj-text font-size="12px" color="#8B92A8" align="right" padding="0">
+          Edição {{ mes_referencia | default: 'maio/2025' }}
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- TITLE -->
+    <mj-section background-color="#FFFFFF" padding="32px 32px 16px">
+      <mj-column>
+        <mj-text mj-class="eyebrow" color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="0 0 12px">
+          ✉ Newsletter mensal
+        </mj-text>
+        <mj-text mj-class="display" css-class="display-mobile" padding="0 0 16px">
+          {{ titulo | default: 'O que rolou e<br/>o que tá vindo.' }}
+        </mj-text>
+        <mj-text mj-class="lead" padding="0">
+          Oi {{ first_name }}, separei 3 destaques pra você não perder + links que valeram o clique esse mês.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- DESTAQUE 1 -->
+    <mj-section background-color="#FFFFFF" padding="40px 32px 24px">
+      <mj-column>
+        <mj-image src="{{ destaque_1_imagem | default: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1200&q=85' }}" alt="" padding="0 0 20px" border-radius="12px" />
+        <mj-text mj-class="eyebrow" color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="0 0 8px">
+          {{ destaque_1_categoria | default: '01 · Destaque do mês' }}
+        </mj-text>
+        <mj-text mj-class="h2" padding="0 0 12px">
+          {{ destaque_1_titulo | default: 'Lançamos uma feature nova (e ela é melhor que parecia)' }}
+        </mj-text>
+        <mj-text font-size="15px" color="#4A5167" line-height="1.6" padding="0 0 16px">
+          {{ destaque_1_texto | default: 'Você pediu, a gente entregou. A nova feature X resolve aquele problema que você sempre reclamou. Em 2 cliques.' }}
+        </mj-text>
+        <mj-button href="{{ destaque_1_link | default: '#' }}" align="left" background-color="#0A0E27">
+          Ler completo →
+        </mj-button>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#FFFFFF" padding="0 32px">
+      <mj-column>
+        <mj-divider border-color="#E8E1D8" border-width="1px" padding="0" />
+      </mj-column>
+    </mj-section>
+
+    <!-- DESTAQUE 2 -->
+    <mj-section background-color="#FFFFFF" padding="32px 32px 24px">
+      <mj-column>
+        <mj-text mj-class="eyebrow" color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="0 0 8px">
+          {{ destaque_2_categoria | default: '02 · Estudo de caso' }}
+        </mj-text>
+        <mj-text mj-class="h2" padding="0 0 12px">
+          {{ destaque_2_titulo | default: 'Como a Marina dobrou o resultado em 60 dias' }}
+        </mj-text>
+        <mj-text font-size="15px" color="#4A5167" line-height="1.6" padding="0 0 12px">
+          {{ destaque_2_texto | default: 'Spoiler: não foi mágica. Foi consistência aplicada num método simples. A história inteira no link.' }}
+        </mj-text>
+        <mj-text font-size="14px" padding="0">
+          <a href="{{ destaque_2_link | default: '#' }}" class="link-card">Ler o caso completo <span class="link-arrow">→</span></a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#FFFFFF" padding="0 32px">
+      <mj-column>
+        <mj-divider border-color="#E8E1D8" border-width="1px" padding="0" />
+      </mj-column>
+    </mj-section>
+
+    <!-- DESTAQUE 3 -->
+    <mj-section background-color="#FFFFFF" padding="32px 32px 24px">
+      <mj-column>
+        <mj-text mj-class="eyebrow" color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="0 0 8px">
+          {{ destaque_3_categoria | default: '03 · Vem aí' }}
+        </mj-text>
+        <mj-text mj-class="h2" padding="0 0 12px">
+          {{ destaque_3_titulo | default: 'Agenda de eventos pro próximo mês' }}
+        </mj-text>
+        <mj-text font-size="15px" color="#4A5167" line-height="1.6" padding="0 0 12px">
+          {{ destaque_3_texto | default: '3 workshops, 1 live e 1 encontro presencial. Calendário fechado, agora é só escolher.' }}
+        </mj-text>
+        <mj-text font-size="14px" padding="0">
+          <a href="{{ destaque_3_link | default: '#' }}" class="link-card">Ver a agenda <span class="link-arrow">→</span></a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- CURADORIA DE LINKS -->
+    <mj-section background-color="#0A0E27" padding="48px 32px">
+      <mj-column>
+        <mj-text mj-class="eyebrow" color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="0 0 16px">
+          📎 Vale o clique
+        </mj-text>
+        <mj-text font-size="22px" font-weight="700" color="#FFFFFF" line-height="1.3" padding="0 0 28px">
+          Curadoria do que rolou na internet
+        </mj-text>
+        <mj-table width="100%">
+          <tr>
+            <td style="padding:12px 0;vertical-align:top;border-bottom:1px solid #1E2749">
+              <a href="{{ link_curadoria_1 | default: '#' }}" style="text-decoration:none">
+                <div style="font-size:15px;color:#FFFFFF;font-weight:600;margin-bottom:4px">→ {{ link_curadoria_1_titulo | default: 'Artigo que mudou como eu penso sobre X' }}</div>
+                <div style="font-size:12px;color:#8B92A8">{{ link_curadoria_1_fonte | default: 'fonte · 8 min de leitura' }}</div>
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:12px 0;vertical-align:top;border-bottom:1px solid #1E2749">
+              <a href="{{ link_curadoria_2 | default: '#' }}" style="text-decoration:none">
+                <div style="font-size:15px;color:#FFFFFF;font-weight:600;margin-bottom:4px">→ {{ link_curadoria_2_titulo | default: 'Vídeo de 12 min que vale por um curso' }}</div>
+                <div style="font-size:12px;color:#8B92A8">{{ link_curadoria_2_fonte | default: 'YouTube · 12 min' }}</div>
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:12px 0;vertical-align:top">
+              <a href="{{ link_curadoria_3 | default: '#' }}" style="text-decoration:none">
+                <div style="font-size:15px;color:#FFFFFF;font-weight:600;margin-bottom:4px">→ {{ link_curadoria_3_titulo | default: 'Ferramenta nova que entrou pro meu workflow' }}</div>
+                <div style="font-size:12px;color:#8B92A8">{{ link_curadoria_3_fonte | default: 'tool · gratuita' }}</div>
+              </a>
+            </td>
+          </tr>
+        </mj-table>
+      </mj-column>
+    </mj-section>
+
+    <!-- FORWARD CTA -->
+    <mj-section background-color="#F4EFEA" padding="32px 32px">
+      <mj-column>
+        <mj-text font-size="15px" color="#0A0E27" line-height="1.6" padding="0 0 8px" align="center">
+          💌 <strong>Curtiu?</strong> Encaminha pra quem vai gostar também.
+        </mj-text>
+        <mj-text font-size="13px" color="#4A5167" align="center" padding="0">
+          A gente cresce mais com indicação de quem confia.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- FOOTER -->
+    <mj-section background-color="#0A0E27" padding="32px 24px 24px">
+      <mj-column>
+        <mj-image src="{{ brand.logo_url_white | default: 'https://placehold.co/140x44/0A0E27/FFFFFF/png?text=ACADEMIA' }}" alt="{{ brand.name }}" width="120px" align="left" padding="0 0 20px" />
+        <mj-text color="#8B92A8" font-size="13px" line-height="1.65" padding="0 0 16px">
+          <strong style="color:#FFFFFF">{{ brand.name }}</strong><br/>
+          {{ brand.address }}
+        </mj-text>
+        <mj-divider border-color="#1E2749" border-width="1px" padding="8px 0 16px" />
+        <mj-text color="#5A6378" font-size="11px" line-height="1.6" padding="0">
+          Você está na lista da newsletter da {{ brand.name }}.<br/>
+          <a href="{{ link_unsubscribe }}" style="color:#8B92A8;text-decoration:underline">Sair da lista</a> · <a href="{{ brand.privacy_url }}" style="color:#8B92A8;text-decoration:underline">Privacidade</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+  </mj-body>
+</mjml>

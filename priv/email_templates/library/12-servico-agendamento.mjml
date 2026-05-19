@@ -1,0 +1,140 @@
+<mjml>
+  <mj-head>
+    <mj-title>{{ first_name }}, agendamento {{ servico | default: 'da sua consulta' }} ainda essa semana?</mj-title>
+    <mj-preview>{{ slot_descricao | default: 'Slots disponíveis essa semana' }}. Reserva direto pelo link.</mj-preview>
+    <mj-attributes>
+      <mj-all font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" />
+      <mj-text color="#0A0E27" font-size="16px" line-height="1.65" />
+      <mj-button background-color="{{ brand.color_primary | default: '#FF5A1F' }}" color="#FFFFFF" font-size="15px" font-weight="700" padding="0" inner-padding="16px 32px" border-radius="999px" />
+      <mj-section padding="0" />
+      <mj-class name="eyebrow" font-size="11px" font-weight="700" letter-spacing="2.5px" text-transform="uppercase" />
+      <mj-class name="display" font-size="42px" font-weight="800" line-height="1.1" letter-spacing="-1.2px" />
+      <mj-class name="h2" font-size="26px" font-weight="700" line-height="1.25" />
+      <mj-class name="lead" font-size="17px" line-height="1.6" color="#4A5167" />
+    </mj-attributes>
+    <mj-style>
+      .slot { background: #F4EFEA; border-radius: 12px; padding: 16px; margin-bottom: 8px; }
+      .slot-day { font-size: 11px; color: {{ brand.color_primary | default: '#FF5A1F' }}; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
+      .slot-time { font-size: 18px; color: #0A0E27; font-weight: 700; margin-top: 4px; }
+      .slot-prof { font-size: 13px; color: #4A5167; margin-top: 4px; }
+      @media only screen and (max-width: 600px) {
+        .display-mobile { font-size: 30px !important; }
+      }
+    </mj-style>
+  </mj-head>
+
+  <mj-body background-color="#F4EFEA" width="600px">
+
+    <!-- HEADER -->
+    <mj-section background-color="#FFFFFF" padding="24px 32px">
+      <mj-column>
+        <mj-image src="{{ brand.logo_url | default: 'https://placehold.co/140x44/0A0E27/FFFFFF/png?text=ACADEMIA' }}" alt="{{ brand.name }}" width="140px" align="left" padding="0" />
+      </mj-column>
+    </mj-section>
+
+    <!-- HERO -->
+    <mj-section background-color="#FFFFFF" padding="40px 32px 32px">
+      <mj-column>
+        <mj-text mj-class="eyebrow" color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="0 0 16px">
+          {{ first_name }}, recado rápido
+        </mj-text>
+        <mj-text mj-class="display" css-class="display-mobile" padding="0 0 16px">
+          {{ titulo | default: 'Abrimos novos<br/>horários essa semana.' }}
+        </mj-text>
+        <mj-text mj-class="lead" padding="0 0 24px">
+          {{ subtitulo | default: 'Separamos slots pra quem é cliente recorrente. Reserva direto, sem ligação.' }}
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- RECIPROCITY GIFT (gratuidade ou bônus) -->
+    <mj-section background-color="#0A0E27" padding="32px 32px">
+      <mj-column>
+        <mj-text mj-class="eyebrow" color="#C4FF00" padding="0 0 12px">
+          Pra essa semana
+        </mj-text>
+        <mj-text font-size="22px" font-weight="700" color="#FFFFFF" line-height="1.3" padding="0 0 12px">
+          {{ beneficio | default: 'Primeira consulta com retorno incluso.' }}
+        </mj-text>
+        <mj-text font-size="14px" color="#C8CCDB" line-height="1.6" padding="0">
+          {{ beneficio_descricao | default: 'Quem agenda essa semana sai com retorno em 30 dias agendado também — sem custo extra.' }}
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- SLOTS DISPONÍVEIS -->
+    <mj-section background-color="#FFFFFF" padding="48px 32px 16px">
+      <mj-column>
+        <mj-text mj-class="eyebrow" color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="0 0 12px">
+          Horários abertos
+        </mj-text>
+        <mj-text mj-class="h2" padding="0 0 24px">
+          Escolhe o que cabe na sua agenda.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#FFFFFF" padding="0 32px 16px">
+      <mj-column>
+        <mj-raw>
+          <div class="slot">
+            <div class="slot-day">{{ slot_1_dia | default: 'TER · 14 MAIO' }}</div>
+            <div class="slot-time">{{ slot_1_hora | default: '14h00 — 15h00' }}</div>
+            <div class="slot-prof">{{ slot_1_prof | default: 'Com Dra. Helena · Sala 3' }}</div>
+          </div>
+          <div class="slot">
+            <div class="slot-day">{{ slot_2_dia | default: 'QUA · 15 MAIO' }}</div>
+            <div class="slot-time">{{ slot_2_hora | default: '10h00 — 11h00' }}</div>
+            <div class="slot-prof">{{ slot_2_prof | default: 'Com Dr. Pedro · Sala 1' }}</div>
+          </div>
+          <div class="slot">
+            <div class="slot-day">{{ slot_3_dia | default: 'SEX · 17 MAIO' }}</div>
+            <div class="slot-time">{{ slot_3_hora | default: '16h30 — 17h30' }}</div>
+            <div class="slot-prof">{{ slot_3_prof | default: 'Com Dra. Helena · Sala 3' }}</div>
+          </div>
+        </mj-raw>
+      </mj-column>
+    </mj-section>
+
+    <!-- CTA AGENDAR -->
+    <mj-section background-color="#FFFFFF" padding="24px 32px 48px">
+      <mj-column>
+        <mj-button href="{{ link_agendamento | default: '#' }}" align="left">
+          Ver agenda completa e reservar →
+        </mj-button>
+        <mj-text font-size="13px" color="#4A5167" padding="16px 0 0">
+          Ou whatsapp direto: <a href="{{ brand.whatsapp_url }}" style="color:{{ brand.color_primary | default: '#FF5A1F' }};text-decoration:none;font-weight:600;border-bottom:2px solid {{ brand.color_primary | default: '#FF5A1F' }}">clica aqui</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- SCARCITY -->
+    <mj-section background-color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="32px 32px">
+      <mj-column>
+        <mj-text font-size="14px" font-weight="700" color="#FFFFFF" letter-spacing="2px" text-transform="uppercase" padding="0 0 8px">
+          Heads-up
+        </mj-text>
+        <mj-text font-size="18px" color="#FFFFFF" line-height="1.5" padding="0">
+          A gente abre {{ vagas_semana | default: '12 slots' }} novos por semana. Geralmente fecham até quarta. Não deixa pra última hora.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- FOOTER -->
+    <mj-section background-color="#0A0E27" padding="32px 24px 24px">
+      <mj-column>
+        <mj-image src="{{ brand.logo_url_white | default: 'https://placehold.co/140x44/0A0E27/FFFFFF/png?text=ACADEMIA' }}" alt="{{ brand.name }}" width="120px" align="left" padding="0 0 20px" />
+        <mj-text color="#8B92A8" font-size="13px" line-height="1.65" padding="0 0 16px">
+          <strong style="color:#FFFFFF">{{ brand.name }}</strong><br/>
+          {{ brand.address }}<br/>
+          CNPJ {{ brand.cnpj }}
+        </mj-text>
+        <mj-divider border-color="#1E2749" border-width="1px" padding="8px 0 16px" />
+        <mj-text color="#5A6378" font-size="11px" line-height="1.6" padding="0">
+          <a href="{{ link_unsubscribe }}" style="color:#8B92A8;text-decoration:underline">Descadastrar</a> · <a href="{{ brand.privacy_url }}" style="color:#8B92A8;text-decoration:underline">Privacidade</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+  </mj-body>
+</mjml>

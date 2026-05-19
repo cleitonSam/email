@@ -1,0 +1,171 @@
+<mjml>
+  <mj-head>
+    <mj-title>{{ first_name }}, {{ produto_destaque | default: 'oferta especial' }} chegou pra você</mj-title>
+    <mj-preview>{{ cupom | default: 'Cupom exclusivo' }} — {{ desconto | default: 'até 40% OFF' }}. Termina {{ data_limite }}.</mj-preview>
+    <mj-attributes>
+      <mj-all font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" />
+      <mj-text color="#0A0E27" font-size="16px" line-height="1.65" />
+      <mj-button background-color="{{ brand.color_primary | default: '#FF5A1F' }}" color="#FFFFFF" font-size="15px" font-weight="700" padding="0" inner-padding="18px 36px" border-radius="999px" />
+      <mj-section padding="0" />
+      <mj-class name="eyebrow" font-size="11px" font-weight="700" letter-spacing="2.5px" text-transform="uppercase" />
+      <mj-class name="display" font-size="48px" font-weight="800" line-height="1.05" letter-spacing="-1.5px" />
+      <mj-class name="h2" font-size="28px" font-weight="700" line-height="1.2" letter-spacing="-0.5px" />
+      <mj-class name="lead" font-size="17px" line-height="1.6" color="#4A5167" />
+    </mj-attributes>
+    <mj-style>
+      .coupon-box { background: {{ brand.color_accent | default: '#C4FF00' }}; border: 2px dashed #0A0E27; border-radius: 12px; padding: 24px; text-align: center; }
+      .coupon-code { font-family: 'Courier New', monospace; font-size: 28px; font-weight: 800; color: #0A0E27; letter-spacing: 4px; }
+      .price-old { color: #8B92A8; text-decoration: line-through; font-size: 18px; }
+      .price-new { color: {{ brand.color_primary | default: '#FF5A1F' }}; font-size: 32px; font-weight: 800; }
+      @media only screen and (max-width: 600px) {
+        .display-mobile { font-size: 34px !important; line-height: 1.1 !important; }
+        .coupon-code { font-size: 22px !important; letter-spacing: 2px !important; }
+      }
+    </mj-style>
+  </mj-head>
+
+  <mj-body background-color="#F4EFEA" width="600px">
+
+    <!-- URGENCY BAR -->
+    <mj-section background-color="#0A0E27" padding="14px 24px">
+      <mj-column>
+        <mj-text align="center" font-size="12px" color="#C4FF00" font-weight="700" letter-spacing="2px" padding="0">
+          🔥 PROMO RELÂMPAGO — TERMINA {{ data_limite | default: 'EM 48H' }}
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- HEADER -->
+    <mj-section background-color="#FFFFFF" padding="20px 24px">
+      <mj-column width="100%">
+        <mj-image src="{{ brand.logo_url | default: 'https://placehold.co/140x44/0A0E27/FFFFFF/png?text=ACADEMIA' }}" alt="{{ brand.name }}" width="140px" align="left" padding="0" />
+      </mj-column>
+    </mj-section>
+
+    <!-- HERO -->
+    <mj-section padding="0">
+      <mj-column>
+        <mj-image src="{{ hero_image | default: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1280&q=85' }}" alt="" padding="0" fluid-on-mobile="true" />
+      </mj-column>
+    </mj-section>
+
+    <!-- OFFER HEADLINE -->
+    <mj-section background-color="#FFFFFF" padding="48px 32px 24px">
+      <mj-column>
+        <mj-text mj-class="eyebrow" color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="0 0 16px">
+          ▸ {{ first_name }}, só hoje pra você
+        </mj-text>
+        <mj-text mj-class="display" css-class="display-mobile" padding="0 0 16px">
+          {{ titulo | default: 'Aquele produto que você queria<br/>tá com desconto.' }}
+        </mj-text>
+        <mj-text mj-class="lead" padding="0 0 32px">
+          {{ subtitulo | default: 'Selecionamos uma curadoria pra essa semana. Estoque limitado, então é primeiro a clicar leva.' }}
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- COUPON BOX -->
+    <mj-section background-color="#FFFFFF" padding="0 32px 40px">
+      <mj-column>
+        <mj-raw>
+          <div class="coupon-box">
+            <div style="font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#0A0E27;margin-bottom:8px">Seu cupom</div>
+            <div class="coupon-code">{{ cupom | default: 'VOLTOU10' }}</div>
+            <div style="font-size:13px;color:#0A0E27;margin-top:8px">{{ desconto | default: '10% OFF' }} aplicado direto no checkout</div>
+          </div>
+        </mj-raw>
+      </mj-column>
+    </mj-section>
+
+    <!-- FEATURED PRODUCT -->
+    <mj-section background-color="#FFFFFF" padding="32px 32px 16px">
+      <mj-column width="45%" padding="0 16px 0 0">
+        <mj-image src="{{ produto_imagem | default: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&q=85' }}" alt="{{ produto_destaque }}" padding="0" border-radius="12px" />
+      </mj-column>
+      <mj-column width="55%" padding="0 0 0 16px" vertical-align="middle">
+        <mj-text mj-class="eyebrow" color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="0 0 12px">
+          Produto destaque
+        </mj-text>
+        <mj-text font-size="22px" font-weight="700" color="#0A0E27" line-height="1.25" padding="0 0 16px">
+          {{ produto_destaque | default: 'Camiseta dry-fit performance' }}
+        </mj-text>
+        <mj-text font-size="14px" color="#4A5167" line-height="1.55" padding="0 0 16px">
+          {{ produto_descricao | default: 'Tecido respirável, secagem rápida. Pra treinar pesado sem suar a camisa (literalmente).' }}
+        </mj-text>
+        <mj-raw>
+          <div>
+            <span class="price-old">R$ {{ produto_preco_antigo | default: '129' }}</span>
+            &nbsp;&nbsp;
+            <span class="price-new">R$ {{ produto_preco | default: '89' }}</span>
+          </div>
+        </mj-raw>
+      </mj-column>
+    </mj-section>
+
+    <!-- WHY NOW (3 reasons) -->
+    <mj-section background-color="#0A0E27" padding="56px 32px 40px">
+      <mj-column>
+        <mj-text mj-class="eyebrow" color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="0 0 12px">
+          Por que aproveitar agora
+        </mj-text>
+        <mj-text font-size="26px" font-weight="700" color="#FFFFFF" line-height="1.25" padding="0 0 32px">
+          Três motivos que não voltam tão cedo.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#0A0E27" padding="0 24px 56px">
+      <mj-column width="33%" padding="0 8px 0 0" vertical-align="top">
+        <mj-text font-size="32px" color="{{ brand.color_primary | default: '#FF5A1F' }}" font-weight="800" padding="0 0 8px">01</mj-text>
+        <mj-text font-size="15px" font-weight="700" color="#FFFFFF" padding="0 0 6px">Frete grátis</mj-text>
+        <mj-text font-size="13px" color="#8B92A8" line-height="1.55" padding="0">Acima de R$ 150 chega na tua casa sem custo extra.</mj-text>
+      </mj-column>
+      <mj-column width="33%" padding="0 8px" vertical-align="top">
+        <mj-text font-size="32px" color="{{ brand.color_primary | default: '#FF5A1F' }}" font-weight="800" padding="0 0 8px">02</mj-text>
+        <mj-text font-size="15px" font-weight="700" color="#FFFFFF" padding="0 0 6px">Troca fácil</mj-text>
+        <mj-text font-size="13px" color="#8B92A8" line-height="1.55" padding="0">Não serviu? 7 dias pra trocar sem dor de cabeça.</mj-text>
+      </mj-column>
+      <mj-column width="33%" padding="0 0 0 8px" vertical-align="top">
+        <mj-text font-size="32px" color="{{ brand.color_primary | default: '#FF5A1F' }}" font-weight="800" padding="0 0 8px">03</mj-text>
+        <mj-text font-size="15px" font-weight="700" color="#FFFFFF" padding="0 0 6px">Estoque baixo</mj-text>
+        <mj-text font-size="13px" color="#8B92A8" line-height="1.55" padding="0">Os tamanhos M e G já estão indo embora rápido.</mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- CTA -->
+    <mj-section background-color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="48px 32px">
+      <mj-column>
+        <mj-text mj-class="eyebrow" color="#FFFFFF" padding="0 0 12px">
+          Próximo passo
+        </mj-text>
+        <mj-text font-size="32px" font-weight="800" color="#FFFFFF" line-height="1.15" letter-spacing="-1px" padding="0 0 20px">
+          Garante o seu antes que acabe.
+        </mj-text>
+        <mj-text font-size="15px" color="#FFFFFF" line-height="1.6" padding="0 0 28px">
+          Aplica o cupom <strong>{{ cupom | default: 'VOLTOU10' }}</strong> no checkout e leva pra casa.
+        </mj-text>
+        <mj-button href="{{ link_loja | default: '#' }}" align="left" background-color="#0A0E27" color="#FFFFFF">
+          Quero aproveitar agora →
+        </mj-button>
+      </mj-column>
+    </mj-section>
+
+    <!-- FOOTER -->
+    <mj-section background-color="#0A0E27" padding="32px 24px 24px">
+      <mj-column>
+        <mj-image src="{{ brand.logo_url_white | default: 'https://placehold.co/140x44/0A0E27/FFFFFF/png?text=ACADEMIA' }}" alt="{{ brand.name }}" width="120px" align="left" padding="0 0 20px" />
+        <mj-text color="#8B92A8" font-size="13px" line-height="1.65" padding="0 0 16px">
+          <strong style="color:#FFFFFF">{{ brand.name }}</strong><br/>
+          {{ brand.address }}<br/>
+          CNPJ {{ brand.cnpj }}
+        </mj-text>
+        <mj-divider border-color="#1E2749" border-width="1px" padding="8px 0 16px" />
+        <mj-text color="#5A6378" font-size="11px" line-height="1.6" padding="0">
+          Você recebeu este email porque é cliente da {{ brand.name }}.<br/>
+          <a href="{{ link_unsubscribe }}" style="color:#8B92A8;text-decoration:underline">Descadastrar</a> · <a href="{{ brand.privacy_url }}" style="color:#8B92A8;text-decoration:underline">Privacidade</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+  </mj-body>
+</mjml>

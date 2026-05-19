@@ -69,6 +69,46 @@ defmodule Keila.Templates.Library do
       tag: "Crescimento",
       description: "Programa de indicação. Aluno indica amigo e ambos ganham.",
       preview_url: "/email-previews/08-indicacao-amigo"
+    },
+    %{
+      slug: "09-ecommerce-promo",
+      title: "E-commerce promo",
+      tag: "Conversão",
+      description:
+        "Promo com cupom e produto destaque. Scarcity + frete grátis. Pra loja virtual de qualquer nicho.",
+      preview_url: "/email-previews/09-ecommerce-promo"
+    },
+    %{
+      slug: "10-infoproduto-lancamento",
+      title: "Lançamento infoproduto",
+      tag: "Lançamento",
+      description:
+        "Abertura de turma / curso / ebook. Autoridade + prova social + vagas limitadas. CTA direto pra inscrição.",
+      preview_url: "/email-previews/10-infoproduto-lancamento"
+    },
+    %{
+      slug: "11-saas-onboarding",
+      title: "Onboarding SaaS",
+      tag: "Onboarding",
+      description:
+        "3 passos pro novo usuário tirar o máximo na primeira semana. Barra de progresso + CTA por etapa.",
+      preview_url: "/email-previews/11-saas-onboarding"
+    },
+    %{
+      slug: "12-servico-agendamento",
+      title: "Agendamento serviço",
+      tag: "Engajamento",
+      description:
+        "Pra clínicas, consultórios, consultorias. Lista de slots disponíveis + reciprocidade (bônus pra essa semana).",
+      preview_url: "/email-previews/12-servico-agendamento"
+    },
+    %{
+      slug: "13-newsletter-generica",
+      title: "Newsletter mensal",
+      tag: "Comunidade",
+      description:
+        "Newsletter multiuso: 3 destaques + curadoria de links + CTA pra encaminhar. Funciona pra qualquer nicho.",
+      preview_url: "/email-previews/13-newsletter-generica"
     }
   ]
 
@@ -120,6 +160,11 @@ defmodule Keila.Templates.Library do
       "06-convite-evento" -> "Você está convidado(a): {{ data_evento }}"
       "07-reativacao-aluno" -> "{{ first_name }}, a gente sente sua falta"
       "08-indicacao-amigo" -> "Treina com quem você ama 💪"
+      "09-ecommerce-promo" -> "{{ first_name }}, promo relâmpago — só até {{ data_limite }}"
+      "10-infoproduto-lancamento" -> "{{ first_name }}, abriu inscrição da turma {{ turma }}"
+      "11-saas-onboarding" -> "{{ first_name }}, bem-vindo(a) — vamos te deixar pronto em 3 passos"
+      "12-servico-agendamento" -> "{{ first_name }}, abrimos novos horários essa semana"
+      "13-newsletter-generica" -> "📬 Newsletter {{ mes_referencia }} — destaques e curadoria"
       _ -> ""
     end
   end

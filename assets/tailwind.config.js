@@ -35,7 +35,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ["Poppins", "Inter", "system-ui", "sans-serif"],
-        display: ["Montserrat", "Inter", "system-ui", "sans-serif"]
+        display: ["Poppins", "Inter", "system-ui", "sans-serif"]
       },
       backgroundImage: {
         "fluxo-gradient": "linear-gradient(135deg, #0066FF 0%, #00F2FE 100%)",

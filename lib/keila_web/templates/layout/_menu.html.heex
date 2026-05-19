@@ -149,7 +149,7 @@
             icon: :code
           )}
           <%= if not Keila.Projects.Brand.completed?(@current_project) do %>
-            {menu_link(@conn, :wizard, :show, [@current_project.id], gettext("✨ Configurar marca"),
+            {menu_link(@conn, :wizard, :show, [@current_project.id], gettext("Configurar marca"),
               exact: true,
               icon: :sparkles
             )}
@@ -171,7 +171,7 @@
             exact: true,
             icon: :sparkles
           )}
-          {menu_link(@conn, :birthdays, :index, [@current_project.id], gettext("🎂 Aniversariantes"),
+          {menu_link(@conn, :birthdays, :index, [@current_project.id], gettext("Aniversariantes"),
             exact: true,
             icon: :gift
           )}

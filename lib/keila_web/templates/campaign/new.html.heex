@@ -1,10 +1,10 @@
 <div class="container flex py-8 sm:py-11 sm:mb-4">
   <div class="flex-grow gap-4 flex flex-col-reverse sm:flex-row sm:items-center max-w-4xl">
     <div class="flex items-center gap-4">
-      <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-fluxo-400 to-cyan-400 flex items-center justify-center shadow-lg shadow-fluxo-500/20">
-        {render_icon(:at_symbol)}
+      <div class="h-10 w-10 rounded-xl bg-fluxo-gradient flex items-center justify-center shadow-fluxo">
+        <span class="inline-flex h-5 w-5 text-white">{render_icon(:at_symbol)}</span>
       </div>
-      <h1 class="text-2xl md:text-3xl font-bold text-white">
+      <h1 class="text-h1">
         {gettext("New Campaign")}
       </h1>
     </div>
@@ -73,20 +73,20 @@
 
     <div class="form-row">
       <%= inputs_for(f, :settings, fn fs -> %>
-        <label class="text-lg font-semibold text-gray-300 mb-4 block">{gettext("Choose Your Editor")}</label>
+        <label class="text-h4 mb-4 block">{gettext("Choose Your Editor")}</label>
         <div class="grid grid-cols-2 gap-4">
           <input type="radio" name={input_name(fs, :type)} id={input_id(fs, :type, "text")} value="text" class="hidden" x-bind:checked="type === 'text'" />
           <label
             for={input_id(fs, :type, "text")}
             x-on:click="type = 'text'"
-            class="group bg-gray-900/60 border-2 rounded-2xl p-5 hover:bg-gray-800/60 transition-all duration-300 cursor-pointer flex flex-col items-center text-center"
-            x-bind:class="type === 'text' ? 'border-fluxo-500 bg-fluxo-500/10 shadow-lg shadow-fluxo-500/10' : 'border-gray-700/50 hover:border-fluxo-500/40'"
+            class="card-option group flex flex-col items-center text-center"
+            x-bind:class="type === 'text' && 'card-option--active'"
           >
-            <div class="h-14 w-14 bg-gradient-to-br from-fluxo-400 to-cyan-400 rounded-xl text-white flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-fluxo-500/20">
-              {render_icon(:plain_text)}
+            <div class="h-14 w-14 bg-fluxo-gradient rounded-xl text-white flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 shadow-fluxo">
+              <span class="inline-flex h-6 w-6">{render_icon(:plain_text)}</span>
             </div>
-            <h3 class="font-bold text-base text-white mb-1">{gettext("Plain Text")}</h3>
-            <p class="text-xs text-gray-400 leading-relaxed">
+            <h3 class="text-h4 mb-1">{gettext("Plain Text")}</h3>
+            <p class="text-caption">
               {gettext(
                 "The simplest type of email. Text and nothing else. No images, no links, just text."
               )}
@@ -97,14 +97,14 @@
           <label
             for={input_id(fs, :type, "markdown")}
             x-on:click="type = 'markdown'"
-            class="group bg-gray-900/60 border-2 rounded-2xl p-5 hover:bg-gray-800/60 transition-all duration-300 cursor-pointer flex flex-col items-center text-center"
-            x-bind:class="type === 'markdown' ? 'border-fluxo-500 bg-fluxo-500/10 shadow-lg shadow-fluxo-500/10' : 'border-gray-700/50 hover:border-fluxo-500/40'"
+            class="card-option group flex flex-col items-center text-center"
+            x-bind:class="type === 'markdown' && 'card-option--active'"
           >
-            <div class="h-14 w-14 bg-gradient-to-br from-cyan-500 to-fluxo-500 rounded-xl text-white flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-cyan-500/20">
-              {render_icon(:markdown)}
+            <div class="h-14 w-14 bg-fluxo-gradient rounded-xl text-white flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 shadow-fluxo">
+              <span class="inline-flex h-6 w-6">{render_icon(:markdown)}</span>
             </div>
-            <h3 class="font-bold text-base text-white mb-1">{gettext("Markdown")}</h3>
-            <p class="text-xs text-gray-400 leading-relaxed">
+            <h3 class="text-h4 mb-1">{gettext("Markdown")}</h3>
+            <p class="text-caption">
               {gettext("Use the Markdown editor to create beautiful single-column hybrid emails.")}
             </p>
           </label>
@@ -113,15 +113,15 @@
           <label
             for={input_id(fs, :type, "block")}
             x-on:click="type = 'block'"
-            class="group bg-gray-900/60 border-2 rounded-2xl p-5 hover:bg-gray-800/60 transition-all duration-300 cursor-pointer flex flex-col items-center text-center relative overflow-hidden"
-            x-bind:class="type === 'block' ? 'border-fluxo-500 bg-fluxo-500/10 shadow-lg shadow-fluxo-500/10' : 'border-gray-700/50 hover:border-fluxo-500/40'"
+            class="card-option group flex flex-col items-center text-center overflow-hidden"
+            x-bind:class="type === 'block' && 'card-option--active'"
           >
-            <span class="absolute top-2 right-2 bg-fluxo-500 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">beta</span>
-            <div class="h-14 w-14 bg-gradient-to-br from-purple-500 to-fluxo-500 rounded-xl text-white flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-purple-500/20">
-              {render_icon(:block)}
+            <span class="badge badge--info absolute top-2 right-2">beta</span>
+            <div class="h-14 w-14 bg-fluxo-gradient rounded-xl text-white flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 shadow-fluxo">
+              <span class="inline-flex h-6 w-6">{render_icon(:block)}</span>
             </div>
-            <h3 class="font-bold text-base text-white mb-1">{gettext("Block")}</h3>
-            <p class="text-xs text-gray-400 leading-relaxed">
+            <h3 class="text-h4 mb-1">{gettext("Block")}</h3>
+            <p class="text-caption">
               {gettext("Create stunning emails with multi-column layouts with the Block editor.")}
             </p>
           </label>
@@ -130,15 +130,15 @@
           <label
             for={input_id(fs, :type, "mjml")}
             x-on:click="type = 'mjml'"
-            class="group bg-gray-900/60 border-2 rounded-2xl p-5 hover:bg-gray-800/60 transition-all duration-300 cursor-pointer flex flex-col items-center text-center relative overflow-hidden"
-            x-bind:class="type === 'mjml' ? 'border-fluxo-500 bg-fluxo-500/10 shadow-lg shadow-fluxo-500/10' : 'border-gray-700/50 hover:border-fluxo-500/40'"
+            class="card-option group flex flex-col items-center text-center overflow-hidden"
+            x-bind:class="type === 'mjml' && 'card-option--active'"
           >
-            <span class="absolute top-2 right-2 bg-gradient-to-r from-fluxo-500 to-cyan-400 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">recomendado</span>
-            <div class="h-14 w-14 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl text-white flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-orange-500/20">
-              {render_icon(:mjml)}
+            <span class="badge badge--success absolute top-2 right-2">recomendado</span>
+            <div class="h-14 w-14 bg-fluxo-gradient rounded-xl text-white flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 shadow-fluxo">
+              <span class="inline-flex h-6 w-6">{render_icon(:mjml)}</span>
             </div>
-            <h3 class="font-bold text-base text-white mb-1">{gettext("MJML")}</h3>
-            <p class="text-xs text-gray-400 leading-relaxed">
+            <h3 class="text-h4 mb-1">{gettext("MJML")}</h3>
+            <p class="text-caption">
               {gettext("Build fully customized responsive email layouts with MJML.")}
             </p>
           </label>

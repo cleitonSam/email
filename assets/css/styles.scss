@@ -67,36 +67,6 @@ html {
     min-height: 100px;
 }
 
-/* ========================================
-   MODAL — sistema unificado
-   z-index scale: 30 (popover) / 40 (sticky) / 50 (modal)
-   ======================================== */
-
-.modal-backdrop {
-    @apply fixed inset-0 z-50 bg-gray-950/80 backdrop-blur-sm flex items-center justify-center p-4;
-}
-
-.modal-panel {
-    @apply bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl p-6;
-    animation: fadeInScale 0.2s ease-out;
-}
-
-.modal-panel--sm { @apply max-w-md; }
-.modal-panel--lg { @apply max-w-4xl; }
-
-.modal-header {
-    @apply flex justify-between items-start mb-5;
-}
-
-.modal-close {
-    @apply text-gray-400 hover:text-white transition-colors inline-flex h-5 w-5;
-}
-
-@keyframes fadeInScale {
-    from { opacity: 0; transform: scale(0.96); }
-    to { opacity: 1; transform: scale(1); }
-}
-
 /* Card variant selecionavel (radio-like) — usado em escolhas tipo "tipo de campanha" */
 .card-option {
     @apply relative p-5 bg-gray-900/60 backdrop-blur-sm border-2 border-gray-800/50 rounded-2xl transition-all duration-200 cursor-pointer

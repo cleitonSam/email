@@ -39,17 +39,17 @@
   </div>
 
   <!-- Modal Criar com IA -->
-  <div id="ai-create-modal" class="modal-backdrop hidden" onclick="if(event.target===this)this.classList.add('hidden')">
-    <div class="modal-panel">
-      <div class="modal-header">
+  <div id="ai-create-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" onclick="if(event.target===this)this.classList.add('hidden')">
+    <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl">
+      <div class="flex justify-between items-start mb-5">
         <div>
           <h3 class="text-h3 flex items-center gap-2">
             <span class="inline-flex h-5 w-5 text-fluxo-400">{render_icon(:sparkles)}</span> Criar email com IA
           </h3>
           <p class="text-caption mt-1">Descreve em português o email que você quer.</p>
         </div>
-        <button type="button" aria-label="Fechar modal" onclick="document.getElementById('ai-create-modal').classList.add('hidden')" class="modal-close">
-          {render_icon(:x)}
+        <button type="button" aria-label="Fechar modal" onclick="document.getElementById('ai-create-modal').classList.add('hidden')" class="text-gray-400 hover:text-white">
+          <span class="inline-flex h-5 w-5">{render_icon(:x)}</span>
         </button>
       </div>
 

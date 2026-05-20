@@ -41,12 +41,10 @@
 
     <!-- ============== STEP 2: Logo (form HTML POST tradicional — sem LiveView upload) ============== -->
     <%= if @step == 2 do %>
-      <div class="card card--full">
-        <div class="h-14 w-14 rounded-2xl bg-fluxo-gradient flex items-center justify-center shadow-fluxo mb-5">
-          <span class="inline-flex h-7 w-7 text-white">{render_icon(:color_swatch)}</span>
-        </div>
-        <h2 class="text-h1 mb-2">Manda o logo da {@brand["name"]}</h2>
-        <p class="text-lead text-gray-400 mb-8">PNG, JPG ou SVG. Vou usar pra extrair as cores.</p>
+      <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-8">
+        <div class="text-5xl mb-5">🎨</div>
+        <h2 class="text-3xl font-bold text-white mb-2">Manda o logo da {@brand["name"]}</h2>
+        <p class="text-gray-400 mb-8">PNG, JPG ou SVG. Vou usar pra extrair as cores. ✨</p>
 
         <%= if not @imagekit_configured? do %>
           <div class="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 mb-5 text-sm text-amber-200">
@@ -56,12 +54,11 @@
           <form id="logo-form" action={"/projects/" <> @current_project.id <> "/setup/logo"} method="post" enctype="multipart/form-data">
             <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
             <div class="bg-gray-800/40 border-2 border-dashed border-gray-700 hover:border-fluxo-500/50 rounded-2xl p-10 text-center transition">
-              <span class="inline-flex h-10 w-10 text-gray-500 mx-auto mb-3">{render_icon(:photograph)}</span>
-              <p class="text-h4 mb-1">Escolhe o logo</p>
-              <p class="text-body text-gray-400 mb-5">PNG, JPG, WebP ou SVG (até 5MB)</p>
-              <label for="logo-input" class="button button--cta button--large cursor-pointer inline-flex gap-2">
-                <span class="inline-flex h-4 w-4">{render_icon(:upload)}</span>
-                Selecionar arquivo
+              <span class="text-5xl block mb-3">📁</span>
+              <p class="text-white font-semibold mb-1">Escolhe o logo</p>
+              <p class="text-sm text-gray-400 mb-5">PNG, JPG, WebP ou SVG (até 5MB)</p>
+              <label for="logo-input" class="button button--cta button--large cursor-pointer inline-block">
+                📤 Selecionar arquivo
               </label>
               <input
                 id="logo-input"
@@ -69,7 +66,7 @@
                 name="logo"
                 accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml,.png,.jpg,.jpeg,.webp,.svg"
                 class="sr-only"
-                onchange="document.getElementById('selected-name').textContent = (this.files[0]?.name || ''); document.getElementById('upload-actions').classList.remove('hidden'); document.getElementById('placeholder-actions').classList.add('hidden');"
+                onchange="document.getElementById('selected-name').textContent = '📄 ' + (this.files[0]?.name || ''); document.getElementById('upload-actions').classList.remove('hidden'); document.getElementById('placeholder-actions').classList.add('hidden');"
               />
               <p id="selected-name" class="text-fluxo-300 text-sm font-medium mt-4"></p>
             </div>
@@ -79,9 +76,9 @@
               <button
                 type="submit"
                 class="flex-1 button button--cta button--large"
-                onclick="this.disabled=true; this.textContent='Enviando... aguarda 5-15 seg'; this.form.submit();"
+                onclick="this.disabled=true; this.innerHTML='📤 Enviando... aguarda 5-15 seg'; this.form.submit();"
               >
-                Enviar logo e extrair cores
+                Enviar logo e extrair cores ✨
               </button>
             </div>
 
@@ -98,12 +95,10 @@
 
     <!-- ============== STEP 3: Cores automáticas (Color Thief) ============== -->
     <%= if @step == 3 do %>
-      <div class="card card--full" data-logo-url={@brand["logo_url"]}>
-        <div class="h-14 w-14 rounded-2xl bg-fluxo-gradient flex items-center justify-center shadow-fluxo mb-5">
-          <span class="inline-flex h-7 w-7 text-white">{render_icon(:sparkles)}</span>
-        </div>
-        <h2 class="text-h1 mb-2">Cores extraídas do seu logo</h2>
-        <p class="text-lead text-gray-400 mb-8">Olhei seu logo e sugeri essa paleta. Confirma pra aplicar nos emails.</p>
+      <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-8" data-logo-url={@brand["logo_url"]}>
+        <div class="text-5xl mb-5">✨</div>
+        <h2 class="text-3xl font-bold text-white mb-2">Cores extraídas do seu logo</h2>
+        <p class="text-gray-400 mb-8">Olhei seu logo e sugeri essa paleta. Confirma pra aplicar nos emails.</p>
 
         <div class="bg-gray-800/40 rounded-xl p-6 mb-5">
           <img
@@ -133,10 +128,7 @@
           </div>
         </div>
 
-        <p id="extractor-status" class="text-caption mb-5 flex items-center gap-2">
-          <span class="inline-flex h-3.5 w-3.5 animate-pulse-soft">{render_icon(:clock)}</span>
-          Analisando logo...
-        </p>
+        <p id="extractor-status" class="text-xs text-gray-500 mb-5">⏳ Analisando logo...</p>
 
         <form phx-submit="save-colors">
           <input type="hidden" name="primary" id="hidden-primary" value={@brand["color_primary"] || "#FF5A1F"} />
@@ -154,12 +146,10 @@
 
     <!-- ============== STEP 4: Preview + finalizar ============== -->
     <%= if @step == 4 do %>
-      <div class="card card--full">
-        <div class="h-14 w-14 rounded-2xl bg-fluxo-gradient flex items-center justify-center shadow-fluxo mb-5">
-          <span class="inline-flex h-7 w-7 text-white">{render_icon(:check_circle)}</span>
-        </div>
-        <h2 class="text-h1 mb-2">Tudo pronto!</h2>
-        <p class="text-lead text-gray-400 mb-8">Sua marca tá aplicada nos templates. Olha como vai ficar:</p>
+      <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-8">
+        <div class="text-5xl mb-5">🎉</div>
+        <h2 class="text-3xl font-bold text-white mb-2">Tudo pronto!</h2>
+        <p class="text-gray-400 mb-8">Sua marca tá aplicada nos templates. Olha como vai ficar:</p>
 
         <!-- Mini preview email -->
         <div class="bg-white rounded-xl overflow-hidden mb-6 shadow-2xl">
@@ -203,7 +193,7 @@
         <div class="flex gap-3">
           <button type="button" phx-click="prev-step" class="button">← Voltar e ajustar</button>
           <button type="button" phx-click="finish" class="flex-1 button button--cta">
-            Salvar e começar a usar
+            Salvar e começar a usar 🚀
           </button>
         </div>
       </div>

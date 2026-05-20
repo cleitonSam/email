@@ -1,14 +1,14 @@
 <div class="container flex py-8 sm:py-11 sm:mb-4">
   <div class="flex-grow gap-4 flex flex-col-reverse sm:flex-row sm:items-center max-w-6xl">
     <div class="flex items-center gap-4">
-      <div class="h-10 w-10 rounded-xl bg-fluxo-gradient flex items-center justify-center shadow-fluxo">
+      <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-fluxo-400 to-cyan-400 flex items-center justify-center shadow-lg shadow-fluxo-500/20">
         <span class="inline-flex h-5 w-5 text-white">{render_icon(:sparkles)}</span>
       </div>
       <div>
-        <h1 class="text-h1">
+        <h1 class="text-2xl md:text-3xl font-bold text-white">
           {gettext("Modelos de Email")}
         </h1>
-        <p class="text-subtitle mt-1">
+        <p class="text-sm text-gray-400 mt-1">
           {gettext("13 modelos prontos. Clique em \"Usar este modelo\" e edite à vontade.")}
         </p>
       </div>
@@ -20,20 +20,17 @@
   <!-- Card "Criar com IA" -->
   <div class="bg-gradient-to-br from-fluxo-500/20 via-cyan-500/10 to-fluxo-500/20 border-2 border-fluxo-500/40 rounded-2xl p-6 mb-8">
     <div class="flex flex-col md:flex-row items-start md:items-center gap-5">
-      <div class="h-14 w-14 rounded-2xl bg-fluxo-500/20 border border-fluxo-500/40 flex items-center justify-center flex-shrink-0">
-        <span class="inline-flex h-7 w-7 text-fluxo-300">{render_icon(:sparkles)}</span>
-      </div>
+      <div class="text-5xl">🪄</div>
       <div class="flex-grow">
-        <h2 class="text-h3 mb-1">Crie um modelo do zero com IA</h2>
-        <p class="text-body text-gray-300">Descreva o email que você quer e a IA monta inteiro pra você. Use cores e marca do projeto automaticamente.</p>
+        <h2 class="text-xl font-bold text-white mb-1">Crie um modelo do zero com IA</h2>
+        <p class="text-sm text-gray-300">Descreva o email que você quer e a IA monta inteiro pra você. Use cores e marca do projeto automaticamente.</p>
       </div>
       <button
         type="button"
         onclick="document.getElementById('ai-create-modal').classList.remove('hidden')"
-        class="button button--cta button--large flex-shrink-0 gap-2"
+        class="button button--cta button--large flex-shrink-0"
       >
-        <span class="inline-flex h-4 w-4">{render_icon(:sparkles)}</span>
-        Criar com IA
+        ✨ Criar com IA
       </button>
     </div>
   </div>
@@ -43,14 +40,12 @@
     <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl">
       <div class="flex justify-between items-start mb-5">
         <div>
-          <h3 class="text-h3 flex items-center gap-2">
-            <span class="inline-flex h-5 w-5 text-fluxo-400">{render_icon(:sparkles)}</span> Criar email com IA
+          <h3 class="text-xl font-bold text-white flex items-center gap-2">
+            <span class="text-2xl">🪄</span> Criar email com IA
           </h3>
-          <p class="text-caption mt-1">Descreve em português o email que você quer.</p>
+          <p class="text-sm text-gray-400 mt-1">Descreve em português o email que você quer.</p>
         </div>
-        <button type="button" aria-label="Fechar modal" onclick="document.getElementById('ai-create-modal').classList.add('hidden')" class="text-gray-400 hover:text-white">
-          <span class="inline-flex h-5 w-5">{render_icon(:x)}</span>
-        </button>
+        <button type="button" onclick="document.getElementById('ai-create-modal').classList.add('hidden')" class="text-gray-400 hover:text-white text-2xl">×</button>
       </div>
 
       <textarea
@@ -60,10 +55,7 @@
         class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-3 text-sm mb-3"
       ></textarea>
 
-      <p class="text-caption mb-3 flex items-center gap-1.5">
-        <span class="inline-flex h-3.5 w-3.5 text-fluxo-400">{render_icon(:light_bulb)}</span>
-        Exemplos:
-      </p>
+      <p class="text-xs text-gray-500 mb-3">💡 Exemplos:</p>
       <div class="flex flex-wrap gap-2 mb-5">
         <%= for ex <- ["Email de Black Friday com 30% off", "Convite pra aula experimental gratuita", "Reativação de aluno parado há 3 meses", "Anúncio de novo professor de muay thai", "Newsletter mensal com dicas de treino", "Email de boas-vindas pra aula trial"] do %>
           <button
@@ -74,10 +66,7 @@
         <% end %>
       </div>
 
-      <div id="ai-create-status" class="hidden text-sm text-fluxo-300 mb-3 flex items-center gap-2">
-        <span class="inline-flex h-4 w-4 animate-pulse-soft">{render_icon(:clock)}</span>
-        IA criando seu email... (10-20 segundos)
-      </div>
+      <div id="ai-create-status" class="hidden text-sm text-fluxo-300 mb-3">⏳ IA criando seu email... (10-20 segundos)</div>
       <div id="ai-create-error" class="hidden bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-sm text-red-300 mb-3"></div>
 
       <div class="flex gap-3">
@@ -87,14 +76,11 @@
           type="button"
           data-project-id={@current_project.id}
           onclick="window.runAICreate(this)"
-          class="flex-1 button button--cta gap-2"
-        >
-          <span class="inline-flex h-4 w-4">{render_icon(:sparkles)}</span>
-          Criar email
-        </button>
+          class="flex-1 button button--cta"
+        >✨ Criar email</button>
       </div>
 
-      <p class="text-caption mt-4 text-center">~$0.005 · Modelo Gemini 2.5 Flash · Cria como rascunho de campanha</p>
+      <p class="text-xs text-gray-500 mt-4 text-center">💰 ~$0.005 · Modelo Gemini 2.5 Flash · Cria como rascunho de campanha</p>
     </div>
   </div>
 
@@ -150,7 +136,8 @@
           <iframe
             src={model.preview_url <> "?p=" <> @current_project.id <> "&v=" <> @brand_version}
             loading="lazy"
-            class="template-preview-iframe absolute top-0 left-0 origin-top-left pointer-events-none"
+            class="absolute top-0 left-0 origin-top-left pointer-events-none"
+            style="width: 200%; height: 200%; transform: scale(0.5); border: 0;"
             sandbox="allow-same-origin"
           >
           </iframe>
@@ -199,12 +186,12 @@
   </div>
 
   <!-- Helper info box no final -->
-  <div class="card card--compact card--flat max-w-4xl mb-12">
-    <h3 class="text-h4 mb-2 flex items-center gap-2">
+  <div class="bg-gray-800/40 border border-gray-700 rounded-xl p-6 mb-12 max-w-4xl">
+    <h3 class="text-white font-semibold mb-2 flex items-center gap-2">
       <span class="inline-flex h-5 w-5 text-fluxo-400">{render_icon(:light_bulb)}</span>
       {gettext("Como funciona")}
     </h3>
-    <p class="text-body text-gray-400">
+    <p class="text-sm text-gray-400 leading-relaxed">
       {gettext(
         "Cada modelo já vem com texto, imagens e estrutura prontos. Quando você clicar em \"Usar este\", a gente cria uma campanha nova com esse modelo carregado e você só edita o que quiser: trocar foto, mudar texto, ajustar cor — tudo no editor visual."
       )}

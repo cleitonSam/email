@@ -23,58 +23,8 @@ html {
     }
 }
 
-/* ========================================
-   CARD SYSTEM
-   Hierarquia de bg: gray-950 (root) / gray-900/60 (card) / gray-800/60 (input)
-   ======================================== */
-
 .card {
-    @apply p-4 sm:max-w-5xl sm:p-8 bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl shadow-lg transition-all duration-300 hover:border-fluxo-500/30 hover:shadow-xl hover:shadow-fluxo-500/5;
-
-    &.card--flat {
-        @apply shadow-none hover:shadow-none;
-    }
-
-    &.card--elevated {
-        @apply shadow-xl hover:shadow-2xl hover:-translate-y-0.5;
-    }
-
-    &.card--compact {
-        @apply p-4 sm:p-5;
-    }
-
-    &.card--interactive {
-        @apply cursor-pointer hover:border-fluxo-500/50 hover:bg-gray-900/80;
-    }
-
-    /* Para o conteudo desabilitar o max-w padrao */
-    &.card--full {
-        @apply sm:max-w-none;
-    }
-}
-
-/* Preview iframe escalado 50% pra caber em cards de biblioteca/templates */
-.template-preview-iframe {
-    width: 200%;
-    height: 200%;
-    transform: scale(0.5);
-    border: 0;
-}
-
-/* Logo preview box em brand/show — dimensoes minimas pra container nao colapsar */
-.brand-logo-preview {
-    min-width: 140px;
-    min-height: 100px;
-}
-
-/* Card variant selecionavel (radio-like) — usado em escolhas tipo "tipo de campanha" */
-.card-option {
-    @apply relative p-5 bg-gray-900/60 backdrop-blur-sm border-2 border-gray-800/50 rounded-2xl transition-all duration-200 cursor-pointer
-        hover:border-fluxo-500/40 hover:bg-gray-900/80;
-
-    &.card-option--active {
-        @apply border-fluxo-500 bg-fluxo-500/5 shadow-lg shadow-fluxo-500/10;
-    }
+    @apply p-4 sm:max-w-5xl sm:p-8 bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-2xl shadow-lg transition-all duration-300 hover:border-fluxo-500/30 hover:shadow-xl hover:shadow-fluxo-500/5;
 }
 
 .button {
@@ -315,7 +265,10 @@ table {
     }
 }
 
-/* Skeleton Loading (definicao completa em SKELETON LOADING STATES abaixo) */
+/* Skeleton Loading */
+.skeleton {
+    @apply animate-pulse bg-gray-800/50 rounded-lg;
+}
 
 /* Scrollbar Styles */
 ::-webkit-scrollbar {
@@ -580,68 +533,17 @@ svg:not(.no-flex-auto) {
     @apply border-t border-gray-800/50 my-6;
 }
 
-/* ========================================
-   TIPOGRAFIA — escala semantica reutilizavel
-   Use estas classes em vez de espalhar text-Xl/font-bold
-   ======================================== */
-
-.text-display {
-    @apply text-4xl sm:text-5xl font-bold tracking-tight text-white;
-    line-height: 1.05;
-    letter-spacing: -0.025em;
-}
-
-.text-h1 {
-    @apply text-2xl sm:text-3xl font-bold text-white tracking-tight;
-    line-height: 1.15;
-}
-
-.text-h2 {
-    @apply text-xl sm:text-2xl font-bold text-white;
-    line-height: 1.2;
-}
-
-.text-h3 {
-    @apply text-lg font-semibold text-white;
-    line-height: 1.3;
-}
-
-.text-h4 {
-    @apply text-base font-semibold text-white;
-    line-height: 1.35;
-}
-
-.text-lead {
-    @apply text-base sm:text-lg text-gray-300;
-    line-height: 1.55;
-}
-
-.text-body {
-    @apply text-sm text-gray-300;
-    line-height: 1.6;
-}
-
-.text-subtitle {
-    @apply text-sm text-gray-400;
-    line-height: 1.5;
-}
-
-.text-caption {
-    @apply text-xs text-gray-500;
-    line-height: 1.5;
-}
-
-.text-eyebrow {
-    @apply text-xs font-bold uppercase tracking-widest text-fluxo-400;
-}
-
-/* Mantem aliases legados pra nao quebrar templates existentes */
 .text-muted {
     @apply text-gray-400 text-sm;
 }
 
 .text-label {
     @apply text-xs font-semibold text-gray-400 uppercase tracking-wider;
+}
+
+/* Focus visible for keyboard navigation */
+*:focus-visible {
+    @apply outline-2 outline-offset-2 outline-fluxo-500;
 }
 
 /* Selection color */
@@ -983,7 +885,6 @@ html {
     }
 }
 
-/* Focus visible for keyboard navigation (unico — definido aqui pra todo o app) */
 *:focus-visible {
     @apply outline-2 outline-offset-2 outline-fluxo-500;
 }

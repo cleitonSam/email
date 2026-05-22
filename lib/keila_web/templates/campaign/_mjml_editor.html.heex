@@ -1,4 +1,40 @@
-<div x-data="{mode: 'simple', ...imagePicker()}">
+<div x-data="{
+  mode: 'simple',
+  showTour: !localStorage.getItem('fluxo_editor_tour_v1'),
+  dismissTour() { localStorage.setItem('fluxo_editor_tour_v1', '1'); this.showTour = false; },
+  ...imagePicker()
+}">
+<!-- Mini-tour de boas-vindas (aparece 1x) -->
+<div x-show="showTour" x-cloak x-transition class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" x-on:click.self="dismissTour()">
+  <div class="bg-gray-900 border border-fluxo-500/40 rounded-2xl max-w-lg w-full p-6 shadow-2xl shadow-fluxo-500/20">
+    <div class="flex items-start gap-4 mb-4">
+      <div class="h-12 w-12 bg-gradient-to-br from-fluxo-500 to-cyan-400 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">✨</div>
+      <div>
+        <h2 class="text-xl font-bold text-white mb-1">Bem-vindo ao editor!</h2>
+        <p class="text-sm text-gray-400">3 coisas que você precisa saber pra editar rapidinho.</p>
+      </div>
+    </div>
+    <ol class="space-y-3 text-sm text-gray-300 mb-6">
+      <li class="flex gap-3">
+        <span class="h-6 w-6 bg-fluxo-500/20 text-fluxo-300 rounded-full flex items-center justify-center font-bold flex-shrink-0">1</span>
+        <span><strong class="text-white">Modo Simples</strong> (aba que tá ativa) — edite só os textos, imagens e botões. Sem código.</span>
+      </li>
+      <li class="flex gap-3">
+        <span class="h-6 w-6 bg-fluxo-500/20 text-fluxo-300 rounded-full flex items-center justify-center font-bold flex-shrink-0">2</span>
+        <span><strong class="text-white">Preview à direita</strong> atualiza automaticamente enquanto você digita.</span>
+      </li>
+      <li class="flex gap-3">
+        <span class="h-6 w-6 bg-fluxo-500/20 text-fluxo-300 rounded-full flex items-center justify-center font-bold flex-shrink-0">3</span>
+        <span><strong class="text-white">Código MJML</strong> só é pra quem quer mexer no layout. Pode ignorar.</span>
+      </li>
+    </ol>
+    <div class="flex gap-2 justify-end">
+      <button type="button" x-on:click="dismissTour()" class="px-5 py-2.5 bg-gradient-to-r from-fluxo-500 to-cyan-400 text-white font-semibold rounded-xl hover:opacity-90 transition-opacity">
+        Entendi, vamos lá
+      </button>
+    </div>
+  </div>
+</div>
 <div id="mjml-editor-toolbar" class="w-full sticky top-0 z-10" phx-update="ignore">
   <!-- TABS Simples / Avancado -->
   <div class="flex bg-gray-900 border border-gray-800 rounded-t-xl mt-4 overflow-hidden">
@@ -7,14 +43,14 @@
       x-bind:class="mode === 'simple' ? 'bg-fluxo-500 text-white' : 'bg-gray-900 text-gray-300 hover:bg-gray-800'"
       class="flex-1 flex items-center justify-center gap-2 px-4 h-11 text-sm font-semibold transition-colors">
       <span class="text-base">✨</span>
-      <span>Simples</span>
+      <span>Editar visual</span>
     </button>
     <button type="button"
       x-on:click.prevent="mode = 'advanced'"
       x-bind:class="mode === 'advanced' ? 'bg-fluxo-500 text-white' : 'bg-gray-900 text-gray-300 hover:bg-gray-800'"
       class="flex-1 flex items-center justify-center gap-2 px-4 h-11 text-sm font-semibold transition-colors border-l border-gray-800">
       <span class="text-base">{}</span>
-      <span>Avancado (codigo)</span>
+      <span>Código MJML</span>
     </button>
   </div>
 

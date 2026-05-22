@@ -32,7 +32,8 @@ COPY assets/package.json assets/package-lock.json ./assets/
 RUN npm ci --prefix ./assets --no-audit --no-fund --no-progress --loglevel=error
 
 COPY . .
-RUN mix deps.clean mime --build && \
+RUN mix deps.get --only prod && \
+    mix deps.clean mime --build && \
     mix assets.deploy && \
     mix release
 

@@ -20,8 +20,8 @@ config :logger, level: :info
 
 config :keila, Keila.Repo, []
 
-# Use Lexbor HTML parser for better performance and quality
-config :floki, :html_parser, Floki.HTMLParser.FastHtml
+# Floki default Mochiweb parser (fast_html dep nao esta no mix.exs;
+# trocar pra FastHtml/Html5ever requer adicionar a dep correspondente).
 
 # ## SSL Support
 #

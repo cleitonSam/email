@@ -1,31 +1,19 @@
 name: CI
 
+# CI desabilitado temporariamente: o deploy real e feito pelo EasyPanel,
+# que clona o repo e roda Dockerfile na raiz. CI ficou so disponivel via
+# trigger manual em Actions > CI > Run workflow.
+
 on:
-  pull_request:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  compile:
-    name: Compile (sanity check)
+  noop:
+    name: CI desabilitado (use EasyPanel para deploy)
     runs-on: ubuntu-latest
-    container: hexpm/elixir:1.18.4-erlang-27.3.4-alpine-3.21.3
-    env:
-      MIX_ENV: prod
     steps:
-      - name: install system packages
-        run: apk add --no-cache build-base git tar curl cmake ca-certificates
-      - uses: actions/checkout@v6
-        with:
-          persist-credentials: false
-      - name: mix deps.get
-        run: |
-          mix local.rebar --force
-          mix local.hex --force
-          mix deps.get --only prod
-      - name: mix compile
-        run: mix compile
+      - name: noop
+        run: echo "CI manual placeholder. EasyPanel handles deploys."

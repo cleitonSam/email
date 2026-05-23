@@ -80,8 +80,8 @@ msgstr "Email"
 
 #: lib/keila_web/templates/user_admin/index.html.heex:16
 #, elixir-autogen, elixir-format
-msgid "Here you can manage other users on your Fluxo Email MKT instance."
-msgstr "Aqui você pode gerenciar outros usuários em sua instância do Fluxo Email MKT."
+msgid "Here you can manage other users on your Fluxo Digital instance."
+msgstr "Aqui você pode gerenciar outros usuários em sua instância do Fluxo Digital."
 
 #: lib/keila_web/templates/shared_sender_admin/edit.html.heex:9
 #, elixir-autogen, elixir-format
@@ -105,8 +105,8 @@ msgstr "Remetentes compartilhados"
 
 #: lib/keila_web/templates/shared_sender_admin/index.html.heex:17
 #, elixir-autogen, elixir-format
-msgid "Shared Senders are available to all users on this instance of Fluxo Email MKT."
-msgstr "Remetentes compartilhados estão disponíveis para todos os usuários nesta instância do Fluxo Email MKT."
+msgid "Shared Senders are available to all users on this instance of Fluxo Digital."
+msgstr "Remetentes compartilhados estão disponíveis para todos os usuários nesta instância do Fluxo Digital."
 
 #: lib/keila_web/templates/user_admin/index.html.heex:25
 #, elixir-autogen, elixir-format
@@ -125,8 +125,8 @@ msgstr "Fazer login como"
 
 #: lib/keila_web/templates/layout/app.html.heex:16
 #, elixir-autogen, elixir-format
-msgid "A new version of Fluxo Email MKT is available."
-msgstr "Uma nova versão do Fluxo Email MKT está disponível."
+msgid "A new version of Fluxo Digital is available."
+msgstr "Uma nova versão do Fluxo Digital está disponível."
 
 #: lib/keila_web/templates/layout/app.html.heex:17
 #, elixir-autogen, elixir-format
@@ -140,13 +140,13 @@ msgstr "Informações do sistema"
 
 #: lib/keila_web/templates/instance_admin/show.html.heex:4
 #, elixir-autogen, elixir-format
-msgid "You are currently running Fluxo Email MKT %{version} on %{host}."
-msgstr "Você está executando o Fluxo Email MKT %{version} em %{host}."
+msgid "You are currently running Fluxo Digital %{version} on %{host}."
+msgstr "Você está executando o Fluxo Digital %{version} em %{host}."
 
 #: lib/keila_web/templates/instance_admin/show.html.heex:19
 #, elixir-autogen, elixir-format
-msgid "There are updates available for your Fluxo Email MKT instance!"
-msgstr "Existem atualizações disponíveis para sua instância do Fluxo Email MKT!"
+msgid "There are updates available for your Fluxo Digital instance!"
+msgstr "Existem atualizações disponíveis para sua instância do Fluxo Digital!"
 
 #: lib/keila_web/templates/instance_admin/show.html.heex:42
 #, elixir-autogen, elixir-format
@@ -155,8 +155,8 @@ msgstr "As verificações de atualização estão desativadas."
 
 #: lib/keila_web/templates/instance_admin/show.html.heex:37
 #, elixir-autogen, elixir-format
-msgid "You seem to be running the most recent version of Fluxo Email MKT!"
-msgstr "Parece que você está executando a versão mais recente do Fluxo Email MKT!"
+msgid "You seem to be running the most recent version of Fluxo Digital!"
+msgstr "Parece que você está executando a versão mais recente do Fluxo Digital!"
 
 #: extra/keila_cloud_web/templates/cloud_admin/user_account_status.html.heex:47
 #, elixir-autogen, elixir-format

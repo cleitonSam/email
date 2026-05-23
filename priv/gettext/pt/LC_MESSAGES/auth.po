@@ -50,13 +50,13 @@ msgstr "Olá,\n\npor favor confirme seu novo endereço de email visitando o segu
 
 #: lib/keila/auth/emails.ex:95
 #, elixir-autogen, elixir-format
-msgid "Hey there,\n\nyou can login to Fluxo Email MKT with the following link:\n\n%{url}\n\nIf you haven't requested a login, simply ignore this message.\n"
-msgstr "Olá,\n\nvocê pode fazer login no Fluxo Email MKT com o seguinte link:\n\n%{url}\n\nSe você não solicitou um login, simplesmente ignore esta mensagem.\n"
+msgid "Hey there,\n\nyou can login to Fluxo Digital with the following link:\n\n%{url}\n\nIf you haven't requested a login, simply ignore this message.\n"
+msgstr "Olá,\n\nvocê pode fazer login no Fluxo Digital com o seguinte link:\n\n%{url}\n\nSe você não solicitou um login, simplesmente ignore esta mensagem.\n"
 
 #: lib/keila/auth/emails.ex:70
 #, elixir-autogen, elixir-format
-msgid "Hey there,\n\nyou have requested a password reset for your Fluxo Email MKT account.\n\nYou can set a new password by visiting the following link:\n\n%{url}\n\nIf you weren't trying to reset your password, simply ignore this message.\n"
-msgstr "Olá,\n\nvocê solicitou uma redefinição de senha para sua conta do Fluxo Email MKT.\n\nVocê pode definir uma nova senha visitando o seguinte link:\n\n%{url}\n\nSe você não estava tentando redefinir sua senha, simplesmente ignore esta mensagem.\n"
+msgid "Hey there,\n\nyou have requested a password reset for your Fluxo Digital account.\n\nYou can set a new password by visiting the following link:\n\n%{url}\n\nIf you weren't trying to reset your password, simply ignore this message.\n"
+msgstr "Olá,\n\nvocê solicitou uma redefinição de senha para sua conta do Fluxo Digital.\n\nVocê pode definir uma nova senha visitando o seguinte link:\n\n%{url}\n\nSe você não estava tentando redefinir sua senha, simplesmente ignore esta mensagem.\n"
 
 #: lib/keila_web/templates/auth/reset_success.html.heex:7
 #, elixir-autogen, elixir-format
@@ -169,13 +169,13 @@ msgstr "Isso não funcionou :-("
 
 #: lib/keila_web/templates/auth/activate_success.html.heex:4
 #, elixir-autogen, elixir-format
-msgid "Welcome to Fluxo Email MKT!"
-msgstr "Bem-vindo ao Fluxo Email MKT!"
+msgid "Welcome to Fluxo Digital!"
+msgstr "Bem-vindo ao Fluxo Digital!"
 
 #: lib/keila/auth/emails.ex:22
 #, elixir-autogen, elixir-format
-msgid "Welcome to Fluxo Email MKT,\n\nplease confirm your new account by visiting the following link:\n\n%{url}\n\nIf you weren't trying to create an account, simply ignore this message.\n"
-msgstr "Bem-vindo ao Fluxo Email MKT,\n\npor favor confirme sua nova conta visitando o seguinte link:\n\n%{url}\n\nSe você não estava tentando criar uma conta, simplesmente ignore esta mensagem.\n"
+msgid "Welcome to Fluxo Digital,\n\nplease confirm your new account by visiting the following link:\n\n%{url}\n\nIf you weren't trying to create an account, simply ignore this message.\n"
+msgstr "Bem-vindo ao Fluxo Digital,\n\npor favor confirme sua nova conta visitando o seguinte link:\n\n%{url}\n\nSe você não estava tentando criar uma conta, simplesmente ignore esta mensagem.\n"
 
 #: lib/keila_web/templates/auth/activate_resend_success.html.heex:7
 #, elixir-autogen, elixir-format
@@ -189,13 +189,13 @@ msgstr "Enviamos um link de verificação para %{email}."
 
 #: lib/keila_web/templates/auth/reset_change_password_success.html.heex:7
 #, elixir-autogen, elixir-format
-msgid "You can now continue using Fluxo Email MKT."
-msgstr "Você pode continuar usando o Fluxo Email MKT."
+msgid "You can now continue using Fluxo Digital."
+msgstr "Você pode continuar usando o Fluxo Digital."
 
 #: lib/keila_web/templates/auth/activate_required.html.heex:7
 #, elixir-autogen, elixir-format
-msgid "You need to verify your email before you can use Fluxo Email MKT. Please check your inbox."
-msgstr "Você precisa verificar seu email antes de usar o Fluxo Email MKT. Por favor, verifique sua caixa de entrada."
+msgid "You need to verify your email before you can use Fluxo Digital. Please check your inbox."
+msgstr "Você precisa verificar seu email antes de usar o Fluxo Digital. Por favor, verifique sua caixa de entrada."
 
 #: lib/keila/auth/emails.ex:66
 #, elixir-autogen, elixir-format
@@ -219,15 +219,15 @@ msgstr "Olá,\n\npor favor verifique seu endereço de email de remetente visitan
 
 #: lib/keila/auth/emails.ex:115
 #, elixir-autogen, elixir-format, fuzzy
-msgid "Please Verify Your Email for Fluxo Email MKT"
-msgstr "Por favor, verifique seu email para Fluxo Email MKT"
+msgid "Please Verify Your Email for Fluxo Digital"
+msgstr "Por favor, verifique seu email para Fluxo Digital"
 
 # Adicionado pelo Fluxo
-msgid "Start sending emails with Fluxo Email MKT now"
-msgstr "Comece a enviar emails com o Fluxo Email MKT agora"
+msgid "Start sending emails with Fluxo Digital now"
+msgstr "Comece a enviar emails com o Fluxo Digital agora"
 
-msgid "Register your Fluxo Email MKT account now and start your newsletter project within minutes."
-msgstr "Registre sua conta no Fluxo Email MKT e comece a enviar seus emails em minutos."
+msgid "Register your Fluxo Digital account now and start your newsletter project within minutes."
+msgstr "Registre sua conta no Fluxo Digital e comece a enviar seus emails em minutos."
 
 msgid "Sign up now"
 msgstr "Criar conta"
@@ -247,8 +247,8 @@ msgstr "Senha"
 msgid "Must have at least 10 characters."
 msgstr "Mínimo de 10 caracteres."
 
-msgid "Set a new secure password to keep using Fluxo Email MKT."
-msgstr "Defina uma nova senha pra continuar usando o Fluxo Email MKT."
+msgid "Set a new secure password to keep using Fluxo Digital."
+msgstr "Defina uma nova senha pra continuar usando o Fluxo Digital."
 
 msgid "Reset password now"
 msgstr "Redefinir senha"

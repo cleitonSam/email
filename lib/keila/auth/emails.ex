@@ -15,14 +15,14 @@ defmodule Keila.Auth.Emails do
   @spec build(:activate, %{url: String.t(), user: Keila.Auth.User.t()}) :: term() | no_return()
   def build(:activate, %{user: user, url: url}) do
     new()
-    |> from({"Keila", system_from_email()})
+    |> from({"Fluxo Digital", system_from_email()})
     |> subject(dgettext("auth", "Please Verify Your Account"))
     |> to(user.email)
     |> text_body(
       dgettext(
         "auth",
         """
-        Welcome to Keila,
+        Welcome to Fluxo Digital,
 
         please confirm your new account by visiting the following link:
 
@@ -39,7 +39,7 @@ defmodule Keila.Auth.Emails do
           term() | no_return()
   def build(:update_email, %{user: user, url: url}) do
     new()
-    |> from({"Keila", system_from_email()})
+    |> from({"Fluxo Digital", system_from_email()})
     |> subject(dgettext("auth", "Please Verify Your Email"))
     |> to(user.email)
     |> text_body(
@@ -65,14 +65,14 @@ defmodule Keila.Auth.Emails do
     new()
     |> subject(dgettext("auth", "Your Account Reset Link"))
     |> to(user.email)
-    |> from({"Keila", system_from_email()})
+    |> from({"Fluxo Digital", system_from_email()})
     |> text_body(
       dgettext(
         "auth",
         """
         Hey there,
 
-        you have requested a password reset for your Keila account.
+        you have requested a password reset for your Fluxo Digital account.
 
         You can set a new password by visiting the following link:
 
@@ -90,14 +90,14 @@ defmodule Keila.Auth.Emails do
     new()
     |> subject(dgettext("auth", "Your Login Link"))
     |> to(user.email)
-    |> from({"Keila", system_from_email()})
+    |> from({"Fluxo Digital", system_from_email()})
     |> text_body(
       dgettext(
         "auth",
         """
         Hey there,
 
-        you can login to Keila with the following link:
+        you can login to Fluxo Digital with the following link:
 
         %{url}
 
@@ -112,9 +112,9 @@ defmodule Keila.Auth.Emails do
           term() | no_return()
   def build(:verify_sender_from_email, %{sender: sender, url: url}) do
     new()
-    |> subject(dgettext("auth", "Please Verify Your Email for Keila"))
+    |> subject(dgettext("auth", "Please Verify Your Email for Fluxo Digital"))
     |> to(sender.from_email)
-    |> from({"Keila", system_from_email()})
+    |> from({"Fluxo Digital", system_from_email()})
     |> text_body(
       dgettext(
         "auth",
@@ -141,13 +141,13 @@ defmodule Keila.Auth.Emails do
         }) :: term() | no_return()
   def build(:invitation, %{url: url, email: email, inviter: inviter, project_name: project_name}) do
     new()
-    |> from({"Fluxo Email MKT", system_from_email()})
-    |> subject("Você foi convidado pro #{project_name} no Fluxo")
+    |> from({"Fluxo Digital", system_from_email()})
+    |> subject("Você foi convidado pro #{project_name} no Fluxo Digital")
     |> to(email)
     |> text_body("""
     Olá!
 
-    #{inviter} convidou você pra fazer parte do projeto "#{project_name}" no Fluxo Email MKT.
+    #{inviter} convidou você pra fazer parte do projeto "#{project_name}" no Fluxo Digital.
 
     Pra aceitar o convite e criar sua conta, clica no link abaixo:
 
@@ -158,7 +158,7 @@ defmodule Keila.Auth.Emails do
     Se você não esperava esse convite, pode ignorar este email com tranquilidade.
 
     --
-    Fluxo Email MKT
+    Fluxo Digital
     Email Marketing pra Academias
     """)
   end

@@ -213,7 +213,7 @@ msgstr "Começar"
 #: extra/keila_cloud_web/templates/cloud_account/_referral_source.html.heex:12
 #, elixir-autogen, elixir-format
 msgid "How did you hear about Keila?"
-msgstr "Como você conheceu o Fluxo Email MKT?"
+msgstr "Como você conheceu o Fluxo Digital?"
 
 #: extra/keila_cloud_web/templates/cloud_account/_onboarding_review_data.html.heex:29
 #, elixir-autogen, elixir-format
@@ -223,7 +223,7 @@ msgstr "Eu ainda não tenho uma lista de contatos."
 #: extra/keila_cloud_web/templates/cloud_account/_onboarding_review_data.html.heex:25
 #, elixir-autogen, elixir-format
 msgid "I have an existing contact list that I want to import into Keila."
-msgstr "Eu tenho uma lista de contatos que quero importar para o Fluxo Email MKT."
+msgstr "Eu tenho uma lista de contatos que quero importar para o Fluxo Digital."
 
 #: extra/keila_cloud_web/templates/cloud_account/_org_name.html.heex:45
 #, elixir-autogen, elixir-format
@@ -304,7 +304,7 @@ msgstr "Por favor, descreva a origem da sua lista de contatos e como obteve cons
 #: extra/keila_cloud_web/templates/cloud_account/_onboarding_review_data.html.heex:12
 #, elixir-autogen, elixir-format
 msgid "Please describe the type of content and the purpose of the emails you are planning to send with Keila."
-msgstr "Por favor, descreva o tipo de conteúdo e o objetivo dos emails que planeja enviar com o Fluxo Email MKT."
+msgstr "Por favor, descreva o tipo de conteúdo e o objetivo dos emails que planeja enviar com o Fluxo Digital."
 
 #: extra/keila_cloud_web/templates/cloud_account/_address.html.heex:116
 #, elixir-autogen, elixir-format
@@ -354,12 +354,12 @@ msgstr "Selecionar plano"
 #: lib/keila_web/views/sender_view.ex:33
 #, elixir-autogen, elixir-format
 msgid "Send With Keila"
-msgstr "Enviar com Fluxo Email MKT"
+msgstr "Enviar com Fluxo Digital"
 
 #: extra/keila_cloud_web/templates/cloud_sender/create_live.html.heex:68
 #, elixir-autogen, elixir-format
 msgid "Send with Keila"
-msgstr "Enviar com Fluxo Email MKT"
+msgstr "Enviar com Fluxo Digital"
 
 #: extra/keila_cloud_web/components/shared_send_with_keila_status.ex:205
 #, elixir-autogen, elixir-format
@@ -414,12 +414,12 @@ msgstr "Assinatura ainda ativa"
 #: extra/keila_cloud_web/templates/cloud_account/await_subscription_live.html.heex:22
 #, elixir-autogen, elixir-format
 msgid "Thank you for subscribing to Keila!"
-msgstr "Obrigado por assinar o Fluxo Email MKT!"
+msgstr "Obrigado por assinar o Fluxo Digital!"
 
 #: extra/keila_cloud_web/components/subscription_status.ex:69
 #, elixir-autogen, elixir-format
 msgid "There was an error processing your payment. Please update your payment method to continue using Keila."
-msgstr "Houve um erro ao processar seu pagamento. Por favor, atualize seu método de pagamento para continuar usando o Fluxo Email MKT."
+msgstr "Houve um erro ao processar seu pagamento. Por favor, atualize seu método de pagamento para continuar usando o Fluxo Digital."
 
 #: extra/keila_cloud_web/templates/cloud_account/_org_name.html.heex:17
 #, elixir-autogen, elixir-format
@@ -459,7 +459,7 @@ msgstr "Para garantir boa entregabilidade dos seus emails, você precisa verific
 #: extra/keila_cloud_web/templates/cloud_account/_user_name.html.heex:13
 #, elixir-autogen, elixir-format
 msgid "To make sure Keila is only used to send legitimate emails, we need to review every new account.\n\nThank you for helping us fight spam!\n"
-msgstr "Para garantir que o Fluxo Email MKT seja usado apenas para enviar emails legítimos, precisamos analisar cada nova conta.\n\nObrigado por nos ajudar a combater spam!\n"
+msgstr "Para garantir que o Fluxo Digital seja usado apenas para enviar emails legítimos, precisamos analisar cada nova conta.\n\nObrigado por nos ajudar a combater spam!\n"
 
 #: extra/keila_cloud_web/components/shared_send_with_keila_status.ex:212
 #, elixir-autogen, elixir-format
@@ -505,7 +505,7 @@ msgstr "Aguardando verificação do domínio ..."
 #: extra/keila_cloud_web/templates/cloud_account/_completed.html.heex:2
 #, elixir-autogen, elixir-format
 msgid "We will now perform a manual review of your data. This usually doesn't take longer than one working day.\n\nIn the meantime, you can continue to use Keila. Sending emails will be enabled for your account\nonce the review has been completed.\n"
-msgstr "Agora faremos uma análise manual dos seus dados. Isso geralmente não leva mais que um dia útil.\n\nEnquanto isso, você pode continuar usando o Fluxo Email MKT. O envio de emails será habilitado\napós a conclusão da análise.\n"
+msgstr "Agora faremos uma análise manual dos seus dados. Isso geralmente não leva mais que um dia útil.\n\nEnquanto isso, você pode continuar usando o Fluxo Digital. O envio de emails será habilitado\napós a conclusão da análise.\n"
 
 #: extra/keila_cloud_web/components/shared_send_with_keila_status.ex:96
 #, elixir-autogen, elixir-format
@@ -525,7 +525,7 @@ msgstr "Website"
 #: lib/keila_web/templates/layout/app.html.heex:29
 #, elixir-autogen, elixir-format
 msgid "Welcome to Keila, have a look around! To start sending emails, please choose a subscription."
-msgstr "Bem-vindo ao Fluxo Email MKT! Para começar a enviar emails, escolha uma assinatura."
+msgstr "Bem-vindo ao Fluxo Digital! Para começar a enviar emails, escolha uma assinatura."
 
 #: extra/keila_cloud_web/components/shared_send_with_keila_status.ex:131
 #, elixir-autogen, elixir-format
@@ -540,7 +540,7 @@ msgstr "Você pode continuar usando sua assinatura até:"
 #: extra/keila_cloud_web/components/subscription_status.ex:49
 #, elixir-autogen, elixir-format
 msgid "You currently have an active subscription. Thanks for supporting Keila!"
-msgstr "Você tem uma assinatura ativa. Obrigado por apoiar o Fluxo Email MKT!"
+msgstr "Você tem uma assinatura ativa. Obrigado por apoiar o Fluxo Digital!"
 
 #: extra/keila_cloud_web/templates/cloud_account/_org_name.html.heex:29
 #, elixir-autogen, elixir-format
@@ -560,7 +560,7 @@ msgstr "Sua assinatura foi cancelada."
 #: extra/keila_cloud_web/components/subscription_status.ex:59
 #, elixir-autogen, elixir-format
 msgid "Your subscription is currently suspended. Please update your payment method to continue using Keila."
-msgstr "Sua assinatura está suspensa. Por favor, atualize seu método de pagamento para continuar usando o Fluxo Email MKT."
+msgstr "Sua assinatura está suspensa. Por favor, atualize seu método de pagamento para continuar usando o Fluxo Digital."
 
 #: extra/keila_cloud_web/components/shared_send_with_keila_status.ex:30
 #, elixir-autogen, elixir-format

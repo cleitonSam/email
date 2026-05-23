@@ -4,7 +4,7 @@
   <!-- Animated gradient blobs -->
   <div class="absolute inset-0 overflow-hidden pointer-events-none">
     <div class="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-fluxo-600/20 blur-[120px] animate-float"></div>
-    <div class="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-cyan-600/15 blur-[100px] animate-float-delayed"></div>
+    <div class="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-accent-600/15 blur-[100px] animate-float-delayed"></div>
     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-fluxo-800/20 blur-[80px] animate-aurora"></div>
   </div>
 
@@ -18,22 +18,22 @@
   <div class="relative z-10 w-full max-w-[420px] mx-4 animate-fade-in-scale">
 
     <!-- Glow ring behind card -->
-    <div class="absolute -inset-px rounded-2xl bg-gradient-to-br from-fluxo-500/30 via-transparent to-cyan-500/20 blur-sm"></div>
+    <div class="absolute -inset-px rounded-2xl bg-gradient-to-br from-fluxo-500/30 via-transparent to-accent-500/20 blur-sm"></div>
 
     <div class="relative bg-gray-900/80 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl shadow-black/50 px-8 py-9">
 
       <!-- Logo -->
       <div class="flex flex-col items-center gap-3 mb-8">
         <div class="relative">
-          <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-fluxo-400 to-cyan-400 blur-md opacity-50 animate-glow"></div>
-          <div class="relative h-14 w-14 rounded-2xl bg-gradient-to-br from-fluxo-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-fluxo-500/40">
+          <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-fluxo-400 to-accent-400 blur-md opacity-50 animate-glow"></div>
+          <div class="relative h-14 w-14 rounded-2xl bg-gradient-to-br from-fluxo-500 to-accent-400 flex items-center justify-center shadow-lg shadow-fluxo-500/40">
             <svg class="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
           </div>
         </div>
         <div class="text-center">
-          <span class="block text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-fluxo-300 to-cyan-300">Fluxo Email MKT</span>
+          <span class="block text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-fluxo-300 to-accent-300">Fluxo Email MKT</span>
           <span class="text-xs text-gray-400">by Fluxo Digital Tech</span>
         </div>
       </div>
@@ -116,7 +116,7 @@
       <!-- Register link -->
       <p class="text-center text-sm text-gray-400">
         {dgettext("auth", "Don't have an account?")}
-        <a href={Routes.auth_path(@conn, :register)} class="text-fluxo-400 hover:text-cyan-400 font-semibold transition-colors ml-1">
+        <a href={Routes.auth_path(@conn, :register)} class="text-fluxo-400 hover:text-accent-400 font-semibold transition-colors ml-1">
           {dgettext("auth", "Sign up.")}
         </a>
       </p>

@@ -1,7 +1,7 @@
 <div class="container flex py-8 sm:py-11 sm:mb-4">
   <div class="flex-grow gap-4 flex flex-col-reverse sm:flex-row sm:items-center max-w-4xl">
     <div class="flex items-center gap-4">
-      <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-fluxo-400 to-cyan-400 flex items-center justify-center shadow-lg shadow-fluxo-500/20">
+      <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-fluxo-400 to-accent-400 flex items-center justify-center shadow-lg shadow-fluxo-500/20">
         {render_icon(:at_symbol)}
       </div>
       <h1 class="text-2xl md:text-3xl font-bold text-white">
@@ -82,7 +82,7 @@
             class="group bg-gray-900/60 border-2 rounded-2xl p-5 hover:bg-gray-800/60 transition-all duration-300 cursor-pointer flex flex-col items-center text-center"
             x-bind:class="type === 'text' ? 'border-fluxo-500 bg-fluxo-500/10 shadow-lg shadow-fluxo-500/10' : 'border-gray-700/50 hover:border-fluxo-500/40'"
           >
-            <div class="h-14 w-14 bg-gradient-to-br from-fluxo-400 to-cyan-400 rounded-xl text-white flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-fluxo-500/20">
+            <div class="h-14 w-14 bg-gradient-to-br from-fluxo-400 to-accent-400 rounded-xl text-white flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-fluxo-500/20">
               {render_icon(:plain_text)}
             </div>
             <h3 class="font-bold text-base text-white mb-1">{gettext("Texto puro")}</h3>
@@ -98,7 +98,7 @@
             class="group bg-gray-900/60 border-2 rounded-2xl p-5 hover:bg-gray-800/60 transition-all duration-300 cursor-pointer flex flex-col items-center text-center"
             x-bind:class="type === 'markdown' ? 'border-fluxo-500 bg-fluxo-500/10 shadow-lg shadow-fluxo-500/10' : 'border-gray-700/50 hover:border-fluxo-500/40'"
           >
-            <div class="h-14 w-14 bg-gradient-to-br from-cyan-500 to-fluxo-500 rounded-xl text-white flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-cyan-500/20">
+            <div class="h-14 w-14 bg-gradient-to-br from-accent-500 to-fluxo-500 rounded-xl text-white flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-accent-500/20">
               {render_icon(:markdown)}
             </div>
             <h3 class="font-bold text-base text-white mb-1">{gettext("Texto formatado")}</h3>
@@ -131,7 +131,7 @@
             class="group bg-gray-900/60 border-2 rounded-2xl p-5 hover:bg-gray-800/60 transition-all duration-300 cursor-pointer flex flex-col items-center text-center relative overflow-hidden"
             x-bind:class="type === 'mjml' ? 'border-fluxo-500 bg-fluxo-500/10 shadow-lg shadow-fluxo-500/10' : 'border-gray-700/50 hover:border-fluxo-500/40'"
           >
-            <span class="absolute top-2 right-2 bg-gradient-to-r from-fluxo-500 to-cyan-400 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">recomendado</span>
+            <span class="absolute top-2 right-2 bg-gradient-to-r from-fluxo-500 to-accent-400 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">recomendado</span>
             <div class="h-14 w-14 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl text-white flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-orange-500/20">
               {render_icon(:mjml)}
             </div>

@@ -2,7 +2,7 @@
   <div class="w-full max-w-md">
     <!-- Icon + Heading -->
     <div class="text-center mb-8">
-      <div class="inline-flex h-16 w-16 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-400 items-center justify-center shadow-xl shadow-blue-500/30 mb-5">
+      <div class="inline-flex h-16 w-16 rounded-2xl bg-gradient-to-br from-blue-500 to-accent-400 items-center justify-center shadow-xl shadow-blue-500/30 mb-5">
         <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
         </svg>
@@ -20,7 +20,7 @@
 
     <!-- CTA Button -->
     <.form :let={_f} for={@conn} action={Routes.auth_path(@conn, :post_activate_resend)}>
-      <button type="submit" class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-fluxo-500 to-fluxo-400 hover:from-fluxo-400 hover:to-cyan-500 text-white font-semibold py-3 px-6 rounded-xl shadow-lg shadow-fluxo-500/25 hover:shadow-fluxo-500/40 transition-all duration-300 transform hover:scale-[1.01]">
+      <button type="submit" class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-fluxo-500 to-fluxo-400 hover:from-fluxo-400 hover:to-accent-500 text-white font-semibold py-3 px-6 rounded-xl shadow-lg shadow-fluxo-500/25 hover:shadow-fluxo-500/40 transition-all duration-300 transform hover:scale-[1.01]">
         {dgettext("auth", "Resend activation link")}
       </button>
     </.form>

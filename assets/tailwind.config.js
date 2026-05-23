@@ -20,7 +20,7 @@ module.exports = {
           900: "#0A1F3D",
           950: "#020617"
         },
-        cyan: {
+        accent: {
           50: "#E6FEFF",
           100: "#CCFDFE",
           200: "#99FBFD",

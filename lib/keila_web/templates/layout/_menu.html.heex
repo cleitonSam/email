@@ -27,7 +27,7 @@
           <span class="flex justify-end h-10 w-10 group-hover:scale-110 transition-transform duration-300">
             {render_icon(:logo)}
           </span>
-          <span class="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-fluxo-400 to-cyan-400">Fluxo Email MKT</span>
+          <span class="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-fluxo-400 to-accent-400">Fluxo Email MKT</span>
         </a>
       </div>
       <nav class="font-medium hidden flex-col gap-0.5 mt-3 mb-4 sm:flex flex-grow px-2">
@@ -124,6 +124,21 @@
               indent: 1
             )}
           <% end %>
+          {menu_link(@conn, :media, :index, [@current_project.id], gettext("Imagens"),
+            exact: true,
+            icon: :photograph
+          )}
+          <%= if not Keila.Projects.Brand.completed?(@current_project) do %>
+            {menu_link(@conn, :wizard, :show, [@current_project.id], gettext("Configurar marca"),
+              exact: true,
+              icon: :sparkles
+            )}
+          <% else %>
+            {menu_link(@conn, :brand, :show, [@current_project.id], gettext("Minha Marca"),
+              exact: true,
+              icon: :color_swatch
+            )}
+          <% end %>
 
           <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-600 px-3 pt-4 pb-1">{gettext("Campaigns")}</p>
           {menu_link(@conn, :campaign, :index, [@current_project.id], gettext("Campaigns"),
@@ -143,22 +158,11 @@
             )}
           <% end %>
 
-          <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-600 px-3 pt-4 pb-1">{gettext("Integrations")}</p>
+          <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-600 px-3 pt-4 pb-1">{gettext("Ferramentas")}</p>
           {menu_link(@conn, :api_key, :index, [@current_project.id], gettext("API Keys"),
             exact: true,
             icon: :code
           )}
-          <%= if not Keila.Projects.Brand.completed?(@current_project) do %>
-            {menu_link(@conn, :wizard, :show, [@current_project.id], gettext("Configurar marca"),
-              exact: true,
-              icon: :sparkles
-            )}
-          <% else %>
-            {menu_link(@conn, :brand, :show, [@current_project.id], gettext("Minha Marca"),
-              exact: true,
-              icon: :color_swatch
-            )}
-          <% end %>
           {menu_link(@conn, :units, :index, [@current_project.id], gettext("Minhas Academias"),
             exact: true,
             icon: :office_building
@@ -174,10 +178,6 @@
           {menu_link(@conn, :birthdays, :index, [@current_project.id], gettext("Aniversariantes"),
             exact: true,
             icon: :gift
-          )}
-          {menu_link(@conn, :media, :index, [@current_project.id], gettext("Imagens"),
-            exact: true,
-            icon: :photograph
           )}
           {menu_link(@conn, :team, :index, [@current_project.id], gettext("Equipe"),
             exact: true,
@@ -223,7 +223,7 @@
         <span class="flex h-10 w-10 group-hover:scale-110 transition-transform duration-300">
           {render_icon(:logo)}
         </span>
-        <span class="text-2xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-fluxo-400 to-cyan-400">Fluxo Email MKT</span>
+        <span class="text-2xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-fluxo-400 to-accent-400">Fluxo Email MKT</span>
       </a>
     </div>
   </header>

@@ -43,7 +43,7 @@ html {
 
     &.button--cta {
         @apply bg-gradient-to-r from-fluxo-500 to-fluxo-400 text-white font-semibold outline-none transform shadow-lg shadow-fluxo-500/20
-            hover:from-fluxo-400 hover:to-cyan-500 hover:shadow-fluxo-500/40 hover:scale-[1.02]
+            hover:from-fluxo-400 hover:to-accent-500 hover:shadow-fluxo-500/40 hover:scale-[1.02]
             focus:ring-2 focus:ring-fluxo-400/50 focus:ring-offset-2 focus:ring-offset-gray-900
             active:scale-[0.98]
             disabled:bg-gray-700 disabled:from-gray-700 disabled:to-gray-700 disabled:text-gray-500
@@ -142,7 +142,7 @@ input[disabled] {
             @apply bg-gray-900/80 text-white border-t-2 border-x border-fluxo-500 border-gray-700/50;
 
             &::after {
-                @apply content-[''] absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-fluxo-400 to-cyan-400;
+                @apply content-[''] absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-fluxo-400 to-accent-400;
             }
         }
     }
@@ -514,7 +514,7 @@ svg:not(.no-flex-auto) {
 }
 
 .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-fluxo-400 to-cyan-400;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-fluxo-400 to-accent-400;
 }
 
 .hover-glow {

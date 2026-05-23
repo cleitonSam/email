@@ -20,7 +20,7 @@
       --fluxo-500: #FF5A1F;
       --fluxo-400: #FF7B47;
       --fluxo-300: #FF9D75;
-      --cyan-400: #22D3EE;
+      --accent-400: #22D3EE;
       --bg-900: #0A1F3D;
       --bg-800: #0F2848;
       --bg-700: #1A2F52;
@@ -50,7 +50,7 @@
     .toolbar h1 { font-size: 14px; font-weight: 600; margin: 0; opacity: 0.95; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 360px; }
     .toolbar h1 small { display: block; font-size: 11px; opacity: 0.55; font-weight: 400; margin-top: 2px; }
     .badge {
-      background: linear-gradient(135deg, var(--fluxo-500), var(--cyan-400));
+      background: linear-gradient(135deg, var(--fluxo-500), var(--accent-400));
       color: var(--bg-900);
       font-size: 10px;
       font-weight: 800;
@@ -73,7 +73,7 @@
       opacity: 0;
     }
     .save-status.show { opacity: 1; }
-    .save-status.saving { background: rgba(34,211,238,0.12); color: var(--cyan-400); }
+    .save-status.saving { background: rgba(34,211,238,0.12); color: var(--accent-400); }
     .save-status.saved { background: rgba(74,222,128,0.12); color: var(--success); }
     .save-status.error { background: rgba(248,113,113,0.12); color: var(--error); }
     .save-status .dot {
@@ -106,7 +106,7 @@
     .btn-ghost { background: transparent; color: var(--text); opacity: 0.7; }
     .btn-ghost:hover { opacity: 1; background: rgba(255,255,255,0.06); }
     .btn-primary {
-      background: linear-gradient(135deg, var(--fluxo-500), var(--cyan-400));
+      background: linear-gradient(135deg, var(--fluxo-500), var(--accent-400));
       color: var(--bg-900);
       box-shadow: 0 4px 12px rgba(255,90,31,0.25);
     }
@@ -329,7 +329,7 @@
             const uploadArea = document.createElement('div');
             uploadArea.style.cssText = 'padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 12px;';
             uploadArea.innerHTML = `
-              <label class="fluxo-upload-btn" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: linear-gradient(135deg, var(--fluxo-500), var(--cyan-400)); color: var(--bg-900); font-weight: 700; font-size: 13px; border-radius: 10px; cursor: pointer; transition: transform 0.15s;">
+              <label class="fluxo-upload-btn" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: linear-gradient(135deg, var(--fluxo-500), var(--accent-400)); color: var(--bg-900); font-weight: 700; font-size: 13px; border-radius: 10px; cursor: pointer; transition: transform 0.15s;">
                 <span style="font-size: 16px;">↑</span>
                 <span class="upload-label-text">Upload do PC</span>
                 <input type="file" accept="image/*" class="upload-input" style="display: none;" />

@@ -477,7 +477,7 @@
         this.inserting = true;
         this.message = '';
         try {
-          const resp = await fetch('/projects/' + this.projectId + '/blocks/snippet/' + slug + '.json');
+          const resp = await fetch('/projects/' + this.projectId + '/blocks/snippet/' + slug);
           const data = await resp.json();
           if (!data.mjml) { this.message = 'Erro: bloco vazio'; return; }
 

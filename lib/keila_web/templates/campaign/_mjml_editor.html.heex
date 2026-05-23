@@ -138,13 +138,14 @@
     </a>
     <%= if assigns[:campaign] do %>
       <a
-        title="Editor visual experimental (drag-and-drop)"
+        title="Abre o Editor Completo (drag-and-drop, galeria, blocos, auto-save) em nova aba"
         href={"/projects/" <> @current_project.id <> "/campaigns/" <> @campaign.id <> "/grapes"}
         target="_blank"
-        class="flex items-center gap-1.5 px-3 h-10 bg-gradient-to-r from-orange-500/20 to-lime-400/20 hover:from-orange-500/30 hover:to-lime-400/30 text-orange-200 transition-colors text-xs font-bold border-l border-gray-700/50"
+        class="flex items-center gap-1.5 px-3 h-10 bg-gradient-to-r from-fluxo-500 to-cyan-400 hover:opacity-90 text-white transition-all text-xs font-bold border-l border-gray-700/50 shadow-lg shadow-fluxo-500/30"
       >
         <span class="text-base">★</span>
-        <span>Editor visual (beta)</span>
+        <span>Editor Completo</span>
+        <span class="text-[10px] opacity-80">↗</span>
       </a>
     <% end %>
     <div class="flex-grow"></div>

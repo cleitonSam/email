@@ -115,6 +115,65 @@
 
     #gjs-wrapper { flex: 1; min-height: 0; height: calc(100vh - 60px); }
 
+    /* Dropdown de variáveis Liquid */
+    .vars-dropdown { position: relative; }
+    .vars-menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: var(--bg-800);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      min-width: 320px;
+      max-height: 70vh;
+      overflow-y: auto;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+      display: none;
+      z-index: 100;
+    }
+    .vars-dropdown.open .vars-menu { display: block; }
+    .vars-group { margin-bottom: 10px; }
+    .vars-group-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--fluxo-500);
+      padding: 6px 8px;
+    }
+    .vars-menu button {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+      width: 100%;
+      padding: 8px 10px;
+      background: transparent;
+      border: none;
+      border-radius: 6px;
+      color: var(--text);
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .vars-menu button:hover { background: var(--bg-700); }
+    .vars-menu button small {
+      color: var(--text-muted);
+      font-family: 'Poppins', sans-serif;
+      font-size: 10px;
+    }
+    .vars-help {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 10px 0 4px;
+      border-top: 1px solid var(--border);
+      margin-top: 8px;
+    }
+
     /* GrapesJS dark theme - override */
     .gjs-one-bg { background-color: var(--bg-800) !important; }
     .gjs-one-color, .gjs-one-color-h:hover { color: var(--text) !important; }
@@ -145,8 +204,40 @@
       <span class="text"></span>
     </span>
     <div class="actions">
+      <div class="vars-dropdown" id="vars-dropdown">
+        <button class="btn btn-ghost" type="button" id="btn-vars">
+          {} Variáveis
+        </button>
+        <div class="vars-menu" id="vars-menu">
+          <div class="vars-group">
+            <div class="vars-group-title">Destinatário</div>
+            <button type="button" data-var="{{ first_name }}">{{ first_name }} <small>Primeiro nome</small></button>
+            <button type="button" data-var="{{ last_name }}">{{ last_name }} <small>Sobrenome</small></button>
+            <button type="button" data-var="{{ email }}">{{ email }} <small>E-mail</small></button>
+          </div>
+          <div class="vars-group">
+            <div class="vars-group-title">Sistema</div>
+            <button type="button" data-var="{{ unsubscribe_link }}">{{ unsubscribe_link }} <small>Link de descadastro</small></button>
+          </div>
+          <div class="vars-group">
+            <div class="vars-group-title">Marca</div>
+            <button type="button" data-var="{{ brand.name }}">{{ brand.name }} <small>Nome da marca</small></button>
+            <button type="button" data-var="{{ brand.logo_url }}">{{ brand.logo_url }} <small>URL da logo</small></button>
+            <button type="button" data-var="{{ brand.color_primary }}">{{ brand.color_primary }} <small>Cor primária</small></button>
+          </div>
+          <div class="vars-group">
+            <div class="vars-group-title">Templates específicos</div>
+            <button type="button" data-var="{{ unidade }}">{{ unidade }} <small>Unidade/filial</small></button>
+            <button type="button" data-var="{{ mes_referencia }}">{{ mes_referencia }} <small>Mês ref. (newsletter)</small></button>
+            <button type="button" data-var="{{ data_evento }}">{{ data_evento }} <small>Data do evento</small></button>
+          </div>
+          <div class="vars-help">
+            Clica → copia + insere no elemento selecionado
+          </div>
+        </div>
+      </div>
       <a href={"/projects/" <> @current_project.id <> "/campaigns/" <> @campaign.id} class="btn btn-ghost">
-        ← Voltar pra edição padrão
+        ← Voltar
       </a>
       <button id="btn-save" class="btn btn-primary" type="button">
         Salvar agora
@@ -174,7 +265,16 @@
         width: 'auto',
         storageManager: false,
         plugins: ['grapesjs-mjml'],
-        pluginsOpts: { 'grapesjs-mjml': {} }
+        pluginsOpts: { 'grapesjs-mjml': {} },
+        assetManager: {
+          assets: [],
+          upload: false,           // Desativa o upload nativo (vamos usar custom)
+          autoAdd: false,          // Nao adicionar URLs externas digitadas
+          customFetch: async (url) => {
+            const r = await fetch(url);
+            return r.json();
+          }
+        }
       });
 
       editor.on('load', () => {
@@ -188,7 +288,102 @@
 
         // Registra os 17 blocos do Fluxo no painel lateral do GrapesJS
         loadFluxoBlocks();
+        // Carrega imagens da galeria ImageKit no Asset Manager
+        loadFluxoAssets();
+        // Adiciona botao de upload customizado no Asset Manager
+        setupAssetUpload();
       });
+
+      // ========= ASSET MANAGER: GALERIA IMAGEKIT =========
+      async function loadFluxoAssets() {
+        try {
+          const resp = await fetch(`/projects/${projectId}/media/list.json`);
+          const data = await resp.json();
+          if (!data.assets) return;
+          const am = editor.AssetManager;
+          am.add(data.assets.map(a => ({
+            type: 'image',
+            src: a.url,
+            name: a.filename,
+            // metadata extra (folder, tamanho) pode ser usado em filtros futuros
+            folder: a.folder || 'geral'
+          })));
+        } catch (e) {
+          console.error('Falha carregando galeria de imagens:', e);
+        }
+      }
+
+      // Adiciona um botao "Upload do PC" customizado dentro do Asset Manager.
+      // O upload nativo do GrapesJS exige config de endpoint + headers especificos
+      // que nao se encaixam bem com o nosso /media/upload (multipart com csrf).
+      // Solucao: input file invisivel + handler que dispara o upload manual.
+      function setupAssetUpload() {
+        editor.on('run:open-assets', () => {
+          // Aguarda o modal abrir
+          setTimeout(() => {
+            const am = editor.AssetManager;
+            const modal = document.querySelector('.gjs-am-assets-cont');
+            if (!modal || modal.querySelector('.fluxo-upload-btn')) return;
+
+            // Cria a area de upload customizada
+            const uploadArea = document.createElement('div');
+            uploadArea.style.cssText = 'padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 12px;';
+            uploadArea.innerHTML = `
+              <label class="fluxo-upload-btn" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: linear-gradient(135deg, var(--fluxo-500), var(--cyan-400)); color: var(--bg-900); font-weight: 700; font-size: 13px; border-radius: 10px; cursor: pointer; transition: transform 0.15s;">
+                <span style="font-size: 16px;">↑</span>
+                <span class="upload-label-text">Upload do PC</span>
+                <input type="file" accept="image/*" class="upload-input" style="display: none;" />
+              </label>
+              <span class="upload-status" style="margin-left: 12px; font-size: 12px; color: var(--text-muted);"></span>
+            `;
+
+            modal.insertBefore(uploadArea, modal.firstChild);
+
+            const input = uploadArea.querySelector('.upload-input');
+            const label = uploadArea.querySelector('.upload-label-text');
+            const status = uploadArea.querySelector('.upload-status');
+
+            input.addEventListener('change', async (e) => {
+              const file = e.target.files && e.target.files[0];
+              if (!file) return;
+              label.textContent = 'Enviando...';
+              status.textContent = '';
+
+              try {
+                const fd = new FormData();
+                fd.append('file', file);
+                fd.append('_csrf_token', csrfToken);
+
+                const resp = await fetch(`/projects/${projectId}/media/upload`, {
+                  method: 'POST',
+                  headers: { 'x-csrf-token': csrfToken },
+                  body: fd
+                });
+                const data = await resp.json();
+
+                if (!resp.ok || !data.ok) {
+                  status.textContent = 'Erro: ' + (data.error || resp.statusText);
+                  status.style.color = 'var(--error)';
+                  label.textContent = 'Upload do PC';
+                  return;
+                }
+
+                // Adiciona o asset novo ao manager — aparece no grid imediatamente
+                editor.AssetManager.add({ type: 'image', src: data.url, name: data.filename });
+                status.textContent = '✓ ' + data.filename;
+                status.style.color = 'var(--success)';
+                label.textContent = 'Upload do PC';
+                input.value = '';
+              } catch (err) {
+                console.error(err);
+                status.textContent = 'Erro de rede';
+                status.style.color = 'var(--error)';
+                label.textContent = 'Upload do PC';
+              }
+            });
+          }, 100);
+        });
+      }
 
       // ========= BLOCOS DO FLUXO =========
       async function loadFluxoBlocks() {
@@ -312,6 +507,47 @@
           e.preventDefault();
           e.returnValue = '';
         }
+      });
+
+      // ========= DROPDOWN VARIÁVEIS LIQUID =========
+      const varsDropdown = document.getElementById('vars-dropdown');
+      const btnVars = document.getElementById('btn-vars');
+      const varsMenu = document.getElementById('vars-menu');
+
+      btnVars.addEventListener('click', (e) => {
+        e.stopPropagation();
+        varsDropdown.classList.toggle('open');
+      });
+      document.addEventListener('click', (e) => {
+        if (!varsDropdown.contains(e.target)) varsDropdown.classList.remove('open');
+      });
+
+      // Insere a var no componente selecionado + copia pro clipboard como fallback
+      varsMenu.querySelectorAll('button[data-var]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const v = btn.dataset.var;
+
+          // Tenta inserir no componente selecionado (se for texto)
+          const selected = editor.getSelected();
+          let inserted = false;
+          if (selected) {
+            const type = selected.get('type');
+            if (type === 'text' || type === 'textnode' || selected.get('content')) {
+              try {
+                // Acrescenta no fim do conteúdo atual
+                const current = selected.get('content') || '';
+                selected.set('content', current + v);
+                inserted = true;
+              } catch (e) { /* fallback pro clipboard */ }
+            }
+          }
+
+          // Sempre copia pro clipboard (útil mesmo quando inseriu)
+          navigator.clipboard.writeText(v).catch(() => {});
+
+          setStatus('saved', inserted ? 'Variável inserida + copiada' : 'Variável copiada (cole no texto)');
+          varsDropdown.classList.remove('open');
+        });
       });
     })();
   </script>

@@ -33,7 +33,8 @@ defmodule Keila.Empresas.Empresa do
   def creation_changeset(params) do
     %__MODULE__{}
     |> cast(params, @creation_fields)
-    |> validate_required([:nome, :cnpj])
+    |> validate_required([:nome, :cnpj, :email_responsavel])
+    |> validate_format(:email_responsavel, ~r/@/, message: "E-mail inválido")
     |> validate_inclusion(:status, @statuses)
     |> update_change(:cnpj, &only_digits/1)
     |> validate_cnpj()

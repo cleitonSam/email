@@ -188,6 +188,9 @@
         <div class="border-t border-gray-800/50 mt-3 mx-2"></div>
         <%= if assigns[:is_admin?] do %>
           <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-600 px-3 pt-3 pb-1">{dgettext("admin", "Admin")}</p>
+          {menu_link(@conn, Routes.empresa_admin_path(@conn, :index), dgettext("admin", "Empresas"),
+            icon: :office_building
+          )}
           {menu_link(@conn, Routes.project_admin_path(@conn, :index), dgettext("admin", "Projects"),
             icon: :collection
           )}

@@ -112,6 +112,11 @@ defmodule KeilaWeb.Router do
     get "/admin/projects/:id/edit", ProjectAdminController, :edit
     put "/admin/projects/:id", ProjectAdminController, :update
 
+    get "/admin/empresas", EmpresaAdminController, :index
+    get "/admin/empresas/nova", EmpresaAdminController, :new
+    post "/admin/empresas", EmpresaAdminController, :create
+    post "/admin/empresas/:id/reenviar-convite", EmpresaAdminController, :resend
+
     resources "/admin/shared-senders", SharedSenderAdminController
     get "/admin/shared-senders/:id/delete", SharedSenderAdminController, :delete_confirmation
 

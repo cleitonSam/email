@@ -1,5 +1,7 @@
 <div x-data="{
   mode: 'simple',
+  splitPreview: localStorage.getItem('fluxo_split_preview_v1') === '1',
+  toggleSplit() { this.splitPreview = !this.splitPreview; localStorage.setItem('fluxo_split_preview_v1', this.splitPreview ? '1' : '0'); },
   showTour: !localStorage.getItem('fluxo_editor_tour_v1'),
   dismissTour() { localStorage.setItem('fluxo_editor_tour_v1', '1'); this.showTour = false; },
   ...imagePicker()
@@ -137,11 +139,21 @@
     <div class="flex-grow"></div>
     <button
       type="button"
-      title="Preview ao vivo"
-      class="flex w-10 h-10 p-2 items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors flex-shrink-0"
-      @click.prevent="$dispatch('x-toggle-preview')"
+      title="Preview lado a lado (atualiza ao vivo)"
+      x-on:click.prevent="toggleSplit()"
+      x-bind:class="splitPreview ? 'bg-fluxo-500/30 text-fluxo-200' : 'bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white'"
+      class="flex items-center gap-1.5 px-3 h-10 transition-colors text-xs font-medium border-l border-gray-700/50"
     >
       <span class="inline-flex h-4 w-4">{render_icon(:eye)}</span>
+      <span>Lado a lado</span>
+    </button>
+    <button
+      type="button"
+      title="Preview tela cheia"
+      class="flex w-10 h-10 p-2 items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors flex-shrink-0 border-l border-gray-700/50"
+      @click.prevent="$dispatch('x-toggle-preview')"
+    >
+      <span class="inline-flex h-4 w-4">{render_icon(:arrows_expand)}</span>
     </button>
   </div>
 
@@ -274,7 +286,10 @@
   </div>
 
   <!-- ============ MODO SIMPLES ============ -->
-  <div x-show="mode === 'simple'" x-cloak class="border-l border-r border-b border-gray-700/50 bg-gray-950 rounded-b-xl p-4 sm:p-6 max-h-[80vh] overflow-y-auto">
+  <div x-show="mode === 'simple'" x-cloak class="border-l border-r border-b border-gray-700/50 bg-gray-950 rounded-b-xl">
+  <div x-bind:class="splitPreview ? 'grid grid-cols-1 lg:grid-cols-2 gap-0' : ''">
+  <!-- Painel de edicao -->
+  <div class="p-4 sm:p-6 max-h-[80vh] overflow-y-auto">
     <div class="bg-fluxo-500/10 border border-fluxo-500/30 rounded-xl p-4 mb-5 flex items-start gap-3">
       <span class="text-2xl">[?]</span>
       <div>
@@ -297,18 +312,18 @@
             </label>
             <%= case field.type do %>
               <% :text -> %>
-                <textarea name={"simple[" <> field.id <> "]"} rows="3" phx-debounce="800"
+                <textarea name={"simple[" <> field.id <> "]"} rows="3" phx-debounce="400"
                   class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-3 py-2 text-sm font-mono"><%= field.value %></textarea>
                 <p class="text-[10px] text-gray-500 mt-1">
                   Pode usar &lt;br/&gt; pra quebrar linha, &lt;strong&gt; pra negrito, ou variaveis &#123;&#123; first_name &#125;&#125;
                 </p>
 
               <% :button -> %>
-                <input type="text" name={"simple[" <> field.id <> "]"} value={String.trim(field.value)} phx-debounce="800"
+                <input type="text" name={"simple[" <> field.id <> "]"} value={String.trim(field.value)} phx-debounce="400"
                   class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-3 py-2 text-sm" />
 
               <% :button_link -> %>
-                <input type="text" name={"simple[" <> field.id <> "]"} value={field.value} phx-debounce="800"
+                <input type="text" name={"simple[" <> field.id <> "]"} value={field.value} phx-debounce="400"
                   placeholder="https://..."
                   class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-3 py-2 text-sm font-mono" />
                 <p class="text-[10px] text-gray-500 mt-1">Use a URL completa (https://...) ou uma variavel &#123;&#123; link_xxx &#125;&#125;</p>
@@ -326,7 +341,7 @@
                     <% end %>
                   </div>
                   <div class="flex-1 space-y-2">
-                    <input type="text" name={"simple[" <> field.id <> "]"} value={field.value} phx-debounce="800"
+                    <input type="text" name={"simple[" <> field.id <> "]"} value={field.value} phx-debounce="400"
                       class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-3 py-2 text-xs font-mono" />
                     <button type="button"
                       data-target={field.id}
@@ -340,7 +355,7 @@
                 </div>
 
               <% :image_alt -> %>
-                <input type="text" name={"simple[" <> field.id <> "]"} value={field.value} phx-debounce="800"
+                <input type="text" name={"simple[" <> field.id <> "]"} value={field.value} phx-debounce="400"
                   placeholder="Descricao da imagem"
                   class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-3 py-2 text-sm" />
                 <p class="text-[10px] text-gray-500 mt-1">Texto que aparece se a imagem nao carregar (acessibilidade)</p>
@@ -349,6 +364,22 @@
         <% end %>
       </div>
     <% end %>
+  </div>
+  <!-- /Painel de edicao -->
+
+  <!-- Painel de preview lado a lado (so quando splitPreview ativo) -->
+  <div x-show="splitPreview" x-cloak class="bg-gray-100 border-l border-gray-800 relative overflow-hidden" style="min-height: 80vh;">
+    <div class="absolute top-2 right-2 z-10 px-2 py-1 bg-gray-900/70 text-white text-[10px] font-semibold rounded backdrop-blur-sm">
+      Preview ao vivo
+    </div>
+    <iframe
+      id="html-split-preview"
+      src="about:blank"
+      sandbox="allow-same-origin"
+      class="w-full h-full border-0"
+      style="min-height: 80vh;"
+    ></iframe>
+  </div>
   </div>
 </div>
 
@@ -627,14 +658,14 @@
   {textarea(f, :mjml_body,
     rows: 20,
     class: "hidden",
-    phx_debounce: "1000"
+    phx_debounce: "300"
   )}
 </.form>
 <div
   id="html-preview-data"
   phx-hook="HtmlPreview"
   class="hidden"
-  data-iframe="#html-inline-preview, #html-preview"
+  data-iframe="#html-inline-preview, #html-preview, #html-split-preview"
 >
   {@preview}
 </div>

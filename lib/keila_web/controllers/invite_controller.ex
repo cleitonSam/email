@@ -70,13 +70,30 @@ defmodule KeilaWeb.InviteController do
           _ = Auth.add_user_to_group(user.id, project.group_id)
         end
 
+        # Convite de empresa: ativa a empresa e remove o admin master do grupo
+        empresa = Keila.Empresas.get_empresa_por_projeto(invitation.project_id)
+
+        if empresa do
+          _ = Keila.Empresas.ativar(empresa)
+
+          if project && project.group_id && invitation.invited_by_user_id do
+            _ = Auth.remove_user_from_group(invitation.invited_by_user_id, project.group_id)
+          end
+        end
+
         # Marca invitation como aceito
         Invitations.accept(invitation, user)
+
+        # Empresa nova vai pro assistente de configuracao; convite de equipe vai pro projeto
+        destino =
+          if empresa,
+            do: "/projects/#{invitation.project_id}/setup",
+            else: "/projects/#{invitation.project_id}"
 
         conn
         |> put_flash(:info, "🎉 Bem-vindo(a)! Sua conta foi criada.")
         |> KeilaWeb.AuthSession.start_auth_session(user.id)
-        |> redirect(to: "/projects/#{invitation.project_id}")
+        |> redirect(to: destino)
 
       {:error, changeset} ->
         msg =

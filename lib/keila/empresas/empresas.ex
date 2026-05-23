@@ -23,6 +23,18 @@ defmodule Keila.Empresas do
   @doc "Busca uma empresa pelo id."
   def get_empresa(id), do: Repo.get(Empresa, id) |> Repo.preload(:project)
 
+  @doc "Busca a empresa vinculada a um projeto (nil se for um projeto comum)."
+  def get_empresa_por_projeto(project_id) do
+    Repo.get_by(Empresa, project_id: project_id)
+  end
+
+  @doc "Marca a empresa como ativa (convite aceito)."
+  def ativar(%Empresa{} = empresa) do
+    empresa
+    |> Empresa.update_changeset(%{status: "ativa"})
+    |> Repo.update()
+  end
+
   @doc "Indica se um CNPJ (normalizado, só dígitos) já está cadastrado."
   def cnpj_em_uso?(cnpj) when is_binary(cnpj) do
     digits = String.replace(cnpj, ~r/[^0-9]/, "")

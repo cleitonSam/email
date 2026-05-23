@@ -98,14 +98,11 @@
         </div>
 
         <!-- Submit -->
-        <button type="submit" class="relative w-full group mt-1 overflow-hidden rounded-xl bg-gradient-to-r from-fluxo-600 to-fluxo-500 hover:from-fluxo-500 hover:to-cyan-500 text-white font-semibold py-3 px-6 shadow-lg shadow-fluxo-600/30 hover:shadow-fluxo-500/50 transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] text-sm">
-          <span class="relative flex items-center justify-center gap-2">
-            <svg class="w-4 h-4 flex-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-            </svg>
-            {dgettext("auth", "Sign in")}
-          </span>
-          <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+        <button type="submit" class="button button--cta button--large w-full justify-center mt-1">
+          <svg class="w-4 h-4 flex-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+          </svg>
+          {dgettext("auth", "Sign in")}
         </button>
       </.form>
 

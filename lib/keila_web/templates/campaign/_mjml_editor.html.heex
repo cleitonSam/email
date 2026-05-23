@@ -83,7 +83,7 @@
       onclick={"document.getElementById('ai-modal-" <> @current_project.id <> "').classList.remove('hidden')"}
       class="flex items-center gap-1.5 px-3 h-10 bg-gradient-to-r from-fluxo-500/20 to-cyan-500/20 hover:from-fluxo-500/30 hover:to-cyan-500/30 text-fluxo-200 transition-colors text-xs font-bold border-l border-gray-700/50"
     >
-      <span class="text-base">[IA]</span>
+      <span class="inline-flex h-4 w-4">{render_icon(:sparkles)}</span>
       <span>Ajustar com IA</span>
     </button>
     <button
@@ -115,7 +115,7 @@
       x-on:click.prevent="$dispatch('open-block-picker')"
       class="flex items-center gap-1.5 px-3 h-10 bg-gradient-to-r from-purple-500/20 to-fluxo-500/20 hover:from-purple-500/30 hover:to-fluxo-500/30 text-fluxo-200 transition-colors text-xs font-bold"
     >
-      <span class="text-base">+</span>
+      <span class="inline-flex h-4 w-4">{render_icon(:document_add)}</span>
       <span>Adicionar bloco</span>
     </button>
     <button
@@ -124,7 +124,7 @@
       onclick={"document.getElementById('ai-modal-" <> @current_project.id <> "').classList.remove('hidden')"}
       class="flex items-center gap-1.5 px-3 h-10 bg-gradient-to-r from-fluxo-500/20 to-cyan-500/20 hover:from-fluxo-500/30 hover:to-cyan-500/30 text-fluxo-200 transition-colors text-xs font-bold border-l border-gray-700/50"
     >
-      <span class="text-base">[IA]</span>
+      <span class="inline-flex h-4 w-4">{render_icon(:sparkles)}</span>
       <span>Ajustar com IA</span>
     </button>
     <a
@@ -246,7 +246,7 @@
       class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
       x-on:click.self="close()"
     >
-      <div role="dialog" aria-modal="true" aria-labelledby="block-picker-title" class="bg-gray-900 border border-fluxo-500/30 rounded-2xl max-w-5xl w-full max-h-[85vh] overflow-hidden flex flex-col shadow-2xl shadow-fluxo-500/20">
+      <div role="dialog" aria-modal="true" aria-labelledby="block-picker-title" tabindex="-1" x-ref="modal" class="bg-gray-900 border border-fluxo-500/30 rounded-2xl max-w-5xl w-full max-h-[85vh] overflow-hidden flex flex-col shadow-2xl shadow-fluxo-500/20">
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-800">
           <div>
             <h3 id="block-picker-title" class="text-lg font-bold text-white">Adicionar bloco pronto</h3>
@@ -569,6 +569,8 @@
       open() {
         this.isOpen = true;
         this.message = '';
+        this._prevFocus = document.activeElement;
+        this.$nextTick(() => { if (this.$refs.modal) this.$refs.modal.focus(); });
         if (this.blocks.length > 0) return; // ja carregou antes
         if (!this.projectId) { this.message = 'Erro: projeto nao identificado'; return; }
         this.loading = true;
@@ -581,7 +583,7 @@
           })
           .catch(e => { console.error(e); this.loading = false; this.message = 'Erro carregando blocos'; });
       },
-      close() { this.isOpen = false; this.message = ''; },
+      close() { this.isOpen = false; this.message = ''; if (this._prevFocus && this._prevFocus.focus) { this._prevFocus.focus(); } },
       async insert(slug) {
         if (!this.projectId) return;
         this.inserting = true;
@@ -626,7 +628,7 @@
     <div class="flex justify-between items-start mb-5">
       <div>
         <h3 class="text-xl font-bold text-white flex items-center gap-2">
-          <span class="text-2xl">[IA]</span> Ajustar com IA
+          <span class="inline-flex h-6 w-6">{render_icon(:sparkles)}</span> Ajustar com IA
         </h3>
         <p class="text-sm text-gray-400 mt-1">Descreve em portugues o que voce quer mudar.</p>
       </div>

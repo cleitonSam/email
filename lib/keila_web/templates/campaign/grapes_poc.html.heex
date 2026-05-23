@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GrapesJS POC - {@campaign.subject || "Campanha"}</title>
+  {csrf_meta_tag()}
+
+  <!-- GrapesJS via CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/grapesjs@0.22.7/dist/css/grapes.min.css" />
+  <script src="https://unpkg.com/grapesjs@0.22.7/dist/grapes.min.js"></script>
+  <script src="https://unpkg.com/grapesjs-mjml@1.0.6"></script>
+
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; height: 100%; background: #1a1a1a; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 10px 20px;
+      background: #0A1F3D;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      height: 56px;
+    }
+    .toolbar h1 { font-size: 14px; font-weight: 600; margin: 0; opacity: 0.9; }
+    .toolbar h1 small { opacity: 0.6; font-weight: 400; margin-left: 8px; }
+    .toolbar .badge { background: linear-gradient(90deg, #FF5A1F, #C4FF00); color: #0A1F3D; font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 999px; letter-spacing: 1px; text-transform: uppercase; }
+    .toolbar .actions { display: flex; gap: 8px; }
+    .toolbar button, .toolbar a { border: none; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; }
+    .toolbar .btn-cancel { background: transparent; color: #fff; opacity: 0.7; }
+    .toolbar .btn-cancel:hover { opacity: 1; background: rgba(255,255,255,0.1); }
+    .toolbar .btn-save { background: linear-gradient(135deg, #FF5A1F, #C4FF00); color: #0A1F3D; }
+    .toolbar .btn-save:hover { transform: scale(1.05); }
+    .toolbar .btn-save:disabled { opacity: 0.5; cursor: wait; transform: none; }
+    .toolbar .status { font-size: 12px; opacity: 0.7; }
+    .toolbar .status.success { color: #C4FF00; }
+    .toolbar .status.error { color: #ff6b6b; }
+
+    #gjs-wrapper { height: calc(100vh - 56px); }
+
+    /* Overrides GrapesJS pra ficar dark theme */
+    .gjs-one-bg { background-color: #1a1a1a !important; }
+    .gjs-two-color, .gjs-color-active { color: #FF5A1F !important; }
+    .gjs-four-color, .gjs-four-color-h:hover { color: #FF5A1F !important; }
+    .gjs-three-bg { background-color: #FF5A1F !important; color: #fff; }
+
+    /* Banner experimental */
+    .experimental-banner {
+      background: rgba(255,90,31,0.15);
+      border-bottom: 1px solid rgba(255,90,31,0.4);
+      padding: 8px 20px;
+      font-size: 12px;
+      text-align: center;
+    }
+    .experimental-banner strong { color: #FF5A1F; }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <span class="badge">POC</span>
+      <h1>Editor Visual <small>{@campaign.subject || "(sem assunto)"}</small></h1>
+    </div>
+    <span id="save-status" class="status"></span>
+    <div class="actions">
+      <a href={"/projects/" <> @current_project.id <> "/campaigns/" <> @campaign.id} class="btn-cancel">
+        ← Voltar (sem salvar)
+      </a>
+      <button id="btn-save" class="btn-save" type="button">
+        💾 Salvar
+      </button>
+    </div>
+  </div>
+
+  <div class="experimental-banner">
+    <strong>EXPERIMENTAL:</strong> editor visual drag-and-drop. Se algo der errado, volta usando "Voltar (sem salvar)" e o email original fica intacto.
+  </div>
+
+  <div id="gjs-wrapper">
+    <div id="gjs"></div>
+  </div>
+
+  <textarea id="initial-mjml" hidden><%= @campaign.mjml_body || "<mjml><mj-body><mj-section><mj-column><mj-text>Olá!</mj-text></mj-column></mj-section></mj-body></mjml>" %></textarea>
+
+  <script>
+    (function() {
+      const initialMjml = document.getElementById('initial-mjml').value;
+      const projectId = <%= raw("\"#{@current_project.id}\"") %>;
+      const campaignId = <%= raw("\"#{@campaign.id}\"") %>;
+      const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+      const editor = grapesjs.init({
+        container: '#gjs',
+        height: '100%',
+        width: 'auto',
+        storageManager: false,
+        plugins: ['grapesjs-mjml'],
+        pluginsOpts: {
+          'grapesjs-mjml': {
+            // Opções do plugin: deixar default
+          }
+        },
+        // Carregar o MJML inicial após o plugin estar pronto
+      });
+
+      // Quando o editor estiver pronto, importa o MJML existente
+      editor.on('load', () => {
+        try {
+          if (initialMjml && initialMjml.trim()) {
+            editor.setComponents(initialMjml);
+          }
+        } catch (e) {
+          console.error('Erro carregando MJML inicial:', e);
+          alert('Erro carregando o email atual. O editor abriu vazio. Veja o console pra detalhes.');
+        }
+      });
+
+      // Save
+      const btnSave = document.getElementById('btn-save');
+      const statusEl = document.getElementById('save-status');
+
+      btnSave.addEventListener('click', async () => {
+        const mjml = editor.getHtml(); // grapesjs-mjml expõe getHtml() retornando MJML
+        if (!mjml || mjml.length < 20) {
+          statusEl.textContent = 'Erro: MJML vazio';
+          statusEl.className = 'status error';
+          return;
+        }
+
+        btnSave.disabled = true;
+        btnSave.textContent = 'Salvando...';
+        statusEl.textContent = '';
+
+        try {
+          const resp = await fetch(`/projects/${projectId}/campaigns/${campaignId}/grapes/save`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-csrf-token': csrfToken,
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({ mjml: mjml })
+          });
+          const data = await resp.json();
+
+          if (resp.ok && data.ok) {
+            statusEl.textContent = '✓ Salvo!';
+            statusEl.className = 'status success';
+            setTimeout(() => { statusEl.textContent = ''; }, 3000);
+          } else {
+            statusEl.textContent = '✗ Erro: ' + (data.errors || resp.statusText);
+            statusEl.className = 'status error';
+          }
+        } catch (e) {
+          console.error(e);
+          statusEl.textContent = '✗ Erro: ' + e.message;
+          statusEl.className = 'status error';
+        } finally {
+          btnSave.disabled = false;
+          btnSave.innerHTML = '💾 Salvar';
+        }
+      });
+
+      // Ctrl+S pra salvar
+      document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+          e.preventDefault();
+          btnSave.click();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

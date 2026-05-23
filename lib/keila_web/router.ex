@@ -172,6 +172,8 @@ defmodule KeilaWeb.Router do
     get "/projects/:project_id/campaigns/new", CampaignController, :new
     post "/projects/:project_id/campaigns/new", CampaignController, :post_new
     get "/projects/:project_id/campaigns/:id", CampaignController, :edit
+    get "/projects/:project_id/campaigns/:id/grapes", CampaignController, :grapes_poc
+    post "/projects/:project_id/campaigns/:id/grapes/save", CampaignController, :grapes_save
     get "/projects/:project_id/campaigns/:id/stats", CampaignController, :stats
     get "/projects/:project_id/campaigns/:id/view", CampaignController, :view
     get "/projects/:project_id/campaigns/:id/share", CampaignController, :share

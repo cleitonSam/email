@@ -223,6 +223,54 @@ defmodule KeilaWeb.CampaignController do
     end
   end
 
+  @doc """
+  POC GrapesJS (Fase 5): renderiza um editor visual drag-and-drop full-screen
+  pra editar o MJML da campanha. Rota separada da /:id (LiveView normal) pra
+  permitir experimentação sem mexer no fluxo atual.
+  """
+  def grapes_poc(conn, _params) do
+    campaign = conn.assigns.campaign
+    project = current_project(conn)
+
+    if is_nil(campaign.sent_at) and campaign.settings && campaign.settings.type == :mjml do
+      # Renderiza standalone (sem layout root/menu) - o template tem <html> completo
+      conn
+      |> put_root_layout(false)
+      |> put_layout(false)
+      |> assign(:campaign, campaign)
+      |> assign(:current_project, project)
+      |> render("grapes_poc.html")
+    else
+      conn
+      |> put_flash(:error, "POC GrapesJS só funciona em campanhas MJML não enviadas")
+      |> redirect(to: Routes.campaign_path(conn, :edit, project.id, campaign.id))
+    end
+  end
+
+  @doc """
+  Save endpoint pra POC GrapesJS. Recebe o MJML novo, atualiza o campaign
+  e retorna JSON. Usado via fetch do frontend GrapesJS.
+  """
+  def grapes_save(conn, %{"mjml" => mjml}) when is_binary(mjml) do
+    campaign = conn.assigns.campaign
+
+    case Mailings.update_campaign(campaign.id, %{"mjml_body" => mjml}) do
+      {:ok, _campaign} ->
+        json(conn, %{ok: true})
+
+      {:error, changeset} ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> json(%{ok: false, errors: inspect(changeset.errors)})
+    end
+  end
+
+  def grapes_save(conn, _) do
+    conn
+    |> put_status(:bad_request)
+    |> json(%{ok: false, error: "mjml field required"})
+  end
+
   @spec stats(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def stats(conn, _params) do
     project = current_project(conn)

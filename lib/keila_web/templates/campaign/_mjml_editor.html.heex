@@ -136,6 +136,17 @@
       <span class="inline-flex h-4 w-4 flex-shrink-0">{render_icon(:photograph)}</span>
       <span>Galeria de imagens</span>
     </a>
+    <%= if assigns[:campaign] do %>
+      <a
+        title="Editor visual experimental (drag-and-drop)"
+        href={"/projects/" <> @current_project.id <> "/campaigns/" <> @campaign.id <> "/grapes"}
+        target="_blank"
+        class="flex items-center gap-1.5 px-3 h-10 bg-gradient-to-r from-orange-500/20 to-lime-400/20 hover:from-orange-500/30 hover:to-lime-400/30 text-orange-200 transition-colors text-xs font-bold border-l border-gray-700/50"
+      >
+        <span class="text-base">★</span>
+        <span>Editor visual (beta)</span>
+      </a>
+    <% end %>
     <div class="flex-grow"></div>
     <button
       type="button"

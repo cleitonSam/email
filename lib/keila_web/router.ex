@@ -214,6 +214,17 @@ defmodule KeilaWeb.Router do
     post "/projects/:project_id/team/invitations/:id/revoke", TeamController, :revoke
     post "/projects/:project_id/team/members/:id/remove", TeamController, :remove_member
 
+    get "/projects/:project_id/nps", NpsController, :index
+    get "/projects/:project_id/nps/nova", NpsController, :new
+    post "/projects/:project_id/nps", NpsController, :create
+    get "/projects/:project_id/nps/:id/editar", NpsController, :edit
+    put "/projects/:project_id/nps/:id", NpsController, :update
+    delete "/projects/:project_id/nps/:id", NpsController, :delete
+    get "/projects/:project_id/nps/:id/enviar", NpsController, :enviar
+    post "/projects/:project_id/nps/:id/enviar", NpsController, :post_enviar
+    get "/projects/:project_id/nps/:id/resultados", NpsController, :resultados
+    get "/projects/:project_id/nps/:id/resultados/export", NpsController, :export
+
   end
 
   # Scope JSON autenticado pra endpoints AI (precisa accept json)
@@ -263,6 +274,21 @@ defmodule KeilaWeb.Router do
     # DEPRECATED: These routes will be removed in a future Keila release
     get "/unsubscribe/:project_id/:contact_id", PublicFormController, :unsubscribe
     post "/unsubscribe/:project_id/:contact_id", PublicFormController, :unsubscribe
+  end
+
+  pipeline :nps_public do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+  end
+
+  scope "/nps", KeilaWeb do
+    pipe_through [:nps_public]
+
+    get "/:token", NpsPublicController, :show
+    post "/:token", NpsPublicController, :submit
   end
 
   scope "/uploads", KeilaWeb do

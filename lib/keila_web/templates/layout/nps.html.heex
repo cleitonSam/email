@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {csrf_meta_tag()}
+    <title>{assigns[:page_title] || "Pesquisa de satisfação"}</title>
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background: #f4f4f7;
+        color: #1f2937;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px 16px;
+        line-height: 1.5;
+      }
+      .card {
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 20px 40px -16px rgba(0,0,0,0.18);
+        width: 100%;
+        max-width: 540px;
+        overflow: hidden;
+      }
+      .card__header {
+        background: linear-gradient(135deg, #6d28d9, #db2777);
+        padding: 28px 32px;
+        color: #fff;
+      }
+      .card__header h1 { font-size: 19px; font-weight: 700; }
+      .card__header p { font-size: 13px; opacity: 0.85; margin-top: 2px; }
+      .card__body { padding: 32px; }
+      .pergunta { font-size: 18px; font-weight: 600; color: #111827; margin-bottom: 6px; }
+      .ajuda { font-size: 14px; color: #6b7280; margin-bottom: 24px; }
+      .escala {
+        display: grid;
+        grid-template-columns: repeat(11, 1fr);
+        gap: 6px;
+        margin-bottom: 8px;
+      }
+      .nota {
+        aspect-ratio: 1;
+        border: 2px solid #e5e7eb;
+        border-radius: 10px;
+        background: #fff;
+        font-size: 15px;
+        font-weight: 700;
+        color: #374151;
+        cursor: pointer;
+        transition: transform .08s ease, border-color .12s ease, background .12s ease;
+      }
+      .nota:hover { transform: translateY(-2px); }
+      .escala input { display: none; }
+      .escala input:checked + label { color: #fff; transform: translateY(-2px); }
+      .escala label.det:checked-sibling { }
+      .nota.det { }
+      input.r-det:checked + label { background: #e11d48; border-color: #e11d48; }
+      input.r-neu:checked + label { background: #f59e0b; border-color: #f59e0b; }
+      input.r-pro:checked + label { background: #10b981; border-color: #10b981; }
+      .escala-legenda {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        color: #9ca3af;
+        margin-bottom: 24px;
+      }
+      .campo-label { font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px; display: block; }
+      textarea {
+        width: 100%;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 12px 14px;
+        font-size: 14px;
+        font-family: inherit;
+        resize: vertical;
+        min-height: 90px;
+      }
+      textarea:focus { outline: none; border-color: #6d28d9; }
+      .btn {
+        width: 100%;
+        margin-top: 24px;
+        padding: 15px;
+        border: none;
+        border-radius: 12px;
+        background: #6d28d9;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background .12s ease;
+      }
+      .btn:hover { background: #5b21b6; }
+      .btn:disabled { background: #c4b5fd; cursor: not-allowed; }
+      .estado {
+        text-align: center;
+        padding: 16px 0;
+      }
+      .estado .emoji { font-size: 56px; }
+      .estado h2 { font-size: 22px; font-weight: 700; color: #111827; margin: 12px 0 6px; }
+      .estado p { font-size: 15px; color: #6b7280; }
+      .erro-msg {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #b91c1c;
+        font-size: 13px;
+        border-radius: 10px;
+        padding: 10px 14px;
+        margin-bottom: 16px;
+      }
+      .rodape {
+        text-align: center;
+        font-size: 12px;
+        color: #9ca3af;
+        padding: 16px 32px 24px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      {@inner_content}
+    </div>
+  </body>
+</html>

@@ -7,7 +7,7 @@ defmodule Keila.Nps.Envio do
   """
   use Keila.Schema, prefix: "npse"
 
-  alias Keila.Nps.Pesquisa
+  alias Keila.Nps.{Pesquisa, Resposta}
   alias Keila.Contacts.Contact
 
   @statuses ~w(pendente enviado respondido bounce)
@@ -19,6 +19,7 @@ defmodule Keila.Nps.Envio do
 
     belongs_to :pesquisa, Pesquisa, type: Pesquisa.Id
     belongs_to :contato, Contact, type: Contact.Id
+    has_one :resposta, Resposta
 
     timestamps()
   end

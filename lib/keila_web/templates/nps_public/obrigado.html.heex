@@ -1,0 +1,21 @@
+<div class="card__header">
+  <h1>Pesquisa de satisfação</h1>
+</div>
+
+<div class="card__body">
+  <div class="estado">
+    <%= if @ja do %>
+      <div class="emoji">✅</div>
+      <h2>Você já respondeu</h2>
+      <p>Esta pesquisa já recebeu a sua resposta. Obrigado pela participação!</p>
+    <% else %>
+      <div class="emoji">💜</div>
+      <h2>Obrigado pela sua resposta!</h2>
+      <p>Sua opinião foi registrada e ajuda muito a melhorarmos o nosso atendimento.</p>
+    <% end %>
+  </div>
+</div>
+
+<div class="rodape">
+  Pesquisa enviada por meio do Fluxo Email MKT.
+</div>

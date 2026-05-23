@@ -1,0 +1,42 @@
+<div class="card__header">
+  <h1>{@pesquisa.nome}</h1>
+  <p>Sua opinião leva menos de 1 minuto</p>
+</div>
+
+<div class="card__body">
+  <p class="pergunta">{@pesquisa.pergunta}</p>
+  <p class="ajuda">Escolha uma nota de 0 a 10.</p>
+
+  <%= if @erro do %>
+    <div class="erro-msg">{@erro}</div>
+  <% end %>
+
+  <form method="post" action={"/nps/" <> @token}>
+    <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
+
+    <div class="escala">
+      <%= for n <- 0..10 do %>
+        <% classe = cond do
+          n <= 6 -> "r-det"
+          n <= 8 -> "r-neu"
+          true -> "r-pro"
+        end %>
+        <input type="radio" name="nota" id={"nota-#{n}"} value={n} class={classe} required />
+        <label for={"nota-#{n}"} class="nota">{n}</label>
+      <% end %>
+    </div>
+    <div class="escala-legenda">
+      <span>0 — Nada provável</span>
+      <span>10 — Muito provável</span>
+    </div>
+
+    <label for="comentario" class="campo-label">Quer contar o porquê? (opcional)</label>
+    <textarea name="comentario" id="comentario" placeholder="O que mais pesou na sua nota?"></textarea>
+
+    <button type="submit" class="btn">Enviar resposta</button>
+  </form>
+</div>
+
+<div class="rodape">
+  Pesquisa enviada por meio do Fluxo Email MKT.
+</div>

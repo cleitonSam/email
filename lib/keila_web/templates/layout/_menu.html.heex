@@ -179,6 +179,9 @@
             exact: true,
             icon: :gift
           )}
+          {menu_link(@conn, :nps, :index, [@current_project.id], "NPS",
+            icon: :chart_square_bar
+          )}
           {menu_link(@conn, :team, :index, [@current_project.id], gettext("Equipe"),
             exact: true,
             icon: :users

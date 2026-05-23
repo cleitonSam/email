@@ -1,0 +1,84 @@
+<div class="container py-8 sm:py-11 mb-8">
+  <div class="flex items-center gap-6">
+    <a href={Routes.nps_path(@conn, :index, @current_project.id)} class="h-10 w-10 rounded-xl bg-gray-800/80 border border-gray-700/50 flex items-center justify-center text-gray-400 hover:text-white hover:bg-gray-700/80 transition-all">
+      <span class="inline-flex h-5 w-5">{render_icon(:chevron_left)}</span>
+    </a>
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-bold text-white">Enviar pesquisa</h1>
+      <p class="text-gray-400 text-sm mt-1">{@pesquisa.nome}</p>
+    </div>
+  </div>
+</div>
+
+<div class="container max-w-3xl pb-16">
+  <%= if @stats.total_envios > 0 do %>
+    <div class="bg-fluxo-500/10 border border-fluxo-500/30 rounded-xl p-4 mb-6 text-sm text-gray-200">
+      Esta pesquisa já foi enviada para <strong class="text-white">{@stats.total_envios}</strong> contato(s).
+      Contatos que já receberam não recebem de novo — só os novos selecionados serão disparados.
+    </div>
+  <% end %>
+
+  <%= if @senders == [] do %>
+    <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-8 text-center">
+      <p class="text-amber-200 font-medium">Você ainda não tem um remetente configurado</p>
+      <p class="text-gray-400 text-sm mt-1">Para enviar e-mails, configure um remetente (SMTP) do projeto primeiro.</p>
+      <a href={"/projects/" <> @current_project.id <> "/senders"} class="button button--cta button--large mt-5">
+        Configurar remetente
+      </a>
+    </div>
+  <% else %>
+    <%= if @contatos == [] do %>
+      <div class="bg-gray-900/60 border border-gray-800/50 rounded-2xl p-8 text-center">
+        <p class="text-gray-300 font-medium">Nenhum contato ativo neste projeto</p>
+        <p class="text-gray-500 text-sm mt-1">Importe ou cadastre contatos antes de enviar a pesquisa.</p>
+        <a href={"/projects/" <> @current_project.id <> "/contacts"} class="button button--cta mt-5">Ver contatos</a>
+      </div>
+    <% else %>
+      <form action={Routes.nps_path(@conn, :post_enviar, @current_project.id, @pesquisa.id)} method="post" x-data="{ todos: false }">
+        <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
+
+        <div class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6 mb-6">
+          <label class="block text-sm font-medium text-gray-300 mb-2">Remetente</label>
+          <select name="sender_id" required
+            class="w-full rounded-xl bg-gray-800/80 border border-gray-700/50 text-gray-200 px-4 py-3 focus:ring-2 focus:ring-fluxo-500/50">
+            <%= for sender <- @senders do %>
+              <option value={sender.id}>{sender.name} — {sender.from_email}</option>
+            <% end %>
+          </select>
+        </div>
+
+        <div class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl overflow-hidden mb-6">
+          <div class="flex items-center justify-between px-6 py-4 border-b border-gray-800/50 bg-gray-800/20">
+            <p class="text-sm font-semibold text-gray-300">Contatos ({length(@contatos)})</p>
+            <label class="flex items-center gap-2 text-sm text-gray-400 cursor-pointer">
+              <input type="checkbox" x-model="todos" class="rounded bg-gray-800 border-gray-600 text-fluxo-500" />
+              Selecionar todos
+            </label>
+          </div>
+          <div class="max-h-96 overflow-y-auto divide-y divide-gray-800/40">
+            <%= for contato <- @contatos do %>
+              <label class="flex items-center gap-3 px-6 py-3 hover:bg-gray-800/30 cursor-pointer">
+                <input type="checkbox" name="contato_ids[]" value={contato.id}
+                  x-bind:checked="todos"
+                  class="rounded bg-gray-800 border-gray-600 text-fluxo-500 focus:ring-fluxo-500/50" />
+                <div class="min-w-0">
+                  <p class="text-sm text-gray-200 truncate">{nome_contato(contato)}</p>
+                  <p class="text-xs text-gray-500 truncate">{contato.email}</p>
+                </div>
+              </label>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="flex gap-4">
+          <button type="submit" class="button button--cta button--large flex-grow">
+            {render_icon(:paper_airplane)} Disparar pesquisa por e-mail
+          </button>
+          <a href={Routes.nps_path(@conn, :index, @current_project.id)} class="button button--text button--large">
+            Cancelar
+          </a>
+        </div>
+      </form>
+    <% end %>
+  <% end %>
+</div>

@@ -265,10 +265,6 @@ table {
     }
 }
 
-/* Skeleton Loading */
-.skeleton {
-    @apply animate-pulse bg-gray-800/50 rounded-lg;
-}
 
 /* Scrollbar Styles */
 ::-webkit-scrollbar {
@@ -571,7 +567,7 @@ svg:not(.no-flex-auto) {
 }
 
 .text-caption {
-    @apply text-xs text-gray-500;
+    @apply text-xs text-gray-400;
 }
 
 .text-eyebrow {
@@ -764,7 +760,7 @@ svg:not(.no-flex-auto) {
 }
 
 .toast--success {
-    @apply bg-green-500/10 text-green-300 border-green-500/30;
+    @apply bg-emerald-500/10 text-emerald-300 border-emerald-500/30;
 }
 
 .toast--error {
@@ -772,7 +768,7 @@ svg:not(.no-flex-auto) {
 }
 
 .toast--info {
-    @apply bg-blue-500/10 text-blue-300 border-blue-500/30;
+    @apply bg-fluxo-500/10 text-fluxo-300 border-fluxo-500/30;
 }
 
 /* ========================================
@@ -845,7 +841,7 @@ svg:not(.no-flex-auto) {
 }
 
 .metric-badge--good {
-    @apply bg-green-500/10 text-green-300 border border-green-500/20;
+    @apply bg-emerald-500/10 text-emerald-300 border border-emerald-500/20;
 }
 
 .metric-badge--warning {
@@ -922,9 +918,7 @@ html {
     }
 }
 
-*:focus-visible {
-    @apply outline-2 outline-offset-2 outline-fluxo-500;
-}
+
 
 /* ========================================
    CARD HOVER EFFECTS
@@ -938,4 +932,17 @@ html {
     @apply -translate-y-1 shadow-lg;
     box-shadow: 0 0 20px rgba(0, 102, 255, 0.15);
     border-color: rgba(0, 102, 255, 0.3);
+}
+
+/* Animacoes decorativas do tailwind.config respeitam prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+    .animate-aurora,
+    .animate-float,
+    .animate-float-delayed,
+    .animate-glow,
+    .animate-fade-in,
+    .animate-fade-in-scale,
+    .animate-pulse-soft {
+        animation: none !important;
+    }
 }

@@ -187,6 +187,8 @@ defmodule KeilaWeb.Router do
     get "/projects/:project_id/academias", UnitsController, :index
     get "/projects/:project_id/media", MediaController, :index
     get "/projects/:project_id/media/list.json", MediaApiController, :list
+    get "/projects/:project_id/blocks/list.json", BlocksApiController, :list
+    get "/projects/:project_id/blocks/snippet/:slug.json", BlocksApiController, :show
     get "/projects/:project_id/automacoes", AutomationsController, :index
     get "/projects/:project_id/aniversariantes", BirthdaysController, :index
     post "/projects/:project_id/aniversariantes/sync", BirthdaysController, :sync_now

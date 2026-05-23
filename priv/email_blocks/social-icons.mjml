@@ -1,0 +1,10 @@
+<mj-section background-color="#FFFFFF" padding="24px 24px">
+  <mj-column>
+    <mj-social font-size="13px" icon-size="32px" mode="horizontal" align="center" inner-padding="0 8px">
+      <mj-social-element name="instagram" href="https://instagram.com/" background-color="#0A0E27"></mj-social-element>
+      <mj-social-element name="facebook" href="https://facebook.com/" background-color="#0A0E27"></mj-social-element>
+      <mj-social-element name="linkedin" href="https://linkedin.com/" background-color="#0A0E27"></mj-social-element>
+      <mj-social-element name="youtube" href="https://youtube.com/" background-color="#0A0E27"></mj-social-element>
+    </mj-social>
+  </mj-column>
+</mj-section>

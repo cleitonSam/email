@@ -1,0 +1,11 @@
+<mj-section background-color="#FFFFFF" padding="32px 24px">
+  <mj-column>
+    <mj-text font-size="24px" font-weight="700" line-height="1.3" color="#0A0E27" padding-bottom="12px">
+      Subtítulo da seção
+    </mj-text>
+    <mj-text font-size="16px" line-height="1.65" color="#4A5167">
+      Aqui vai o corpo do texto. Pode ter um, dois ou três parágrafos curtos.
+      Mantém a leitura leve — quem abre email no celular não tem paciência pra bloco gigante.
+    </mj-text>
+  </mj-column>
+</mj-section>

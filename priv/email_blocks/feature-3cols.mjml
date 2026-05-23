@@ -1,0 +1,29 @@
+<mj-section background-color="#FFFFFF" padding="40px 16px">
+  <mj-column>
+    <mj-image src="https://placehold.co/72x72/FF5A1F/FFFFFF/png?text=1" alt="" width="72px" padding="0 0 16px" />
+    <mj-text align="center" font-size="16px" font-weight="700" color="#0A0E27" padding="0 0 8px">
+      Benefício 1
+    </mj-text>
+    <mj-text align="center" font-size="14px" line-height="1.5" color="#4A5167">
+      Frase curta explicando o valor desse ponto.
+    </mj-text>
+  </mj-column>
+  <mj-column>
+    <mj-image src="https://placehold.co/72x72/FF5A1F/FFFFFF/png?text=2" alt="" width="72px" padding="0 0 16px" />
+    <mj-text align="center" font-size="16px" font-weight="700" color="#0A0E27" padding="0 0 8px">
+      Benefício 2
+    </mj-text>
+    <mj-text align="center" font-size="14px" line-height="1.5" color="#4A5167">
+      Outra frase curta com o segundo ponto importante.
+    </mj-text>
+  </mj-column>
+  <mj-column>
+    <mj-image src="https://placehold.co/72x72/FF5A1F/FFFFFF/png?text=3" alt="" width="72px" padding="0 0 16px" />
+    <mj-text align="center" font-size="16px" font-weight="700" color="#0A0E27" padding="0 0 8px">
+      Benefício 3
+    </mj-text>
+    <mj-text align="center" font-size="14px" line-height="1.5" color="#4A5167">
+      E a terceira frase fechando os três benefícios.
+    </mj-text>
+  </mj-column>
+</mj-section>

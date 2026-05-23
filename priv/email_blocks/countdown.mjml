@@ -1,0 +1,16 @@
+<mj-section background-color="{{ brand.color_primary | default: '#FF5A1F' }}" padding="32px 24px">
+  <mj-column>
+    <mj-text align="center" font-size="11px" font-weight="700" letter-spacing="2.5px" text-transform="uppercase" color="#FFFFFF" padding-bottom="8px">
+      Termina em
+    </mj-text>
+    <mj-text align="center" font-size="48px" font-weight="800" line-height="1" letter-spacing="-1px" color="#FFFFFF" padding-bottom="8px">
+      48h
+    </mj-text>
+    <mj-text align="center" font-size="14px" color="#FFFFFF" padding-bottom="20px">
+      Depois disso, a promoção sai do ar.
+    </mj-text>
+    <mj-button background-color="#FFFFFF" color="{{ brand.color_primary | default: '#FF5A1F' }}" font-size="14px" font-weight="700" inner-padding="14px 30px" border-radius="999px" href="https://exemplo.com">
+      Aproveitar agora
+    </mj-button>
+  </mj-column>
+</mj-section>

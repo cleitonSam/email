@@ -1,0 +1,14 @@
+<mj-section background-color="#FFFFFF" padding="32px 24px">
+  <mj-group>
+    <mj-column width="50%">
+      <mj-button background-color="{{ brand.color_primary | default: '#FF5A1F' }}" color="#FFFFFF" font-size="14px" font-weight="700" inner-padding="16px 28px" border-radius="999px" href="https://exemplo.com" align="right" padding-right="6px">
+        Começar agora
+      </mj-button>
+    </mj-column>
+    <mj-column width="50%">
+      <mj-button background-color="#FFFFFF" color="#0A0E27" font-size="14px" font-weight="700" inner-padding="16px 28px" border-radius="999px" href="https://exemplo.com" align="left" padding-left="6px" border="2px solid #0A0E27">
+        Ver detalhes
+      </mj-button>
+    </mj-column>
+  </mj-group>
+</mj-section>

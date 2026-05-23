@@ -1,0 +1,29 @@
+<mj-section background-color="#FFFFFF" padding="40px 16px">
+  <mj-column background-color="#FAFAFA" border-radius="12px" padding="24px 16px">
+    <mj-text align="center" font-size="11px" font-weight="700" letter-spacing="2px" text-transform="uppercase" color="#8B92A8" padding="0 0 8px">Básico</mj-text>
+    <mj-text align="center" font-size="32px" font-weight="800" color="#0A0E27" padding="0 0 4px">R$ 49</mj-text>
+    <mj-text align="center" font-size="12px" color="#8B92A8" padding="0 0 16px">/mês</mj-text>
+    <mj-text align="center" font-size="13px" line-height="1.6" color="#4A5167" padding="0 0 16px">
+      Funcionalidade 1<br/>Funcionalidade 2<br/>Funcionalidade 3
+    </mj-text>
+    <mj-button background-color="#FFFFFF" color="#0A0E27" font-size="13px" font-weight="700" inner-padding="12px 24px" border-radius="999px" border="2px solid #0A0E27" href="https://exemplo.com">Escolher</mj-button>
+  </mj-column>
+  <mj-column background-color="{{ brand.color_primary | default: '#FF5A1F' }}" border-radius="12px" padding="24px 16px">
+    <mj-text align="center" font-size="11px" font-weight="700" letter-spacing="2px" text-transform="uppercase" color="#FFFFFF" padding="0 0 8px">Pro ★</mj-text>
+    <mj-text align="center" font-size="32px" font-weight="800" color="#FFFFFF" padding="0 0 4px">R$ 99</mj-text>
+    <mj-text align="center" font-size="12px" color="#FFFFFF" padding="0 0 16px">/mês</mj-text>
+    <mj-text align="center" font-size="13px" line-height="1.6" color="#FFFFFF" padding="0 0 16px">
+      Tudo do Básico +<br/>Recurso premium 1<br/>Recurso premium 2
+    </mj-text>
+    <mj-button background-color="#FFFFFF" color="{{ brand.color_primary | default: '#FF5A1F' }}" font-size="13px" font-weight="700" inner-padding="12px 24px" border-radius="999px" href="https://exemplo.com">Escolher</mj-button>
+  </mj-column>
+  <mj-column background-color="#FAFAFA" border-radius="12px" padding="24px 16px">
+    <mj-text align="center" font-size="11px" font-weight="700" letter-spacing="2px" text-transform="uppercase" color="#8B92A8" padding="0 0 8px">Empresa</mj-text>
+    <mj-text align="center" font-size="32px" font-weight="800" color="#0A0E27" padding="0 0 4px">R$ 299</mj-text>
+    <mj-text align="center" font-size="12px" color="#8B92A8" padding="0 0 16px">/mês</mj-text>
+    <mj-text align="center" font-size="13px" line-height="1.6" color="#4A5167" padding="0 0 16px">
+      Tudo do Pro +<br/>Suporte dedicado<br/>SLA garantido
+    </mj-text>
+    <mj-button background-color="#FFFFFF" color="#0A0E27" font-size="13px" font-weight="700" inner-padding="12px 24px" border-radius="999px" border="2px solid #0A0E27" href="https://exemplo.com">Falar com vendas</mj-button>
+  </mj-column>
+</mj-section>

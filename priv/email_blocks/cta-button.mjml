@@ -1,0 +1,7 @@
+<mj-section background-color="#FFFFFF" padding="32px 24px">
+  <mj-column>
+    <mj-button background-color="{{ brand.color_primary | default: '#FF5A1F' }}" color="#FFFFFF" font-size="15px" font-weight="700" inner-padding="18px 36px" border-radius="999px" href="https://exemplo.com">
+      Quero conhecer
+    </mj-button>
+  </mj-column>
+</mj-section>

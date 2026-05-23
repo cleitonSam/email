@@ -1,0 +1,12 @@
+<mj-section background-color="#FFFFFF" padding="20px 24px">
+  <mj-column width="50%" vertical-align="middle">
+    <mj-image src="{{ brand.logo_url | default: 'https://placehold.co/140x44/0A0E27/FFFFFF/png?text=LOGO' }}" alt="{{ brand.name }}" width="140px" align="left" padding="0" />
+  </mj-column>
+  <mj-column width="50%" vertical-align="middle">
+    <mj-text align="right" font-size="13px" font-weight="600" color="#0A0E27" padding="12px 0 0">
+      <a href="#" style="color:#0A0E27;text-decoration:none;margin-left:18px;">Sobre</a>
+      <a href="#" style="color:#0A0E27;text-decoration:none;margin-left:18px;">Blog</a>
+      <a href="#" style="color:{{ brand.color_primary | default: '#FF5A1F' }};text-decoration:none;margin-left:18px;font-weight:700;">Entrar</a>
+    </mj-text>
+  </mj-column>
+</mj-section>

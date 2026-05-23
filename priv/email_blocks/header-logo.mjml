@@ -1,0 +1,5 @@
+<mj-section background-color="#FFFFFF" padding="24px 24px">
+  <mj-column>
+    <mj-image src="{{ brand.logo_url | default: 'https://placehold.co/160x48/0A0E27/FFFFFF/png?text=LOGO' }}" alt="{{ brand.name }}" width="160px" align="center" padding="0" />
+  </mj-column>
+</mj-section>

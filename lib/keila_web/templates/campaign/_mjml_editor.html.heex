@@ -109,9 +109,18 @@
   <div x-show="mode === 'simple'" x-cloak class="bg-gray-800 flex overflow-x-auto border-l border-r border-gray-700/50">
     <button
       type="button"
+      title="Adicionar um bloco pronto (hero, CTA, footer, etc)"
+      x-on:click.prevent="$dispatch('open-block-picker')"
+      class="flex items-center gap-1.5 px-3 h-10 bg-gradient-to-r from-purple-500/20 to-fluxo-500/20 hover:from-purple-500/30 hover:to-fluxo-500/30 text-fluxo-200 transition-colors text-xs font-bold"
+    >
+      <span class="text-base">+</span>
+      <span>Adicionar bloco</span>
+    </button>
+    <button
+      type="button"
       title="Ajustar email com IA"
       onclick={"document.getElementById('ai-modal-" <> @current_project.id <> "').classList.remove('hidden')"}
-      class="flex items-center gap-1.5 px-3 h-10 bg-gradient-to-r from-fluxo-500/20 to-cyan-500/20 hover:from-fluxo-500/30 hover:to-cyan-500/30 text-fluxo-200 transition-colors text-xs font-bold"
+      class="flex items-center gap-1.5 px-3 h-10 bg-gradient-to-r from-fluxo-500/20 to-cyan-500/20 hover:from-fluxo-500/30 hover:to-cyan-500/30 text-fluxo-200 transition-colors text-xs font-bold border-l border-gray-700/50"
     >
       <span class="text-base">[IA]</span>
       <span>Ajustar com IA</span>
@@ -197,6 +206,69 @@
       <div x-show="copiedUrl" x-transition class="px-6 py-3 bg-fluxo-500/20 border-t border-fluxo-500/30 text-fluxo-200 text-sm flex items-center gap-2">
         <span class="text-lg">OK</span>
         <span x-text="targetField ? 'Imagem trocada! O preview atualiza em segundos.' : 'URL copiada! Cola no codigo MJML.'"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DO PICKER DE BLOCOS -->
+  <div
+    x-data="blockPicker()"
+    x-on:open-block-picker.window="open()"
+  >
+    <div
+      x-show="isOpen"
+      x-cloak
+      x-on:keydown.escape.window="close()"
+      class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+      x-on:click.self="close()"
+    >
+      <div class="bg-gray-900 border border-fluxo-500/30 rounded-2xl max-w-5xl w-full max-h-[85vh] overflow-hidden flex flex-col shadow-2xl shadow-fluxo-500/20">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-800">
+          <div>
+            <h3 class="text-lg font-bold text-white">Adicionar bloco pronto</h3>
+            <p class="text-xs text-gray-400 mt-0.5">Clica num bloco pra adicionar no final do email. Você pode editar os textos depois.</p>
+          </div>
+          <button type="button" x-on:click="close()" class="text-gray-400 hover:text-white text-2xl leading-none">×</button>
+        </div>
+
+        <!-- Filtro de categoria -->
+        <div class="flex gap-1 px-6 py-3 border-b border-gray-800 overflow-x-auto bg-gray-900/50">
+          <button type="button" x-on:click="filter = 'all'" x-bind:class="filter === 'all' ? 'bg-fluxo-500 text-white' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'" class="px-3 py-1.5 text-xs font-semibold rounded-full whitespace-nowrap transition-colors">Todos</button>
+          <template x-for="cat in categories" x-bind:key="cat">
+            <button type="button" x-on:click="filter = cat" x-bind:class="filter === cat ? 'bg-fluxo-500 text-white' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'" class="px-3 py-1.5 text-xs font-semibold rounded-full whitespace-nowrap transition-colors" x-text="cat"></button>
+          </template>
+        </div>
+
+        <!-- Loading -->
+        <div x-show="loading" class="flex-1 flex items-center justify-center p-12 text-gray-400">Carregando blocos...</div>
+
+        <!-- Grid de blocos -->
+        <div x-show="!loading" class="flex-1 overflow-y-auto p-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <template x-for="block in filteredBlocks" x-bind:key="block.slug">
+              <button
+                type="button"
+                x-on:click="insert(block.slug)"
+                x-bind:disabled="inserting"
+                class="group text-left bg-gray-800/60 hover:bg-gray-800 border border-gray-700 hover:border-fluxo-500/50 rounded-xl p-4 transition-all disabled:opacity-50"
+              >
+                <div class="flex items-start gap-3">
+                  <div class="text-2xl flex-shrink-0" x-text="block.icon"></div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-1">
+                      <h4 class="text-sm font-bold text-white truncate" x-text="block.title"></h4>
+                    </div>
+                    <p class="text-[11px] text-gray-400 leading-snug line-clamp-2" x-text="block.description"></p>
+                    <span class="inline-block mt-2 text-[10px] font-semibold tracking-wider uppercase text-fluxo-300" x-text="block.category"></span>
+                  </div>
+                </div>
+              </button>
+            </template>
+          </div>
+        </div>
+
+        <!-- Feedback -->
+        <div x-show="message" x-transition class="px-6 py-3 bg-fluxo-500/20 border-t border-fluxo-500/30 text-fluxo-200 text-sm" x-text="message"></div>
       </div>
     </div>
   </div>
@@ -325,6 +397,80 @@
             this.copiedUrl = true;
             setTimeout(() => { this.copiedUrl = false; }, 3000);
           });
+        }
+      }
+    }
+  }
+
+  // ============ BLOCK PICKER ============
+  // Modal pra inserir snippets MJML reusaveis (hero, CTA, footer, etc).
+  // Pega o pathname (ex: /projects/abc/campaigns/xyz/new) e extrai o projectId
+  // pra montar as URLs da API. Insere o snippet ANTES do </mj-body> e dispara
+  // input event no textarea hidden pra LiveView reparseiar e re-renderizar
+  // os campos do Modo Simples.
+  function blockPicker() {
+    return {
+      isOpen: false,
+      loading: false,
+      inserting: false,
+      blocks: [],
+      categories: [],
+      filter: 'all',
+      message: '',
+      get projectId() {
+        const m = window.location.pathname.match(/\/projects\/([^/]+)/);
+        return m ? m[1] : null;
+      },
+      get filteredBlocks() {
+        if (this.filter === 'all') return this.blocks;
+        return this.blocks.filter(b => b.category === this.filter);
+      },
+      open() {
+        this.isOpen = true;
+        this.message = '';
+        if (this.blocks.length > 0) return; // ja carregou antes
+        if (!this.projectId) { this.message = 'Erro: projeto nao identificado'; return; }
+        this.loading = true;
+        fetch('/projects/' + this.projectId + '/blocks/list.json')
+          .then(r => r.json())
+          .then(data => {
+            this.blocks = data.blocks || [];
+            this.categories = data.categories || [];
+            this.loading = false;
+          })
+          .catch(e => { console.error(e); this.loading = false; this.message = 'Erro carregando blocos'; });
+      },
+      close() { this.isOpen = false; this.message = ''; },
+      async insert(slug) {
+        if (!this.projectId) return;
+        this.inserting = true;
+        this.message = '';
+        try {
+          const resp = await fetch('/projects/' + this.projectId + '/blocks/snippet/' + slug + '.json');
+          const data = await resp.json();
+          if (!data.mjml) { this.message = 'Erro: bloco vazio'; return; }
+
+          const textarea = document.querySelector('textarea[name="campaign[mjml_body]"]');
+          if (!textarea) { this.message = 'Editor nao encontrado'; return; }
+
+          // Insere snippet ANTES de </mj-body> (ou no final se nao encontrar)
+          const current = textarea.value;
+          const idx = current.lastIndexOf('</mj-body>');
+          const newValue = idx >= 0
+            ? current.slice(0, idx) + '\n  ' + data.mjml + '\n' + current.slice(idx)
+            : current + '\n' + data.mjml + '\n';
+
+          textarea.value = newValue;
+          textarea.dispatchEvent(new Event('input', { bubbles: true }));
+          textarea.dispatchEvent(new Event('change', { bubbles: true }));
+
+          this.message = 'Bloco inserido! Role o painel pra editar os textos.';
+          setTimeout(() => { this.close(); }, 1200);
+        } catch (e) {
+          console.error(e);
+          this.message = 'Erro inserindo bloco';
+        } finally {
+          this.inserting = false;
         }
       }
     }

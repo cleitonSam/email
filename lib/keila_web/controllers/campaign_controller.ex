@@ -233,12 +233,16 @@ defmodule KeilaWeb.CampaignController do
     project = current_project(conn)
 
     if is_nil(campaign.sent_at) and campaign.settings && campaign.settings.type == :mjml do
-      # Renderiza standalone (sem layout root/menu) - o template tem <html> completo
+      # Aplica brand do projeto no MJML antes de carregar no editor visual
+      brand = Keila.Projects.Brand.get(project)
+      mjml_with_brand = Library.apply_brand(campaign.mjml_body || "", brand)
+
       conn
       |> put_root_layout(false)
       |> put_layout(false)
       |> assign(:campaign, campaign)
       |> assign(:current_project, project)
+      |> assign(:initial_mjml, mjml_with_brand)
       |> render("grapes_poc.html")
     else
       conn

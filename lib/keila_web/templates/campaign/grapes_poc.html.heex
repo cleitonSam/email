@@ -3,8 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GrapesJS POC - {@campaign.subject || "Campanha"}</title>
+  <title>Editor Visual — {@campaign.subject || "Campanha"}</title>
   {csrf_meta_tag()}
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <!-- GrapesJS via CDN -->
   <link rel="stylesheet" href="https://unpkg.com/grapesjs@0.22.7/dist/css/grapes.min.css" />
@@ -12,8 +16,24 @@
   <script src="https://unpkg.com/grapesjs-mjml@1.0.6"></script>
 
   <style>
+    :root {
+      --fluxo-500: #FF5A1F;
+      --fluxo-400: #FF7B47;
+      --fluxo-300: #FF9D75;
+      --cyan-400: #22D3EE;
+      --bg-900: #0A1F3D;
+      --bg-800: #0F2848;
+      --bg-700: #1A2F52;
+      --bg-600: #243A5E;
+      --border: rgba(255,255,255,0.08);
+      --text: #F1F5F9;
+      --text-muted: #94A3B8;
+      --success: #4ADE80;
+      --error: #F87171;
+    }
+
     * { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; height: 100%; background: #1a1a1a; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--bg-900); color: var(--text); font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
 
     .toolbar {
       display: flex;
@@ -21,69 +41,124 @@
       justify-content: space-between;
       gap: 16px;
       padding: 10px 20px;
-      background: #0A1F3D;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      height: 56px;
+      background: linear-gradient(180deg, var(--bg-900), var(--bg-800));
+      border-bottom: 1px solid var(--border);
+      height: 60px;
+      flex-shrink: 0;
     }
-    .toolbar h1 { font-size: 14px; font-weight: 600; margin: 0; opacity: 0.9; }
-    .toolbar h1 small { opacity: 0.6; font-weight: 400; margin-left: 8px; }
-    .toolbar .badge { background: linear-gradient(90deg, #FF5A1F, #C4FF00); color: #0A1F3D; font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 999px; letter-spacing: 1px; text-transform: uppercase; }
-    .toolbar .actions { display: flex; gap: 8px; }
-    .toolbar button, .toolbar a { border: none; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; }
-    .toolbar .btn-cancel { background: transparent; color: #fff; opacity: 0.7; }
-    .toolbar .btn-cancel:hover { opacity: 1; background: rgba(255,255,255,0.1); }
-    .toolbar .btn-save { background: linear-gradient(135deg, #FF5A1F, #C4FF00); color: #0A1F3D; }
-    .toolbar .btn-save:hover { transform: scale(1.05); }
-    .toolbar .btn-save:disabled { opacity: 0.5; cursor: wait; transform: none; }
-    .toolbar .status { font-size: 12px; opacity: 0.7; }
-    .toolbar .status.success { color: #C4FF00; }
-    .toolbar .status.error { color: #ff6b6b; }
+    .toolbar .left { display: flex; align-items: center; gap: 14px; min-width: 0; }
+    .toolbar h1 { font-size: 14px; font-weight: 600; margin: 0; opacity: 0.95; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 360px; }
+    .toolbar h1 small { display: block; font-size: 11px; opacity: 0.55; font-weight: 400; margin-top: 2px; }
+    .badge {
+      background: linear-gradient(135deg, var(--fluxo-500), var(--cyan-400));
+      color: var(--bg-900);
+      font-size: 10px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 999px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+    .toolbar .actions { display: flex; align-items: center; gap: 10px; }
 
-    #gjs-wrapper { height: calc(100vh - 56px); }
-
-    /* Overrides GrapesJS pra ficar dark theme */
-    .gjs-one-bg { background-color: #1a1a1a !important; }
-    .gjs-two-color, .gjs-color-active { color: #FF5A1F !important; }
-    .gjs-four-color, .gjs-four-color-h:hover { color: #FF5A1F !important; }
-    .gjs-three-bg { background-color: #FF5A1F !important; color: #fff; }
-
-    /* Banner experimental */
-    .experimental-banner {
-      background: rgba(255,90,31,0.15);
-      border-bottom: 1px solid rgba(255,90,31,0.4);
-      padding: 8px 20px;
+    .save-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       font-size: 12px;
-      text-align: center;
+      padding: 4px 12px;
+      border-radius: 999px;
+      transition: all 0.2s;
+      opacity: 0;
     }
-    .experimental-banner strong { color: #FF5A1F; }
+    .save-status.show { opacity: 1; }
+    .save-status.saving { background: rgba(34,211,238,0.12); color: var(--cyan-400); }
+    .save-status.saved { background: rgba(74,222,128,0.12); color: var(--success); }
+    .save-status.error { background: rgba(248,113,113,0.12); color: var(--error); }
+    .save-status .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+    .save-status.saving .dot { animation: pulse 1.2s ease-in-out infinite; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .btn {
+      border: none;
+      padding: 9px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .btn-ghost { background: transparent; color: var(--text); opacity: 0.7; }
+    .btn-ghost:hover { opacity: 1; background: rgba(255,255,255,0.06); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--fluxo-500), var(--cyan-400));
+      color: var(--bg-900);
+      box-shadow: 0 4px 12px rgba(255,90,31,0.25);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(255,90,31,0.35); }
+    .btn-primary:disabled { opacity: 0.6; cursor: wait; transform: none; }
+
+    #gjs-wrapper { flex: 1; min-height: 0; height: calc(100vh - 60px); }
+
+    /* GrapesJS dark theme - override */
+    .gjs-one-bg { background-color: var(--bg-800) !important; }
+    .gjs-one-color, .gjs-one-color-h:hover { color: var(--text) !important; }
+    .gjs-two-bg { background-color: var(--bg-700) !important; }
+    .gjs-two-color, .gjs-two-color-h:hover { color: var(--text) !important; }
+    .gjs-three-bg { background-color: var(--fluxo-500) !important; color: #fff !important; }
+    .gjs-three-color, .gjs-three-color-h:hover { color: var(--fluxo-500) !important; }
+    .gjs-four-bg { background-color: var(--bg-600) !important; }
+    .gjs-four-color, .gjs-four-color-h:hover { color: var(--fluxo-500) !important; }
+    .gjs-color-active, .gjs-color-active * { color: var(--fluxo-500) !important; }
+    .gjs-block:hover { border-color: var(--fluxo-500) !important; }
+    .gjs-block.gjs-bdrag { background: var(--fluxo-500) !important; }
+    .gjs-pn-btn.gjs-pn-active { color: var(--fluxo-500) !important; }
+    .gjs-cv-canvas { background-color: #1a2438 !important; }
   </style>
 </head>
 <body>
   <div class="toolbar">
-    <div style="display: flex; align-items: center; gap: 12px;">
-      <span class="badge">POC</span>
-      <h1>Editor Visual <small>{@campaign.subject || "(sem assunto)"}</small></h1>
+    <div class="left">
+      <span class="badge">Visual</span>
+      <h1>
+        {@campaign.subject || "(sem assunto)"}
+        <small>Editor drag-and-drop</small>
+      </h1>
     </div>
-    <span id="save-status" class="status"></span>
+    <span id="save-status" class="save-status">
+      <span class="dot"></span>
+      <span class="text"></span>
+    </span>
     <div class="actions">
-      <a href={"/projects/" <> @current_project.id <> "/campaigns/" <> @campaign.id} class="btn-cancel">
-        ← Voltar (sem salvar)
+      <a href={"/projects/" <> @current_project.id <> "/campaigns/" <> @campaign.id} class="btn btn-ghost">
+        ← Voltar pra edição padrão
       </a>
-      <button id="btn-save" class="btn-save" type="button">
-        💾 Salvar
+      <button id="btn-save" class="btn btn-primary" type="button">
+        Salvar agora
       </button>
     </div>
-  </div>
-
-  <div class="experimental-banner">
-    <strong>EXPERIMENTAL:</strong> editor visual drag-and-drop. Se algo der errado, volta usando "Voltar (sem salvar)" e o email original fica intacto.
   </div>
 
   <div id="gjs-wrapper">
     <div id="gjs"></div>
   </div>
 
-  <textarea id="initial-mjml" hidden><%= @campaign.mjml_body || "<mjml><mj-body><mj-section><mj-column><mj-text>Olá!</mj-text></mj-column></mj-section></mj-body></mjml>" %></textarea>
+  <textarea id="initial-mjml" hidden><%= @initial_mjml || "<mjml><mj-body><mj-section><mj-column><mj-text>Olá!</mj-text></mj-column></mj-section></mj-body></mjml>" %></textarea>
 
   <script>
     (function() {
@@ -91,6 +166,7 @@
       const projectId = <%= raw("\"#{@current_project.id}\"") %>;
       const campaignId = <%= raw("\"#{@campaign.id}\"") %>;
       const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+      const saveUrl = `/projects/${projectId}/campaigns/${campaignId}/grapes/save`;
 
       const editor = grapesjs.init({
         container: '#gjs',
@@ -98,15 +174,9 @@
         width: 'auto',
         storageManager: false,
         plugins: ['grapesjs-mjml'],
-        pluginsOpts: {
-          'grapesjs-mjml': {
-            // Opções do plugin: deixar default
-          }
-        },
-        // Carregar o MJML inicial após o plugin estar pronto
+        pluginsOpts: { 'grapesjs-mjml': {} }
       });
 
-      // Quando o editor estiver pronto, importa o MJML existente
       editor.on('load', () => {
         try {
           if (initialMjml && initialMjml.trim()) {
@@ -114,28 +184,38 @@
           }
         } catch (e) {
           console.error('Erro carregando MJML inicial:', e);
-          alert('Erro carregando o email atual. O editor abriu vazio. Veja o console pra detalhes.');
         }
       });
 
-      // Save
-      const btnSave = document.getElementById('btn-save');
+      // ========= STATUS UI =========
       const statusEl = document.getElementById('save-status');
-
-      btnSave.addEventListener('click', async () => {
-        const mjml = editor.getHtml(); // grapesjs-mjml expõe getHtml() retornando MJML
-        if (!mjml || mjml.length < 20) {
-          statusEl.textContent = 'Erro: MJML vazio';
-          statusEl.className = 'status error';
-          return;
+      const statusText = statusEl.querySelector('.text');
+      let statusTimer = null;
+      function setStatus(state, msg) {
+        clearTimeout(statusTimer);
+        statusEl.className = 'save-status show ' + state;
+        statusText.textContent = msg;
+        if (state === 'saved') {
+          statusTimer = setTimeout(() => { statusEl.className = 'save-status'; }, 2500);
         }
+      }
 
+      // ========= SAVE =========
+      const btnSave = document.getElementById('btn-save');
+      let saving = false;
+      let pendingSave = false;
+
+      async function doSave() {
+        if (saving) { pendingSave = true; return; }
+        const mjml = editor.getHtml();
+        if (!mjml || mjml.length < 20) return;
+
+        saving = true;
+        setStatus('saving', 'Salvando...');
         btnSave.disabled = true;
-        btnSave.textContent = 'Salvando...';
-        statusEl.textContent = '';
 
         try {
-          const resp = await fetch(`/projects/${projectId}/campaigns/${campaignId}/grapes/save`, {
+          const resp = await fetch(saveUrl, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -147,28 +227,48 @@
           const data = await resp.json();
 
           if (resp.ok && data.ok) {
-            statusEl.textContent = '✓ Salvo!';
-            statusEl.className = 'status success';
-            setTimeout(() => { statusEl.textContent = ''; }, 3000);
+            setStatus('saved', 'Salvo');
           } else {
-            statusEl.textContent = '✗ Erro: ' + (data.errors || resp.statusText);
-            statusEl.className = 'status error';
+            setStatus('error', 'Erro: ' + (data.errors || resp.statusText));
           }
         } catch (e) {
           console.error(e);
-          statusEl.textContent = '✗ Erro: ' + e.message;
-          statusEl.className = 'status error';
+          setStatus('error', 'Erro de rede');
         } finally {
+          saving = false;
           btnSave.disabled = false;
-          btnSave.innerHTML = '💾 Salvar';
+          if (pendingSave) {
+            pendingSave = false;
+            setTimeout(doSave, 100);
+          }
         }
-      });
+      }
 
-      // Ctrl+S pra salvar
+      // Save manual (botão / Ctrl+S)
+      btnSave.addEventListener('click', doSave);
       document.addEventListener('keydown', (e) => {
         if ((e.ctrlKey || e.metaKey) && e.key === 's') {
           e.preventDefault();
-          btnSave.click();
+          doSave();
+        }
+      });
+
+      // ========= AUTO-SAVE =========
+      // Debounce 2s após qualquer mudança no canvas
+      let autoSaveTimer = null;
+      function scheduleAutoSave() {
+        clearTimeout(autoSaveTimer);
+        autoSaveTimer = setTimeout(doSave, 2000);
+      }
+
+      // Eventos do GrapesJS que indicam mudança real
+      editor.on('component:add component:remove component:update:components component:update:attributes component:update:content style:update', scheduleAutoSave);
+
+      // Aviso antes de fechar se ainda tem auto-save pendente
+      window.addEventListener('beforeunload', (e) => {
+        if (saving || autoSaveTimer) {
+          e.preventDefault();
+          e.returnValue = '';
         }
       });
     })();

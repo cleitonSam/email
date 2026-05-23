@@ -185,7 +185,49 @@
         } catch (e) {
           console.error('Erro carregando MJML inicial:', e);
         }
+
+        // Registra os 17 blocos do Fluxo no painel lateral do GrapesJS
+        loadFluxoBlocks();
       });
+
+      // ========= BLOCOS DO FLUXO =========
+      async function loadFluxoBlocks() {
+        try {
+          const listResp = await fetch(`/projects/${projectId}/blocks/list.json`);
+          const listData = await listResp.json();
+          if (!listData.blocks) return;
+
+          const bm = editor.BlockManager;
+
+          // Categorias do Fluxo viram categorias do GrapesJS
+          // Os blocos default do grapesjs-mjml ficam na "Basic". Os nossos ganham
+          // categorias proprias com prefixo "Fluxo:" pra diferenciar visualmente.
+          for (const block of listData.blocks) {
+            // Lazy fetch do MJML no momento do drop seria ideal, mas BlockManager
+            // do GrapesJS espera content sincrono. Fazemos prefetch leve em paralelo.
+            try {
+              const snippetResp = await fetch(`/projects/${projectId}/blocks/snippet/${block.slug}`);
+              const snippetData = await snippetResp.json();
+              if (!snippetData.mjml) continue;
+
+              bm.add('fluxo-' + block.slug, {
+                label: `${block.icon} ${block.title}`,
+                category: 'Fluxo: ' + block.category,
+                content: snippetData.mjml,
+                attributes: { title: block.description }
+              });
+            } catch (e) {
+              console.warn('Falha pré-carregando bloco', block.slug, e);
+            }
+          }
+
+          // Abre o painel de blocos por default depois de carregar
+          const panel = editor.Panels.getButton('views', 'open-blocks');
+          if (panel) panel.set('active', true);
+        } catch (e) {
+          console.error('Falha carregando blocos do Fluxo:', e);
+        }
+      }
 
       // ========= STATUS UI =========
       const statusEl = document.getElementById('save-status');

@@ -298,6 +298,45 @@
       </div>
     </div>
 
+    <!-- Seções do email (reordenar/remover) -->
+    <% mjml_sections = assigns[:mjml_sections] || [] %>
+    <%= if length(mjml_sections) > 1 do %>
+      <div class="mb-5 bg-gray-900/40 border border-gray-800 rounded-xl p-4">
+        <div class="flex items-center justify-between mb-3">
+          <h4 class="text-xs uppercase tracking-wider text-fluxo-300 font-semibold">Seções do email</h4>
+          <span class="text-[10px] text-gray-500">Use as setinhas pra reordenar</span>
+        </div>
+        <div class="space-y-1.5">
+          <%= for section <- mjml_sections do %>
+            <div class="flex items-center gap-2 bg-gray-900/60 border border-gray-800 rounded-lg p-2.5">
+              <span class="text-[10px] font-bold text-gray-500 w-5 text-center">{section.index + 1}</span>
+              <span class="flex-1 text-xs text-gray-300 truncate" title={section.preview}>
+                {if section.preview == "", do: "(seção vazia)", else: section.preview}
+              </span>
+              <button type="button"
+                phx-click="section-up"
+                phx-value-index={section.index}
+                disabled={section.index == 0}
+                title="Mover pra cima"
+                class="px-2 py-1 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded disabled:opacity-30 disabled:cursor-not-allowed">↑</button>
+              <button type="button"
+                phx-click="section-down"
+                phx-value-index={section.index}
+                disabled={section.index == length(mjml_sections) - 1}
+                title="Mover pra baixo"
+                class="px-2 py-1 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded disabled:opacity-30 disabled:cursor-not-allowed">↓</button>
+              <button type="button"
+                phx-click="section-remove"
+                phx-value-index={section.index}
+                data-confirm="Remover essa seção do email?"
+                title="Remover seção"
+                class="px-2 py-1 text-sm text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded">×</button>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
     <% simple_fields = assigns[:simple_fields] || [] %>
     <%= if simple_fields == [] do %>
       <div class="bg-gray-900/40 border border-gray-800 rounded-xl p-8 text-center text-gray-400 text-sm">
@@ -343,14 +382,26 @@
                   <div class="flex-1 space-y-2">
                     <input type="text" name={"simple[" <> field.id <> "]"} value={field.value} phx-debounce="400"
                       class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-3 py-2 text-xs font-mono" />
-                    <button type="button"
-                      data-target={field.id}
-                      data-project-id={@current_project.id}
-                      x-on:click.prevent="openForField($el.dataset.target, '/projects/' + $el.dataset.projectId + '/media/list.json')"
-                      class="text-xs text-fluxo-300 hover:text-fluxo-200 font-semibold flex items-center gap-1.5">
-                      <span class="inline-flex h-3 w-3">{render_icon(:photograph)}</span>
-                      Escolher da biblioteca
-                    </button>
+                    <div class="flex items-center gap-4">
+                      <button type="button"
+                        data-target={field.id}
+                        data-project-id={@current_project.id}
+                        x-on:click.prevent="openForField($el.dataset.target, '/projects/' + $el.dataset.projectId + '/media/list.json')"
+                        class="text-xs text-fluxo-300 hover:text-fluxo-200 font-semibold flex items-center gap-1.5">
+                        <span class="inline-flex h-3 w-3">{render_icon(:photograph)}</span>
+                        Galeria
+                      </button>
+                      <label
+                        class="text-xs text-fluxo-300 hover:text-fluxo-200 font-semibold flex items-center gap-1.5 cursor-pointer"
+                        data-target={field.id}
+                        data-project-id={@current_project.id}
+                      >
+                        <span class="inline-flex h-3 w-3 text-base leading-none">↑</span>
+                        <span data-upload-label>Upload do PC</span>
+                        <input type="file" accept="image/*" class="hidden"
+                          onchange={"window.fluxoUploadImage(this, '" <> field.id <> "', '" <> @current_project.id <> "')"} />
+                      </label>
+                    </div>
                   </div>
                 </div>
 
@@ -431,6 +482,52 @@
           });
         }
       }
+    }
+  }
+
+  // ============ UPLOAD INLINE DE IMAGEM ============
+  // Sobe arquivo direto pro ImageKit via /media/upload e seta a URL no input do campo.
+  window.fluxoUploadImage = async function(inputEl, fieldId, projectId) {
+    const file = inputEl.files && inputEl.files[0];
+    if (!file) return;
+    const label = inputEl.parentElement.querySelector('[data-upload-label]');
+    const originalText = label ? label.textContent : '';
+    if (label) label.textContent = 'Enviando...';
+
+    try {
+      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('_csrf_token', csrfToken);
+
+      const resp = await fetch('/projects/' + projectId + '/media/upload', {
+        method: 'POST',
+        headers: { 'x-csrf-token': csrfToken },
+        body: fd
+      });
+      const data = await resp.json();
+
+      if (!resp.ok || !data.ok) {
+        alert('Erro no upload: ' + (data.error || resp.statusText));
+        if (label) label.textContent = originalText;
+        return;
+      }
+
+      // Acha o input texto correspondente e seta o valor + dispara change
+      const target = document.querySelector('input[name="simple[' + fieldId + ']"]');
+      if (target) {
+        target.value = data.url;
+        target.dispatchEvent(new Event('input', { bubbles: true }));
+        target.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      if (label) label.textContent = 'OK!';
+      setTimeout(() => { if (label) label.textContent = originalText; }, 1500);
+    } catch (e) {
+      console.error(e);
+      alert('Erro no upload: ' + e.message);
+      if (label) label.textContent = originalText;
+    } finally {
+      inputEl.value = ''; // permite re-upload do mesmo arquivo
     }
   }
 

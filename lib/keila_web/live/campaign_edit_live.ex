@@ -47,9 +47,16 @@ defmodule KeilaWeb.CampaignEditLive do
 
     json_body = if campaign.json_body, do: Jason.encode!(campaign.json_body), else: "{}"
 
+    is_mjml? = campaign.settings && campaign.settings.type == :mjml
+
     simple_fields =
-      if campaign.settings && campaign.settings.type == :mjml,
+      if is_mjml?,
         do: Keila.Mailings.SimpleEditor.parse(campaign.mjml_body || ""),
+        else: []
+
+    mjml_sections =
+      if is_mjml?,
+        do: Keila.Mailings.SectionExtractor.list_sections(campaign.mjml_body || ""),
         else: []
 
     socket
@@ -57,6 +64,7 @@ defmodule KeilaWeb.CampaignEditLive do
     |> assign(:preview, preview)
     |> assign(:json_body, json_body)
     |> assign(:simple_fields, simple_fields)
+    |> assign(:mjml_sections, mjml_sections)
   end
 
   @impl true
@@ -75,8 +83,14 @@ defmodule KeilaWeb.CampaignEditLive do
       |> assign(:settings_changeset, changeset)
       |> put_recipient_count()
       |> put_campaign_preview()
+      |> put_mjml_sections()
 
     {:noreply, socket}
+  end
+
+  defp put_mjml_sections(socket) do
+    mjml = Ecto.Changeset.get_field(socket.assigns.changeset, :mjml_body) || ""
+    assign(socket, :mjml_sections, Keila.Mailings.SectionExtractor.list_sections(mjml))
   end
 
   def handle_event("update-settings", params, socket) do
@@ -197,6 +211,36 @@ defmodule KeilaWeb.CampaignEditLive do
      |> assign(:send_preview_error, nil)
      |> assign(:subscription_required, false)
      |> assign(:onboarding_required, false)}
+  end
+
+  # Move/remove section in the Simple editor (Fase 4)
+  def handle_event("section-up", %{"index" => idx}, socket) do
+    apply_section_op(socket, idx, &Keila.Mailings.SectionExtractor.move_up/2)
+  end
+
+  def handle_event("section-down", %{"index" => idx}, socket) do
+    apply_section_op(socket, idx, &Keila.Mailings.SectionExtractor.move_down/2)
+  end
+
+  def handle_event("section-remove", %{"index" => idx}, socket) do
+    apply_section_op(socket, idx, &Keila.Mailings.SectionExtractor.remove/2)
+  end
+
+  defp apply_section_op(socket, idx_str, op_fn) do
+    idx = String.to_integer(to_string(idx_str))
+    current_mjml = Ecto.Changeset.get_field(socket.assigns.changeset, :mjml_body) || ""
+    new_mjml = op_fn.(current_mjml, idx)
+
+    changeset = merged_changeset(socket, %{"mjml_body" => new_mjml})
+
+    simple_fields = Keila.Mailings.SimpleEditor.parse(new_mjml)
+
+    {:noreply,
+     socket
+     |> assign(:changeset, changeset)
+     |> assign(:simple_fields, simple_fields)
+     |> put_campaign_preview()
+     |> put_mjml_sections()}
   end
 
   defp get_preview_contacts(socket, raw_emails) do

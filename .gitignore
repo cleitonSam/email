@@ -63,3 +63,6 @@ worktrees/*
 EASYPANEL_ENV.txt
 *.pem.private
 *.key
+
+# Lixo de sync/FUSE (OneDrive deixa esses ao apagar arquivos em uso)
+.fuse_hidden*

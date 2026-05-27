@@ -3527,3 +3527,503 @@ msgctxt "text-alignment"
 msgid "Right"
 msgstr "Direita"
 
+
+# --- traducoes pt adicionadas manualmente (sem mix gettext.merge) ---
+
+msgid "%{count} contacts imported successfully! Segment \"Prospects EVO\" created."
+msgstr "%{count} contatos importados com sucesso! Segmento \"Prospects EVO\" criado."
+
+msgid "(no subject)"
+msgstr "(sem assunto)"
+
+msgid "Account Settings"
+msgstr "Configurações da conta"
+
+msgid "Active"
+msgstr "Ativo"
+
+msgid "After Submission"
+msgstr "Após o envio"
+
+msgid "All"
+msgstr "Todos"
+
+msgid "Are you ready to schedule sending your campaign <em class='text-white font-medium'>%{subject}</em> to <span class='text-fluxo-400 font-semibold'>%{count}</span> contacts?"
+msgstr "Tudo pronto para agendar o envio da campanha <em class='text-white font-medium'>%{subject}</em> para <span class='text-fluxo-400 font-semibold'>%{count}</span> contatos?"
+
+msgid "Are you ready to send your campaign <em class='text-white font-medium'>%{subject}</em> to <span class='text-fluxo-400 font-semibold'>%{count}</span> contacts?"
+msgstr "Tudo pronto para enviar a campanha <em class='text-white font-medium'>%{subject}</em> para <span class='text-fluxo-400 font-semibold'>%{count}</span> contatos?"
+
+msgid "Audience"
+msgstr "Público"
+
+msgid "Before you can get started, you need to create a sender. In the sender settings, you specify the email address and the name from which to send your emails."
+msgstr "Antes de começar, você precisa criar um remetente. Nas configurações do remetente, você define o endereço de email e o nome de quem envia seus emails."
+
+msgid "Before you can send any emails, you need to create a sender. In the sender settings, you specify the email address and the name from which you send your emails."
+msgstr "Antes de enviar qualquer email, você precisa criar um remetente. Nas configurações do remetente, você define o endereço de email e o nome de quem envia seus emails."
+
+msgid "Body"
+msgstr "Corpo"
+
+msgid "Bounces"
+msgstr "Retornos"
+
+msgid "Build and manage email templates"
+msgstr "Crie e gerencie modelos de email"
+
+msgid "Button text"
+msgstr "Texto do botão"
+
+msgid "Campaign Not Sent"
+msgstr "Campanha não enviada"
+
+msgid "Card"
+msgstr "Cartão"
+
+msgid "Check your inbox"
+msgstr "Verifique sua caixa de entrada"
+
+msgid "Check your sending quota now"
+msgstr "Verifique sua cota de envio agora"
+
+msgid "Check your spam folder too"
+msgstr "Verifique também sua caixa de spam"
+
+msgid "Click the Settings button above to configure your EVO DNS and Secret Key for this project."
+msgstr "Clique no botão Configurações acima para configurar o DNS e a Chave Secreta do EVO para este projeto."
+
+msgid "Click to open project"
+msgstr "Clique para abrir o projeto"
+
+msgid "Collect"
+msgstr "Coletar"
+
+msgid "Configuration Required"
+msgstr "Configuração necessária"
+
+msgid "Configure a sender →"
+msgstr "Configurar um remetente →"
+
+msgid "Configure email sending addresses"
+msgstr "Configure os endereços de envio de email"
+
+msgid "Configure the EVO credentials for this project"
+msgstr "Configure as credenciais do EVO para este projeto"
+
+msgid "Confirm delete"
+msgstr "Confirmar exclusão"
+
+msgid "Connect to EVO"
+msgstr "Conectar ao EVO"
+
+msgid "Contacts in this segment"
+msgstr "Contatos neste segmento"
+
+msgid "Contacts must confirm their email. Reduces spam, improves deliverability, and is required by GDPR."
+msgstr "Os contatos precisam confirmar o email. Reduz spam, melhora a entregabilidade e é exigido pela LGPD."
+
+msgid "Copied!"
+msgstr "Copiado!"
+
+msgid "Could not connect to SMTP server. Check host and port settings."
+msgstr "Não foi possível conectar ao servidor SMTP. Verifique as configurações de host e porta."
+
+msgid "Create Form"
+msgstr "Criar formulário"
+
+msgid "Create and manage email campaigns"
+msgstr "Crie e gerencie campanhas de email"
+
+msgid "Create sender"
+msgstr "Criar remetente"
+
+msgid "Create targeted audience segments"
+msgstr "Crie segmentos de público direcionados"
+
+msgid "Create your first email campaign and start connecting with your audience"
+msgstr "Crie sua primeira campanha de email e comece a se conectar com seu público"
+
+msgid "Data deleted"
+msgstr "Dados excluídos"
+
+msgid "Data key"
+msgstr "Chave do dado"
+
+msgid "Deliver lead magnets, start onboarding, or simply say welcome. Sent immediately after subscription."
+msgstr "Entregue iscas digitais, inicie o onboarding ou simplesmente dê as boas-vindas. Enviado logo após a inscrição."
+
+msgid "Description"
+msgstr "Descrição"
+
+msgid "Deselect"
+msgstr "Desmarcar"
+
+msgid "Design signup and opt-in forms"
+msgstr "Crie formulários de inscrição e opt-in"
+
+msgid "Double Opt-in Email Preview"
+msgstr "Prévia do email de opt-in duplo"
+
+msgid "Draft"
+msgstr "Rascunho"
+
+msgid "EVO API Configuration"
+msgstr "Configuração da API do EVO"
+
+msgid "EVO Integration"
+msgstr "Integração EVO"
+
+msgid "EVO Secret Key"
+msgstr "Chave secreta do EVO"
+
+msgid "Email body"
+msgstr "Corpo do email"
+
+msgid "Email rendering error: %{msg}"
+msgstr "Erro ao renderizar o email: %{msg}"
+
+msgid "Embed"
+msgstr "Incorporar"
+
+msgid "Embedding"
+msgstr "Incorporação"
+
+msgid "Enable double opt-in"
+msgstr "Ativar opt-in duplo"
+
+msgid "End Date"
+msgstr "Data final"
+
+msgid "Expired link message"
+msgstr "Mensagem de link expirado"
+
+msgid "Expired link redirect"
+msgstr "Redirecionamento de link expirado"
+
+msgid "Explore"
+msgstr "Explorar"
+
+msgid "Failed to send preview to %{email}. %{detail}"
+msgstr "Falha ao enviar a prévia para %{email}. %{detail}"
+
+msgid "Fetch Prospects"
+msgstr "Buscar prospects"
+
+msgid "Fewer fields = higher conversion. Each extra field can reduce signups by 11%%."
+msgstr "Menos campos = mais conversão. Cada campo extra pode reduzir as inscrições em 11%%."
+
+msgid "Field type"
+msgstr "Tipo de campo"
+
+msgid "Fill"
+msgstr "Preenchimento"
+
+msgid "Fluxo Email MKT comes with a great default template so you don't have to become a designer before you start sending emails. But if you want a more personalized look, create your own design with the template editor."
+msgstr "O Fluxo Email MKT já vem com um ótimo modelo padrão, então você não precisa virar designer antes de começar a enviar emails. Mas, se quiser um visual mais personalizado, crie seu próprio design com o editor de modelos."
+
+msgid "Fluxo organizes contacts, forms, and campaigns in"
+msgstr "O Fluxo organiza contatos, formulários e campanhas em"
+
+msgid "Form name"
+msgstr "Nome do formulário"
+
+msgid "Get weekly tips straight to your inbox"
+msgstr "Receba dicas semanais direto na sua caixa de entrada"
+
+msgid "Go back"
+msgstr "Voltar"
+
+msgid "If you already have an existing audience for your newsletter, you can use the Import Contacts feature. Or manually add new contacts."
+msgstr "Se você já tem um público para a sua newsletter, pode usar o recurso Importar Contatos. Ou adicione novos contatos manualmente."
+
+msgid "Import Selected"
+msgstr "Importar selecionados"
+
+msgid "Import prospects from EVO platform"
+msgstr "Importe prospects da plataforma EVO"
+
+msgid "Importing..."
+msgstr "Importando..."
+
+msgid "Info message"
+msgstr "Mensagem informativa"
+
+msgid "Input border"
+msgstr "Borda do campo"
+
+msgid "Input fill"
+msgstr "Preenchimento do campo"
+
+msgid "Input text"
+msgstr "Texto do campo"
+
+msgid "Insufficient email quota"
+msgstr "Cota de email insuficiente"
+
+msgid "It looks like you don't yet have any contacts to receive this campaign."
+msgstr "Parece que você ainda não tem contatos para receber esta campanha."
+
+msgid "Legal text, privacy notice. Supports HTML."
+msgstr "Texto legal, aviso de privacidade. Aceita HTML."
+
+msgid "Let's get started!"
+msgstr "Vamos começar!"
+
+msgid "Link expired"
+msgstr "Link expirado"
+
+msgid "Live Preview"
+msgstr "Prévia ao vivo"
+
+msgid "Loading..."
+msgstr "Carregando..."
+
+msgid "Manage your contact database"
+msgstr "Gerencie seu banco de contatos"
+
+msgid "Match your brand. Changes update the preview in real time."
+msgstr "Combine com a sua marca. As mudanças atualizam a prévia em tempo real."
+
+msgid "No campaigns yet"
+msgstr "Nenhuma campanha ainda"
+
+msgid "No links found in this campaign"
+msgstr "Nenhum link encontrado nesta campanha"
+
+msgid "No sender selected. Select a sender in Settings before sending this campaign."
+msgstr "Nenhum remetente selecionado. Selecione um remetente em Configurações antes de enviar esta campanha."
+
+msgid "Not sent yet"
+msgstr "Ainda não enviada"
+
+msgid "Open Settings →"
+msgstr "Abrir Configurações →"
+
+msgid "Page"
+msgstr "Página"
+
+msgid "Phone"
+msgstr "Telefone"
+
+msgid "Please click on the following link to verify your email address %{email} for use with Keila."
+msgstr "Clique no link a seguir para verificar seu endereço de email %{email} para uso com o Fluxo Email MKT."
+
+msgid "Preparing Campaign"
+msgstr "Preparando a campanha"
+
+msgid "Prevents bots from submitting"
+msgstr "Impede o envio por bots"
+
+msgid "Ready to send your campaign?"
+msgstr "Pronto para enviar sua campanha?"
+
+msgid "Redirect URL"
+msgstr "URL de redirecionamento"
+
+msgid "Redirect URL (optional)"
+msgstr "URL de redirecionamento (opcional)"
+
+msgid "Register your Fluxo Email MKT account now and start your newsletter project within minutes."
+msgstr "Crie sua conta no Fluxo Email MKT agora e comece seu projeto de newsletter em minutos."
+
+msgid "Remove condition"
+msgstr "Remover condição"
+
+msgid "Require this field"
+msgstr "Tornar este campo obrigatório"
+
+msgid "Required"
+msgstr "Obrigatório"
+
+msgid "Required to embed form on external websites"
+msgstr "Necessário para incorporar o formulário em sites externos"
+
+msgid "SMTP TLS error. Check your sender's SSL/TLS configuration."
+msgstr "Erro de TLS no SMTP. Verifique a configuração SSL/TLS do seu remetente."
+
+msgid "SMTP authentication failed. Check your sender credentials."
+msgstr "Falha na autenticação SMTP. Verifique as credenciais do seu remetente."
+
+msgid "SMTP delivery error. Check your sender configuration and credentials."
+msgstr "Erro de entrega SMTP. Verifique a configuração e as credenciais do seu remetente."
+
+msgid "Save Configuration"
+msgstr "Salvar configuração"
+
+msgid "Saved!"
+msgstr "Salvo!"
+
+msgid "Scheduled"
+msgstr "Agendada"
+
+msgid "Scheduled:"
+msgstr "Agendada:"
+
+msgid "Search by name, email, phone..."
+msgstr "Buscar por nome, email, telefone..."
+
+msgid "Search contacts..."
+msgstr "Buscar contatos..."
+
+msgid "Select All"
+msgstr "Selecionar todos"
+
+msgid "Select a date range and click \"Fetch Prospects\" to load leads from EVO. Only prospects with valid email will be shown."
+msgstr "Selecione um período e clique em \"Buscar prospects\" para carregar os leads do EVO. Só aparecem prospects com email válido."
+
+msgid "Selected"
+msgstr "Selecionado"
+
+msgid "Send to a thank you page, lead magnet, or offer"
+msgstr "Envie para uma página de agradecimento, isca digital ou oferta"
+
+msgid "Sender required"
+msgstr "Remetente obrigatório"
+
+msgid "Sender:"
+msgstr "Remetente:"
+
+msgid "Sending from:"
+msgstr "Enviando de:"
+
+msgid "Sending in Progress"
+msgstr "Envio em andamento"
+
+msgid "Sent"
+msgstr "Enviada"
+
+msgid "Sent:"
+msgstr "Enviada:"
+
+msgid "Set a new secure password to keep using Fluxo Email MKT."
+msgstr "Defina uma nova senha segura para continuar usando o Fluxo Email MKT."
+
+msgid "Source"
+msgstr "Origem"
+
+msgid "Start Date"
+msgstr "Data inicial"
+
+msgid "Start sending emails with Fluxo Email MKT now"
+msgstr "Comece a enviar emails com o Fluxo Email MKT agora"
+
+msgid "Text & Inputs"
+msgstr "Texto e campos"
+
+msgid "Thank you for subscribing!"
+msgstr "Obrigado por se inscrever!"
+
+msgid "Thank you for verifying your sender. You can now start sending emails with Fluxo Email MKT."
+msgstr "Obrigado por verificar seu remetente. Agora você pode começar a enviar emails com o Fluxo Email MKT."
+
+msgid "Thanks for trying out Fluxo Email MKT!"
+msgstr "Obrigado por experimentar o Fluxo Email MKT!"
+
+msgid "The email address %{email} is invalid."
+msgstr "O endereço de email %{email} é inválido."
+
+msgid "This confirmation link has expired or has already been used. Please submit the form again."
+msgstr "Este link de confirmação expirou ou já foi usado. Envie o formulário novamente."
+
+msgid "This file can't be deleted because it's already in use in the following campaigns:"
+msgstr "Este arquivo não pode ser excluído porque já está em uso nas seguintes campanhas:"
+
+msgid "Tip: Action verbs convert 30%+ better. Try 'Get My Free Guide' or 'Join Now'"
+msgstr "Dica: verbos de ação convertem 30%+ melhor. Tente 'Quero meu guia grátis' ou 'Participar agora'"
+
+msgid "Tip: Social proof works. Try 'Join 10,000+ subscribers'"
+msgstr "Dica: prova social funciona. Tente 'Junte-se a 10.000+ inscritos'"
+
+msgid "Unexpected error: %{msg}"
+msgstr "Erro inesperado: %{msg}"
+
+msgid "Updated:"
+msgstr "Atualizada:"
+
+msgid "Upgrade to unlock"
+msgstr "Faça upgrade para desbloquear"
+
+msgid "Use the campaign editor to create, schedule, and send campaigns to your contacts."
+msgstr "Use o editor de campanhas para criar, agendar e enviar campanhas para seus contatos."
+
+msgid "Verify Your Email for Keila"
+msgstr "Verifique seu email para o Fluxo Email MKT"
+
+msgid "Visual Editor"
+msgstr "Editor visual"
+
+msgid "Waiting for email verification ..."
+msgstr "Aguardando verificação de email ..."
+
+msgid "We sent a confirmation to %{email}. Click the link to complete your subscription."
+msgstr "Enviamos uma confirmação para %{email}. Clique no link para concluir sua inscrição."
+
+msgid "Welcome Email Preview"
+msgstr "Prévia do email de boas-vindas"
+
+msgid "Welcome to Fluxo Email MKT!"
+msgstr "Bem-vindo ao Fluxo Email MKT!"
+
+msgid "Welcome to your email marketing hub"
+msgstr "Bem-vindo ao seu hub de email marketing"
+
+msgid "With Email"
+msgstr "Com email"
+
+msgid "You can create Segments to define subsets of your contacts. This allows you to send campaigns only to those contacts who fulfill certain criteria."
+msgstr "Você pode criar Segmentos para definir subconjuntos dos seus contatos. Assim você envia campanhas apenas para os contatos que atendem a certos critérios."
+
+msgid "You can create one or multiple forms to let new contacts sign up to your newsletter. With the form editor, you can customize the look & feel and choose which input fields to include."
+msgstr "Você pode criar um ou vários formulários para novos contatos se inscreverem na sua newsletter. Com o editor de formulários, você personaliza a aparência e escolhe quais campos incluir."
+
+msgid "You don't have any senders configured. You need a sender to send campaigns."
+msgstr "Você não tem nenhum remetente configurado. Você precisa de um remetente para enviar campanhas."
+
+msgid "You have been successfully subscribed."
+msgstr "Sua inscrição foi confirmada com sucesso."
+
+msgid "You must select a sender before sending."
+msgstr "Você precisa selecionar um remetente antes de enviar."
+
+msgid "You will no longer receive emails from this list."
+msgstr "Você não receberá mais emails desta lista."
+
+msgid "You've been unsubscribed"
+msgstr "Você foi descadastrado"
+
+msgid "Your EVO API secret key"
+msgstr "Sua chave secreta da API do EVO"
+
+msgid "Your EVO platform identifier"
+msgstr "Seu identificador da plataforma EVO"
+
+msgid "Your data has been deleted. You will not be subscribed to this list."
+msgstr "Seus dados foram excluídos. Você não será inscrito nesta lista."
+
+msgid "Your data is safe and secure."
+msgstr "Seus dados estão seguros e protegidos."
+
+msgid "Your email quota is not sufficient for sending this campaign."
+msgstr "Sua cota de email não é suficiente para enviar esta campanha."
+
+msgid "contacts"
+msgstr "contatos"
+
+msgid "e.g. Active subscribers, VIP contacts..."
+msgstr "ex: Inscritos ativos, contatos VIP..."
+
+msgid "e.g. Newsletter Signup"
+msgstr "ex: Inscrição na newsletter"
+
+msgid "project"
+msgstr "projeto"
+
+msgid "projects"
+msgstr "projetos"
+
+msgid "to"
+msgstr "para"
+
+msgid "total contacts"
+msgstr "total de contatos"

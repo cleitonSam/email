@@ -611,3 +611,17 @@ msgstr "contatos ilimitados"
 #, elixir-autogen, elixir-format
 msgid "valid for one year"
 msgstr "válido por um ano"
+
+# --- traducoes pt adicionadas manualmente (sem mix gettext.merge) ---
+
+msgid "Double opt-in protects your list. Available with a subscription."
+msgstr "O opt-in duplo protege sua lista. Disponível com uma assinatura."
+
+msgid "View plans"
+msgstr "Ver planos"
+
+msgid "Welcome emails engage subscribers from day one. Available with a subscription."
+msgstr "Emails de boas-vindas engajam os inscritos desde o primeiro dia. Disponível com uma assinatura."
+
+msgid "Welcome to Fluxo Email MKT, have a look around! To start sending emails, please choose a subscription."
+msgstr "Bem-vindo ao Fluxo Email MKT, fique à vontade para explorar! Para começar a enviar emails, escolha uma assinatura."

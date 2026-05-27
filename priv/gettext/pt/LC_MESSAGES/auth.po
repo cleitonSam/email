@@ -267,3 +267,14 @@ msgstr "Cadastro desativado."
 
 msgid "Please contact an administrator."
 msgstr "Entre em contato com um administrador."
+
+# --- traducoes pt adicionadas manualmente (sem mix gettext.merge) ---
+
+msgid "Back to login"
+msgstr "Voltar para o login"
+
+msgid "If you've forgotten your password, you can request an email to reset it here."
+msgstr "Esqueceu sua senha? Você pode solicitar aqui um email para redefini-la."
+
+msgid "You can now continue using Fluxo Email MKT."
+msgstr "Agora você pode continuar usando o Fluxo Email MKT."

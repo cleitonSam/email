@@ -167,3 +167,98 @@ msgstr "Status"
 #, elixir-autogen, elixir-format
 msgid "Update status"
 msgstr "Atualizar status"
+
+# --- traducoes pt adicionadas manualmente (sem mix gettext.merge) ---
+
+msgid "A new version of Fluxo Email MKT is available."
+msgstr "Uma nova versão do Fluxo Email MKT está disponível."
+
+msgid "Assign to User"
+msgstr "Atribuir a um usuário"
+
+msgid "Available Credits"
+msgstr "Créditos disponíveis"
+
+msgid "Configure EVO API credentials for this project"
+msgstr "Configure as credenciais da API do EVO para este projeto"
+
+msgid "Configured"
+msgstr "Configurado"
+
+msgid "Could not create project"
+msgstr "Não foi possível criar o projeto"
+
+msgid "Create Project"
+msgstr "Criar projeto"
+
+msgid "Create a new project and assign it to a user"
+msgstr "Crie um novo projeto e atribua a um usuário"
+
+msgid "Create and configure projects for all users"
+msgstr "Crie e configure projetos para todos os usuários"
+
+msgid "Create the first project for your clients"
+msgstr "Crie o primeiro projeto para seus clientes"
+
+msgid "Created"
+msgstr "Criado"
+
+msgid "EVO Integration"
+msgstr "Integração EVO"
+
+msgid "EVO Secret Key"
+msgstr "Chave secreta do EVO"
+
+msgid "Edit Project"
+msgstr "Editar projeto"
+
+msgid "Edit Project: %{name}"
+msgstr "Editar projeto: %{name}"
+
+msgid "Edit project"
+msgstr "Editar projeto"
+
+msgid "Here you can manage other users on your Fluxo Email MKT instance."
+msgstr "Aqui você pode gerenciar outros usuários da sua instância do Fluxo Email MKT."
+
+msgid "Manage Projects"
+msgstr "Gerenciar projetos"
+
+msgid "No owner"
+msgstr "Sem dono"
+
+msgid "No projects yet"
+msgstr "Nenhum projeto ainda"
+
+msgid "Not set"
+msgstr "Não definido"
+
+msgid "Open project"
+msgstr "Abrir projeto"
+
+msgid "Owner"
+msgstr "Dono"
+
+msgid "Project"
+msgstr "Projeto"
+
+msgid "Project Details"
+msgstr "Detalhes do projeto"
+
+msgid "Project Name"
+msgstr "Nome do projeto"
+
+msgid "Project created successfully"
+msgstr "Projeto criado com sucesso"
+
+msgid "Project updated successfully"
+msgstr "Projeto atualizado com sucesso"
+
+msgid "Save Changes"
+msgstr "Salvar alterações"
+
+msgid "Select a user..."
+msgstr "Selecione um usuário..."
+
+msgid "Shared Senders are available to all users on this instance of Fluxo Email MKT."
+msgstr "Os remetentes compartilhados ficam disponíveis para todos os usuários desta instância do Fluxo Email MKT."

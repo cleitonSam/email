@@ -2,9 +2,16 @@ defmodule KeilaWeb.PutLocalePlug do
   @moduledoc """
   Plug for setting the Gettext locale.
 
-  When the `:current_user` assign is available and has a locale set, the locale
-  is taken from the user’s settings. Otherwise the locales from the
-  `accept-language` header are used.
+  Resolution order:
+
+    1. The `:current_user` assign, when it has a locale set.
+    2. The `lang` query parameter (also persisted to the session).
+    3. The locale stored in the session.
+    4. The configured `:default_locale` (pt) as a fallback.
+
+  The browser `accept-language` header is intentionally NOT used: this is a
+  Portuguese-first product, so visitors default to pt unless they explicitly
+  choose another language via `?lang=` or their user settings.
   """
 
   alias Keila.Auth.User
@@ -36,12 +43,14 @@ defmodule KeilaWeb.PutLocalePlug do
   end
 
   defp put_locale_from_session(conn) do
+    default_locale =
+      Application.get_env(:keila, KeilaWeb.Gettext) |> Keyword.get(:default_locale, "pt")
+
     param_locale = conn.query_params["lang"]
     session_locale = Plug.Conn.get_session(conn, :locale)
-    header_locales = get_header_locales(conn)
 
     locale =
-      [param_locale, session_locale | header_locales]
+      [param_locale, session_locale, default_locale]
       |> Enum.find(fn locale -> put_locale(locale) == :ok end)
 
     if not is_nil(param_locale) and param_locale == locale do
@@ -49,27 +58,5 @@ defmodule KeilaWeb.PutLocalePlug do
     else
       conn
     end
-  end
-
-  defp get_header_locales(conn) do
-    conn
-    |> Plug.Conn.get_req_header("accept-language")
-    |> Enum.join(",")
-    |> String.split(",")
-    |> Enum.map(&String.trim/1)
-    |> Enum.map(fn language ->
-      case String.split(language, ";q=") do
-        [language] ->
-          {language, 1.0}
-
-        [language, quality] ->
-          case Float.parse(quality) do
-            {quality, _} -> {language, quality}
-            :error -> {language, 1.0}
-          end
-      end
-    end)
-    |> Enum.sort_by(&elem(&1, 1), :desc)
-    |> Enum.map(&elem(&1, 0))
   end
 end

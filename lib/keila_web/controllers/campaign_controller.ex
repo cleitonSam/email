@@ -134,12 +134,12 @@ defmodule KeilaWeb.CampaignController do
 
     with {:ok, model} <- Library.get_model(slug),
          {:ok, mjml_raw} <- Library.load_mjml(slug) do
-      brand = Keila.Projects.Brand.get(project)
-      mjml = Library.apply_brand(mjml_raw, brand)
-
+      # Guarda o template CRU (com placeholders {{ brand.* }} e as cores
+      # padrão). A marca é aplicada no momento de renderizar (ver Builder),
+      # então mudar a marca depois reflete automaticamente na campanha.
       params = %{
         "subject" => Library.default_subject(slug),
-        "mjml_body" => mjml,
+        "mjml_body" => mjml_raw,
         "settings" => %{"type" => "mjml"},
         "data" => %{"library_slug" => model.slug, "library_title" => model.title}
       }

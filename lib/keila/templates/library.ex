@@ -187,7 +187,7 @@ defmodule Keila.Templates.Library do
 
     content
     |> apply_liquid_vars(brand, keys)
-    |> apply_hex_substitutions(brand)
+    |> apply_palette(brand)
     |> apply_smart_contrast(brand)
     |> apply_placeholder_substitutions(brand)
   end
@@ -211,34 +211,115 @@ defmodule Keila.Templates.Library do
     |> String.replace(pattern_simple, value)
   end
 
-  # ── Cores hardcoded → slots da marca ──
-  # Mapeamento de hex codes que aparecem hardcoded nos 8 templates
-  # padroes do Fluxo. Quando o brand do projeto tem o slot definido,
-  # substitui CASE-INSENSITIVE em todo o conteudo.
-  @hex_map %{
-    # Primary (laranja Fluxo): aparece como #FF5A1F nos defaults Liquid
-    # e como #F97316 (orange-500 Tailwind) hardcoded em alguns templates
-    "color_primary" => ["#FF5A1F", "#F97316", "#ff5a1f", "#f97316"],
+  # ── Paleta dos templates → cores da marca ──
+  # Os templates do Fluxo usam uma paleta fixa: laranja (primária), navy
+  # (escura), lime (accent) MAIS uma família de neutros derivados (cinzas-navy
+  # e cremes-laranja). Pra respeitar a marca de verdade, cada hex da paleta é
+  # remapeado pra cor da marca correspondente — os neutros viram tons claros
+  # (mistura com branco) da cor-base da marca.
+  #
+  # Formato: {hex_fluxo, slot_da_marca, ratio_de_branco}
+  # ratio 0.0 = cor pura da marca; 0.9 = quase branco (tom bem claro).
+  @fluxo_palette [
+    # Família primária (laranja) + cremes quentes derivados dela
+    {"#ff5a1f", "color_primary", 0.0},
+    {"#f97316", "color_primary", 0.0},
+    {"#ff7a3f", "color_primary", 0.18},
+    {"#ffe5d6", "color_primary", 0.85},
+    {"#f4efea", "color_primary", 0.92},
+    {"#efe4d2", "color_primary", 0.90},
+    {"#e8e1d8", "color_primary", 0.90},
+    {"#fff8f0", "color_primary", 0.95},
+    # Família escura (navy) + cinzas derivados dela
+    {"#0a0e27", "color_dark", 0.0},
+    {"#1e2749", "color_dark", 0.12},
+    {"#4a5167", "color_dark", 0.28},
+    {"#5a6378", "color_dark", 0.36},
+    {"#8b92a8", "color_dark", 0.56},
+    {"#c8ccdb", "color_dark", 0.80},
+    {"#e8eaed", "color_dark", 0.90},
+    # Accent (lime)
+    {"#c4ff00", "color_accent", 0.0}
+  ]
 
-    # Dark (navy): #0A0E27 e a variante mais clara #1E2749
-    "color_dark" => ["#0A0E27", "#1E2749", "#0a0e27", "#1e2749"],
-
-    # Accent (lime): #C4FF00
-    "color_accent" => ["#C4FF00", "#c4ff00"]
+  # Cores-base padrão do Fluxo. Se a marca não mudou um slot (continua igual ao
+  # padrão), NÃO remapeamos essa família — preserva o visual original.
+  @fluxo_defaults %{
+    "color_primary" => "#ff5a1f",
+    "color_dark" => "#0a0e27",
+    "color_accent" => "#c4ff00"
   }
 
-  defp apply_hex_substitutions(content, brand) do
-    Enum.reduce(@hex_map, content, fn {brand_key, hex_list}, acc ->
-      value = Map.get(brand, brand_key) || ""
+  defp apply_palette(content, brand) do
+    lookup = build_palette_lookup(brand)
 
-      if value != "" and String.starts_with?(value, "#") do
-        Enum.reduce(hex_list, acc, fn hex, inner_acc ->
-          String.replace(inner_acc, hex, value)
-        end)
-      else
-        acc
+    if map_size(lookup) == 0 do
+      content
+    else
+      Regex.replace(~r/#[0-9a-fA-F]{6}\b/, content, fn full ->
+        Map.get(lookup, String.downcase(full), full)
+      end)
+    end
+  end
+
+  # Monta o mapa hex_fluxo(minúsculo) => hex_da_marca, pulando as famílias cujo
+  # slot na marca continua igual ao padrão do Fluxo.
+  defp build_palette_lookup(brand) do
+    Enum.reduce(@fluxo_palette, %{}, fn {hex, key, ratio}, acc ->
+      base = Map.get(brand, key)
+      default = Map.get(@fluxo_defaults, key)
+
+      cond do
+        not (is_binary(base) and String.starts_with?(base, "#")) ->
+          acc
+
+        String.downcase(base) == default ->
+          acc
+
+        ratio == 0.0 ->
+          Map.put(acc, hex, base)
+
+        true ->
+          Map.put(acc, hex, mix_with_white(base, ratio))
       end
     end)
+  end
+
+  # Mistura `hex` com branco. ratio 0 = hex puro, 1 = branco.
+  defp mix_with_white(hex, ratio) do
+    case parse_rgb(hex) do
+      {r, g, b} ->
+        nr = round(r + (255 - r) * ratio)
+        ng = round(g + (255 - g) * ratio)
+        nb = round(b + (255 - b) * ratio)
+        "#" <> hex2(nr) <> hex2(ng) <> hex2(nb)
+
+      :error ->
+        hex
+    end
+  end
+
+  defp parse_rgb("#" <> hex), do: parse_rgb(hex)
+
+  defp parse_rgb(hex) when byte_size(hex) == 6 do
+    with {r, ""} <- Integer.parse(binary_part(hex, 0, 2), 16),
+         {g, ""} <- Integer.parse(binary_part(hex, 2, 2), 16),
+         {b, ""} <- Integer.parse(binary_part(hex, 4, 2), 16) do
+      {r, g, b}
+    else
+      _ -> :error
+    end
+  end
+
+  defp parse_rgb(_), do: :error
+
+  defp hex2(n) do
+    n
+    |> max(0)
+    |> min(255)
+    |> Integer.to_string(16)
+    |> String.downcase()
+    |> String.pad_leading(2, "0")
   end
 
   # ── Placeholders de logo + nome generico ──

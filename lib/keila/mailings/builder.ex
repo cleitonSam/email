@@ -195,7 +195,14 @@ defmodule Keila.Mailings.Builder do
   end
 
   defp put_body(email, campaign = %{settings: %{type: :mjml}}, assigns) do
-    mjml_content = campaign.mjml_body || ""
+    # Aplica o brand kit (cores da marca) no momento de renderizar, usando o
+    # brand ATUAL do projeto (já está em assigns). Assim o preview e o envio
+    # sempre refletem a marca atual — mesmo que ela tenha sido alterada depois
+    # de criar a campanha. Os placeholders {{ brand.* }} continuam sendo
+    # resolvidos pelo Liquid em MJML.put_body.
+    mjml_content =
+      (campaign.mjml_body || "")
+      |> Keila.Templates.Library.apply_brand(assigns["brand"] || %{})
 
     __MODULE__.MJML.put_body(email, mjml_content, assigns)
   end

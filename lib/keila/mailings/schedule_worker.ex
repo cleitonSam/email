@@ -55,8 +55,12 @@ defmodule Keila.Mailings.ScheduleWorker do
   end
 
   defp schedule_recipients() do
+    now = DateTime.utc_now()
+
     from(r in Recipient,
-      where: is_nil(r.queued_at) and is_nil(r.failed_at),
+      where:
+        is_nil(r.queued_at) and is_nil(r.failed_at) and
+          (is_nil(r.send_after) or r.send_after <= ^now),
       select: %{id: r.id, campaign_id: r.campaign_id},
       limit: @limit,
       lock: "FOR NO KEY UPDATE"

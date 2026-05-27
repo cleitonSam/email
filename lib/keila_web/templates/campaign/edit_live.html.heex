@@ -89,6 +89,13 @@
                 <span class="inline-flex h-5 w-5 text-purple-400">{render_icon(:clock)}</span>
                 {gettext("Schedule")}
               </button>
+              <button
+                class="flex items-center gap-3 w-full px-4 py-2.5 rounded-lg text-white hover:bg-accent-500/10 hover:text-accent-400 transition-colors text-left"
+                @click.prevent="showSendMenu = false; $dispatch('x-show', { dialog: 'cadence' })"
+              >
+                <span class="inline-flex h-5 w-5 text-accent-400">{render_icon(:calendar)}</span>
+                Agendar em ondas
+              </button>
             </div>
           </div>
         <% else %>

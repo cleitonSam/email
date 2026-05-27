@@ -168,7 +168,13 @@ defmodule KeilaWeb.CampaignEditLive do
         _ -> nil
       end
 
-    params = socket.assigns.changeset.params || %{}
+    # Ao agendar (ou desagendar) de forma normal, limpa qualquer cadência
+    # anterior pra não reaproveitar slots antigos no envio.
+    current_data = Ecto.Changeset.get_field(socket.assigns.changeset, :data) || %{}
+
+    params =
+      (socket.assigns.changeset.params || %{})
+      |> Map.put("data", Map.delete(current_data, "cadence"))
 
     with {:ok, campaign} <-
            Mailings.update_campaign(socket.assigns.campaign.id, params, true),
@@ -183,6 +189,67 @@ defmodule KeilaWeb.CampaignEditLive do
 
   def handle_event("unschedule", _params, socket) do
     handle_event("schedule", %{}, socket)
+  end
+
+  # Agendamento em ondas (cadência): recebe os slots (dia+hora no fuso do
+  # usuário) calculados no cliente, converte pra UTC, salva em data["cadence"]
+  # e agenda a campanha pro primeiro slot. O envio (do_deliver_campaign)
+  # distribui os contatos entre os slots, 1 email por contato.
+  def handle_event("schedule-cadence", %{"cadence_json" => json}, socket) do
+    with {:ok, %{"timezone" => tz, "slots" => raw_slots}} <- Jason.decode(json),
+         true <- is_binary(tz) and is_list(raw_slots),
+         slots when slots != [] <- parse_cadence_slots(raw_slots, tz) do
+      first_slot = List.first(slots)
+
+      current_data = Ecto.Changeset.get_field(socket.assigns.changeset, :data) || %{}
+      new_data = Map.put(current_data, "cadence", %{"timezone" => tz, "slots" => slots})
+
+      params =
+        (socket.assigns.changeset.params || %{})
+        |> Map.put("data", new_data)
+
+      {:ok, first_dt, _} = DateTime.from_iso8601(first_slot)
+
+      with {:ok, campaign} <-
+             Mailings.update_campaign(socket.assigns.campaign.id, params, true),
+           {:ok, campaign} <-
+             Mailings.schedule_campaign(campaign.id, %{scheduled_for: first_dt}) do
+        {:noreply, redirect(socket, to: Routes.campaign_path(socket, :index, campaign.project_id))}
+      else
+        {:error, changeset} ->
+          {:noreply, put_changesets(socket, changeset) |> put_campaign_preview()}
+      end
+    else
+      _ ->
+        {:noreply,
+         put_flash(socket, :error, gettext("Defina ao menos um horário válido para a cadência."))}
+    end
+  end
+
+  # Converte os slots {date, time} do fuso informado pra ISO8601 UTC (segundos),
+  # descartando inválidos, deduplicando e ordenando cronologicamente.
+  defp parse_cadence_slots(raw_slots, tz) do
+    raw_slots
+    |> Enum.map(fn
+      %{"date" => date_str, "time" => time_str}
+      when is_binary(date_str) and is_binary(time_str) ->
+        with {:ok, date} <- Date.from_iso8601(date_str),
+             {:ok, time} <- Time.from_iso8601(time_str <> ":00"),
+             {:ok, datetime} <- DateTime.new(date, time, tz),
+             {:ok, utc} <- DateTime.shift_zone(datetime, "Etc/UTC") do
+          utc |> DateTime.truncate(:second) |> DateTime.to_iso8601()
+        else
+          _ -> nil
+        end
+
+      _ ->
+        nil
+    end)
+    |> Enum.reject(&is_nil/1)
+    |> Enum.uniq()
+    |> Enum.sort()
+    # Teto de segurança: mantém o campo data bem abaixo do limite de 32KB.
+    |> Enum.take(500)
   end
 
   @email_regex ~r/^[^\s@]+@[^\s@]+$/
@@ -393,7 +460,12 @@ defmodule KeilaWeb.CampaignEditLive do
           gettext("Could not connect to SMTP server. Check host and port settings.")
 
         _ ->
-          gettext("SMTP delivery error. Check your sender configuration and credentials.")
+          # Mostra a resposta real do servidor SMTP (ex: "535 auth failed",
+          # "550 relay denied") em vez de esconder atrás de uma mensagem genérica.
+          raw = reason |> inspect() |> String.slice(0, 240)
+
+          gettext("SMTP delivery error. Check your sender configuration and credentials.") <>
+            " — " <> raw
       end
 
     message = gettext("Failed to send preview to %{email}. %{detail}", email: email, detail: detail)

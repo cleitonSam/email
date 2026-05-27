@@ -3,7 +3,7 @@
   style="display: none"
   class="fixed z-50 inset-0 overflow-y-auto bg-gray-950/80 backdrop-blur-sm flex items-center justify-center"
   x-on:x-confirm.stop="activeDialog = null"
-  x-show.transition="['send', 'schedule', 'preview'].includes(activeDialog)"
+  x-show.transition="['send', 'schedule', 'preview', 'cadence'].includes(activeDialog)"
   x-on:x-cancel.stop="activeDialog = null"
   x-on:phx:preview-sent.window="activeDialog = null"
   x-on:x-show.window="activeDialog = ($event.detail && $event.detail.dialog); if (activeDialog) { $nextTick(() => {const el = $el.querySelector(`[data-dialog-for=${activeDialog}] input, [data-dialog-for=${activeDialog}] button`); el.focus()}) }"
@@ -322,4 +322,248 @@
       <% end %>
     </form>
   </div>
+
+  <!-- CADENCE (ondas) DIALOG -->
+  <div
+    x-show="activeDialog == 'cadence'"
+    class="flex items-center justify-center min-h-screen p-4"
+    @keydown.escape.prevent="$dispatch('x-cancel')"
+    @click.away="$dispatch('x-cancel')"
+    data-dialog-for="cadence"
+  >
+    <%= if @recipient_count > 0 do %>
+      <form
+        id="cadence-form"
+        phx-update="ignore"
+        x-data={"cadenceForm(#{@recipient_count})"}
+        class="w-full max-w-2xl bg-gray-900/95 backdrop-blur-xl border border-gray-700/50 rounded-2xl shadow-2xl p-8 max-h-[90vh] overflow-y-auto"
+        role="dialog"
+        aria-modal="true"
+        phx-submit="schedule-cadence"
+      >
+        <input type="hidden" name="cadence_json" x-bind:value="payload()" />
+
+        <div class="flex items-center gap-3 mb-2">
+          <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-accent-500 to-fluxo-400 flex items-center justify-center shadow-lg shadow-accent-500/30">
+            <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <h2 class="text-2xl font-bold text-white">Agendar em ondas</h2>
+        </div>
+        <p class="text-gray-400 text-sm mb-5">
+          Espalha o envio em vários horários — cada contato recebe <strong class="text-white">uma vez só</strong>. Melhora a entrega e pega gente em horários diferentes.
+        </p>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-sm font-medium text-gray-300">Começa em</label>
+            <input type="date" x-model="startDate" class="w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all" />
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-sm font-medium text-gray-300">Termina em</label>
+            <input type="date" x-model="endDate" x-bind:min="startDate" class="w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all" />
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <label class="text-sm font-medium text-gray-300">Horários (valem pra todos os dias)</label>
+          <div class="flex flex-wrap gap-2 mt-2">
+            <template x-for="t in times" x-bind:key="t">
+              <span class="inline-flex items-center gap-1.5 pl-3 pr-2 py-1.5 rounded-full bg-fluxo-500/20 text-fluxo-200 text-sm font-medium">
+                <span x-text="t"></span>
+                <button type="button" class="text-fluxo-300 hover:text-white leading-none" x-on:click="removeTime(t)">&times;</button>
+              </span>
+            </template>
+            <span x-show="times.length === 0" class="text-xs text-gray-500 py-1.5">Adicione ao menos um horário</span>
+          </div>
+          <div class="flex flex-wrap items-center gap-2 mt-3">
+            <template x-for="q in ['09:00','12:00','14:00','18:00']" x-bind:key="q">
+              <button type="button" class="px-2.5 py-1 text-xs rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 transition-colors" x-on:click="quickTime(q)" x-text="'+ ' + q"></button>
+            </template>
+            <input type="time" x-model="newTime" class="rounded-lg bg-gray-800/50 border border-gray-700/50 text-white px-2.5 py-1 text-sm" />
+            <button type="button" class="px-3 py-1.5 text-xs rounded-lg bg-fluxo-500 hover:bg-fluxo-600 text-white font-semibold transition-colors" x-on:click="addTime()">Adicionar</button>
+          </div>
+        </div>
+
+        <div class="mt-5" x-show="days.length > 0" x-cloak>
+          <div class="flex items-center justify-between">
+            <label class="text-sm font-medium text-gray-300">Dias (<span x-text="days.length"></span>)</label>
+            <span class="text-[11px] text-gray-500">Clique num dia pra usar horários diferentes nele</span>
+          </div>
+          <div class="mt-2 space-y-1.5 max-h-48 overflow-y-auto pr-1">
+            <template x-for="day in days" x-bind:key="day">
+              <div class="bg-gray-900/50 border border-gray-800 rounded-lg">
+                <button type="button" class="w-full flex items-center justify-between gap-3 px-3 py-2 text-left" x-on:click="toggleDay(day)">
+                  <span class="text-sm text-gray-200" x-text="fmtBR(day)"></span>
+                  <span class="text-xs truncate" x-bind:class="overrides[day] ? 'text-accent-300 font-medium' : 'text-gray-500'" x-text="timesFor(day).join(', ') || 'sem horário'"></span>
+                </button>
+                <div x-show="expandedDay === day" x-cloak class="px-3 pb-3 flex flex-wrap items-center gap-2 border-t border-gray-800 pt-2">
+                  <template x-for="t in timesFor(day)" x-bind:key="t">
+                    <span class="inline-flex items-center gap-1 pl-2.5 pr-1.5 py-1 rounded-full bg-accent-500/20 text-accent-200 text-xs">
+                      <span x-text="t"></span>
+                      <button type="button" class="hover:text-white leading-none" x-on:click="removeDayTime(day, t)">&times;</button>
+                    </span>
+                  </template>
+                  <input type="time" x-on:change="addDayTime(day, $event.target.value); $event.target.value = ''" class="rounded-lg bg-gray-800/50 border border-gray-700/50 text-white px-2 py-1 text-xs" />
+                  <button type="button" x-show="overrides[day]" x-on:click="resetDay(day)" class="text-[11px] text-gray-400 hover:text-white underline">usar padrão</button>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <div class="mt-5 flex items-center gap-2 text-sm bg-accent-500/10 border border-accent-500/20 rounded-lg px-3 py-2.5 text-accent-200">
+          <svg class="w-4 h-4 flex-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          <span>
+            <span class="font-semibold text-white" x-text="totalSlots"></span> ondas ·
+            <span class="font-semibold text-white" x-text="recipientCount"></span> contatos ·
+            ≈ <span class="font-semibold text-white" x-text="perWave"></span> por onda
+          </span>
+        </div>
+
+        <div class="flex justify-end gap-3 mt-6 pt-5 border-t border-gray-800/50">
+          <button class="button button--text button--large" type="button" @click.prevent="$dispatch('x-cancel')">
+            {gettext("Cancel")}
+          </button>
+          <button
+            class="button button--cta button--large"
+            type="submit"
+            x-bind:disabled="!valid()"
+            x-bind:class="!valid() ? 'opacity-50 cursor-not-allowed' : ''"
+            @click="setUnsavedReminder(false); $dispatch('x-confirm')"
+          >
+            {render_icon(:calendar)} Agendar em ondas
+          </button>
+        </div>
+      </form>
+    <% else %>
+      <div
+        class="w-full max-w-lg bg-gray-900/95 backdrop-blur-xl border border-gray-700/50 rounded-2xl shadow-2xl p-8"
+        role="dialog"
+        aria-modal="true"
+      >
+        <div class="flex items-center gap-3 mb-5">
+          <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-400 flex items-center justify-center">
+            <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <h2 class="text-2xl font-bold text-white">{gettext("No Contacts, No Campaign.")}</h2>
+        </div>
+        <p class="text-gray-400 text-sm">
+          {gettext("It looks like you don't yet have any contacts to receive this campaign.")}
+        </p>
+        <div class="flex justify-end mt-6 pt-5 border-t border-gray-800/50">
+          <button class="button button--cta button--large" @click.prevent="$dispatch('x-cancel')">
+            {gettext("Ok")}
+          </button>
+        </div>
+      </div>
+    <% end %>
+  </div>
 </div>
+
+<script>
+  // Diálogo "Agendar em ondas": calcula os slots (dia × horário) a partir do
+  // período e dos horários, com override por dia. Cada contato é distribuído
+  // em UM slot pelo servidor (1 email por contato).
+  function cadenceForm(recipientCount) {
+    const pad2 = (n) => String(n).padStart(2, "0");
+    const today = new Date();
+    const todayStr = today.getFullYear() + "-" + pad2(today.getMonth() + 1) + "-" + pad2(today.getDate());
+    const WD = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
+
+    return {
+      tz: Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Sao_Paulo",
+      recipientCount: recipientCount || 0,
+      startDate: todayStr,
+      endDate: todayStr,
+      times: ["09:00", "14:00", "18:00"],
+      newTime: "",
+      overrides: {},
+      expandedDay: null,
+
+      normTime(t) {
+        if (!t || !/^\d{1,2}:\d{2}/.test(t)) return null;
+        const p = t.split(":");
+        return pad2(p[0]) + ":" + p[1].slice(0, 2);
+      },
+      addTime() {
+        const t = this.normTime(this.newTime);
+        if (t && !this.times.includes(t)) this.times = [...this.times, t].sort();
+        this.newTime = "";
+      },
+      quickTime(q) {
+        if (!this.times.includes(q)) this.times = [...this.times, q].sort();
+      },
+      removeTime(t) {
+        this.times = this.times.filter((x) => x !== t);
+      },
+
+      get days() {
+        if (!this.startDate || !this.endDate || this.endDate < this.startDate) return [];
+        const out = [];
+        const s = this.startDate.split("-").map(Number);
+        const e = this.endDate.split("-").map(Number);
+        let d = new Date(s[0], s[1] - 1, s[2]);
+        const end = new Date(e[0], e[1] - 1, e[2]);
+        let guard = 0;
+        while (d <= end && guard < 370) {
+          out.push(d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()));
+          d.setDate(d.getDate() + 1);
+          guard++;
+        }
+        return out;
+      },
+      fmtBR(day) {
+        const p = day.split("-").map(Number);
+        const d = new Date(p[0], p[1] - 1, p[2]);
+        return pad2(p[2]) + "/" + pad2(p[1]) + " (" + WD[d.getDay()] + ")";
+      },
+      timesFor(day) {
+        return this.overrides[day] || this.times;
+      },
+      toggleDay(day) {
+        this.expandedDay = this.expandedDay === day ? null : day;
+      },
+      addDayTime(day, val) {
+        const t = this.normTime(val);
+        if (!t) return;
+        const cur = this.overrides[day] || [...this.times];
+        if (!cur.includes(t)) this.overrides[day] = [...cur, t].sort();
+        else this.overrides[day] = cur;
+      },
+      removeDayTime(day, t) {
+        const cur = this.overrides[day] || [...this.times];
+        this.overrides[day] = cur.filter((x) => x !== t);
+      },
+      resetDay(day) {
+        delete this.overrides[day];
+        if (this.expandedDay === day) this.expandedDay = null;
+      },
+
+      get slots() {
+        const out = [];
+        for (const day of this.days) {
+          for (const t of this.timesFor(day)) out.push({ date: day, time: t });
+        }
+        return out;
+      },
+      get totalSlots() {
+        return this.slots.length;
+      },
+      get perWave() {
+        return this.totalSlots > 0 ? Math.ceil(this.recipientCount / this.totalSlots) : 0;
+      },
+      valid() {
+        return this.totalSlots > 0 && !!this.startDate && !!this.endDate && this.endDate >= this.startDate;
+      },
+      payload() {
+        return JSON.stringify({ timezone: this.tz, slots: this.slots });
+      },
+    };
+  }
+</script>

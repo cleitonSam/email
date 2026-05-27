@@ -570,15 +570,84 @@ defmodule Keila.Mailings do
     segment_filter = if campaign.segment, do: campaign.segment.filter, else: %{}
     filter = %{"$and" => [segment_filter, %{"status" => "active"}]}
 
-    Keila.Contacts.stream_project_contacts(campaign.project_id, filter: filter)
-    |> Stream.chunk_every(5000)
-    |> Stream.map(fn contacts ->
-      insert_recipients(contacts, campaign)
-    end)
-    |> Enum.sum()
+    count =
+      Keila.Contacts.stream_project_contacts(campaign.project_id, filter: filter)
+      |> Stream.chunk_every(5000)
+      |> Stream.map(fn contacts ->
+        insert_recipients(contacts, campaign)
+      end)
+      |> Enum.sum()
+
+    # Envio em ondas (cadência): distribui os destinatários nos horários (slots)
+    # configurados, setando send_after. Roda na MESMA transação da criação dos
+    # recipients, então o ScheduleWorker do cron só os enxerga (pós-commit) já
+    # com send_after definido — sem risco de enfileirar todos de uma vez.
+    maybe_assign_cadence(campaign, count)
+
+    count
     |> tap(&maybe_consume_credits(&1, campaign))
     |> tap(&insert_scheduling_job/1)
     |> tap(&ensure_not_empty/1)
+  end
+
+  # Lê os slots (datetimes UTC ISO8601) salvos em campaign.data["cadence"].
+  defp cadence_slots(%{data: %{"cadence" => %{"slots" => slots}}}) when is_list(slots) do
+    slots
+    |> Enum.map(&parse_slot/1)
+    |> Enum.reject(&is_nil/1)
+    |> Enum.sort({:asc, DateTime})
+  end
+
+  defp cadence_slots(_), do: []
+
+  defp parse_slot(slot) when is_binary(slot) do
+    case DateTime.from_iso8601(slot) do
+      {:ok, datetime, _offset} -> DateTime.truncate(datetime, :second)
+      _ -> nil
+    end
+  end
+
+  defp parse_slot(_), do: nil
+
+  defp maybe_assign_cadence(_campaign, 0), do: :ok
+
+  defp maybe_assign_cadence(campaign, _count) do
+    case cadence_slots(campaign) do
+      [] -> :ok
+      slots -> assign_send_after_slots(campaign, slots)
+    end
+  end
+
+  # Distribui os destinatários desta campanha igualmente entre os N slots
+  # (ntile sobre id) e seta send_after = horário do slot correspondente.
+  defp assign_send_after_slots(campaign, slots) do
+    {:ok, campaign_id} = Keila.Mailings.Campaign.Id.dump(campaign.id)
+
+    # send_after é :utc_datetime (armazena UTC naive). Bindar como NaiveDateTime
+    # com ::timestamp evita qualquer shift de timezone na sessão do Postgres.
+    naive_slots = Enum.map(slots, &DateTime.to_naive/1)
+    n = length(naive_slots)
+
+    values_sql =
+      naive_slots
+      |> Enum.with_index(1)
+      |> Enum.map(fn {_slot, i} -> "(#{i}, $#{i + 1}::timestamp)" end)
+      |> Enum.join(", ")
+
+    sql = """
+    UPDATE mailings_recipients AS r
+    SET send_after = b.ts, updated_at = now()
+    FROM (
+      SELECT id, ntile(#{n}) OVER (ORDER BY id) AS bucket
+      FROM mailings_recipients
+      WHERE campaign_id = $1 AND send_after IS NULL
+    ) AS sub
+    JOIN (VALUES #{values_sql}) AS b(bucket, ts) ON b.bucket = sub.bucket
+    WHERE r.id = sub.id
+    """
+
+    Repo.query!(sql, [campaign_id | naive_slots])
+    :ok
   end
 
   defp insert_recipients(contacts, campaign) do

@@ -1,7 +1,7 @@
 <div x-data="{
   mode: 'simple',
-  splitPreview: localStorage.getItem('fluxo_split_preview_v1') === '1',
-  toggleSplit() { this.splitPreview = !this.splitPreview; localStorage.setItem('fluxo_split_preview_v1', this.splitPreview ? '1' : '0'); },
+  splitPreview: (localStorage.getItem('fluxo_split_preview_v2') ?? (window.innerWidth >= 1024 ? '1' : '0')) === '1',
+  toggleSplit() { this.splitPreview = !this.splitPreview; localStorage.setItem('fluxo_split_preview_v2', this.splitPreview ? '1' : '0'); },
   showTour: !localStorage.getItem('fluxo_editor_tour_v1'),
   dismissTour() { localStorage.setItem('fluxo_editor_tour_v1', '1'); this.showTour = false; },
   ...imagePicker()
@@ -44,14 +44,14 @@
       x-on:click.prevent="mode = 'simple'"
       x-bind:class="mode === 'simple' ? 'bg-fluxo-500 text-white' : 'bg-gray-900 text-gray-300 hover:bg-gray-800'"
       class="flex-1 flex items-center justify-center gap-2 px-4 h-11 text-sm font-semibold transition-colors">
-      <span class="text-base">✨</span>
+      <span class="inline-flex h-4 w-4">{render_icon(:pencil_alt)}</span>
       <span>Editar visual</span>
     </button>
     <button type="button"
       x-on:click.prevent="mode = 'advanced'"
       x-bind:class="mode === 'advanced' ? 'bg-fluxo-500 text-white' : 'bg-gray-900 text-gray-300 hover:bg-gray-800'"
       class="flex-1 flex items-center justify-center gap-2 px-4 h-11 text-sm font-semibold transition-colors border-l border-gray-800">
-      <span class="text-base">{}</span>
+      <span class="inline-flex h-4 w-4">{render_icon(:code)}</span>
       <span>Código MJML</span>
     </button>
   </div>
@@ -143,9 +143,9 @@
         target="_blank"
         class="flex items-center gap-1.5 px-3 h-10 bg-gradient-to-r from-fluxo-500 to-accent-400 hover:opacity-90 text-white transition-all text-xs font-bold border-l border-gray-700/50 shadow-lg shadow-fluxo-500/30"
       >
-        <span class="text-base">★</span>
+        <span class="inline-flex h-4 w-4">{render_icon(:star)}</span>
         <span>Editor Completo</span>
-        <span class="text-[10px] opacity-80">↗</span>
+        <span class="inline-flex h-3 w-3 opacity-80">{render_icon(:external_link)}</span>
       </a>
     <% end %>
     <div class="flex-grow"></div>
@@ -177,14 +177,22 @@
     class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
     x-on:click.self="close()"
   >
-    <div class="bg-gray-900 border border-gray-800 rounded-2xl max-w-4xl w-full max-h-[85vh] overflow-hidden flex flex-col shadow-2xl">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="image-picker-title"
+      tabindex="-1"
+      x-ref="modal"
+      x-on:keydown.tab="trapFocus($event)"
+      class="bg-gray-900 border border-gray-800 rounded-2xl max-w-4xl w-full max-h-[85vh] overflow-hidden flex flex-col shadow-2xl"
+    >
       <!-- Header -->
       <div class="flex items-center justify-between px-6 py-4 border-b border-gray-800">
         <div>
-          <h3 class="text-lg font-bold text-white" x-text="targetField ? 'Trocar imagem' : 'Inserir imagem'"></h3>
-          <p class="text-xs text-gray-400 mt-0.5" x-text="targetField ? `Clica numa imagem pra usar no campo` : `${assets.length} imagens disponiveis - clique pra copiar URL`"></p>
+          <h3 id="image-picker-title" class="text-lg font-bold text-white" x-text="targetField ? 'Trocar imagem' : 'Inserir imagem'"></h3>
+          <p class="text-xs text-gray-400 mt-0.5" x-text="targetField ? `Clica numa imagem pra usar no campo` : `${assets.length} imagens disponíveis — clique pra copiar a URL`"></p>
         </div>
-        <button type="button" x-on:click="close()" class="text-gray-400 hover:text-white"><span class="inline-flex h-5 w-5">{render_icon(:x)}</span></button>
+        <button type="button" x-on:click="close()" aria-label="Fechar" class="text-gray-400 hover:text-white"><span class="inline-flex h-5 w-5">{render_icon(:x)}</span></button>
       </div>
 
       <!-- Loading -->
@@ -194,9 +202,9 @@
 
       <!-- Empty state -->
       <div x-show="!loading && assets.length === 0" class="flex-1 flex flex-col items-center justify-center p-12 text-center">
-        <span class="text-5xl mb-4">[img]</span>
+        <span class="inline-flex h-14 w-14 text-gray-600 mb-4">{render_icon(:photograph)}</span>
         <p class="text-white font-semibold mb-2">Nenhuma imagem na biblioteca ainda</p>
-        <p class="text-sm text-gray-400 mb-5">Faca o upload primeiro pra usar nos emails.</p>
+        <p class="text-sm text-gray-400 mb-5">Faça o upload primeiro pra usar nos emails.</p>
         <a
           href={"/projects/" <> @current_project.id <> "/media"}
           target="_blank"
@@ -228,8 +236,8 @@
 
       <!-- Footer com mensagem de copia -->
       <div x-show="copiedUrl" x-transition class="px-6 py-3 bg-fluxo-500/20 border-t border-fluxo-500/30 text-fluxo-200 text-sm flex items-center gap-2">
-        <span class="text-lg">OK</span>
-        <span x-text="targetField ? 'Imagem trocada! O preview atualiza em segundos.' : 'URL copiada! Cola no codigo MJML.'"></span>
+        <span class="inline-flex h-5 w-5 text-fluxo-300 flex-shrink-0">{render_icon(:check_circle)}</span>
+        <span x-text="targetField ? 'Imagem trocada! O preview atualiza em segundos.' : 'URL copiada! Cola no código MJML.'"></span>
       </div>
     </div>
   </div>
@@ -246,13 +254,13 @@
       class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
       x-on:click.self="close()"
     >
-      <div role="dialog" aria-modal="true" aria-labelledby="block-picker-title" tabindex="-1" x-ref="modal" class="bg-gray-900 border border-fluxo-500/30 rounded-2xl max-w-5xl w-full max-h-[85vh] overflow-hidden flex flex-col shadow-2xl shadow-fluxo-500/20">
+      <div role="dialog" aria-modal="true" aria-labelledby="block-picker-title" tabindex="-1" x-ref="modal" x-on:keydown.tab="trapFocus($event)" class="bg-gray-900 border border-fluxo-500/30 rounded-2xl max-w-5xl w-full max-h-[85vh] overflow-hidden flex flex-col shadow-2xl shadow-fluxo-500/20">
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-800">
           <div>
             <h3 id="block-picker-title" class="text-lg font-bold text-white">Adicionar bloco pronto</h3>
             <p class="text-xs text-gray-400 mt-0.5">Clica num bloco pra adicionar no final do email. Você pode editar os textos depois.</p>
           </div>
-          <button type="button" x-on:click="close()" class="text-gray-400 hover:text-white text-2xl leading-none">×</button>
+          <button type="button" x-on:click="close()" aria-label="Fechar" class="text-gray-400 hover:text-white"><span class="inline-flex h-5 w-5">{render_icon(:x)}</span></button>
         </div>
 
         <!-- Filtro de categoria -->
@@ -303,10 +311,10 @@
   <!-- Painel de edicao -->
   <div class="p-4 sm:p-6 max-h-[80vh] overflow-y-auto">
     <div class="bg-fluxo-500/10 border border-fluxo-500/30 rounded-xl p-4 mb-5 flex items-start gap-3">
-      <span class="text-2xl">[?]</span>
+      <span class="inline-flex h-5 w-5 text-fluxo-300 flex-shrink-0 mt-0.5">{render_icon(:information_circle)}</span>
       <div>
-        <h3 class="font-semibold text-white text-sm">Modo Simples</h3>
-        <p class="text-xs text-gray-300 mt-0.5">Edita os textos, botoes e imagens do email sem mexer no codigo. Mudancas aparecem no preview ao lado em segundos. Usa a aba "Avancado" se precisar de controle total.</p>
+        <h3 class="font-semibold text-white text-sm">Editar visual</h3>
+        <p class="text-xs text-gray-300 mt-0.5">Edite os textos, botões e imagens do email sem mexer no código. As mudanças aparecem no preview ao lado em segundos. Use a aba "Código MJML" se precisar de controle total.</p>
       </div>
     </div>
 
@@ -330,19 +338,28 @@
                 phx-value-index={section.index}
                 disabled={section.index == 0}
                 title="Mover pra cima"
-                class="px-2 py-1 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded disabled:opacity-30 disabled:cursor-not-allowed">↑</button>
+                aria-label="Mover seção pra cima"
+                class="flex items-center justify-center w-7 h-7 text-gray-400 hover:text-white hover:bg-gray-800 rounded disabled:opacity-30 disabled:cursor-not-allowed">
+                <span class="inline-flex h-4 w-4">{render_icon(:chevron_up)}</span>
+              </button>
               <button type="button"
                 phx-click="section-down"
                 phx-value-index={section.index}
                 disabled={section.index == length(mjml_sections) - 1}
                 title="Mover pra baixo"
-                class="px-2 py-1 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded disabled:opacity-30 disabled:cursor-not-allowed">↓</button>
+                aria-label="Mover seção pra baixo"
+                class="flex items-center justify-center w-7 h-7 text-gray-400 hover:text-white hover:bg-gray-800 rounded disabled:opacity-30 disabled:cursor-not-allowed">
+                <span class="inline-flex h-4 w-4">{render_icon(:chevron_down)}</span>
+              </button>
               <button type="button"
                 phx-click="section-remove"
                 phx-value-index={section.index}
                 data-confirm="Remover essa seção do email?"
                 title="Remover seção"
-                class="px-2 py-1 text-sm text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded">×</button>
+                aria-label="Remover seção"
+                class="flex items-center justify-center w-7 h-7 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded">
+                <span class="inline-flex h-4 w-4">{render_icon(:trash)}</span>
+              </button>
             </div>
           <% end %>
         </div>
@@ -351,8 +368,16 @@
 
     <% simple_fields = assigns[:simple_fields] || [] %>
     <%= if simple_fields == [] do %>
-      <div class="bg-gray-900/40 border border-gray-800 rounded-xl p-8 text-center text-gray-400 text-sm">
-        Nenhum campo editavel encontrado neste email. Use o modo Avancado para editar o codigo MJML diretamente.
+      <div class="bg-gray-900/40 border border-gray-800 rounded-xl p-8 text-center">
+        <span class="inline-flex h-10 w-10 text-gray-600 mb-3">{render_icon(:document_text)}</span>
+        <p class="text-gray-300 text-sm font-medium mb-1">Nenhum campo editável neste email ainda</p>
+        <p class="text-gray-500 text-xs mb-4">Adicione um bloco pronto pra começar, ou edite o código direto na aba "Código MJML".</p>
+        <button type="button"
+          x-on:click.prevent="$dispatch('open-block-picker')"
+          class="inline-flex items-center gap-1.5 px-4 py-2 bg-fluxo-500 hover:bg-fluxo-600 text-white rounded-lg text-sm font-semibold transition-colors">
+          <span class="inline-flex h-4 w-4">{render_icon(:document_add)}</span>
+          Adicionar bloco
+        </button>
       </div>
     <% else %>
       <div class="space-y-4">
@@ -366,7 +391,7 @@
                 <textarea name={"simple[" <> field.id <> "]"} rows="3" phx-debounce="400"
                   class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-3 py-2 text-sm font-mono"><%= field.value %></textarea>
                 <p class="text-[10px] text-gray-500 mt-1">
-                  Pode usar &lt;br/&gt; pra quebrar linha, &lt;strong&gt; pra negrito, ou variaveis &#123;&#123; first_name &#125;&#125;
+                  Pode usar &lt;br/&gt; pra quebrar linha, &lt;strong&gt; pra negrito, ou variáveis &#123;&#123; first_name &#125;&#125;
                 </p>
 
               <% :button -> %>
@@ -377,14 +402,14 @@
                 <input type="text" name={"simple[" <> field.id <> "]"} value={field.value} phx-debounce="400"
                   placeholder="https://..."
                   class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-3 py-2 text-sm font-mono" />
-                <p class="text-[10px] text-gray-500 mt-1">Use a URL completa (https://...) ou uma variavel &#123;&#123; link_xxx &#125;&#125;</p>
+                <p class="text-[10px] text-gray-500 mt-1">Use a URL completa (https://...) ou uma variável &#123;&#123; link_xxx &#125;&#125;</p>
 
               <% :image_src -> %>
                 <div class="flex items-start gap-3">
                   <div class="w-24 h-24 bg-gray-800 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center">
                     <%= cond do %>
                       <% String.starts_with?(field.value, "{{") -> %>
-                        <div class="text-center text-[10px] text-gray-400 px-2">Variavel<br/>da marca</div>
+                        <div class="text-center text-[10px] text-gray-400 px-2">Variável<br/>da marca</div>
                       <% String.starts_with?(field.value, "http") -> %>
                         <img src={field.value} alt="" class="max-w-full max-h-full object-contain" />
                       <% true -> %>
@@ -408,7 +433,7 @@
                         data-target={field.id}
                         data-project-id={@current_project.id}
                       >
-                        <span class="inline-flex h-3 w-3 text-base leading-none">↑</span>
+                        <span class="inline-flex h-3.5 w-3.5">{render_icon(:upload)}</span>
                         <span data-upload-label>Upload do PC</span>
                         <input type="file" accept="image/*" class="hidden"
                           onchange={"window.fluxoUploadImage(this, '" <> field.id <> "', '" <> @current_project.id <> "')"} />
@@ -419,9 +444,9 @@
 
               <% :image_alt -> %>
                 <input type="text" name={"simple[" <> field.id <> "]"} value={field.value} phx-debounce="400"
-                  placeholder="Descricao da imagem"
+                  placeholder="Descrição da imagem"
                   class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-3 py-2 text-sm" />
-                <p class="text-[10px] text-gray-500 mt-1">Texto que aparece se a imagem nao carregar (acessibilidade)</p>
+                <p class="text-[10px] text-gray-500 mt-1">Texto que aparece se a imagem não carregar (acessibilidade)</p>
             <% end %>
           </div>
         <% end %>
@@ -431,16 +456,21 @@
   <!-- /Painel de edicao -->
 
   <!-- Painel de preview lado a lado (so quando splitPreview ativo) -->
-  <div x-show="splitPreview" x-cloak class="bg-gray-100 border-l border-gray-800 relative overflow-hidden" style="min-height: 80vh;">
-    <div class="absolute top-2 right-2 z-10 px-2 py-1 bg-gray-900/70 text-white text-[10px] font-semibold rounded backdrop-blur-sm">
-      Preview ao vivo
+  <div x-show="splitPreview" x-cloak class="flex flex-col border-l border-gray-800 bg-gray-100" style="min-height: 80vh;">
+    <div class="flex items-center gap-2 px-4 h-9 bg-gray-900 border-b border-gray-800 flex-shrink-0">
+      <span class="relative flex h-2 w-2">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-fluxo-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-fluxo-500"></span>
+      </span>
+      <span class="text-[11px] font-semibold text-gray-300 uppercase tracking-wider">Preview ao vivo</span>
+      <span class="text-[10px] text-gray-500 ml-auto">atualiza enquanto você edita</span>
     </div>
     <iframe
       id="html-split-preview"
       src="about:blank"
       sandbox="allow-same-origin"
-      class="w-full h-full border-0"
-      style="min-height: 80vh;"
+      title="Preview do email"
+      class="w-full flex-grow border-0 bg-white"
     ></iframe>
   </div>
   </div>
@@ -448,6 +478,24 @@
 </div>
 
 <script>
+  // Prende o Tab dentro do modal aberto (focus trap) — acessibilidade.
+  function trapFocusIn(modalEl, event) {
+    if (!modalEl) return;
+    const focusable = modalEl.querySelectorAll(
+      'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
+    );
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+
   function imagePicker() {
     return {
       isOpen: false,
@@ -455,12 +503,15 @@
       assets: [],
       copiedUrl: false,
       targetField: null,
+      _prevFocus: null,
       open(url) {
         this.targetField = null;
         this.isOpen = true;
         this.loading = true;
         this.assets = [];
         this.copiedUrl = false;
+        this._prevFocus = document.activeElement;
+        this.$nextTick(() => { if (this.$refs.modal) this.$refs.modal.focus(); });
         fetch(url)
           .then(r => r.json())
           .then(data => { this.assets = data.assets || []; this.loading = false; })
@@ -470,10 +521,12 @@
         this.open(url);
         this.targetField = fieldId;
       },
+      trapFocus(event) { trapFocusIn(this.$refs.modal, event); },
       close() {
         this.isOpen = false;
         this.copiedUrl = false;
         this.targetField = null;
+        if (this._prevFocus && this._prevFocus.focus) { this._prevFocus.focus(); }
       },
       pick(url, filename) {
         if (this.targetField) {
@@ -572,7 +625,7 @@
         this._prevFocus = document.activeElement;
         this.$nextTick(() => { if (this.$refs.modal) this.$refs.modal.focus(); });
         if (this.blocks.length > 0) return; // ja carregou antes
-        if (!this.projectId) { this.message = 'Erro: projeto nao identificado'; return; }
+        if (!this.projectId) { this.message = 'Erro: projeto não identificado'; return; }
         this.loading = true;
         fetch('/projects/' + this.projectId + '/blocks/list.json')
           .then(r => r.json())
@@ -584,6 +637,7 @@
           .catch(e => { console.error(e); this.loading = false; this.message = 'Erro carregando blocos'; });
       },
       close() { this.isOpen = false; this.message = ''; if (this._prevFocus && this._prevFocus.focus) { this._prevFocus.focus(); } },
+      trapFocus(event) { trapFocusIn(this.$refs.modal, event); },
       async insert(slug) {
         if (!this.projectId) return;
         this.inserting = true;
@@ -594,7 +648,7 @@
           if (!data.mjml) { this.message = 'Erro: bloco vazio'; return; }
 
           const textarea = document.querySelector('textarea[name="campaign[mjml_body]"]');
-          if (!textarea) { this.message = 'Editor nao encontrado'; return; }
+          if (!textarea) { this.message = 'Editor não encontrado'; return; }
 
           // Insere snippet ANTES de </mj-body> (ou no final se nao encontrar)
           const current = textarea.value;
@@ -630,21 +684,21 @@
         <h3 class="text-xl font-bold text-white flex items-center gap-2">
           <span class="inline-flex h-6 w-6">{render_icon(:sparkles)}</span> Ajustar com IA
         </h3>
-        <p class="text-sm text-gray-400 mt-1">Descreve em portugues o que voce quer mudar.</p>
+        <p class="text-sm text-gray-400 mt-1">Descreva em português o que você quer mudar.</p>
       </div>
-      <button type="button" onclick={"document.getElementById('ai-modal-" <> @current_project.id <> "').classList.add('hidden')"} class="text-gray-400 hover:text-white text-2xl">x</button>
+      <button type="button" aria-label="Fechar" onclick={"document.getElementById('ai-modal-" <> @current_project.id <> "').classList.add('hidden')"} class="text-gray-400 hover:text-white"><span class="inline-flex h-5 w-5">{render_icon(:x)}</span></button>
     </div>
 
     <textarea
       id={"ai-prompt-" <> @current_project.id}
       rows="4"
-      placeholder="Ex: deixa o tom mais informal, encurta o email pela metade, troca o titulo por algo sobre Black Friday, adiciona urgencia no CTA..."
+      placeholder="Ex: deixa o tom mais informal, encurta o email pela metade, troca o título por algo sobre Black Friday, adiciona urgência no CTA..."
       class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-4 py-3 text-sm mb-3"
     ></textarea>
 
-    <p class="text-xs text-gray-500 mb-3">Sugestoes rapidas:</p>
+    <p class="text-xs text-gray-500 mb-3">Sugestões rápidas:</p>
     <div id={"ai-suggestions-" <> @current_project.id} class="flex flex-wrap gap-2 mb-5">
-      <%= for s <- ["Encurtar pela metade", "Tom mais informal", "Adicionar urgencia", "Trocar todas as cores pra mais vibrantes", "Adicionar emoji nos titulos", "Reescrever em pt-BR mais coloquial"] do %>
+      <%= for s <- ["Encurtar pela metade", "Tom mais informal", "Adicionar urgência", "Trocar todas as cores pra mais vibrantes", "Adicionar emoji nos títulos", "Reescrever em pt-BR mais coloquial"] do %>
         <button
           type="button"
           onclick={"document.getElementById('ai-prompt-" <> @current_project.id <> "').value='" <> s <> "'"}
@@ -672,7 +726,7 @@
     </div>
 
     <p class="text-xs text-gray-500 mt-4 text-center">
-      ~$0.005 por edicao - Modelo: Gemini 2.5 Flash
+      ~$0,005 por edição · Modelo: Gemini 2.5 Flash
     </p>
   </div>
 </div>
@@ -687,10 +741,10 @@
     const modalEl = document.getElementById('ai-modal-' + projectId);
 
     const instruction = promptEl.value.trim();
-    if (!instruction) { errorEl.textContent = 'Diz o que voce quer mudar'; errorEl.classList.remove('hidden'); return; }
+    if (!instruction) { errorEl.textContent = 'Diz o que você quer mudar'; errorEl.classList.remove('hidden'); return; }
 
     const textarea = document.querySelector('textarea[name="campaign[mjml_body]"]');
-    if (!textarea) { errorEl.textContent = 'Editor MJML nao encontrado.'; errorEl.classList.remove('hidden'); return; }
+    if (!textarea) { errorEl.textContent = 'Editor MJML não encontrado.'; errorEl.classList.remove('hidden'); return; }
 
     statusEl.classList.remove('hidden');
     errorEl.classList.add('hidden');

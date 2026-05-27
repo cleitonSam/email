@@ -942,7 +942,9 @@ html {
     .animate-glow,
     .animate-fade-in,
     .animate-fade-in-scale,
-    .animate-pulse-soft {
+    .animate-pulse-soft,
+    .animate-ping,
+    .animate-pulse {
         animation: none !important;
     }
 }

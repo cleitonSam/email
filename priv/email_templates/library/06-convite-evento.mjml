@@ -163,7 +163,7 @@
     <!-- FOOTER -->
     <mj-section background-color="#0A0E27" padding="32px 24px 24px">
       <mj-column>
-        <mj-image src="{{ brand.logo_url_white | default: 'https://placehold.co/140x44/0A0E27/FFFFFF/png?text=ACADEMIA' }}" alt="{{ brand.name }}" width="120px" align="left" padding="0 0 20px" />
+        <mj-image src="{{ brand.logo_url | default: 'https://placehold.co/140x44/0A0E27/FFFFFF/png?text=ACADEMIA' }}" alt="{{ brand.name }}" width="120px" align="left" padding="0 0 20px" />
         <mj-text color="#8B92A8" font-size="13px" line-height="1.65" padding="0 0 16px">
           <strong style="color:#FFFFFF">{{ brand.name }}</strong> — {{ unidade }}<br/>
           {{ brand.address }}<br/>

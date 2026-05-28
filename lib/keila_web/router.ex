@@ -3,7 +3,9 @@ defmodule KeilaWeb.Router do
   use KeilaWeb, :router
 
   pipeline :browser do
-    plug :accepts, ["html"]
+    # Aceita json também: POSTs via fetch (ex: Editor Completo /grapes/save)
+    # mandam Accept: application/json e davam 406 quando só "html" era aceito.
+    plug :accepts, ["html", "json"]
     plug :fetch_session
     plug :fetch_live_flash
     plug :put_root_layout, {KeilaWeb.LayoutView, :root}

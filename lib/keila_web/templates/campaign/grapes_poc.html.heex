@@ -444,7 +444,18 @@
 
       async function doSave() {
         if (saving) { pendingSave = true; return; }
-        const mjml = editor.getHtml();
+
+        // IMPORTANTE: com o plugin grapesjs-mjml, editor.getHtml() NÃO devolve
+        // MJML válido — o que quebrava a campanha ("unexpected token in root
+        // template"). O comando 'mjml-get-code' retorna { html, mjml }; salvamos
+        // o MJML de verdade no campo mjml_body.
+        let mjml;
+        try {
+          const code = editor.runCommand('mjml-get-code');
+          mjml = code && code.mjml ? code.mjml : editor.getHtml();
+        } catch (_) {
+          mjml = editor.getHtml();
+        }
         if (!mjml || mjml.length < 20) return;
 
         saving = true;

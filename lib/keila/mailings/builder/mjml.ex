@@ -31,14 +31,14 @@ defmodule Keila.Mailings.Builder.MJML do
   defp render_mjml(input) do
     case Mjml.to_html(input) do
       {:ok, output} ->
-        {:ok, output}
+        {:ok, inject_mobile_css(output)}
 
       {:error, reason} ->
         repaired = sanitize_mjml(input)
 
         if repaired != input do
           case Mjml.to_html(repaired) do
-            {:ok, output} -> {:ok, output}
+            {:ok, output} -> {:ok, inject_mobile_css(output)}
             {:error, reason2} -> {:error, mjml_error(reason2)}
           end
         else
@@ -46,6 +46,53 @@ defmodule Keila.Mailings.Builder.MJML do
         end
     end
   end
+
+  # CSS defensivo pra mobile injetado em TODO email. Não altera os templates;
+  # roda no HTML compilado e usa seletor de atributo `[style*="font-size:..."]`
+  # com !important pra cobrir tudo automaticamente. Cobre:
+  #   - fontes grandes (28/32/36/38/40/48/56/64px) encolhem em telas <=600px;
+  #   - paddings extremos (48/56/64px) ficam compactos;
+  #   - imagens nunca estouram a tela (max-width:100% + height:auto).
+  @mobile_css """
+  <style type="text/css">
+  @media only screen and (max-width: 600px) {
+    img { max-width: 100% !important; height: auto !important; }
+    *[style*="font-size: 64px"], *[style*="font-size:64px"] { font-size: 30px !important; line-height: 1.15 !important; letter-spacing: -1px !important; }
+    *[style*="font-size: 56px"], *[style*="font-size:56px"] { font-size: 28px !important; line-height: 1.2 !important; letter-spacing: -0.5px !important; }
+    *[style*="font-size: 48px"], *[style*="font-size:48px"] { font-size: 26px !important; line-height: 1.2 !important; }
+    *[style*="font-size: 40px"], *[style*="font-size:40px"] { font-size: 24px !important; line-height: 1.25 !important; }
+    *[style*="font-size: 38px"], *[style*="font-size:38px"] { font-size: 22px !important; line-height: 1.3 !important; }
+    *[style*="font-size: 36px"], *[style*="font-size:36px"] { font-size: 22px !important; line-height: 1.3 !important; }
+    *[style*="font-size: 32px"], *[style*="font-size:32px"] { font-size: 20px !important; line-height: 1.35 !important; }
+    *[style*="font-size: 28px"], *[style*="font-size:28px"] { font-size: 19px !important; line-height: 1.4 !important; }
+    *[style*="padding: 64px"], *[style*="padding:64px"] { padding: 24px !important; }
+    *[style*="padding: 56px"], *[style*="padding:56px"] { padding: 24px !important; }
+    *[style*="padding: 48px"], *[style*="padding:48px"] { padding: 20px !important; }
+    *[style*="padding-left: 64px"] { padding-left: 24px !important; }
+    *[style*="padding-right: 64px"] { padding-right: 24px !important; }
+    *[style*="padding-left: 56px"] { padding-left: 24px !important; }
+    *[style*="padding-right: 56px"] { padding-right: 24px !important; }
+    *[style*="padding-left: 48px"] { padding-left: 20px !important; }
+    *[style*="padding-right: 48px"] { padding-right: 20px !important; }
+  }
+  </style>
+  """
+
+  defp inject_mobile_css(html) when is_binary(html) do
+    cond do
+      String.contains?(html, "</head>") ->
+        String.replace(html, "</head>", @mobile_css <> "</head>", global: false)
+
+      true ->
+        # Sem <head> (improvável vindo do MJML compilado): coloca antes de <body
+        case String.split(html, "<body", parts: 2) do
+          [pre, post] -> pre <> @mobile_css <> "<body" <> post
+          _ -> html
+        end
+    end
+  end
+
+  defp inject_mobile_css(html), do: html
 
   defp mjml_error(reason),
     do: gettext("Error compiling MJML: %{reason}", reason: to_string(reason))

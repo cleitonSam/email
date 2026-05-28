@@ -136,6 +136,15 @@
       <span class="inline-flex h-4 w-4 flex-shrink-0">{render_icon(:photograph)}</span>
       <span>Galeria de imagens</span>
     </a>
+    <a
+      title="Trocar o logo, cores e dados da marca (abre em nova aba)"
+      href={"/projects/" <> @current_project.id <> "/marca"}
+      target="_blank"
+      class="flex items-center gap-1.5 px-3 h-10 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors text-xs font-medium border-l border-gray-700/50"
+    >
+      <span class="inline-flex h-4 w-4 flex-shrink-0">{render_icon(:color_swatch)}</span>
+      <span>Minha marca</span>
+    </a>
 <%!-- Editor Completo (GrapesJS POC) desativado: gerava MJML incompatível com o
        compilador (mrml) — "unexpected token in root template". Use o editor
        estável (Editar visual / Código MJML). Rota também desativada no router. --%>

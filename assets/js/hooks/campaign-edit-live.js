@@ -3,9 +3,24 @@ import { MarkdownEditor } from "../campaign-editors/markdown"
 import MarkdownSimpleEditor from "../campaign-editors/markdown-simple"
 import MjmlEditor from "../campaign-editors/mjml"
 
+// Placeholder usado quando uma imagem falha no preview (mesmo formato visual
+// dos templates pra não chamar atenção pro problema na hora de revisar).
+const IMG_FALLBACK = "https://placehold.co/280x88/0A0E27/FFFFFF/png?text=LOGO"
+
+// Injeta onerror em cada <img> do HTML do email. Se a imagem falhar
+// (logo do ImageKit com restrição, asset removido, etc.), aparece o
+// placeholder em vez do ícone "imagem quebrada". Só afeta o PREVIEW —
+// o email enviado ao destinatário não roda JS.
+const addImageFallback = (html) => {
+  const handler = `this.onerror=null;this.src='${IMG_FALLBACK}';`
+  return html.replace(/<img\b/gi, `<img onerror="${handler}"`)
+}
+
 const putHtmlPreview = (el) => {
-  const content = el.innerText
-  if (!content) return
+  const raw = el.innerText
+  if (!raw) return
+
+  const content = addImageFallback(raw)
 
   const iframes = document.querySelectorAll(el.dataset.iframe)
   if (!iframes.length) return

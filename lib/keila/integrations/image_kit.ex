@@ -140,9 +140,18 @@ defmodule Keila.Integrations.ImageKit do
         |> Enum.map(fn {k, v} -> "#{k}-#{v}" end)
         |> Enum.join(",")
 
-      case String.split(url, "/", parts: 4) do
-        [scheme, _empty, host, path] -> "#{scheme}//#{host}/tr:#{tr}/#{path}"
-        _ -> url
+      # ImageKit espera o segmento "tr:..." DEPOIS do ID do endpoint, não
+      # entre o host e o ID. Usa o url_endpoint configurado (ex:
+      # "https://ik.imagekit.io/0jwoagmre") pra dividir corretamente:
+      # endpoint/<resto>  ->  endpoint/tr:<transforms>/<resto>
+      # Antes a função inseria "tr:" antes do ID, gerando URL inválida (404).
+      endpoint = String.trim_trailing(get_config_value(:url_endpoint) || "", "/")
+
+      if endpoint != "" and String.starts_with?(url, endpoint <> "/") do
+        rest = String.replace_prefix(url, endpoint <> "/", "")
+        "#{endpoint}/tr:#{tr}/#{rest}"
+      else
+        url
       end
     end
   end

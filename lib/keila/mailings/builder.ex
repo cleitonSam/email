@@ -75,13 +75,33 @@ defmodule Keila.Mailings.Builder do
 
   # Carrega o brand kit do projeto pra disponibilizar como {{ brand.* }} nos
   # templates Liquid. Configurado pelo wizard /projects/:id/setup.
+  #
+  # Reescreve brand.logo_url pra apontar pro proxy público do app
+  # (/b/:project_id/logo) em vez da URL direta do ImageKit. Isso elimina
+  # de uma vez problemas de "Restrict unsigned URLs", restrição de origem
+  # e hotlink: o servidor busca a imagem e devolve pro cliente de email.
   defp brand_for_project(project_id) do
     case Keila.Projects.get_project(project_id) do
       nil -> %{}
-      project -> Keila.Projects.Brand.get(project)
+      project -> rewrite_logo_url(Keila.Projects.Brand.get(project), project_id)
     end
   rescue
     _ -> %{}
+  end
+
+  defp rewrite_logo_url(brand, project_id) do
+    case Map.get(brand, "logo_url") do
+      url when is_binary(url) and url != "" ->
+        try do
+          proxy = Routes.brand_url(KeilaWeb.Endpoint, :public_logo, project_id)
+          Map.put(brand, "logo_url", proxy)
+        rescue
+          _ -> brand
+        end
+
+      _ ->
+        brand
+    end
   end
 
   @default_preview_contact %Keila.Contacts.Contact{

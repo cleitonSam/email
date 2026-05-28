@@ -109,6 +109,71 @@ defmodule KeilaWeb.BrandController do
     end
   end
 
+  # URL pública servida quando não há logo ou o fetch da URL real falha.
+  @placeholder_logo_url "https://placehold.co/280x88/0A0E27/FFFFFF/png?text=LOGO"
+
+  @doc """
+  Proxy público do logo da marca.
+
+  Os emails apontam pra essa URL no app (`/b/:project_id/logo`) em vez da URL
+  externa do ImageKit. O servidor busca a imagem pela rede (sem CORS, sem
+  bloqueio de hotlink, sem "restrict unsigned URLs" do painel do ImageKit) e
+  devolve os bytes pro cliente de email. Se não houver logo configurado ou o
+  fetch falhar, redireciona pra um placeholder (assim o email nunca mostra
+  ícone de imagem quebrada).
+  """
+  def public_logo(conn, %{"project_id" => project_id}) do
+    case Keila.Projects.get_project(project_id) do
+      nil ->
+        serve_placeholder(conn)
+
+      project ->
+        brand = Brand.get(project)
+        url = brand["logo_url"]
+
+        if is_binary(url) and url != "" do
+          case fetch_remote_image(url) do
+            {:ok, body, content_type} ->
+              conn
+              |> put_resp_content_type(content_type)
+              |> put_resp_header("cache-control", "public, max-age=86400")
+              |> send_resp(200, body)
+
+            :error ->
+              serve_placeholder(conn)
+          end
+        else
+          serve_placeholder(conn)
+        end
+    end
+  end
+
+  defp serve_placeholder(conn) do
+    conn
+    |> put_resp_header("cache-control", "public, max-age=300")
+    |> redirect(external: @placeholder_logo_url)
+  end
+
+  defp fetch_remote_image(url) do
+    case HTTPoison.get(url, [{"User-Agent", "FluxoLogoProxy/1.0"}],
+           recv_timeout: 10_000,
+           timeout: 5_000,
+           follow_redirect: true,
+           max_redirect: 3
+         ) do
+      {:ok, %HTTPoison.Response{status_code: 200, body: body, headers: headers}} ->
+        content_type =
+          Enum.find_value(headers, "image/png", fn {k, v} ->
+            if String.downcase(k) == "content-type", do: v
+          end)
+
+        {:ok, body, content_type}
+
+      _ ->
+        :error
+    end
+  end
+
   defp get_extras(brand) do
     case Map.get(brand, "extra_colors") do
       list when is_list(list) -> list

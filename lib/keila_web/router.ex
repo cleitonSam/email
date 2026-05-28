@@ -40,6 +40,11 @@ defmodule KeilaWeb.Router do
     # Previews dos modelos de email — servidos diretamente do disco
     get "/email-previews/:slug", PreviewController, :show
 
+    # Proxy público do logo da marca (usado pelos emails enviados). O server
+    # busca a imagem do ImageKit e devolve os bytes, evitando que restrições
+    # de painel/origem do ImageKit quebrem o logo nos clientes de email.
+    get "/b/:project_id/logo", BrandController, :public_logo
+
     # Convite pra entrar num projeto (link recebido por email)
     get "/invite/:token", InviteController, :show
     post "/invite/:token", InviteController, :accept

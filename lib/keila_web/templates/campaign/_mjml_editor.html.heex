@@ -223,7 +223,7 @@
               x-on:click="pick(asset.url, asset.filename)"
               class="group relative aspect-square bg-gray-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-fluxo-500 transition"
             >
-              <img x-bind:src="asset.thumbnail_url" x-bind:alt="asset.filename" loading="lazy" class="w-full h-full object-cover" />
+              <img x-bind:src="asset.thumbnail_url" x-bind:alt="asset.filename" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400/1f2937/9ca3af/png?text=falhou';" class="w-full h-full object-cover" />
               <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent opacity-0 group-hover:opacity-100 transition flex flex-col justify-end p-2.5">
                 <div class="text-xs font-semibold text-white truncate" x-text="asset.filename"></div>
                 <div class="text-[10px] text-fluxo-300 mt-0.5" x-text="targetField ? 'Clique pra usar' : 'Clique pra copiar URL'"></div>
@@ -411,7 +411,7 @@
                       <% String.starts_with?(field.value, "{{") -> %>
                         <div class="text-center text-[10px] text-gray-400 px-2">Variável<br/>da marca</div>
                       <% String.starts_with?(field.value, "http") -> %>
-                        <img src={field.value} alt="" class="max-w-full max-h-full object-contain" />
+                        <img src={field.value} alt="" onerror="this.onerror=null;this.src='https://placehold.co/96/1f2937/9ca3af/png?text=erro';" class="max-w-full max-h-full object-contain" />
                       <% true -> %>
                         <div class="text-center text-[10px] text-gray-500">sem<br/>preview</div>
                     <% end %>

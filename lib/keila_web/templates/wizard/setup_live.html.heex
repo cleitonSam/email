@@ -155,7 +155,7 @@
         <div class="bg-white rounded-xl overflow-hidden mb-6 shadow-2xl">
           <div class="px-6 py-4 border-b border-gray-200 flex items-center gap-3">
             <%= if @brand["logo_url"] != "" do %>
-              <img src={@brand["logo_url"]} alt={@brand["name"]} class="h-8" />
+              <img src={@brand["logo_url"]} alt={@brand["name"]} onerror="this.onerror=null;this.src='https://placehold.co/120x32/0A0E27/FFFFFF/png?text=LOGO';" class="h-8" />
             <% end %>
           </div>
           <div class="p-12" style={"background: " <> (@brand["color_dark"] || "#0A0E27")}>

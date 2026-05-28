@@ -61,7 +61,7 @@
           x-data="{ showDelete: false }"
         >
           <div class="relative overflow-hidden rounded-xl bg-gray-900/60 border border-gray-800/50 backdrop-blur-sm aspect-square">
-            <img id={"file-#{file.uuid}"} src={url} alt="" class="h-full w-full object-cover transition-transform group-hover:scale-105" />
+            <img id={"file-#{file.uuid}"} src={url} alt="" onerror="this.onerror=null;this.src='https://placehold.co/400/1f2937/9ca3af/png?text=falhou';" class="h-full w-full object-cover transition-transform group-hover:scale-105" />
             <button 
               @click.stop="showDelete = true" 
               class="absolute top-2 right-2 p-2 rounded-lg bg-gray-950/80 hover:bg-gray-950 text-gray-400 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"

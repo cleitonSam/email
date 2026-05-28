@@ -3,9 +3,11 @@ defmodule KeilaWeb.Router do
   use KeilaWeb, :router
 
   pipeline :browser do
-    # Aceita json também: POSTs via fetch (ex: Editor Completo /grapes/save)
-    # mandam Accept: application/json e davam 406 quando só "html" era aceito.
-    plug :accepts, ["html", "json"]
+    # Aceita json (POSTs via fetch mandam Accept: application/json) e formatos de
+    # imagem (clientes de email / proxies pedem imagens de /uploads com Accept
+    # estrito tipo "image/png" sem */*). Sem isso o Phoenix respondia 406 e a
+    # imagem quebrava.
+    plug :accepts, ["html", "json", "png", "jpg", "jpeg", "gif", "webp", "svg"]
     plug :fetch_session
     plug :fetch_live_flash
     plug :put_root_layout, {KeilaWeb.LayoutView, :root}
@@ -179,8 +181,11 @@ defmodule KeilaWeb.Router do
     get "/projects/:project_id/campaigns/new", CampaignController, :new
     post "/projects/:project_id/campaigns/new", CampaignController, :post_new
     get "/projects/:project_id/campaigns/:id", CampaignController, :edit
-    get "/projects/:project_id/campaigns/:id/grapes", CampaignController, :grapes_poc
-    post "/projects/:project_id/campaigns/:id/grapes/save", CampaignController, :grapes_save
+    # Editor Completo (GrapesJS POC) desativado — gerava MJML incompatível com o
+    # compilador (mrml), causando "unexpected token in root template" e corrompendo
+    # campanhas. Use o editor estável (Editar visual / Código MJML).
+    # get "/projects/:project_id/campaigns/:id/grapes", CampaignController, :grapes_poc
+    # post "/projects/:project_id/campaigns/:id/grapes/save", CampaignController, :grapes_save
     get "/projects/:project_id/campaigns/:id/stats", CampaignController, :stats
     get "/projects/:project_id/campaigns/:id/view", CampaignController, :view
     get "/projects/:project_id/campaigns/:id/share", CampaignController, :share

@@ -7,7 +7,16 @@ defmodule KeilaWeb.ContactImportLive do
 
     socket =
       socket
-      |> allow_upload(:csv, accept: [".csv", ".txt", ".tsv"], max_entries: 1)
+      |> allow_upload(:csv,
+        accept: [".csv", ".txt", ".tsv"],
+        max_entries: 1,
+        # auto_upload faz o upload comecar assim que o usuario seleciona o
+        # arquivo (em vez de so ao submeter o form). Sem isso o usuario via
+        # "0%" travado ate clicar Start Import.
+        auto_upload: true,
+        # 50MB cobre planilhas grandes de contatos sem precisar mexer aqui.
+        max_file_size: 50_000_000
+      )
       |> assign(:uploaded_files, [])
       |> assign(:current_project, session["current_project"])
       |> put_default_assigns()
@@ -23,6 +32,10 @@ defmodule KeilaWeb.ContactImportLive do
   @impl true
   def handle_event("validate", %{"import" => import_options}, socket) do
     {:noreply, assign(socket, :import_replace, import_options["replace"] == "true")}
+  end
+
+  def handle_event("cancel-upload", %{"ref" => ref}, socket) do
+    {:noreply, cancel_upload(socket, :csv, ref)}
   end
 
   def handle_event("import", %{"import" => import_options}, socket) do

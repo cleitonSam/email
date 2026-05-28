@@ -12,6 +12,7 @@ defmodule Keila.Mailings.Builder do
   alias Keila.Templates.{Template, Css, Html, HybridTemplate}
   import Swoosh.Email
   import __MODULE__.LiquidRenderer
+  require Logger
 
   @placeholder_recipient_id "00000000-0000-4000-0000-000000000000"
 
@@ -61,6 +62,7 @@ defmodule Keila.Mailings.Builder do
       |> Map.put("link_unsubscribe", unsubscribe_link)
       |> Map.put("assets_url", Routes.static_url(KeilaWeb.Endpoint, "/"))
       |> maybe_put_public_link(campaign)
+      |> put_contact_shortcuts(contact)
 
     Email.new()
     |> put_subject(campaign.subject, assigns)
@@ -71,6 +73,20 @@ defmodule Keila.Mailings.Builder do
     |> put_anti_spam_headers(campaign)
     |> maybe_put_precedence_header()
     |> maybe_put_tracking(campaign, recipient)
+  end
+
+  # Atalhos top-level pra evitar quebrar campanhas que usam {{ first_name }} em
+  # vez de {{ contact.first_name }} — vários botões da UI inserem a forma curta.
+  defp put_contact_shortcuts(assigns, contact) do
+    first = contact.first_name || ""
+    last = contact.last_name || ""
+    name = String.trim("#{first} #{last}")
+
+    assigns
+    |> Map.put_new("first_name", first)
+    |> Map.put_new("last_name", last)
+    |> Map.put_new("name", name)
+    |> Map.put_new("email", contact.email || "")
   end
 
   # Carrega o brand kit do projeto pra disponibilizar como {{ brand.* }} nos
@@ -86,7 +102,12 @@ defmodule Keila.Mailings.Builder do
       project -> rewrite_logo_url(Keila.Projects.Brand.get(project), project_id)
     end
   rescue
-    _ -> %{}
+    e ->
+      Logger.warning(
+        "Failed loading brand for project #{inspect(project_id)}: #{Exception.message(e)}"
+      )
+
+      %{}
   end
 
   defp rewrite_logo_url(brand, project_id) do

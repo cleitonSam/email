@@ -224,27 +224,50 @@ defmodule Keila.Mailings.RateLimiter do
     end
   end
 
-  def do_get_schedule_at(ets_table, key, rate_limits) do
-    i = update_counter(ets_table, key)
-    start_datetime = :ets.lookup_element(ets_table, key, 3)
+  def do_get_schedule_at(ets_table, key, rate_limits, attempts \\ 0)
 
-    rate_limits
-    |> Enum.filter(fn {_, limit} -> is_number(limit) && limit > 0 end)
-    |> Enum.map(fn {scale_name, limit} ->
-      scale(scale_name) * div(i, limit)
-    end)
-    |> Enum.sum()
-    |> then(fn ms ->
-      schedule_at = DateTime.add(start_datetime, div(ms, 1000))
-      now = DateTime.utc_now(:second)
+  # Sem limites válidos não há nada pra agendar — retorna nil pra get_schedule_at
+  # filtrar fora. Sem essa cláusula a recursão entraria em loop.
+  def do_get_schedule_at(_ets_table, _key, [], _attempts), do: nil
 
-      if DateTime.diff(schedule_at, now) >= 0 do
-        {schedule_at, now}
-      else
-        :ets.delete(ets_table, key)
-        do_get_schedule_at(ets_table, key, rate_limits)
-      end
-    end)
+  # Guard contra recursão infinita por clock skew ou estado de bucket inconsistente.
+  def do_get_schedule_at(_ets_table, _key, _rate_limits, attempts) when attempts >= 5 do
+    Logger.warning(
+      "RateLimiter.do_get_schedule_at giving up after #{attempts} attempts — possible clock skew."
+    )
+
+    now = DateTime.utc_now(:second)
+    {now, now}
+  end
+
+  def do_get_schedule_at(ets_table, key, rate_limits, attempts) do
+    valid_limits = Enum.filter(rate_limits, fn {_, limit} -> is_number(limit) && limit > 0 end)
+
+    case valid_limits do
+      [] ->
+        nil
+
+      _ ->
+        i = update_counter(ets_table, key)
+        start_datetime = :ets.lookup_element(ets_table, key, 3)
+
+        valid_limits
+        |> Enum.map(fn {scale_name, limit} ->
+          scale(scale_name) * div(i, limit)
+        end)
+        |> Enum.sum()
+        |> then(fn ms ->
+          schedule_at = DateTime.add(start_datetime, div(ms, 1000))
+          now = DateTime.utc_now(:second)
+
+          if DateTime.diff(schedule_at, now) >= 0 do
+            {schedule_at, now}
+          else
+            :ets.delete(ets_table, key)
+            do_get_schedule_at(ets_table, key, rate_limits, attempts + 1)
+          end
+        end)
+    end
   end
 
   defp scale(scale_name)

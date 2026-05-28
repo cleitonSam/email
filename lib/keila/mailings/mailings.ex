@@ -780,7 +780,6 @@ defmodule Keila.Mailings do
 
   defp recipient_stats(campaign_id) do
     from(r in Recipient, where: r.campaign_id == ^campaign_id)
-    |> where([r], r.campaign_id == ^campaign_id)
     |> select(
       [r],
       %{

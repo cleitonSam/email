@@ -6,9 +6,10 @@ defmodule Keila.Mailings.Worker do
 
   use Oban.Worker,
     queue: :mailer,
+    max_attempts: 5,
     unique: [
       period: :infinity,
-      states: [:available, :scheduled, :executing],
+      states: [:available, :scheduled, :executing, :retryable],
       fields: [:args],
       keys: [:recipient_id]
     ]
@@ -18,17 +19,30 @@ defmodule Keila.Mailings.Worker do
 
   require Logger
 
+  # Backoff em segundos: 30, 60, 120, 240 (caps em 5min) para retries de erro
+  # transient. Snooze (rate limit) tem seu próprio delay, não passa por aqui.
+  @impl Oban.Worker
+  def backoff(%Oban.Job{attempt: attempt}) do
+    base = 30
+    min(base * Integer.pow(2, attempt - 1), 300)
+  end
+
   @impl true
   def perform(%Oban.Job{args: %{"recipient_id" => recipient_id}} = job) do
-    recipient = load_recipient(recipient_id)
+    case load_recipient(recipient_id) do
+      nil ->
+        Logger.warning("Skipping mailer job: recipient #{inspect(recipient_id)} not found.")
+        {:cancel, :recipient_not_found}
 
-    with :ok <- check_sender_rate_limit(recipient, job),
-         :ok <- ensure_valid_recipient(recipient),
-         email <- Builder.build(recipient.campaign, recipient, %{}),
-         :ok <- ensure_valid_email(email) do
-      Keila.Mailer.deliver_with_sender(email, recipient.campaign.sender)
+      recipient ->
+        with :ok <- check_sender_rate_limit(recipient, job),
+             :ok <- ensure_valid_recipient(recipient),
+             email <- Builder.build(recipient.campaign, recipient, %{}),
+             :ok <- ensure_valid_email(email) do
+          Keila.Mailer.deliver_with_sender(email, recipient.campaign.sender)
+        end
+        |> handle_result(recipient, job)
     end
-    |> handle_result(recipient)
   end
 
   defp load_recipient(recipient_id) do
@@ -63,11 +77,37 @@ defmodule Keila.Mailings.Worker do
 
         delay = DateTime.diff(schedule_at, scheduling_requested_at)
 
-        Logger.debug(
-          "Snoozing email to #{recipient.contact.email} for campaign #{recipient.campaign.id} for #{delay}s."
-        )
+        log_snooze(recipient, delay)
 
         {:snooze, delay}
+    end
+  end
+
+  # Log apenas o primeiro snooze por campanha em cada janela de 60s pra não floodar
+  # o log quando centenas de jobs batem o rate limit ao mesmo tempo. Tracking
+  # via :persistent_term que sobrevive a múltiplas workers do mesmo node.
+  defp log_snooze(recipient, delay) do
+    campaign_id = recipient.campaign.id
+    key = {__MODULE__, :snooze_log, campaign_id}
+    now = System.monotonic_time(:second)
+
+    last =
+      try do
+        :persistent_term.get(key)
+      rescue
+        ArgumentError -> 0
+      end
+
+    if now - last >= 60 do
+      :persistent_term.put(key, now)
+
+      Logger.info(
+        "Mailer rate limit hit for campaign #{campaign_id} — snoozing recipients for ~#{delay}s. Subsequent snoozes in the next 60s are suppressed."
+      )
+    else
+      Logger.debug(
+        "Snoozing email to #{recipient.contact.email} for campaign #{campaign_id} for #{delay}s."
+      )
     end
   end
 
@@ -90,7 +130,7 @@ defmodule Keila.Mailings.Worker do
   end
 
   # Email was sent successfully
-  defp handle_result({:ok, raw_receipt}, recipient) do
+  defp handle_result({:ok, raw_receipt}, recipient, _job) do
     receipt = get_receipt(raw_receipt)
 
     recipient
@@ -101,13 +141,13 @@ defmodule Keila.Mailings.Worker do
   end
 
   # Sending needs to be retried later
-  defp handle_result({:snooze, delay}, _), do: {:snooze, delay}
+  defp handle_result({:snooze, delay}, _recipient, _job), do: {:snooze, delay}
 
   # Email was already sent
-  defp handle_result({:error, :already_sent}, _), do: {:cancel, :already_sent}
+  defp handle_result({:error, :already_sent}, _recipient, _job), do: {:cancel, :already_sent}
 
   # Rendering error
-  defp handle_result({:error, :rendering_error}, recipient) do
+  defp handle_result({:error, :rendering_error}, recipient, _job) do
     Repo.transaction(fn ->
       recipient
       |> set_recipient_failed_query()
@@ -118,7 +158,7 @@ defmodule Keila.Mailings.Worker do
   end
 
   # Invalid contact (e.g. unsubscribed or deleted)
-  defp handle_result({:error, :invalid_contact}, recipient) do
+  defp handle_result({:error, :invalid_contact}, recipient, _job) do
     Repo.transaction(fn ->
       recipient
       |> set_recipient_failed_query()
@@ -133,7 +173,7 @@ defmodule Keila.Mailings.Worker do
   end
 
   # Invalid email address (returned by Keila.Mailer)
-  defp handle_result({:error, :invalid_email}, recipient) do
+  defp handle_result({:error, :invalid_email}, recipient, _job) do
     Repo.transaction(fn ->
       recipient
       |> set_recipient_failed_query()
@@ -147,18 +187,63 @@ defmodule Keila.Mailings.Worker do
     {:cancel, :invalid_email}
   end
 
-  # Another error occurred. Sending is not retried.
-  defp handle_result({:error, reason}, recipient) do
-    Logger.warning(
-      "Failed sending email to #{recipient.contact.email} for campaign #{recipient.campaign.id}: #{inspect(reason)}"
-    )
+  # Another error occurred — retry transient errors (timeout/network/SMTP 4xx)
+  # via Oban (até max_attempts). Erros permanentes marcam falha imediatamente.
+  defp handle_result({:error, reason}, recipient, job) do
+    attempt = Map.get(job, :attempt, 1)
+    max_attempts = Map.get(job, :max_attempts, 5)
 
-    recipient
-    |> set_recipient_failed_query()
-    |> Repo.update_all([])
+    cond do
+      transient_error?(reason) and attempt < max_attempts ->
+        Logger.warning(
+          "Transient send error for #{recipient.contact.email} (campaign #{recipient.campaign.id}, attempt #{attempt}/#{max_attempts}): #{inspect(reason)} — Oban will retry"
+        )
 
-    {:cancel, reason}
+        {:error, reason}
+
+      true ->
+        Logger.warning(
+          "Failed sending email to #{recipient.contact.email} for campaign #{recipient.campaign.id} (attempt #{attempt}): #{inspect(reason)}"
+        )
+
+        recipient
+        |> set_recipient_failed_query()
+        |> Repo.update_all([])
+
+        {:cancel, reason}
+    end
   end
+
+  # Heurística pra classificar erros que valem retry — falhas de rede, timeout,
+  # códigos HTTP 5xx, SMTP temporário (4xx). Erros permanentes (DNS inexistente,
+  # auth inválido, address parse) caem no fallthrough e marcam o recipient.
+  defp transient_error?(:timeout), do: true
+  defp transient_error?(:closed), do: true
+  defp transient_error?(:econnrefused), do: true
+  defp transient_error?(:econnreset), do: true
+  defp transient_error?(:enetunreach), do: true
+  defp transient_error?(:ehostunreach), do: true
+  defp transient_error?({:tls_alert, _}), do: true
+  defp transient_error?({:failed_connect, _}), do: true
+
+  defp transient_error?({code, _}) when is_integer(code) and code >= 500 and code < 600,
+    do: true
+
+  # SMTP 4xx é "tente de novo mais tarde"; 5xx é falha permanente.
+  defp transient_error?({:retries_exceeded, {:network_failure, _, _}}), do: true
+  defp transient_error?({:permanent_failure, _, _}), do: false
+  defp transient_error?({:temporary_failure, _, _}), do: true
+
+  defp transient_error?(%{__exception__: true} = e) do
+    case e do
+      %{__struct__: Mint.TransportError} -> true
+      %{__struct__: Mint.HTTPError} -> true
+      %{__struct__: Swoosh.DeliveryError, reason: reason} -> transient_error?(reason)
+      _ -> false
+    end
+  end
+
+  defp transient_error?(_), do: false
 
   defp set_recipient_sent_query(recipient, receipt) do
     from(r in Recipient,

@@ -13,7 +13,7 @@ defmodule KeilaWeb.CampaignController do
 
   @spec index(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def index(conn, _params) do
-    campaigns = Mailings.get_project_campaigns(current_project(conn).id)
+    campaigns = Mailings.get_project_campaigns_with_progress(current_project(conn).id)
 
     conn
     |> assign(:campaigns, campaigns)

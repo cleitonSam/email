@@ -111,6 +111,14 @@
     <!-- Campaign Cards Grid -->
     <div class="container grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-8">
       <%= for campaign <- @campaigns do %>
+        <%
+          state = campaign_progress_state(campaign)
+          total = Map.get(campaign, :recipients_count, 0)
+          sent = Map.get(campaign, :sent_count, 0)
+          failed = Map.get(campaign, :failed_count, 0)
+          processed = sent + failed
+          progress_pct = if total > 0, do: trunc(processed * 100 / total), else: 0
+        %>
         <div
           x-show={"filterCampaign({sent_at: #{if campaign.sent_at, do: "true", else: "null"}, scheduled_for: #{if campaign.scheduled_for, do: "true", else: "null"}, id: '#{campaign.id}'})"}
           class="card-hover-effect bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6 animate-fade-in"
@@ -119,12 +127,16 @@
           <div class="flex items-start justify-between gap-3 mb-4">
             <div class="flex items-start gap-3 flex-grow">
               <div class="mt-1">
-                <%= cond do %>
-                  <% campaign.sent_at -> %>
+                <%= case state do %>
+                  <% :sent -> %>
                     <div class="status-dot status-dot--active"></div>
-                  <% campaign.scheduled_for -> %>
+                  <% :sending -> %>
                     <div class="status-dot status-dot--pending"></div>
-                  <% true -> %>
+                  <% :scheduled -> %>
+                    <div class="status-dot status-dot--pending"></div>
+                  <% :overdue -> %>
+                    <div class="status-dot status-dot--pending"></div>
+                  <% _ -> %>
                     <div class="status-dot status-dot--inactive"></div>
                 <% end %>
               </div>
@@ -133,22 +145,37 @@
                   {campaign.subject}
                 </h2>
                 <!-- Status Badge -->
-                <%= cond do %>
-                  <% campaign.sent_at -> %>
+                <%= case state do %>
+                  <% :sent -> %>
                     <span class="metric-badge metric-badge--good">
                       <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                       </svg>
-                      {gettext("Sent")}
+                      {gettext("Enviado")} <%= if total > 0, do: "(#{sent}#{if failed > 0, do: " · #{failed} falha", else: ""})" %>
                     </span>
-                  <% campaign.scheduled_for -> %>
+                  <% :sending -> %>
+                    <span class="metric-badge bg-blue-500/15 text-blue-300 border border-blue-500/30">
+                      <svg class="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      {gettext("Enviando")} {processed}/{total}
+                    </span>
+                  <% :scheduled -> %>
                     <span class="metric-badge metric-badge--warning">
                       <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00-.293.707l-.707.707a1 1 0 101.414 1.414L9 9.414V6z" clip-rule="evenodd" />
                       </svg>
-                      {gettext("Scheduled")}
+                      {gettext("Agendado")}
                     </span>
-                  <% true -> %>
+                  <% :overdue -> %>
+                    <span class="metric-badge bg-orange-500/15 text-orange-300 border border-orange-500/30">
+                      <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                      </svg>
+                      {gettext("Aguardando processamento")}
+                    </span>
+                  <% _ -> %>
                     <span class="metric-badge bg-gray-700/50 text-gray-400 border border-gray-600/30">
                       {gettext("Draft")}
                     </span>
@@ -157,24 +184,48 @@
             </div>
           </div>
 
+          <!-- Barra de progresso quando enviando -->
+          <%= if state == :sending and total > 0 do %>
+            <div class="mb-4">
+              <div class="h-1.5 w-full bg-gray-800 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-blue-500 to-fluxo-500 transition-all duration-500" style={"width: #{progress_pct}%"}></div>
+              </div>
+              <p class="text-[10px] text-gray-500 mt-1 text-right">{progress_pct}%</p>
+            </div>
+          <% end %>
+
           <!-- Date Info -->
           <p class="text-xs text-gray-500 mb-4">
-            <%= cond do
-              campaign.sent_at ->
+            <%= case state do
+              :sent ->
                 [
-                  gettext("Sent:"),
+                  gettext("Enviado em:"),
                   " ",
                   local_datetime_tag(campaign.sent_at)
                 ]
 
-              campaign.scheduled_for ->
+              :sending ->
                 [
-                  gettext("Scheduled:"),
+                  gettext("Disparado em:"),
+                  " ",
+                  local_datetime_tag(campaign.sent_at)
+                ]
+
+              :scheduled ->
+                [
+                  gettext("Agendado para:"),
                   " ",
                   local_datetime_tag(campaign.scheduled_for)
                 ]
 
-              true ->
+              :overdue ->
+                [
+                  gettext("Era para enviar em:"),
+                  " ",
+                  local_datetime_tag(campaign.scheduled_for)
+                ]
+
+              _ ->
                 [
                   gettext("Updated:"),
                   " ",
@@ -277,3 +328,25 @@
     };
   }
 </script>
+
+<%= if any_campaign_in_progress?(@campaigns) do %>
+  <!-- Auto-refresh enquanto houver campanha em andamento (Enviando/Aguardando).
+       Pausa o refresh quando a aba está em background pra não desperdiçar requests. -->
+  <script>
+    (function() {
+      var REFRESH_MS = 10000;
+      var timer = null;
+
+      function schedule() {
+        clearTimeout(timer);
+        if (document.hidden) return;
+        timer = setTimeout(function() {
+          window.location.reload();
+        }, REFRESH_MS);
+      }
+
+      document.addEventListener('visibilitychange', schedule);
+      schedule();
+    })();
+  </script>
+<% end %>

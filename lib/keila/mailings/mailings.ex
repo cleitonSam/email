@@ -362,6 +362,55 @@ defmodule Keila.Mailings do
   end
 
   @doc """
+  Returns all Campaigns belonging to a project, com contadores agregados de
+  recipients (total / enviados / falhas) pra cada campanha. Os contadores ficam
+  como campos extras no struct via Map.put — usados só pela view do index.
+  """
+  @spec get_project_campaigns_with_progress(Project.id()) :: [Campaign.t()]
+  def get_project_campaigns_with_progress(project_id) when is_id(project_id) do
+    # Subquery filtrada por project_id via campaign — evita scan na tabela
+    # inteira de recipients quando um projeto tem só algumas campanhas.
+    counts_subquery =
+      from(r in Recipient,
+        join: c in Campaign,
+        on: c.id == r.campaign_id,
+        where: c.project_id == ^project_id,
+        group_by: r.campaign_id,
+        select: %{
+          campaign_id: r.campaign_id,
+          recipients_count: count(r.id),
+          sent_count: sum(fragment("CASE WHEN ? IS NOT NULL THEN 1 ELSE 0 END", r.sent_at)),
+          failed_count: sum(fragment("CASE WHEN ? IS NOT NULL THEN 1 ELSE 0 END", r.failed_at))
+        }
+      )
+
+    from(c in Campaign,
+      left_join: counts in subquery(counts_subquery),
+      on: counts.campaign_id == c.id,
+      where: c.project_id == ^project_id,
+      order_by: [desc: c.updated_at],
+      select: %{
+        campaign: c,
+        recipients_count: coalesce(counts.recipients_count, 0),
+        sent_count: coalesce(counts.sent_count, 0),
+        failed_count: coalesce(counts.failed_count, 0)
+      }
+    )
+    |> Repo.all()
+    |> Enum.map(fn %{
+                     campaign: c,
+                     recipients_count: rc,
+                     sent_count: sc,
+                     failed_count: fc
+                   } ->
+      c
+      |> Map.put(:recipients_count, rc)
+      |> Map.put(:sent_count, sc)
+      |> Map.put(:failed_count, fc)
+    end)
+  end
+
+  @doc """
   Returns the latest Campaign belonging to the specified Project.
   """
   @spec get_latest_project_campaign(Project.id()) :: Campaign.t() | nil

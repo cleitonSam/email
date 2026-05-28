@@ -26,37 +26,47 @@ defmodule KeilaWeb.ContactImportLive do
   end
 
   def handle_event("import", %{"import" => import_options}, socket) do
-    [{csv_filename, import_task}] =
-      consume_uploaded_entries(socket, :csv, fn %{path: upload_path}, _entry ->
-        pid = self()
+    # Defensivo: se nenhum arquivo foi selecionado (ou consume falhou), em vez
+    # de crashar (pattern match em lista vazia), mostra erro claro pro usuário.
+    case consume_uploaded_entries(socket, :csv, fn %{path: upload_path}, _entry ->
+           pid = self()
 
-        csv_basename =
-          socket.assigns.current_project.id <>
-            Base.url_encode64(:crypto.strong_rand_bytes(8), padding: false) <> "_import.csv"
+           csv_basename =
+             socket.assigns.current_project.id <>
+               Base.url_encode64(:crypto.strong_rand_bytes(8), padding: false) <> "_import.csv"
 
-        csv_filename = Path.join(System.tmp_dir!(), csv_basename)
-        File.cp!(upload_path, csv_filename)
+           csv_filename = Path.join(System.tmp_dir!(), csv_basename)
+           File.cp!(upload_path, csv_filename)
 
-        on_conflict = if import_options["replace"] == "true", do: :replace, else: :ignore
+           on_conflict = if import_options["replace"] == "true", do: :replace, else: :ignore
 
-        task =
-          Task.async(fn ->
-            Keila.Contacts.import_csv(socket.assigns.current_project.id, csv_filename,
-              notify: pid,
-              on_conflict: on_conflict
-            )
-          end)
+           task =
+             Task.async(fn ->
+               Keila.Contacts.import_csv(socket.assigns.current_project.id, csv_filename,
+                 notify: pid,
+                 on_conflict: on_conflict
+               )
+             end)
 
-        {:ok, {csv_filename, task}}
-      end)
+           {:ok, {csv_filename, task}}
+         end) do
+      [{csv_filename, import_task}] ->
+        socket =
+          socket
+          |> assign(:csv_filename, csv_filename)
+          |> assign(:import_task, import_task)
+          |> put_default_assigns()
 
-    socket =
-      socket
-      |> assign(:csv_filename, csv_filename)
-      |> assign(:import_task, import_task)
-      |> put_default_assigns()
+        {:noreply, socket}
 
-    {:noreply, socket}
+      [] ->
+        {:noreply,
+         assign(
+           socket,
+           :import_error,
+           "Nenhum arquivo selecionado. Escolha um CSV (clique na área tracejada acima) e clique em \"Start Import\" de novo."
+         )}
+    end
   end
 
   @impl true

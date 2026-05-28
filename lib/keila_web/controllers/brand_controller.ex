@@ -55,14 +55,33 @@ defmodule KeilaWeb.BrandController do
       {:ok, asset} ->
         Brand.update(project.id, %{"logo_url" => asset.url})
 
-        conn
-        |> put_flash(:info, "✓ Logo atualizado!")
-        |> redirect(to: "/projects/#{project.id}/marca")
+        if wants_json?(conn) do
+          json(conn, %{ok: true, logo_url: asset.url})
+        else
+          conn
+          |> put_flash(:info, "✓ Logo atualizado!")
+          |> redirect(to: "/projects/#{project.id}/marca")
+        end
 
       {:error, reason} ->
-        conn
-        |> put_flash(:error, "Erro: #{inspect(reason)}")
-        |> redirect(to: "/projects/#{project.id}/marca")
+        if wants_json?(conn) do
+          conn
+          |> put_status(:unprocessable_entity)
+          |> json(%{ok: false, error: inspect(reason)})
+        else
+          conn
+          |> put_flash(:error, "Erro: #{inspect(reason)}")
+          |> redirect(to: "/projects/#{project.id}/marca")
+        end
+    end
+  end
+
+  # Cliente que envia Accept: application/json (ex: fetch do editor de email)
+  # recebe JSON em vez de redirect. Mantém compat com o form HTML clássico.
+  defp wants_json?(conn) do
+    case get_req_header(conn, "accept") do
+      [accept | _] -> String.contains?(accept, "application/json")
+      _ -> false
     end
   end
 

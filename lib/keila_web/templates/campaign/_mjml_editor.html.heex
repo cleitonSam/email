@@ -318,6 +318,37 @@
       </div>
     </div>
 
+    <!-- Logo da marca (atalho inline pra trocar sem sair do editor) -->
+    <% brand_for_card = Keila.Projects.Brand.get(@current_project) %>
+    <div class="bg-gray-900/40 border border-gray-800 rounded-xl p-3 mb-5 flex items-center gap-3">
+      <div class="flex-shrink-0 w-16 h-10 bg-white rounded flex items-center justify-center overflow-hidden border border-gray-700">
+        <%= if brand_for_card["logo_url"] != "" do %>
+          <img
+            src={"/b/" <> @current_project.id <> "/logo"}
+            alt="logo da marca"
+            class="max-w-full max-h-full object-contain"
+            onerror="this.onerror=null;this.style.display='none';"
+          />
+        <% else %>
+          <span class="text-[9px] text-gray-400">sem logo</span>
+        <% end %>
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-[10px] uppercase tracking-wider text-fluxo-300 font-semibold">Logo da marca</p>
+        <p class="text-[11px] text-gray-400 leading-snug">Vai no topo de todos os emails. Troca aqui, vale pra todas as campanhas.</p>
+      </div>
+      <label
+        title="Faz upload de um novo logo (PNG, JPG, WebP ou SVG, até 5MB)"
+        class="flex items-center gap-1.5 px-3 py-2 bg-fluxo-500 hover:bg-fluxo-600 text-white text-xs font-semibold rounded-lg cursor-pointer flex-shrink-0 transition-colors"
+        data-project-id={@current_project.id}
+        onchange="window.fluxoEditorLogoUpload(this)"
+      >
+        <span class="inline-flex h-3.5 w-3.5">{render_icon(:upload)}</span>
+        <span>Trocar logo</span>
+        <input type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" class="hidden" />
+      </label>
+    </div>
+
     <!-- Seções do email (reordenar/remover) -->
     <% mjml_sections = assigns[:mjml_sections] || [] %>
     <%= if length(mjml_sections) > 1 do %>
@@ -594,6 +625,47 @@
     } finally {
       inputEl.value = ''; // permite re-upload do mesmo arquivo
     }
+  }
+
+  // ============ TROCAR LOGO DA MARCA (inline no editor) ============
+  // Sobe um novo logo pra /projects/:id/marca/logo via fetch (Accept JSON),
+  // sem sair do editor. Em sucesso, recarrega a página pra refletir o novo
+  // logo no preview (que já usa o proxy /b/:project_id/logo).
+  window.fluxoEditorLogoUpload = async function(labelEl) {
+    const input = labelEl.querySelector('input[type=file]');
+    const file = input && input.files && input.files[0];
+    if (!file) return;
+
+    const projectId = labelEl.dataset.projectId;
+    const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
+    const fd = new FormData();
+    fd.append('logo', file);
+    fd.append('_csrf_token', csrf);
+
+    const originalHTML = labelEl.innerHTML;
+    labelEl.innerHTML = '<span>Enviando...</span>';
+    labelEl.style.pointerEvents = 'none';
+
+    try {
+      const resp = await fetch(`/projects/${projectId}/marca/logo`, {
+        method: 'POST',
+        headers: { 'x-csrf-token': csrf, 'Accept': 'application/json' },
+        body: fd
+      });
+      const data = await resp.json().catch(() => ({}));
+      if (resp.ok && data.ok) {
+        window.location.reload();
+      } else {
+        alert('Erro ao enviar o logo: ' + (data.error || resp.statusText));
+        labelEl.innerHTML = originalHTML;
+        labelEl.style.pointerEvents = '';
+      }
+    } catch (e) {
+      alert('Erro: ' + e.message);
+      labelEl.innerHTML = originalHTML;
+      labelEl.style.pointerEvents = '';
+    }
+    input.value = '';
   }
 
   // ============ BLOCK PICKER ============

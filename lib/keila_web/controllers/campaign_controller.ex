@@ -291,6 +291,28 @@ defmodule KeilaWeb.CampaignController do
     )
   end
 
+  @doc """
+  Cancela a cadência de uma campanha em andamento: zera send_after dos recipients
+  pendentes (não enviados, não falhos) pra que o ScheduleWorker enfileire todos
+  na próxima passagem (até 1 minuto). Não afeta quem já recebeu.
+  """
+  @spec flush_cadence(Plug.Conn.t(), map()) :: Plug.Conn.t()
+  def flush_cadence(conn, _params) do
+    campaign = conn.assigns.campaign
+    project = current_project(conn)
+    {count, _} = Mailings.flush_cadence(campaign.id)
+
+    conn
+    |> put_flash(
+      :info,
+      gettext(
+        "Cadência cancelada. %{count} destinatário(s) restante(s) serão enviados agora.",
+        count: count
+      )
+    )
+    |> redirect(to: Routes.campaign_path(conn, :index, project.id))
+  end
+
   def view(conn, _params) do
     project = current_project(conn)
     campaign = conn.assigns.campaign

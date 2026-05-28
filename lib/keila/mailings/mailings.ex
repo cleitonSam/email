@@ -525,6 +525,39 @@ defmodule Keila.Mailings do
   end
 
   @doc """
+  Cancela a cadência ("envio em ondas") de uma campanha já disparada: zera o
+  send_after dos recipients pendentes (sem sent_at nem failed_at) pra que o
+  ScheduleWorker enfileire todos no próximo minuto. Também remove o bloco
+  `cadence` de `campaign.data` pra não reaparecer.
+
+  Retorna `{recipients_affected, nil}` — tupla padrão de `Repo.update_all/2`.
+  """
+  @spec flush_cadence(Campaign.id()) :: {non_neg_integer(), nil}
+  def flush_cadence(campaign_id) when is_id(campaign_id) do
+    {count, _} =
+      from(r in Recipient,
+        where:
+          r.campaign_id == ^campaign_id and
+            is_nil(r.sent_at) and
+            is_nil(r.failed_at) and
+            not is_nil(r.send_after),
+        update: [set: [send_after: nil, updated_at: fragment("now()")]]
+      )
+      |> Repo.update_all([])
+
+    case get_campaign(campaign_id) do
+      %Campaign{data: data} = campaign when is_map(data) ->
+        new_data = Map.delete(data, "cadence")
+        campaign |> change(data: new_data) |> Repo.update()
+
+      _ ->
+        :ok
+    end
+
+    {count, nil}
+  end
+
+  @doc """
   Schedules the given campaign to be delivered in the future.
 
   Campaigns can be re-scheduled or unscheduled (`%{scheduled_for: nil}`).

@@ -192,6 +192,7 @@ defmodule KeilaWeb.Router do
     # get "/projects/:project_id/campaigns/:id/grapes", CampaignController, :grapes_poc
     # post "/projects/:project_id/campaigns/:id/grapes/save", CampaignController, :grapes_save
     get "/projects/:project_id/campaigns/:id/stats", CampaignController, :stats
+    post "/projects/:project_id/campaigns/:id/flush-cadence", CampaignController, :flush_cadence
     get "/projects/:project_id/campaigns/:id/view", CampaignController, :view
     get "/projects/:project_id/campaigns/:id/share", CampaignController, :share
     post "/projects/:project_id/campaigns/:id/share", CampaignController, :post_share

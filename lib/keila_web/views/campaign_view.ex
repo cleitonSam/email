@@ -62,4 +62,21 @@ defmodule KeilaWeb.CampaignView do
       campaign_progress_state(c) in [:sending, :overdue]
     end)
   end
+
+  @doc """
+  Retorna true se a campanha está usando "envio em ondas" (cadência) —
+  campaign.data["cadence"]["slots"] é uma lista não-vazia.
+  """
+  def has_cadence?(%{data: %{"cadence" => %{"slots" => slots}}}) when is_list(slots) and slots != [],
+    do: true
+
+  def has_cadence?(_), do: false
+
+  @doc """
+  Quantos slots de cadência a campanha tem configurados (0 se não tem).
+  """
+  def cadence_slot_count(%{data: %{"cadence" => %{"slots" => slots}}}) when is_list(slots),
+    do: length(slots)
+
+  def cadence_slot_count(_), do: 0
 end

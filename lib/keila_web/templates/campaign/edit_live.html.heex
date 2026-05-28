@@ -94,7 +94,10 @@
                 @click.prevent="showSendMenu = false; $dispatch('x-show', { dialog: 'cadence' })"
               >
                 <span class="inline-flex h-5 w-5 text-accent-400">{render_icon(:calendar)}</span>
-                Agendar em ondas
+                <span class="flex flex-col">
+                  <span>Dividir em ondas (avançado)</span>
+                  <span class="text-[10px] text-gray-400 font-normal">contatos repartidos em vários horários</span>
+                </span>
               </button>
             </div>
           </div>

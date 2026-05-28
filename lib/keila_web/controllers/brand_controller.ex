@@ -123,28 +123,34 @@ defmodule KeilaWeb.BrandController do
   ícone de imagem quebrada).
   """
   def public_logo(conn, %{"project_id" => project_id}) do
-    case Keila.Projects.get_project(project_id) do
-      nil ->
-        serve_placeholder(conn)
-
-      project ->
-        brand = Brand.get(project)
-        url = brand["logo_url"]
-
-        if is_binary(url) and url != "" do
-          case fetch_remote_image(url) do
-            {:ok, body, content_type} ->
-              conn
-              |> put_resp_content_type(content_type)
-              |> put_resp_header("cache-control", "public, max-age=86400")
-              |> send_resp(200, body)
-
-            :error ->
-              serve_placeholder(conn)
-          end
-        else
+    try do
+      case Keila.Projects.get_project(project_id) do
+        nil ->
           serve_placeholder(conn)
-        end
+
+        project ->
+          brand = Brand.get(project)
+          url = brand["logo_url"]
+
+          if is_binary(url) and url != "" do
+            case fetch_remote_image(url) do
+              {:ok, body, content_type} ->
+                conn
+                |> put_resp_content_type(content_type)
+                |> put_resp_header("cache-control", "public, max-age=86400")
+                |> send_resp(200, body)
+
+              :error ->
+                serve_placeholder(conn)
+            end
+          else
+            serve_placeholder(conn)
+          end
+      end
+    rescue
+      # Qualquer erro inesperado (ex: project_id em formato inválido faz o
+      # cast do Ecto raise) cai no placeholder em vez de devolver 400/500.
+      _ -> serve_placeholder(conn)
     end
   end
 

@@ -58,10 +58,21 @@
       </form>
     </div>
     <%= if @brand["logo_url"] != "" do %>
-      <div class="mt-4 flex items-center gap-2 text-[11px]">
-        <span class="text-gray-500 flex-shrink-0">URL atual:</span>
-        <code class="flex-1 truncate bg-gray-800 px-2 py-1 rounded text-gray-300 font-mono" title={@brand["logo_url"]}>{@brand["logo_url"]}</code>
-        <a href={@brand["logo_url"]} target="_blank" rel="noopener" class="text-fluxo-400 hover:text-fluxo-300 whitespace-nowrap flex-shrink-0 font-semibold">abrir ↗</a>
+      <% proxy_url = "/b/" <> @current_project.id <> "/logo" %>
+      <div class="mt-4 space-y-1.5">
+        <div class="flex items-center gap-2 text-[11px]">
+          <span class="text-gray-500 flex-shrink-0 w-32">URL do ImageKit:</span>
+          <code class="flex-1 truncate bg-gray-800 px-2 py-1 rounded text-gray-300 font-mono" title={@brand["logo_url"]}>{@brand["logo_url"]}</code>
+          <a href={@brand["logo_url"]} target="_blank" rel="noopener" class="text-fluxo-400 hover:text-fluxo-300 whitespace-nowrap flex-shrink-0 font-semibold">abrir ↗</a>
+        </div>
+        <div class="flex items-center gap-2 text-[11px]">
+          <span class="text-gray-500 flex-shrink-0 w-32">URL nos emails:</span>
+          <code class="flex-1 truncate bg-gray-800 px-2 py-1 rounded text-fluxo-300 font-mono" title={proxy_url}>{proxy_url}</code>
+          <a href={proxy_url} target="_blank" rel="noopener" class="text-fluxo-400 hover:text-fluxo-300 whitespace-nowrap flex-shrink-0 font-semibold">testar ↗</a>
+        </div>
+        <p class="text-[10px] text-gray-500 leading-snug pl-32">
+          O app baixa a imagem do ImageKit no servidor e serve pelos emails — assim funciona mesmo com restrições no painel do ImageKit. Se a primeira URL falhar mas a segunda mostrar o logo, está tudo certo.
+        </p>
       </div>
     <% end %>
   </div>

@@ -9,10 +9,9 @@
   >
     {hidden_input(f, :return, value: @contacts_status)}
     {hidden_input(f, :require_confirmation, value: "true")}
-    <div x-data="{ checked: false, allPages: false }" x-effect="if (!checked) allPages = false">
-    <!-- Contexto pro 'selecionar todas as páginas' aplicar a ação ao filtro atual -->
+    <div x-data="{ checked: false }">
+    <!-- Busca atual, pra ação aplicar ao mesmo conjunto quando "todas as páginas" estiver marcado -->
     <input type="hidden" name="contact[search]" value={@search} />
-    <input type="hidden" name="contact[select_all]" x-bind:value="allPages ? 'true' : 'false'" />
     <table
       class="w-full"
       x-init="Hooks.ContactsTable.mounted.call({el: $el})"
@@ -103,37 +102,21 @@
       </tbody>
     </table>
 
-    <!-- Selecionar todos os contatos de todas as páginas -->
-    <div
-      x-show="checked"
-      x-cloak
-      class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm bg-fluxo-500/10 border border-fluxo-500/20 rounded-lg px-3 py-2"
-    >
-      <span class="text-gray-300" x-show="!allPages">
-        Selecionados os contatos desta página.
+    <!-- Aplicar a ação a TODOS os contatos do filtro/aba atual (todas as páginas) -->
+    <label class="flex items-start gap-2 mt-4 text-sm text-gray-300 cursor-pointer select-none bg-fluxo-500/10 border border-fluxo-500/20 rounded-lg px-3 py-2">
+      <input
+        type="checkbox"
+        name="contact[select_all]"
+        value="true"
+        class="mt-0.5 w-4 h-4 rounded bg-gray-800 border-gray-600 text-fluxo-500"
+      />
+      <span>
+        Aplicar a <strong class="text-fluxo-300">TODOS os {@contacts.count} contatos</strong>
+        (todas as {@contacts.page_count} páginas), e não só aos marcados nesta página.
       </span>
-      <span class="text-fluxo-300 font-medium" x-show="allPages">
-        Selecionados TODOS os {@contacts.count} contatos (todas as {@contacts.page_count} páginas).
-      </span>
-      <button
-        type="button"
-        class="text-fluxo-400 underline hover:text-fluxo-300"
-        x-show="!allPages"
-        @click="allPages = true"
-      >
-        Selecionar todos os {@contacts.count} contatos
-      </button>
-      <button
-        type="button"
-        class="text-gray-400 underline hover:text-gray-300"
-        x-show="allPages"
-        @click="allPages = false"
-      >
-        Limpar
-      </button>
-    </div>
+    </label>
 
-    <div class="flex flex-col gap-4 mt-5 pt-4 border-t border-gray-800/50">
+    <div class="flex flex-col gap-4 mt-4 pt-4 border-t border-gray-800/50">
       <!-- Atribuir grupo aos selecionados -->
       <div class="flex flex-col sm:flex-row gap-2 sm:items-end">
         <div class="flex flex-col gap-1.5 flex-1">

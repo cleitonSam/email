@@ -472,36 +472,80 @@ defmodule Keila.Contacts do
   @spec assign_contacts_to_group(Project.id(), [Contact.id()], String.t()) ::
           {:ok, non_neg_integer()} | {:error, :no_contacts | :no_group}
   def assign_contacts_to_group(project_id, ids, group) when is_id(project_id) do
+    do_assign_group(project_id, group, fn ->
+      if ids in [nil, []] do
+        nil
+      else
+        from(c in Contact, where: c.project_id == ^project_id and c.id in ^ids)
+      end
+    end)
+  end
+
+  @doc """
+  Como `assign_contacts_to_group/3`, mas atribui o grupo a TODOS os contatos do
+  projeto que batem com `filter` (usado pelo "selecionar todas as páginas").
+  """
+  @spec assign_filtered_contacts_to_group(Project.id(), map(), String.t()) ::
+          {:ok, non_neg_integer()} | {:error, :no_contacts | :no_group}
+  def assign_filtered_contacts_to_group(project_id, filter, group) when is_id(project_id) do
+    do_assign_group(project_id, group, fn ->
+      from(c in Contact, where: c.project_id == ^project_id)
+      |> Keila.Contacts.Query.apply(filter: filter, sort: false)
+      |> exclude(:order_by)
+    end)
+  end
+
+  defp do_assign_group(project_id, group, build_query) do
     group = if is_binary(group), do: String.trim(group), else: ""
+    query = if group == "", do: nil, else: build_query.()
 
     cond do
-      ids in [nil, []] ->
-        {:error, :no_contacts}
-
       group == "" ->
         {:error, :no_group}
 
+      is_nil(query) ->
+        {:error, :no_contacts}
+
       true ->
         {count, _} =
-          from(c in Contact,
-            where: c.project_id == ^project_id and c.id in ^ids,
-            update: [
-              set: [
-                data:
-                  fragment(
-                    "jsonb_set(coalesce(?, '{}'::jsonb), '{grupo}', to_jsonb(?::text))",
-                    c.data,
-                    ^group
-                  ),
-                updated_at: fragment("now()")
-              ]
+          query
+          |> update([c],
+            set: [
+              data:
+                fragment(
+                  "jsonb_set(coalesce(?, '{}'::jsonb), '{grupo}', to_jsonb(?::text))",
+                  c.data,
+                  ^group
+                ),
+              updated_at: fragment("now()")
             ]
           )
           |> Repo.update_all([])
 
-        ensure_group_segment(project_id, group)
-        {:ok, count}
+        if count == 0 do
+          {:error, :no_contacts}
+        else
+          ensure_group_segment(project_id, group)
+          {:ok, count}
+        end
     end
+  end
+
+  @group_segment_prefix "Grupo: "
+
+  @doc """
+  Lista os nomes dos grupos já criados no projeto (derivados dos segmentos
+  "Grupo: X"), em ordem alfabética. Usado pra oferecer os grupos existentes na
+  hora de atribuir (o usuário escolhe um ou digita um novo).
+  """
+  @spec list_group_names(Project.id()) :: [String.t()]
+  def list_group_names(project_id) when is_id(project_id) do
+    project_id
+    |> get_project_segments()
+    |> Enum.map(& &1.name)
+    |> Enum.filter(&String.starts_with?(&1, @group_segment_prefix))
+    |> Enum.map(&String.replace_prefix(&1, @group_segment_prefix, ""))
+    |> Enum.sort()
   end
 
   @doc """
@@ -510,7 +554,7 @@ defmodule Keila.Contacts do
   """
   @spec ensure_group_segment(Project.id(), String.t()) :: :ok
   def ensure_group_segment(project_id, group) when is_id(project_id) and is_binary(group) do
-    name = "Grupo: #{group}"
+    name = @group_segment_prefix <> group
 
     exists? =
       project_id

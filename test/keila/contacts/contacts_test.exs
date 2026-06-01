@@ -231,6 +231,25 @@ defmodule Keila.ContactsTest do
   end
 
   @tag :contacts
+  test "assign_filtered_contacts_to_group tags all contacts matching a filter", %{
+    project: project
+  } do
+    for _ <- 1..3, do: {:ok, _} = Contacts.create_contact(project.id, params(:contact))
+
+    assert {:ok, 3} =
+             Contacts.assign_filtered_contacts_to_group(
+               project.id,
+               %{"status" => "active"},
+               "Altino"
+             )
+
+    contacts = Contacts.get_project_contacts(project.id)
+    assert Enum.all?(contacts, &(&1.data["grupo"] == "Altino"))
+
+    assert "Altino" in Contacts.list_group_names(project.id)
+  end
+
+  @tag :contacts
   test "Import CSV with Portuguese headers (Nome/E-mail), splitting full name", %{
     project: project
   } do

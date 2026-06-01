@@ -41,12 +41,18 @@
             </label>
             {text_input(f, :group,
               value: @import_group,
-              placeholder: "Ex: Altino, Ipiranga...",
+              placeholder: "Escolha um grupo existente ou digite um novo",
               autocomplete: "off",
               phx_debounce: "300",
+              list: "import-group-options",
               class:
                 "w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-3 py-2 text-sm"
             )}
+            <datalist id="import-group-options">
+              <%= for g <- @group_names do %>
+                <option value={g}></option>
+              <% end %>
+            </datalist>
             <p class="text-xs text-gray-500">
               Todos os contatos deste arquivo entram nesse grupo. Depois é só escolher o grupo ao criar a campanha. Deixe em branco pra não agrupar.
             </p>

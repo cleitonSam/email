@@ -9,8 +9,11 @@
   >
     {hidden_input(f, :return, value: @contacts_status)}
     {hidden_input(f, :require_confirmation, value: "true")}
+    <div x-data="{ checked: false, allPages: false }" x-effect="if (!checked) allPages = false">
+    <!-- Contexto pro 'selecionar todas as páginas' aplicar a ação ao filtro atual -->
+    <input type="hidden" name="contact[search]" value={@search} />
+    <input type="hidden" name="contact[select_all]" x-bind:value="allPages ? 'true' : 'false'" />
     <table
-      x-data="{checked: false}"
       class="w-full"
       x-init="Hooks.ContactsTable.mounted.call({el: $el})"
     >
@@ -100,6 +103,36 @@
       </tbody>
     </table>
 
+    <!-- Selecionar todos os contatos de todas as páginas -->
+    <div
+      x-show="checked"
+      x-cloak
+      class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm bg-fluxo-500/10 border border-fluxo-500/20 rounded-lg px-3 py-2"
+    >
+      <span class="text-gray-300" x-show="!allPages">
+        Selecionados os contatos desta página.
+      </span>
+      <span class="text-fluxo-300 font-medium" x-show="allPages">
+        Selecionados TODOS os {@contacts.count} contatos (todas as {@contacts.page_count} páginas).
+      </span>
+      <button
+        type="button"
+        class="text-fluxo-400 underline hover:text-fluxo-300"
+        x-show="!allPages"
+        @click="allPages = true"
+      >
+        Selecionar todos os {@contacts.count} contatos
+      </button>
+      <button
+        type="button"
+        class="text-gray-400 underline hover:text-gray-300"
+        x-show="allPages"
+        @click="allPages = false"
+      >
+        Limpar
+      </button>
+    </div>
+
     <div class="flex flex-col gap-4 mt-5 pt-4 border-t border-gray-800/50">
       <!-- Atribuir grupo aos selecionados -->
       <div class="flex flex-col sm:flex-row gap-2 sm:items-end">
@@ -110,10 +143,16 @@
           <input
             type="text"
             name="contact[group]"
-            placeholder="Nome do grupo (ex: Altino, Ipiranga...)"
+            list="group-options"
+            placeholder="Escolha um grupo existente ou digite um novo"
             autocomplete="off"
             class="w-full bg-gray-800 border border-gray-700 focus:border-fluxo-500 text-white rounded-lg px-3 py-2 text-sm"
           />
+          <datalist id="group-options">
+            <%= for g <- @group_names do %>
+              <option value={g}></option>
+            <% end %>
+          </datalist>
         </div>
         <button
           type="submit"
@@ -135,6 +174,7 @@
         {render_icon(:trash)}
         {gettext("Delete all selected contacts")}
       </button>
+    </div>
     </div>
   </.form>
 

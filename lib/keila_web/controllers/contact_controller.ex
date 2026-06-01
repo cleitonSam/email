@@ -71,6 +71,7 @@ defmodule KeilaWeb.ContactController do
     |> assign(:sort_by, sort_by)
     |> assign(:sort_order, sort_order)
     |> assign(:contacts_stats, contacts_stats)
+    |> assign(:group_names, Contacts.list_group_names(project_id))
     |> render("index.html")
   end
 
@@ -120,26 +121,19 @@ defmodule KeilaWeb.ContactController do
   end
 
   defp assign_group(conn, params) do
-    ids =
-      case get_in(params, ["contact", "id"]) do
-        ids when is_list(ids) -> ids
-        id when is_binary(id) -> [id]
-        _ -> []
-      end
-
     group = get_in(params, ["contact", "group"]) || ""
-    return = get_in(params, ["contact", "return"])
     project_id = current_project(conn).id
+    return_action = return_action(params)
 
-    return_action =
-      case return do
-        "unsubscribed" -> :index_unsubscribed
-        "unreachable" -> :index_unreachable
-        _other -> :index
+    result =
+      if select_all?(params) do
+        Contacts.assign_filtered_contacts_to_group(project_id, bulk_filter(params), group)
+      else
+        Contacts.assign_contacts_to_group(project_id, selected_ids(params), group)
       end
 
     conn =
-      case Contacts.assign_contacts_to_group(project_id, ids, group) do
+      case result do
         {:ok, n} ->
           put_flash(
             conn,
@@ -162,36 +156,80 @@ defmodule KeilaWeb.ContactController do
 
   @spec delete(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def delete(conn, params) do
-    ids =
-      case get_in(params, ["contact", "id"]) do
-        ids when is_list(ids) -> ids
-        id when is_binary(id) -> [id]
-        nil -> []
-      end
-
+    ids = selected_ids(params)
     return = get_in(params, ["contact", "return"])
-
-    return_action =
-      case return do
-        "unsubscribed" -> :index_unsubscribed
-        "unreachable" -> :index_unreachable
-        _other -> :index
-      end
+    return_action = return_action(params)
+    project_id = current_project(conn).id
+    confirm? = get_in(params, ["contact", "require_confirmation"]) == "true"
 
     cond do
-      Enum.empty?(ids) ->
-        redirect(conn, to: Routes.contact_path(conn, return_action, current_project(conn).id))
+      # Excluir TODOS os contatos do filtro atual (todas as páginas).
+      select_all?(params) and confirm? ->
+        render_delete_all_confirmation(conn, params)
 
-      get_in(params, ["contact", "require_confirmation"]) == "true" ->
+      select_all?(params) ->
+        :ok = Contacts.delete_project_contacts(project_id, filter: bulk_filter(params))
+        redirect(conn, to: Routes.contact_path(conn, return_action, project_id))
+
+      Enum.empty?(ids) ->
+        redirect(conn, to: Routes.contact_path(conn, return_action, project_id))
+
+      confirm? ->
         conn
         |> assign(:return, return)
         |> render_delete_confirmation(ids)
 
       true ->
         opts = [filter: %{"id" => %{"$in" => ids}}, sort: false]
-        :ok = Contacts.delete_project_contacts(current_project(conn).id, opts)
-        redirect(conn, to: Routes.contact_path(conn, return_action, current_project(conn).id))
+        :ok = Contacts.delete_project_contacts(project_id, opts)
+        redirect(conn, to: Routes.contact_path(conn, return_action, project_id))
     end
+  end
+
+  defp selected_ids(params) do
+    case get_in(params, ["contact", "id"]) do
+      ids when is_list(ids) -> ids
+      id when is_binary(id) -> [id]
+      _ -> []
+    end
+  end
+
+  defp select_all?(params), do: get_in(params, ["contact", "select_all"]) == "true"
+
+  defp return_action(params) when is_map(params) do
+    case get_in(params, ["contact", "return"]) do
+      "unsubscribed" -> :index_unsubscribed
+      "unreachable" -> :index_unreachable
+      _other -> :index
+    end
+  end
+
+  # Reconstrói o filtro da listagem (aba de status + busca) pra aplicar a ação
+  # ao conjunto inteiro quando o usuário marca "selecionar todas as páginas".
+  defp bulk_filter(params) do
+    status =
+      case get_in(params, ["contact", "return"]) do
+        "unsubscribed" -> "unsubscribed"
+        "unreachable" -> "unreachable"
+        _other -> "active"
+      end
+
+    search = get_in(params, ["contact", "search"])
+    Map.merge(%{"status" => status}, build_search_filter(search))
+  end
+
+  defp render_delete_all_confirmation(conn, params) do
+    project_id = current_project(conn).id
+    count = Contacts.get_project_contacts_count(project_id, filter: bulk_filter(params))
+
+    conn
+    |> put_meta(:title, gettext("Confirm Contact Deletion"))
+    |> assign(:select_all, true)
+    |> assign(:count, count)
+    |> assign(:search, get_in(params, ["contact", "search"]))
+    |> assign(:return, get_in(params, ["contact", "return"]))
+    |> assign(:contacts, [])
+    |> render("delete.html")
   end
 
   defp render_delete_confirmation(conn, ids) do

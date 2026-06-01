@@ -19,6 +19,7 @@ defmodule KeilaWeb.ContactImportLive do
       )
       |> assign(:uploaded_files, [])
       |> assign(:current_project, session["current_project"])
+      |> assign(:group_names, Keila.Contacts.list_group_names(session["current_project"].id))
       |> put_default_assigns()
 
     {:ok, socket}

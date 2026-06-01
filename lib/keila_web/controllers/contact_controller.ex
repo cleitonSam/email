@@ -13,6 +13,7 @@ defmodule KeilaWeb.ContactController do
            :new,
            :post_new,
            :delete,
+           :bulk,
            :import,
            :export
          ]
@@ -104,6 +105,60 @@ defmodule KeilaWeb.ContactController do
 
   defp get_sort_order(%{"sort_order" => "1"}), do: 1
   defp get_sort_order(_), do: -1
+
+  @doc """
+  Ação em massa a partir da lista de contatos. Despacha pelo botão clicado
+  (`contact[bulk_action]`): "group" atribui os selecionados a um grupo;
+  qualquer outro valor cai no fluxo de exclusão (com confirmação) já existente.
+  """
+  @spec bulk(Plug.Conn.t(), map()) :: Plug.Conn.t()
+  def bulk(conn, params) do
+    case get_in(params, ["contact", "bulk_action"]) do
+      "group" -> assign_group(conn, params)
+      _ -> delete(conn, params)
+    end
+  end
+
+  defp assign_group(conn, params) do
+    ids =
+      case get_in(params, ["contact", "id"]) do
+        ids when is_list(ids) -> ids
+        id when is_binary(id) -> [id]
+        _ -> []
+      end
+
+    group = get_in(params, ["contact", "group"]) || ""
+    return = get_in(params, ["contact", "return"])
+    project_id = current_project(conn).id
+
+    return_action =
+      case return do
+        "unsubscribed" -> :index_unsubscribed
+        "unreachable" -> :index_unreachable
+        _other -> :index
+      end
+
+    conn =
+      case Contacts.assign_contacts_to_group(project_id, ids, group) do
+        {:ok, n} ->
+          put_flash(
+            conn,
+            :info,
+            gettext("%{count} contato(s) atribuído(s) ao grupo \"%{group}\".",
+              count: n,
+              group: String.trim(group)
+            )
+          )
+
+        {:error, :no_contacts} ->
+          put_flash(conn, :error, gettext("Selecione ao menos um contato."))
+
+        {:error, :no_group} ->
+          put_flash(conn, :error, gettext("Digite um nome para o grupo."))
+      end
+
+    redirect(conn, to: Routes.contact_path(conn, return_action, project_id))
+  end
 
   @spec delete(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def delete(conn, params) do

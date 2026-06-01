@@ -463,6 +463,68 @@ defmodule Keila.Contacts do
   end
 
   @doc """
+  Atribui os contatos (`ids`) ao grupo `group`: grava `data.grupo` em cada um
+  e garante que exista o segmento "Grupo: <group>". Usado tanto na importação
+  quanto na ação em massa da lista de contatos.
+
+  Retorna `{:ok, quantidade}` ou `{:error, :no_contacts | :no_group}`.
+  """
+  @spec assign_contacts_to_group(Project.id(), [Contact.id()], String.t()) ::
+          {:ok, non_neg_integer()} | {:error, :no_contacts | :no_group}
+  def assign_contacts_to_group(project_id, ids, group) when is_id(project_id) do
+    group = if is_binary(group), do: String.trim(group), else: ""
+
+    cond do
+      ids in [nil, []] ->
+        {:error, :no_contacts}
+
+      group == "" ->
+        {:error, :no_group}
+
+      true ->
+        {count, _} =
+          from(c in Contact,
+            where: c.project_id == ^project_id and c.id in ^ids,
+            update: [
+              set: [
+                data:
+                  fragment(
+                    "jsonb_set(coalesce(?, '{}'::jsonb), '{grupo}', to_jsonb(?::text))",
+                    c.data,
+                    ^group
+                  ),
+                updated_at: fragment("now()")
+              ]
+            ]
+          )
+          |> Repo.update_all([])
+
+        ensure_group_segment(project_id, group)
+        {:ok, count}
+    end
+  end
+
+  @doc """
+  Garante que exista um segmento "Grupo: <group>" filtrando por `data.grupo`.
+  Idempotente — não duplica se já existir.
+  """
+  @spec ensure_group_segment(Project.id(), String.t()) :: :ok
+  def ensure_group_segment(project_id, group) when is_id(project_id) and is_binary(group) do
+    name = "Grupo: #{group}"
+
+    exists? =
+      project_id
+      |> get_project_segments()
+      |> Enum.any?(&(&1.name == name))
+
+    unless exists? do
+      create_segment(project_id, %{"name" => name, "filter" => %{"data.grupo" => group}})
+    end
+
+    :ok
+  end
+
+  @doc """
   Updates an existing Segment.
   """
   @spec update_segment(Segment.id(), map()) ::

@@ -195,6 +195,42 @@ defmodule Keila.ContactsTest do
   end
 
   @tag :contacts
+  test "assign_contacts_to_group tags selected contacts and creates segment", %{
+    project: project
+  } do
+    {:ok, c1} = Contacts.create_contact(project.id, params(:contact))
+    {:ok, c2} = Contacts.create_contact(project.id, params(:contact))
+    {:ok, c3} = Contacts.create_contact(project.id, params(:contact))
+
+    assert {:ok, 2} =
+             Contacts.assign_contacts_to_group(project.id, [c1.id, c2.id], "  Ipiranga  ")
+
+    contacts = Contacts.get_project_contacts(project.id)
+    by_id = Map.new(contacts, &{&1.id, &1})
+
+    assert by_id[c1.id].data["grupo"] == "Ipiranga"
+    assert by_id[c2.id].data["grupo"] == "Ipiranga"
+    # Não atribuído fica sem grupo.
+    refute is_map(by_id[c3.id].data) and Map.has_key?(by_id[c3.id].data, "grupo")
+
+    segment =
+      project.id
+      |> Contacts.get_project_segments()
+      |> Enum.find(&(&1.name == "Grupo: Ipiranga"))
+
+    assert segment
+    assert segment.filter == %{"data.grupo" => "Ipiranga"}
+  end
+
+  @tag :contacts
+  test "assign_contacts_to_group validates input", %{project: project} do
+    {:ok, c1} = Contacts.create_contact(project.id, params(:contact))
+
+    assert {:error, :no_contacts} = Contacts.assign_contacts_to_group(project.id, [], "Altino")
+    assert {:error, :no_group} = Contacts.assign_contacts_to_group(project.id, [c1.id], "   ")
+  end
+
+  @tag :contacts
   test "Import CSV with Portuguese headers (Nome/E-mail), splitting full name", %{
     project: project
   } do

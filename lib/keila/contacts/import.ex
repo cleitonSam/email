@@ -163,28 +163,12 @@ defmodule Keila.Contacts.Import do
 
   defp normalize_group(_), do: nil
 
-  # Cria (se ainda não existir) um segmento "Grupo: X" que filtra os contatos
-  # por `data.grupo`. Assim o grupo aparece no seletor de segmento ao criar a
-  # campanha, sem o usuário precisar montar filtro algum.
+  # Cria (se ainda não existir) o segmento "Grupo: X" que filtra por
+  # `data.grupo` — assim o grupo aparece no seletor de segmento da campanha.
   defp maybe_ensure_group_segment(_project_id, nil), do: :ok
 
-  defp maybe_ensure_group_segment(project_id, group) do
-    name = "Grupo: #{group}"
-
-    already_exists? =
-      project_id
-      |> Keila.Contacts.get_project_segments()
-      |> Enum.any?(&(&1.name == name))
-
-    unless already_exists? do
-      Keila.Contacts.create_segment(project_id, %{
-        "name" => name,
-        "filter" => %{"data.grupo" => group}
-      })
-    end
-
-    :ok
-  end
+  defp maybe_ensure_group_segment(project_id, group),
+    do: Keila.Contacts.ensure_group_segment(project_id, group)
 
   # Quando o CSV traz uma coluna única de nome completo ("Nome"/"Name"), divide
   # no primeiro espaço: a primeira palavra vira first_name e o resto last_name.

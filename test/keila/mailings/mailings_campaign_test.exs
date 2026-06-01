@@ -111,6 +111,69 @@ defmodule Keila.MailingsCampaignTest do
   end
 
   @tag :mailings_campaign
+  test "recurring campaign clones itself for the next occurrence", %{project: project} do
+    insert!(:contact, project_id: project.id)
+
+    sender =
+      insert!(:mailings_sender,
+        project_id: project.id,
+        config: %Mailings.Sender.Config{type: "test"}
+      )
+
+    base = DateTime.utc_now() |> DateTime.truncate(:second)
+    until = base |> DateTime.add(30 * 86_400, :second) |> DateTime.to_date()
+
+    campaign =
+      insert!(:mailings_campaign,
+        project_id: project.id,
+        sender_id: sender.id,
+        scheduled_for: base,
+        data: %{"repeat" => %{"interval_days" => 7, "until_date" => Date.to_iso8601(until)}}
+      )
+
+    assert :ok = Mailings.deliver_campaign(campaign.id)
+
+    clone =
+      project.id
+      |> Mailings.get_project_campaigns()
+      |> Enum.find(&(&1.id != campaign.id))
+
+    assert clone
+    assert is_nil(clone.sent_at)
+    assert DateTime.to_date(clone.scheduled_for) == DateTime.to_date(DateTime.add(base, 7 * 86_400, :second))
+    assert clone.data["repeat"]["interval_days"] == 7
+    assert clone.data["repeat"]["until_date"] == Date.to_iso8601(until)
+  end
+
+  @tag :mailings_campaign
+  test "recurring campaign stops cloning after the end date", %{project: project} do
+    insert!(:contact, project_id: project.id)
+
+    sender =
+      insert!(:mailings_sender,
+        project_id: project.id,
+        config: %Mailings.Sender.Config{type: "test"}
+      )
+
+    base = DateTime.utc_now() |> DateTime.truncate(:second)
+    # Data limite ANTES da próxima ocorrência (base + 7 dias) -> não deve clonar.
+    until = base |> DateTime.add(3 * 86_400, :second) |> DateTime.to_date()
+
+    campaign =
+      insert!(:mailings_campaign,
+        project_id: project.id,
+        sender_id: sender.id,
+        scheduled_for: base,
+        data: %{"repeat" => %{"interval_days" => 7, "until_date" => Date.to_iso8601(until)}}
+      )
+
+    assert :ok = Mailings.deliver_campaign(campaign.id)
+
+    campaigns = Mailings.get_project_campaigns(project.id)
+    assert length(campaigns) == 1
+  end
+
+  @tag :mailings_campaign
   test "deliver campaign only delivers up to the limit in minutes", %{project: project} do
     rate_limit_per_minute = 10
     n = @emails_to_deliver

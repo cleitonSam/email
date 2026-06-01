@@ -169,12 +169,18 @@ defmodule KeilaWeb.CampaignEditLive do
       end
 
     # Ao agendar (ou desagendar) de forma normal, limpa qualquer cadência
-    # anterior pra não reaproveitar slots antigos no envio.
+    # anterior pra não reaproveitar slots antigos no envio, e grava (ou remove)
+    # a config de repetição informada no formulário.
     current_data = Ecto.Changeset.get_field(socket.assigns.changeset, :data) || %{}
+
+    data =
+      current_data
+      |> Map.delete("cadence")
+      |> put_repeat_config(params["schedule"])
 
     params =
       (socket.assigns.changeset.params || %{})
-      |> Map.put("data", Map.delete(current_data, "cadence"))
+      |> Map.put("data", data)
 
     with {:ok, campaign} <-
            Mailings.update_campaign(socket.assigns.campaign.id, params, true),
@@ -225,6 +231,48 @@ defmodule KeilaWeb.CampaignEditLive do
          put_flash(socket, :error, gettext("Defina ao menos um horário válido para a cadência."))}
     end
   end
+
+  # Lê a config de repetição do formulário de agendamento e devolve o `data`
+  # com (ou sem) a chave "repeat". Só ativa a repetição quando há intervalo > 0
+  # E uma data limite válida — senão remove qualquer repetição anterior.
+  defp put_repeat_config(data, schedule_params) when is_map(schedule_params) do
+    interval =
+      case schedule_params["repeat"] do
+        "custom" -> parse_pos_int(schedule_params["repeat_custom"])
+        other -> parse_pos_int(other)
+      end
+
+    until = parse_iso_date(schedule_params["repeat_until"])
+
+    if interval && until do
+      Map.put(data, "repeat", %{
+        "interval_days" => interval,
+        "until_date" => Date.to_iso8601(until)
+      })
+    else
+      Map.delete(data, "repeat")
+    end
+  end
+
+  defp put_repeat_config(data, _), do: Map.delete(data, "repeat")
+
+  defp parse_pos_int(value) when is_binary(value) do
+    case Integer.parse(value) do
+      {n, _} when n > 0 -> n
+      _ -> nil
+    end
+  end
+
+  defp parse_pos_int(_), do: nil
+
+  defp parse_iso_date(value) when is_binary(value) do
+    case Date.from_iso8601(value) do
+      {:ok, date} -> date
+      _ -> nil
+    end
+  end
+
+  defp parse_iso_date(_), do: nil
 
   # Converte os slots {date, time} do fuso informado pra ISO8601 UTC (segundos),
   # descartando inválidos, deduplicando e ordenando cronologicamente.

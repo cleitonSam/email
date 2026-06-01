@@ -605,12 +605,76 @@ defmodule Keila.Mailings do
 
     case result do
       {:ok, _n} ->
+        maybe_schedule_repeat(id)
         :ok
 
       {:error, reason} ->
         schedule_campaign(id, %{scheduled_for: nil})
         {:error, reason}
     end
+  end
+
+  # Campanhas recorrentes: se a campanha entregue tem config de repetição em
+  # `data["repeat"]`, cria uma cópia agendada pra próxima ocorrência (data +
+  # intervalo), até passar da data limite. Cada envio gera só a próxima cópia —
+  # a cópia, ao ser entregue, gera a seguinte, e assim por diante. Feito FORA
+  # da transação de entrega pra que uma falha aqui nunca bloqueie o envio real.
+  defp maybe_schedule_repeat(id) do
+    with campaign = %Campaign{scheduled_for: %DateTime{} = base} <- get_campaign(id),
+         %{"interval_days" => days, "until_date" => until_iso} <- repeat_config(campaign),
+         true <- is_integer(days) and days > 0,
+         {:ok, until} <- Date.from_iso8601(to_string(until_iso)),
+         next = DateTime.add(base, days * 86_400, :second),
+         :lt_or_eq <- date_within?(next, until) do
+      clone_campaign_for_repeat(campaign, next)
+    else
+      _ -> :ok
+    end
+  end
+
+  defp repeat_config(%Campaign{data: %{"repeat" => %{} = repeat}}), do: repeat
+  defp repeat_config(_), do: nil
+
+  defp date_within?(next, until) do
+    if Date.compare(DateTime.to_date(next), until) == :gt, do: :gt, else: :lt_or_eq
+  end
+
+  defp clone_campaign_for_repeat(campaign, next) do
+    # Mantém a config de repetição (pra continuar repetindo) mas remove a
+    # cadência (slots de horário são datas fixas e não fazem sentido na cópia).
+    data = Map.delete(campaign.data || %{}, "cadence")
+
+    attrs = %{
+      "subject" => campaign.subject,
+      "text_body" => campaign.text_body,
+      "html_body" => campaign.html_body,
+      "json_body" => campaign.json_body,
+      "mjml_body" => campaign.mjml_body,
+      "preview_text" => campaign.preview_text,
+      "sender_id" => campaign.sender_id,
+      "template_id" => campaign.template_id,
+      "segment_id" => campaign.segment_id,
+      "public_link_enabled" => campaign.public_link_enabled,
+      "data" => data,
+      "settings" => settings_to_params(campaign.settings)
+    }
+
+    with {:ok, new_campaign} <- create_campaign(campaign.project_id, attrs),
+         {:ok, _} <- schedule_campaign(new_campaign.id, %{scheduled_for: next}) do
+      :ok
+    else
+      _ -> :ok
+    end
+  end
+
+  defp settings_to_params(nil), do: %{}
+
+  defp settings_to_params(settings) do
+    %{
+      "type" => settings.type && to_string(settings.type),
+      "enable_wysiwyg" => settings.enable_wysiwyg,
+      "do_not_track" => settings.do_not_track
+    }
   end
 
   @doc """

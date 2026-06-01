@@ -102,14 +102,19 @@ defmodule Keila.Contacts.Import do
       |> parser.parse_string(skip_headers: false)
       |> hd()
 
+    # Detecção de colunas em inglês E português — o Fluxo é PT-BR, então os
+    # CSVs costumam vir com cabeçalhos "Nome", "Sobrenome", "E-mail" etc. A
+    # coluna virtual `:name` cobre uma coluna única de nome completo ("Nome",
+    # "Nome completo", "Full name") que é dividida em first/last logo abaixo.
     columns =
       [
-        email: find_header_column(headers, ~r{email.?(address)?}i),
-        external_id: find_header_column(headers, ~r{external.?id}i),
-        first_name: find_header_column(headers, ~r{first.?name}i),
-        last_name: find_header_column(headers, ~r{last.?name}i),
-        data: find_header_column(headers, ~r{data}i),
-        status: find_header_column(headers, ~r{status}i)
+        email: find_header_column(headers, ~r{e-?mail}i),
+        external_id: find_header_column(headers, ~r{external.?id|id.?externo}i),
+        first_name: find_header_column(headers, ~r{first.?name|primeiro.?nome}i),
+        last_name: find_header_column(headers, ~r{last.?name|sobrenome|últim[oa].?nome|ultim[oa].?nome}i),
+        name: find_header_column(headers, ~r{^\s*nome\s*$|^\s*name\s*$|nome.?completo|full.?name}i),
+        data: find_header_column(headers, ~r{data|dados}i),
+        status: find_header_column(headers, ~r{status|situaç}i)
       ]
       |> Enum.filter(fn {_key, column} -> not is_nil(column) end)
       |> Enum.sort_by(fn {_key, column} -> column end)
@@ -119,11 +124,41 @@ defmodule Keila.Contacts.Import do
       Enum.zip(columns, row)
       |> Enum.into(%{})
       |> Map.update(:data, nil, &update_data_param/1)
+      |> split_full_name()
       |> then(fn row ->
         unless contact_not_active?(row) do
           Contact.creation_changeset(row, project_id)
         end
       end)
+    end
+  end
+
+  # Quando o CSV traz uma coluna única de nome completo ("Nome"/"Name"), divide
+  # no primeiro espaço: a primeira palavra vira first_name e o resto last_name.
+  # Colunas explícitas de first/last name têm prioridade — só preenchemos o que
+  # estiver ausente.
+  defp split_full_name(%{name: name} = row) when is_binary(name) do
+    {first, last} =
+      case name |> String.trim() |> String.split(~r/\s+/, parts: 2) do
+        [first, last] -> {first, last}
+        [first] -> {first, nil}
+        _ -> {nil, nil}
+      end
+
+    row
+    |> Map.delete(:name)
+    |> put_unless_blank(:first_name, first)
+    |> put_unless_blank(:last_name, last)
+  end
+
+  defp split_full_name(row), do: Map.delete(row, :name)
+
+  defp put_unless_blank(row, _key, value) when value in [nil, ""], do: row
+
+  defp put_unless_blank(row, key, value) do
+    case Map.get(row, key) do
+      existing when existing in [nil, ""] -> Map.put(row, key, value)
+      _ -> row
     end
   end
 

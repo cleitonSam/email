@@ -81,12 +81,18 @@ defmodule Keila.Mailings.Builder do
     first = contact.first_name || ""
     last = contact.last_name || ""
     name = String.trim("#{first} #{last}")
+    email = contact.email || ""
 
     assigns
     |> Map.put_new("first_name", first)
     |> Map.put_new("last_name", last)
     |> Map.put_new("name", name)
-    |> Map.put_new("email", contact.email || "")
+    |> Map.put_new("email", email)
+    # Aliases em português — usuários PT-BR frequentemente escrevem
+    # {{ nome }}, {{ primeiro_nome }} ou {{ sobrenome }} no editor.
+    |> Map.put_new("nome", name)
+    |> Map.put_new("primeiro_nome", first)
+    |> Map.put_new("sobrenome", last)
   end
 
   # Carrega o brand kit do projeto pra disponibilizar como {{ brand.* }} nos

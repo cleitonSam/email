@@ -195,6 +195,29 @@ defmodule Keila.ContactsTest do
   end
 
   @tag :contacts
+  test "Import CSV with Portuguese headers (Nome/E-mail), splitting full name", %{
+    project: project
+  } do
+    assert :ok == Contacts.import_csv(project.id, "test/keila/contacts/import_pt_br.csv")
+
+    contacts = Contacts.get_project_contacts(project.id)
+
+    expected = [
+      %{email: "joao@example.com", first_name: "João", last_name: "Nilton"},
+      %{email: "elisa@example.com", first_name: "Elisa", last_name: "Paula"},
+      # Nome com uma só palavra: vira first_name, last_name fica nil.
+      %{email: "foo@example.com", first_name: "Foo", last_name: nil}
+    ]
+
+    for %{email: email, first_name: first_name, last_name: last_name} <- expected do
+      assert Enum.find(contacts, fn
+               %{email: ^email, first_name: ^first_name, last_name: ^last_name} -> true
+               _ -> false
+             end)
+    end
+  end
+
+  @tag :contacts
   test "Import RFC 4180 CSV with on_conflict: replace (upsert)", %{project: project} do
     assert :ok ==
              Contacts.import_csv(project.id, "test/keila/contacts/import_rfc_4180_upsert.csv",

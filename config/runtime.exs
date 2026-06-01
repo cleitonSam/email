@@ -84,6 +84,12 @@ if config_env() == :prod do
           starttls? =
             System.get_env("MAILER_ENABLE_STARTTLS", "FALSE") in [1, "1", "true", "TRUE"]
 
+          # Permite STARTTLS/SSL sem validar o certificado do servidor SMTP.
+          # Use so se o envio falhar por erro de certificado (self-signed,
+          # hostname diferente). Padrao: validacao ligada.
+          no_verify? =
+            System.get_env("MAILER_SMTP_NO_VERIFY", "FALSE") in [1, "1", "true", "TRUE"]
+
           if ssl? and starttls? do
             Logger.warning("""
             Both MAILER_ENABLE_SSL and MAILER_ENABLE_STARTTLS are set to true.
@@ -103,17 +109,24 @@ if config_env() == :prod do
           |> then(fn config ->
             cond do
               ssl? ->
+                sockopts =
+                  if no_verify?,
+                    do: [verify: :verify_none],
+                    else: :tls_certificate_check.options(host)
+
                 config
                 |> Keyword.put(:ssl, true)
-                |> Keyword.put(:sockopts, :tls_certificate_check.options(host))
+                |> Keyword.put(:sockopts, sockopts)
 
               starttls? ->
+                tls_options =
+                  if no_verify?,
+                    do: [verify: :verify_none, versions: [:"tlsv1.2"]],
+                    else: :tls_certificate_check.options(host) ++ [versions: [:"tlsv1.2"]]
+
                 config
                 |> Keyword.put(:tls, :always)
-                |> Keyword.put(
-                  :tls_options,
-                  :tls_certificate_check.options(host) ++ [versions: [:"tlsv1.2"]]
-                )
+                |> Keyword.put(:tls_options, tls_options)
 
               true ->
                 config

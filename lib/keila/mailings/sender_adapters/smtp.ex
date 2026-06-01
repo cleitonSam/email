@@ -70,6 +70,19 @@ defmodule Keila.Mailings.SenderAdapters.SMTP do
         |> Keyword.put(:tls_options, :tls_certificate_check.options(config.smtp_relay))
         |> put_in([:tls_options, :versions], [:"tlsv1.2"])
 
+      # STARTTLS sem validar o certificado do servidor. Use so quando o envio
+      # falhar por erro de certificado (self-signed / hostname diferente).
+      config.smtp_tls_mode == "starttls_noverify" ->
+        opts
+        |> Keyword.put(:tls, :always)
+        |> Keyword.put(:tls_options, verify: :verify_none, versions: [:"tlsv1.2"])
+
+      # SSL/TLS direto (porta 465) sem validar o certificado.
+      config.smtp_tls_mode == "tls_noverify" ->
+        opts
+        |> Keyword.put(:ssl, true)
+        |> Keyword.put(:sockopts, verify: :verify_none)
+
       config.smtp_tls_mode == "none" ->
         opts
         |> Keyword.put(:tls, :never)

@@ -20,17 +20,22 @@ defmodule Keila.Contacts.Import do
     - `:on_conflict`:
       - `:replace`: replace contacts that have the same email address to the latest information on the CSV (or already on database)
       - `:ignore`: ignore contacts that already exists on database and will do nothing
+    - `:group` - optional group name. Every imported contact gets `data.grupo`
+      set to this value and a segment `"Grupo: <name>"` is created (if missing)
+      so the group can be selected as a campaign segment.
   """
   @spec import_csv(Keila.Projects.Project.id(), String.t(), Keyword.t()) ::
           :ok | {:error, String.t()}
   def import_csv(project_id, filename, opts) do
     notify_pid = Keyword.get(opts, :notify, self())
     on_conflict = Keyword.get(opts, :on_conflict, :replace)
+    group = opts |> Keyword.get(:group) |> normalize_group()
 
     Repo.transaction(
       fn ->
         try do
-          import_csv!(project_id, filename, notify_pid, on_conflict)
+          import_csv!(project_id, filename, notify_pid, on_conflict, group)
+          maybe_ensure_group_segment(project_id, group)
         rescue
           e in NimbleCSV.ParseError ->
             Repo.rollback(e.message)
@@ -51,10 +56,10 @@ defmodule Keila.Contacts.Import do
     end
   end
 
-  defp import_csv!(project_id, filename, notify_pid, on_conflict) do
+  defp import_csv!(project_id, filename, notify_pid, on_conflict, group) do
     first_line = read_first_line!(filename)
     parser = determine_parser(first_line)
-    row_function = build_row_function(parser, first_line, project_id)
+    row_function = build_row_function(parser, first_line, project_id, group)
 
     lines = read_file_line_count!(filename)
     send(notify_pid, {:contacts_import_progress, 0, lines})
@@ -96,7 +101,7 @@ defmodule Keila.Contacts.Import do
     end
   end
 
-  defp build_row_function(parser, first_line, project_id) do
+  defp build_row_function(parser, first_line, project_id, group) do
     headers =
       first_line
       |> parser.parse_string(skip_headers: false)
@@ -125,12 +130,60 @@ defmodule Keila.Contacts.Import do
       |> Enum.into(%{})
       |> Map.update(:data, nil, &update_data_param/1)
       |> split_full_name()
+      |> put_group(group)
       |> then(fn row ->
         unless contact_not_active?(row) do
           Contact.creation_changeset(row, project_id)
         end
       end)
     end
+  end
+
+  # Grava o grupo informado na tela de import dentro de `data.grupo` de cada
+  # contato, preservando os demais campos de `data`. É o que permite, depois,
+  # filtrar a campanha por grupo (segmento "Grupo: X").
+  defp put_group(row, nil), do: row
+
+  defp put_group(row, group) do
+    data =
+      case Map.get(row, :data) do
+        map when is_map(map) -> map
+        _ -> %{}
+      end
+
+    Map.put(row, :data, Map.put(data, "grupo", group))
+  end
+
+  defp normalize_group(group) when is_binary(group) do
+    case String.trim(group) do
+      "" -> nil
+      trimmed -> trimmed
+    end
+  end
+
+  defp normalize_group(_), do: nil
+
+  # Cria (se ainda não existir) um segmento "Grupo: X" que filtra os contatos
+  # por `data.grupo`. Assim o grupo aparece no seletor de segmento ao criar a
+  # campanha, sem o usuário precisar montar filtro algum.
+  defp maybe_ensure_group_segment(_project_id, nil), do: :ok
+
+  defp maybe_ensure_group_segment(project_id, group) do
+    name = "Grupo: #{group}"
+
+    already_exists? =
+      project_id
+      |> Keila.Contacts.get_project_segments()
+      |> Enum.any?(&(&1.name == name))
+
+    unless already_exists? do
+      Keila.Contacts.create_segment(project_id, %{
+        "name" => name,
+        "filter" => %{"data.grupo" => group}
+      })
+    end
+
+    :ok
   end
 
   # Quando o CSV traz uma coluna única de nome completo ("Nome"/"Name"), divide

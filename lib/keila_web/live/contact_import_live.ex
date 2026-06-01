@@ -31,7 +31,12 @@ defmodule KeilaWeb.ContactImportLive do
 
   @impl true
   def handle_event("validate", %{"import" => import_options}, socket) do
-    {:noreply, assign(socket, :import_replace, import_options["replace"] == "true")}
+    socket =
+      socket
+      |> assign(:import_replace, import_options["replace"] == "true")
+      |> assign(:import_group, import_options["group"] || "")
+
+    {:noreply, socket}
   end
 
   def handle_event("cancel-upload", %{"ref" => ref}, socket) do
@@ -57,7 +62,8 @@ defmodule KeilaWeb.ContactImportLive do
              Task.async(fn ->
                Keila.Contacts.import_csv(socket.assigns.current_project.id, csv_filename,
                  notify: pid,
-                 on_conflict: on_conflict
+                 on_conflict: on_conflict,
+                 group: import_options["group"]
                )
              end)
 
@@ -123,5 +129,6 @@ defmodule KeilaWeb.ContactImportLive do
     |> assign(:import_total, 0)
     |> assign(:import_error, nil)
     |> assign(:import_replace, true)
+    |> assign_new(:import_group, fn -> "" end)
   end
 end

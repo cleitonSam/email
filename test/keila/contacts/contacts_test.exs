@@ -218,6 +218,49 @@ defmodule Keila.ContactsTest do
   end
 
   @tag :contacts
+  test "Import CSV with a group tags contacts and creates a segment", %{project: project} do
+    assert :ok ==
+             Contacts.import_csv(project.id, "test/keila/contacts/import_pt_br.csv",
+               group: "Altino"
+             )
+
+    contacts = Contacts.get_project_contacts(project.id)
+
+    assert Enum.all?(contacts, fn contact -> contact.data["grupo"] == "Altino" end)
+
+    segments = Contacts.get_project_segments(project.id)
+    segment = Enum.find(segments, &(&1.name == "Grupo: Altino"))
+    assert segment
+    assert segment.filter == %{"data.grupo" => "Altino"}
+
+    # O segmento filtra exatamente os contatos do grupo.
+    filtered =
+      Contacts.get_project_contacts(project.id, filter: segment.filter)
+
+    assert length(filtered) == length(contacts)
+  end
+
+  @tag :contacts
+  test "Importing the same group twice does not duplicate the segment", %{project: project} do
+    assert :ok ==
+             Contacts.import_csv(project.id, "test/keila/contacts/import_pt_br.csv",
+               group: "Altino"
+             )
+
+    assert :ok ==
+             Contacts.import_csv(project.id, "test/keila/contacts/import_pt_br.csv",
+               group: "Altino"
+             )
+
+    segments =
+      project.id
+      |> Contacts.get_project_segments()
+      |> Enum.filter(&(&1.name == "Grupo: Altino"))
+
+    assert length(segments) == 1
+  end
+
+  @tag :contacts
   test "Import RFC 4180 CSV with on_conflict: replace (upsert)", %{project: project} do
     assert :ok ==
              Contacts.import_csv(project.id, "test/keila/contacts/import_rfc_4180_upsert.csv",

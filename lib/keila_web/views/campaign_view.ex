@@ -79,4 +79,33 @@ defmodule KeilaWeb.CampaignView do
     do: length(slots)
 
   def cadence_slot_count(_), do: 0
+
+  @doc """
+  Config de repetição da campanha (`data["repeat"]`) ou nil.
+  """
+  def repeat_config(%{data: %{"repeat" => %{"interval_days" => days} = repeat}})
+      when is_integer(days) and days > 0,
+      do: repeat
+
+  def repeat_config(_), do: nil
+
+  @doc """
+  Descrição curta da repetição pra exibir no card, ou nil.
+  Ex.: "Repete a cada 7 dias" / "Repete a cada 15 dias até 31/12/2026".
+  """
+  def repeat_label(campaign) do
+    case repeat_config(campaign) do
+      %{"interval_days" => days} = repeat ->
+        until =
+          case Date.from_iso8601(to_string(repeat["until_date"] || "")) do
+            {:ok, date} -> " até #{Calendar.strftime(date, "%d/%m/%Y")}"
+            _ -> ""
+          end
+
+        "Repete a cada #{days} #{if days == 1, do: "dia", else: "dias"}#{until}"
+
+      nil ->
+        nil
+    end
+  end
 end

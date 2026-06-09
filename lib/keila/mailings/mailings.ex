@@ -616,16 +616,20 @@ defmodule Keila.Mailings do
 
   # Campanhas recorrentes: se a campanha entregue tem config de repetição em
   # `data["repeat"]`, cria uma cópia agendada pra próxima ocorrência (data +
-  # intervalo), até passar da data limite. Cada envio gera só a próxima cópia —
-  # a cópia, ao ser entregue, gera a seguinte, e assim por diante. Feito FORA
-  # da transação de entrega pra que uma falha aqui nunca bloqueie o envio real.
+  # intervalo). Cada envio gera só a próxima cópia — a cópia, ao ser entregue,
+  # gera a seguinte, e assim por diante. Funciona tanto pra campanha agendada
+  # quanto pra envio manual ("Enviar agora"): a base é o horário agendado ou,
+  # na falta dele, o horário do envio. A data limite é opcional — sem ela,
+  # repete indefinidamente (até o usuário desagendar/excluir a próxima cópia).
+  # Feito FORA da transação de entrega pra que uma falha aqui nunca bloqueie
+  # o envio real.
   defp maybe_schedule_repeat(id) do
-    with campaign = %Campaign{scheduled_for: %DateTime{} = base} <- get_campaign(id),
-         %{"interval_days" => days, "until_date" => until_iso} <- repeat_config(campaign),
+    with campaign = %Campaign{} <- get_campaign(id),
+         %{"interval_days" => days} = repeat <- repeat_config(campaign),
          true <- is_integer(days) and days > 0,
-         {:ok, until} <- Date.from_iso8601(to_string(until_iso)),
-         next = DateTime.add(base, days * 86_400, :second),
-         :lt_or_eq <- date_within?(next, until) do
+         %DateTime{} = base <- repeat_base(campaign),
+         next = next_future_occurrence(base, days),
+         true <- within_until?(next, repeat["until_date"]) do
       clone_campaign_for_repeat(campaign, next)
     else
       _ -> :ok
@@ -635,8 +639,38 @@ defmodule Keila.Mailings do
   defp repeat_config(%Campaign{data: %{"repeat" => %{} = repeat}}), do: repeat
   defp repeat_config(_), do: nil
 
-  defp date_within?(next, until) do
-    if Date.compare(DateTime.to_date(next), until) == :gt, do: :gt, else: :lt_or_eq
+  # Base da próxima ocorrência: horário agendado, senão o horário real do envio.
+  defp repeat_base(%Campaign{scheduled_for: %DateTime{} = dt}), do: dt
+  defp repeat_base(%Campaign{sent_at: %DateTime{} = dt}), do: dt
+  defp repeat_base(_), do: DateTime.truncate(DateTime.utc_now(), :second)
+
+  # Avança base + N*intervalo até cair no futuro (com folga de 1h), pra cobrir
+  # casos de envio atrasado/manual de uma cópia antiga — senão o agendamento da
+  # cópia falharia na validação de "data no futuro".
+  defp next_future_occurrence(base, days) do
+    threshold = DateTime.add(DateTime.utc_now(), 3_600, :second)
+    next = DateTime.add(base, days * 86_400, :second)
+
+    if DateTime.compare(next, threshold) == :gt do
+      next
+    else
+      # quantos intervalos faltam pra passar do threshold
+      diff = DateTime.diff(threshold, base, :second)
+      steps = max(div(diff, days * 86_400) + 1, 1)
+      DateTime.add(base, steps * days * 86_400, :second)
+    end
+  end
+
+  # Sem data limite (nil/vazio/inválida), repete sempre. Com data limite,
+  # só repete enquanto a próxima ocorrência não passar dela.
+  defp within_until?(_next, nil), do: true
+  defp within_until?(_next, ""), do: true
+
+  defp within_until?(next, until_iso) do
+    case Date.from_iso8601(to_string(until_iso)) do
+      {:ok, until} -> Date.compare(DateTime.to_date(next), until) != :gt
+      _ -> true
+    end
   end
 
   defp clone_campaign_for_repeat(campaign, next) do
@@ -663,7 +697,14 @@ defmodule Keila.Mailings do
          {:ok, _} <- schedule_campaign(new_campaign.id, %{scheduled_for: next}) do
       :ok
     else
-      _ -> :ok
+      error ->
+        require Logger
+
+        Logger.warning(
+          "Falha ao criar cópia recorrente da campanha #{campaign.id}: #{inspect(error)}"
+        )
+
+        :ok
     end
   end
 

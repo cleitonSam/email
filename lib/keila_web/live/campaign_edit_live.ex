@@ -233,8 +233,9 @@ defmodule KeilaWeb.CampaignEditLive do
   end
 
   # Lê a config de repetição do formulário de agendamento e devolve o `data`
-  # com (ou sem) a chave "repeat". Só ativa a repetição quando há intervalo > 0
-  # E uma data limite válida — senão remove qualquer repetição anterior.
+  # com (ou sem) a chave "repeat". Ativa a repetição quando há intervalo > 0;
+  # a data limite é OPCIONAL — sem ela, repete indefinidamente (até o usuário
+  # desagendar/excluir a próxima cópia). Sem intervalo, remove a repetição.
   defp put_repeat_config(data, schedule_params) when is_map(schedule_params) do
     interval =
       case schedule_params["repeat"] do
@@ -244,11 +245,10 @@ defmodule KeilaWeb.CampaignEditLive do
 
     until = parse_iso_date(schedule_params["repeat_until"])
 
-    if interval && until do
-      Map.put(data, "repeat", %{
-        "interval_days" => interval,
-        "until_date" => Date.to_iso8601(until)
-      })
+    if interval do
+      repeat = %{"interval_days" => interval}
+      repeat = if until, do: Map.put(repeat, "until_date", Date.to_iso8601(until)), else: repeat
+      Map.put(data, "repeat", repeat)
     else
       Map.delete(data, "repeat")
     end

@@ -9,7 +9,12 @@
   >
     {hidden_input(f, :return, value: @contacts_status)}
     {hidden_input(f, :require_confirmation, value: "true")}
-    <div x-data="{ checked: false }">
+    <div
+      x-data="{ checked: false, selected: 0, countSelected() { this.selected = this.$el.querySelectorAll('tbody input[type=checkbox]:checked').length } }"
+      x-init="$nextTick(() => countSelected())"
+      x-effect="checked; $nextTick(() => countSelected())"
+      @change="$nextTick(() => countSelected())"
+    >
     <!-- Busca atual, pra ação aplicar ao mesmo conjunto quando "todas as páginas" estiver marcado -->
     <input type="hidden" name="contact[search]" value={@search} />
     <table
@@ -117,6 +122,11 @@
     </label>
 
     <div class="flex flex-col gap-4 mt-4 pt-4 border-t border-gray-800/50">
+      <p class="text-sm" x-show="selected > 0" x-cloak>
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-fluxo-500/20 text-fluxo-300 font-semibold text-xs">
+          <span x-text="selected"></span> <span x-text="selected === 1 ? 'contato selecionado' : 'contatos selecionados'"></span>
+        </span>
+      </p>
       <!-- Atribuir grupo aos selecionados -->
       <div class="flex flex-col sm:flex-row gap-2 sm:items-end">
         <div class="flex flex-col gap-1.5 flex-1">

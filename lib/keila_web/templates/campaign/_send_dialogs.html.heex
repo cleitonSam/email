@@ -61,6 +61,17 @@
             {gettext("This campaign has already been scheduled. You can manually send it up to five minutes before the scheduled sending time.")}
           </div>
         <% end %>
+        <% send_repeat = (get_field(@changeset, :data) || %{})["repeat"] %>
+        <%= if is_map(send_repeat) && is_integer(send_repeat["interval_days"]) do %>
+          <div class="flex items-center gap-2 text-sm text-fluxo-300 bg-fluxo-500/10 border border-fluxo-500/20 rounded-lg px-3 py-2 mt-3">
+            <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span>
+              Repetição ativa: após o envio, uma cópia agendada pra daqui a <strong>{send_repeat["interval_days"]} dias</strong> será criada automaticamente<%= if send_repeat["until_date"] do %> (até {send_repeat["until_date"]})<% end %>.
+            </span>
+          </div>
+        <% end %>
         <div class="flex justify-end gap-3 mt-6 pt-5 border-t border-gray-800/50">
           <button class="button button--text button--large" @click.prevent="$dispatch('x-cancel')">
             {gettext("Cancel")}
@@ -215,7 +226,9 @@
           </div>
 
           <div class="flex flex-col gap-1.5" x-show="repeat !== ''" x-cloak>
-            <label class="text-sm font-medium text-gray-300">Repetir até (data limite)</label>
+            <label class="text-sm font-medium text-gray-300">
+              Repetir até <span class="text-gray-500 font-normal">(opcional)</span>
+            </label>
             <input
               type="date"
               name="schedule[repeat_until]"
@@ -223,7 +236,7 @@
               class="w-full rounded-xl bg-gray-800/50 border border-gray-700/50 text-white px-4 py-3 focus:border-fluxo-500 focus:ring-2 focus:ring-fluxo-500/20 transition-all"
             />
             <p class="text-xs text-gray-500">
-              Repete no intervalo escolhido até essa data. Sem data, não repete.
+              Sem data limite, repete sem parar. Após cada envio, uma cópia já agendada é criada automaticamente — com seus próprios dados e estatísticas. Pra parar, basta desagendar ou excluir a próxima cópia.
             </p>
           </div>
         </div>

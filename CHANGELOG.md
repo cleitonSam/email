@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### LGPD — Direitos do titular (Art. 18)
+- **`data_subject_requests` + `Keila.DataSubject`:** registro de pedidos do titular (acesso, correção, portabilidade, eliminação/anonimização, revogação, oposição). **Anonimização de contato** (remove PII, descadastra, mantém a linha e suprime o e-mail original) e **exportação** (com histórico de consentimento). Backend + testes; UI de compliance a seguir.
+
 ### Reputação — pausa automática (regras 5/6)
 - **`Keila.Reputation`:** calcula taxas de spam/hard bounce por campanha e, ao ultrapassar o limiar seguro (spam > 0,3%, hard bounce > 5%, com amostra mínima de 500), **pausa a empresa automaticamente** (bloqueia → worker barra novos disparos) e registra em `audit_logs`. Avaliação disparada nos handlers de complaint e hard bounce.
 

@@ -131,6 +131,79 @@ defmodule Keila.Auth do
     |> Repo.update()
   end
 
+  # ------------------------------------------------------------------
+  # RBAC de empresa (perfis Dono/Operador/Visualizador/Compliance)
+  # ------------------------------------------------------------------
+
+  @company_permissions ~w(
+    manage_company_users
+    manage_company_domain
+    manage_company_billing
+    manage_campaigns
+    manage_contacts
+    manage_segments
+    view_reports
+    view_compliance_logs
+  )
+
+  @company_roles %{
+    "owner" => @company_permissions,
+    "operator" => ~w(manage_campaigns manage_contacts manage_segments view_reports),
+    "viewer" => ~w(view_reports),
+    "compliance" => ~w(view_compliance_logs view_reports)
+  }
+
+  @doc "Lista os nomes dos papéis de empresa."
+  def company_role_names, do: Map.keys(@company_roles)
+
+  @doc "Lista os nomes das permissões de empresa."
+  def company_permission_names, do: @company_permissions
+
+  @doc """
+  Garante (idempotente) que os papéis e permissões de empresa existem e estão
+  vinculados. Pode rodar a cada boot (chamado pelos seeds).
+  """
+  @spec ensure_company_roles!() :: :ok
+  def ensure_company_roles! do
+    permissions =
+      Map.new(@company_permissions, fn name -> {name, ensure_permission!(name)} end)
+
+    Enum.each(@company_roles, fn {role_name, perm_names} ->
+      role = ensure_role!(role_name)
+
+      Enum.each(perm_names, fn perm_name ->
+        ensure_role_permission!(role.id, permissions[perm_name].id)
+      end)
+    end)
+
+    :ok
+  end
+
+  @doc """
+  Concede a um usuário um papel de empresa no grupo informado, pelo nome do
+  papel (owner/operator/viewer/compliance). Idempotente.
+  """
+  @spec assign_company_role(integer(), integer(), String.t()) :: :ok | {:error, term()}
+  def assign_company_role(user_id, group_id, role_name) when is_binary(role_name) do
+    case Repo.get_by(Role, name: role_name) do
+      %Role{id: role_id} -> add_user_group_role(user_id, group_id, role_id)
+      nil -> {:error, :role_not_found}
+    end
+  end
+
+  defp ensure_permission!(name) do
+    Repo.get_by(Permission, name: name) || Repo.insert!(%Permission{name: name})
+  end
+
+  defp ensure_role!(name) do
+    Repo.get_by(Role, name: name) || Repo.insert!(%Role{name: name})
+  end
+
+  defp ensure_role_permission!(role_id, permission_id) do
+    Repo.get_by(Keila.Auth.RolePermission, role_id: role_id, permission_id: permission_id) ||
+      Repo.insert!(%Keila.Auth.RolePermission{role_id: role_id, permission_id: permission_id})
+  end
+
   @doc """
   Adds User with given `user_id` to Group specified with `group_id`.
 

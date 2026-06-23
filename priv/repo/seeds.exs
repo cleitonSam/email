@@ -61,3 +61,8 @@ if Repo.all(Auth.Group) == [] do
 else
   Logger.info("Database already populated, not populating database.")
 end
+
+# Garante (idempotente) os papéis de empresa (owner/operator/viewer/compliance)
+# e suas permissões. Roda em todo boot via Keila.ReleaseTasks.init/0.
+:ok = Keila.Auth.ensure_company_roles!()
+Logger.info("Company RBAC roles ensured.")

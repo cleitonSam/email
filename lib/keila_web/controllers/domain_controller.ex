@@ -9,6 +9,8 @@ defmodule KeilaWeb.DomainController do
   alias Keila.Deliverability.EmailDomain
   alias Keila.Auditoria
 
+  plug :authorize_domain
+
   @spec index(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def index(conn, _params) do
     conn
@@ -86,6 +88,28 @@ defmodule KeilaWeb.DomainController do
     case Deliverability.get_por_projeto(project_id(conn), id) do
       nil -> conn |> put_status(404) |> halt()
       domain -> fun.(domain)
+    end
+  end
+
+  # Gestão de domínio exige o papel com `manage_company_domain` (Dono).
+  # Master Admin sempre passa; usuário sem papel atribuído (legado) também
+  # (default não-quebra de `Keila.Rbac.can?/3`).
+  defp authorize_domain(conn, _) do
+    user = conn.assigns[:current_user]
+    project = conn.assigns[:current_project]
+
+    cond do
+      conn.assigns[:is_admin?] ->
+        conn
+
+      user && project && Keila.Rbac.can?(user.id, project, "manage_company_domain") ->
+        conn
+
+      true ->
+        conn
+        |> put_flash(:error, gettext("Você não tem permissão para gerenciar domínios."))
+        |> redirect(to: Routes.project_path(conn, :show, project.id))
+        |> halt()
     end
   end
 

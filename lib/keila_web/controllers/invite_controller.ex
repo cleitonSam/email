@@ -63,11 +63,12 @@ defmodule KeilaWeb.InviteController do
         # Ativa o user na hora (já confirmou email aceitando o convite)
         _ = Auth.activate_user(user.id)
 
-        # Adiciona ao Group do projeto
+        # Adiciona ao Group do projeto e concede o papel do convite
         project = Projects.get_project(invitation.project_id)
 
         if project && project.group_id do
           _ = Auth.add_user_to_group(user.id, project.group_id)
+          _ = Auth.assign_company_role(user.id, project.group_id, papel_do_convite(invitation.role))
         end
 
         # Convite de empresa: ativa a empresa e remove o admin master do grupo
@@ -106,4 +107,14 @@ defmodule KeilaWeb.InviteController do
         |> redirect(to: "/invite/#{invitation.token}")
     end
   end
+
+  # Mapeia o `role` do convite para um papel de empresa válido.
+  # Convite de empresa usa "owner"; convite de equipe usa "member" (vira operador).
+  defp papel_do_convite("owner"), do: "owner"
+
+  defp papel_do_convite(role) when is_binary(role) do
+    if role in Keila.Auth.company_role_names(), do: role, else: "operator"
+  end
+
+  defp papel_do_convite(_), do: "operator"
 end

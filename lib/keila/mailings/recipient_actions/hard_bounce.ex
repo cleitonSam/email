@@ -12,6 +12,11 @@ defmodule Keila.Mailings.RecipientActions.HardBounce do
     |> maybe_update_recipient()
     |> tap_if_not_nil(&update_contact(&1))
     |> tap_if_not_nil(&log_event(&1, data))
+    |> tap_if_not_nil(&evaluate_reputation/1)
+  end
+
+  defp evaluate_reputation(%Recipient{campaign_id: campaign_id}) do
+    Keila.Reputation.evaluate_campaign(campaign_id)
   end
 
   defp maybe_update_recipient(recipient_id) do

@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Reputação — pausa automática (regras 5/6)
+- **`Keila.Reputation`:** calcula taxas de spam/hard bounce por campanha e, ao ultrapassar o limiar seguro (spam > 0,3%, hard bounce > 5%, com amostra mínima de 500), **pausa a empresa automaticamente** (bloqueia → worker barra novos disparos) e registra em `audit_logs`. Avaliação disparada nos handlers de complaint e hard bounce.
+
 ### LGPD — Sprint 3
 - **Base legal e origem por contato:** `contacts.legal_basis` (consent | legitimate_interest | contract) e `contacts.source` (form | import | api | manual | integration). Contatos de formulário nascem como `consent`/`form`; importados como `legitimate_interest`/`import`.
 - **Prova de consentimento (`consent_logs`):** registro imutável (texto exibido, IP, user-agent, momento, double opt-in) gravado na inscrição via formulário (submit direto e confirmação de double opt-in). Módulo `Keila.Consent`. Mantido mesmo após exclusão do contato.

@@ -131,13 +131,25 @@ defmodule Keila.Contacts.Import do
       |> Map.update(:data, nil, &update_data_param/1)
       |> split_full_name()
       |> put_group(group)
+      # LGPD: contatos importados nascem com origem "import" e base legal
+      # "legitimate_interest" (exige LIA/RIPD documentado pela empresa).
+      |> Map.put(:source, "import")
+      |> Map.put(:legal_basis, "legitimate_interest")
       |> then(fn row ->
-        unless contact_not_active?(row) do
-          Contact.creation_changeset(row, project_id)
+        cond do
+          contact_not_active?(row) -> nil
+          # Higiene: pula e-mails descartáveis/temporários (não aborta o import)
+          disposable_row?(row) -> nil
+          true -> Contact.creation_changeset(row, project_id)
         end
       end)
     end
   end
+
+  defp disposable_row?(%{email: email}) when is_binary(email),
+    do: Keila.Contacts.EmailHygiene.disposable?(email)
+
+  defp disposable_row?(_), do: false
 
   # Grava o grupo informado na tela de import dentro de `data.grupo` de cada
   # contato, preservando os demais campos de `data`. É o que permite, depois,

@@ -38,6 +38,7 @@ defmodule KeilaWeb.PublicFormController do
       {:ok, contact = %Contact{}} ->
         data = if form.settings.captcha_required, do: %{"captcha" => true}, else: %{}
         Tracking.log_event("subscribe", contact.id, data)
+        registrar_consentimento(conn, form, contact, false)
 
         conn
         |> assign(:contact, contact)
@@ -103,6 +104,7 @@ defmodule KeilaWeb.PublicFormController do
         data = %{"double_opt_in" => true}
         Tracking.log_event("subscribe", contact.id, data)
         Contacts.delete_form_params(form_params.id)
+        registrar_consentimento(conn, form, contact, true)
 
         conn
         |> assign(:contact, contact)
@@ -331,6 +333,39 @@ defmodule KeilaWeb.PublicFormController do
       |> assign(:contact, nil)
       |> render_success_or_redirect()
       |> halt()
+    end
+  end
+
+  # Registra a prova de consentimento (LGPD) do contato vindo de formulário.
+  # Best-effort: nunca interrompe o fluxo de inscrição.
+  defp registrar_consentimento(conn, form, contact, double_opt_in?) do
+    Keila.Consent.registrar(
+      contact: contact,
+      source: "form",
+      legal_basis: "consent",
+      double_opt_in: double_opt_in?,
+      consent_text: consent_text(form),
+      ip: client_ip(conn),
+      user_agent: user_agent(conn)
+    )
+  end
+
+  defp consent_text(%{settings: %{fine_print: text}}) when is_binary(text), do: text
+  defp consent_text(_), do: nil
+
+  defp client_ip(conn) do
+    case Plug.Conn.get_req_header(conn, "x-forwarded-for") do
+      [value | _] -> value |> String.split(",") |> List.first() |> String.trim()
+      _ -> conn.remote_ip |> :inet.ntoa() |> to_string()
+    end
+  rescue
+    _ -> nil
+  end
+
+  defp user_agent(conn) do
+    case Plug.Conn.get_req_header(conn, "user-agent") do
+      [ua | _] -> ua
+      _ -> nil
     end
   end
 end

@@ -17,6 +17,10 @@ defmodule Keila.Contacts.Contact do
     field(:status, Ecto.Enum, values: @statuses, default: :active)
     field(:data, Keila.Repo.JsonField)
     field(:double_opt_in_at, :utc_datetime)
+    # LGPD: base legal (consent | legitimate_interest | contract) e origem do
+    # contato (form | import | api | manual | integration). Ver Keila.Consent.
+    field(:legal_basis, :string)
+    field(:source, :string)
     belongs_to(:project, Keila.Projects.Project, type: Keila.Projects.Project.Id)
     timestamps()
   end
@@ -25,7 +29,16 @@ defmodule Keila.Contacts.Contact do
           Ecto.Changeset.t(t())
   def creation_changeset(struct \\ %__MODULE__{}, params, project_id) do
     struct
-    |> cast(params, [:email, :external_id, :first_name, :last_name, :project_id, :data])
+    |> cast(params, [
+      :email,
+      :external_id,
+      :first_name,
+      :last_name,
+      :project_id,
+      :data,
+      :legal_basis,
+      :source
+    ])
     |> put_change(:project_id, project_id)
     |> validate_email()
     |> validate_max_name_length()
@@ -82,6 +95,8 @@ defmodule Keila.Contacts.Contact do
     |> validate_double_opt_in(form, form_params_id, double_opt_in_hmac)
     |> put_change(:project_id, form.project_id)
     |> put_change(:status, :active)
+    |> put_change(:legal_basis, "consent")
+    |> put_change(:source, "form")
     |> EctoStringMap.cast_string_map(:data, field_mapping)
   end
 

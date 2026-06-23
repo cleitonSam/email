@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### LGPD — Sprint 3
+- **Base legal e origem por contato:** `contacts.legal_basis` (consent | legitimate_interest | contract) e `contacts.source` (form | import | api | manual | integration). Contatos de formulário nascem como `consent`/`form`; importados como `legitimate_interest`/`import`.
+- **Prova de consentimento (`consent_logs`):** registro imutável (texto exibido, IP, user-agent, momento, double opt-in) gravado na inscrição via formulário (submit direto e confirmação de double opt-in). Módulo `Keila.Consent`. Mantido mesmo após exclusão do contato.
+- **Higiene de import (regra inegociável nº 4):** módulo `Keila.Contacts.EmailHygiene` (sintaxe, domínios descartáveis, MX best-effort). O import agora **pula e-mails descartáveis** automaticamente e carimba origem/base legal.
+
 ### Entregabilidade — Sprint 2
 - **Gate de DNS por domínio (regra inegociável nº 1):** nova tela **Domínios de envio** (`/projects/:id/domains`) onde a empresa cadastra o domínio do remetente e verifica **SPF/DMARC** (e DKIM best-effort) via DNS. Módulo `Keila.Deliverability` + tabela `email_domains`. O envio consulta o gate: domínio cadastrado e **não verificado bloqueia**; sem registro, o comportamento é progressivo (libera, salvo modo estrito `REQUIRE_VERIFIED_DOMAIN=true`) para não quebrar projetos existentes.
 - **Enforce de descadastro no corpo (regra inegociável nº 2):** uma campanha sem link/menção de descadastro no corpo (ou no template) **não pode ser enviada nem agendada**. Validação amigável no editor + gate forte em `deliver_campaign` (cobre envio manual, agendado e via API). O cabeçalho `List-Unsubscribe` one-click continua sempre presente.

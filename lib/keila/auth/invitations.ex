@@ -8,6 +8,7 @@ defmodule Keila.Auth.Invitations do
   alias Keila.Repo
   alias Keila.Auth.Invitation
   alias Keila.Auth.User
+  alias Keila.Projects.Brand
 
   @spec list_pending(binary()) :: [Invitation.t()]
   def list_pending(project_id) do
@@ -88,7 +89,8 @@ defmodule Keila.Auth.Invitations do
       url: accept_url,
       email: invitation.email,
       inviter: inviter_name,
-      project_name: project_name
+      project_name: project_name,
+      brand: invitation_brand(invitation)
     }
 
     try do
@@ -106,5 +108,35 @@ defmodule Keila.Auth.Invitations do
     scheme = System.get_env("URL_SCHEMA") || "https"
     host = System.get_env("URL_HOST") || "emailmkt.fluxodigitaltech.com.br"
     "#{scheme}://#{host}"
+  end
+
+  # Identidade visual do convite: usa o brand kit da empresa quando ele já foi
+  # configurado (logo + cores); senão, cai pra identidade Fluxo (azul/ciano).
+  defp invitation_brand(%Invitation{project: project} = invitation) when not is_nil(project) do
+    brand = Brand.get(project)
+
+    if Brand.completed?(project) do
+      logo_url =
+        if is_binary(brand["logo_url"]) and brand["logo_url"] != "" do
+          "#{base_url()}/b/#{invitation.project_id}/logo"
+        else
+          nil
+        end
+
+      %{
+        logo_url: logo_url,
+        color_primary: brand["color_primary"] || "#0066FF",
+        color_dark: brand["color_dark"] || "#0A1F3D",
+        color_accent: brand["color_accent"] || "#00F2FE"
+      }
+    else
+      fluxo_brand()
+    end
+  end
+
+  defp invitation_brand(_), do: fluxo_brand()
+
+  defp fluxo_brand do
+    %{logo_url: nil, color_primary: "#0066FF", color_dark: "#0A1F3D", color_accent: "#00F2FE"}
   end
 end

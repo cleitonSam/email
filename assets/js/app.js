@@ -21,6 +21,7 @@ import * as ContactsTable from "./hooks/contacts-table"
 import * as DateTimeHooks from "./hooks/date-time"
 import { FileManager } from "./hooks/file_manager"
 import { RememberUnsaved } from "./hooks/remember-unsaved"
+import { initBrandColors } from "./brand_colors"
 
 const Hooks = {
   ...DateTimeHooks,
@@ -57,6 +58,10 @@ window.addEventListener("phx:page-loading-stop", info => NProgress.done())
 
 // connect if there are any LiveViews on the page
 liveSocket.connect()
+
+// Brand kit: extração de cores do logo (página dead-view, fora do LiveSocket)
+if (document.readyState !== "loading") initBrandColors()
+else document.addEventListener("DOMContentLoaded", initBrandColors)
 
 // expose liveSocket on window for web console debug logs and latency simulation:
 // >> liveSocket.enableDebug()

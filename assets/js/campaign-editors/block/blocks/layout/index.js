@@ -9,10 +9,39 @@ export default class Layout {
     this.editors = []
     this.config = config
 
-    this.wrapper = document.createElement("div")
-    this.drawView()
+    // api/block precisam existir ANTES de drawView(): os editores aninhados
+    // chamam this.block.dispatchChange() no onChange. Antes ficavam undefined
+    // até logo depois do drawView.
     this.api = api
     this.block = block
+
+    this.wrapper = document.createElement("div")
+    this.drawView()
+  }
+
+  // Destrói os editores aninhados (listeners + DOM) e zera a lista. EditorJS
+  // chama removed() quando o BLOCO é apagado e destroy() quando o EDITOR
+  // inteiro é destruído; ligamos os dois pra não vazar instâncias em nenhum
+  // dos casos. O try/catch protege contra um editor já destruído.
+  cleanupEditors() {
+    this.editors.forEach(editor => {
+      if (editor && typeof editor.destroy === "function") {
+        try {
+          editor.destroy()
+        } catch (_e) {
+          /* editor já destruído — ignora */
+        }
+      }
+    })
+    this.editors = []
+  }
+
+  removed() {
+    this.cleanupEditors()
+  }
+
+  destroy() {
+    this.cleanupEditors()
   }
 
   render() {
@@ -20,6 +49,10 @@ export default class Layout {
   }
 
   drawView() {
+    // Destrói os editores da renderização anterior antes de recriar (ex.:
+    // updateColumns ao trocar 1-1 -> 1-2). Sem isto, cada troca de layout
+    // vazava as instâncias antigas do EditorJS com todos os seus listeners.
+    this.cleanupEditors()
     this.wrapper.innerHTML = ""
     const colSpans = this.data.ratio.split("-").map(colSpan => parseInt(colSpan))
     const colSpanTotal = colSpans.reduce((acc, i) => acc + i)
@@ -75,6 +108,13 @@ export default class Layout {
       editorPlace.addEventListener("mouseleave", () => {
         editor.toolbar.close()
         maybeOpen = false
+      })
+
+      // Toque: abre a toolbar da coluna no tap (não há mouseenter no mobile).
+      // Não mexe em maybeOpen (flag do hover) pra não ficar travada aberta.
+      editorPlace.addEventListener("pointerup", e => {
+        if (e.pointerType === "mouse") return
+        editor.toolbar.open()
       })
 
       editorPlace.addEventListener("paste", e => {

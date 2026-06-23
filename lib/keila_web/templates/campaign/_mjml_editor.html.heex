@@ -845,11 +845,12 @@
       }
 
       textarea.value = data.mjml;
+      // Dispara input/change: o MjmlEditor escuta esses eventos e sincroniza o
+      // CodeMirror (ver campaign-editors/mjml/index.js). Não há mais setValue
+      // manual aqui — aquele código era da API do CodeMirror 5 (.CodeMirror),
+      // que não existe no CodeMirror 6 e nunca chegava a rodar.
       textarea.dispatchEvent(new Event('input', { bubbles: true }));
       textarea.dispatchEvent(new Event('change', { bubbles: true }));
-
-      const cm = document.querySelector('.CodeMirror');
-      if (cm && cm.CodeMirror) cm.CodeMirror.setValue(data.mjml);
 
       modalEl.classList.add('hidden');
       promptEl.value = '';

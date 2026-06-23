@@ -1,6 +1,7 @@
 <div id="wysiwyg" phx-update="ignore">
   <div class="wysiwyg--menu bg-gray-800 relative shadow-lg z-10 flex overflow-x-auto rounded-t-xl border border-gray-700/50">
     <button
+      type="button"
       title={gettext("Bold")}
       class="flex w-10 h-10 p-2 items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white font-bold transition-colors"
       data-action="strong"
@@ -8,6 +9,7 @@
       b
     </button>
     <button
+      type="button"
       title={gettext("Italics")}
       class="flex w-10 h-10 p-2 items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white italic transition-colors"
       data-action="em"
@@ -15,6 +17,7 @@
       i
     </button>
     <button
+      type="button"
       title={gettext("Decrease indent")}
       class="flex w-10 h-10 p-2 items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors"
       data-action="indent-decrease"
@@ -22,6 +25,7 @@
       {render_icon(:indent_decrease)}
     </button>
     <button
+      type="button"
       title={gettext("Increase indent")}
       class="flex w-10 h-10 p-2 items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors"
       data-action="indent-increase"
@@ -29,6 +33,7 @@
       {render_icon(:indent_increase)}
     </button>
     <button
+      type="button"
       title={gettext("Unordered list")}
       class="flex w-10 h-10 p-2 items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors"
       data-action="ul"
@@ -36,6 +41,7 @@
       {render_icon(:list_unordered)}
     </button>
     <button
+      type="button"
       title={gettext("Ordered list")}
       class="flex w-10 h-10 p-2 items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors"
       data-action="ol"
@@ -43,6 +49,7 @@
       {render_icon(:list_ordered)}
     </button>
     <button
+      type="button"
       title={gettext("Heading 1")}
       class="flex w-10 h-10 p-2 items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white font-semibold transition-colors"
       data-action="h1"
@@ -50,6 +57,7 @@
       h1
     </button>
     <button
+      type="button"
       title={gettext("Heading 2")}
       class="flex w-10 h-10 p-2 items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white font-semibold transition-colors"
       data-action="h2"
@@ -57,6 +65,7 @@
       h2
     </button>
     <button
+      type="button"
       title={gettext("Heading 3")}
       class="flex w-10 h-10 p-2 items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white font-semibold transition-colors"
       data-action="h3"
@@ -64,6 +73,7 @@
       h3
     </button>
     <button
+      type="button"
       title={gettext("Link")}
       class="flex w-10 h-10 p-2 items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors"
       data-action="link"
@@ -71,6 +81,7 @@
       {render_icon(:link)}
     </button>
     <button
+      type="button"
       title={gettext("Image")}
       class="flex w-10 h-10 p-2 items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors"
       data-action="img"
@@ -78,6 +89,7 @@
       {render_icon(:photograph)}
     </button>
     <button
+      type="button"
       title={gettext("Button")}
       class="flex w-10 h-10 p-2 items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors"
       data-action="button"
@@ -85,6 +97,7 @@
       {render_icon(:button_alt)}
     </button>
     <button
+      type="button"
       title={gettext("Spacer")}
       class="flex w-10 h-10 p-2 items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors"
       data-action="hr"
@@ -92,6 +105,7 @@
       {render_icon(:horizontal_rule)}
     </button>
     <button
+      type="button"
       title={gettext("Insert Code")}
       class="flex w-10 h-10 p-2 items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors"
       data-action="liquid"
@@ -100,6 +114,7 @@
     </button>
     <div class="flex-grow"></div>
     <button
+      type="button"
       title={gettext("Preview")}
       class="flex w-10 h-10 p-2 items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors"
       data-action="toggle-preview"

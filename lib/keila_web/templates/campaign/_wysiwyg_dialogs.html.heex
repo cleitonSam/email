@@ -55,10 +55,10 @@
           </div>
         </div>
         <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-800/50">
-          <button class="button button--text" @click.prevent="$dispatch('x-cancel')">
+          <button type="button" class="button button--text" @click.prevent="$dispatch('x-cancel')">
             {gettext("Cancel")}
           </button>
-          <button class="button button--cta" @click.prevent="$dispatch('x-confirm')">
+          <button type="button" class="button button--cta" @click.prevent="$dispatch('x-confirm')">
             {gettext("Ok")}
           </button>
         </div>
@@ -155,10 +155,10 @@
           </div>
         </div>
         <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-800/50">
-          <button class="button button--text" @click.prevent="$dispatch('x-cancel')">
+          <button type="button" class="button button--text" @click.prevent="$dispatch('x-cancel')">
             {gettext("Cancel")}
           </button>
-          <button class="button button--cta" @click.prevent="$dispatch('x-confirm')">
+          <button type="button" class="button button--cta" @click.prevent="$dispatch('x-confirm')">
             {gettext("Ok")}
           </button>
         </div>
@@ -202,10 +202,10 @@
           </div>
         </div>
         <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-800/50">
-          <button class="button button--text" @click.prevent="$dispatch('x-cancel')">
+          <button type="button" class="button button--text" @click.prevent="$dispatch('x-cancel')">
             {gettext("Cancel")}
           </button>
-          <button class="button button--cta" @click.prevent="$dispatch('x-confirm')">
+          <button type="button" class="button button--cta" @click.prevent="$dispatch('x-confirm')">
             {gettext("Ok")}
           </button>
         </div>
@@ -242,10 +242,10 @@
           </div>
         </div>
         <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-800/50">
-          <button class="button button--text" @click.prevent="$dispatch('x-cancel')">
+          <button type="button" class="button button--text" @click.prevent="$dispatch('x-cancel')">
             {gettext("Cancel")}
           </button>
-          <button class="button button--cta" @click.prevent="$dispatch('x-confirm')">
+          <button type="button" class="button button--cta" @click.prevent="$dispatch('x-confirm')">
             {gettext("Ok")}
           </button>
         </div>
@@ -264,18 +264,21 @@
             <p class="text-xs text-gray-500 mb-2">{gettext("You can get started by trying one of these examples:")}</p>
             <div class="flex flex-wrap gap-2">
               <button
+                type="button"
                 class="text-xs px-3 py-1.5 rounded-lg bg-gray-700/50 text-gray-300 hover:text-fluxo-400 hover:bg-fluxo-500/10 transition-colors"
                 @click.stop="liquid.text = '{{ contact.first_name }}'"
               >
                 {gettext("Contact first name")}
               </button>
               <button
+                type="button"
                 class="text-xs px-3 py-1.5 rounded-lg bg-gray-700/50 text-gray-300 hover:text-fluxo-400 hover:bg-fluxo-500/10 transition-colors"
                 @click.stop="liquid.text = '{{ contact.email }}'"
               >
                 {gettext("Contact email address")}
               </button>
               <button
+                type="button"
                 class="text-xs px-3 py-1.5 rounded-lg bg-gray-700/50 text-gray-300 hover:text-fluxo-400 hover:bg-fluxo-500/10 transition-colors"
                 @click.stop="liquid.text = 'Hello {{ contact.first_name | default: &quot;there&quot; }}!'"
               >

@@ -1,6 +1,8 @@
 export default class Button {
   constructor({ data, block }) {
-    this.data = (data.label || data.url) ? data : { label: null, url: null, centered: false }
+    // Botão novo nasce com um rótulo visível em vez de vazio/"null", pra não
+    // parecer um bloco quebrado. O usuário edita o texto direto no botão.
+    this.data = (data.label || data.url) ? data : { label: "Clique aqui", url: "", centered: false }
     this.block = block
 
     this.wrapper = document.createElement("div")
@@ -18,14 +20,14 @@ export default class Button {
     this.button.className = "button-contenteditable"
     this.button.style = "margin:0!important"
     this.button.setAttribute("contenteditable", true)
-    this.button.innerHTML = this.data.label
+    this.button.innerHTML = this.data.label || ""
     this.wrapper.appendChild(this.button)
 
     this.linkEditor = document.createElement("input")
     this.linkEditor.setAttribute("type", "url")
     this.linkEditor.setAttribute("placeholder", "https://www.example.org")
     this.linkEditor.className = "text-xs mt-1 w-full bg-transparent border-1 border-gray-500 border-dashed"
-    this.linkEditor.value = this.data.url
+    this.linkEditor.value = this.data.url || ""
     this.wrapper.appendChild(this.linkEditor)
   }
 

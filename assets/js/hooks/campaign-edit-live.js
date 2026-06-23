@@ -16,6 +16,22 @@ const addImageFallback = (html) => {
   return html.replace(/<img\b/gi, `<img onerror="${handler}"`)
 }
 
+// O preview "lado a lado" ocupa ~metade da tela. Sem uma largura mínima, o
+// email de 600px reflui pra largura estreita do painel e as colunas do MJML
+// espremem o texto (1 caractere por linha). Forçamos a largura real do email
+// (>=640px) SÓ nesse iframe (#html-split-preview): o painel rola na horizontal
+// se for mais estreito, mas o layout fica fiel ao que o destinatário vê.
+// O preview fullscreen (#html-preview) tem toggle de dispositivo (desktop/
+// tablet/mobile) e por isso NÃO recebe essa largura mínima.
+const SPLIT_PREVIEW_FIX =
+  "<style>html,body{min-width:640px !important;margin:0 !important;}</style>"
+
+const forceEmailWidth = (html) => {
+  if (/<\/head>/i.test(html)) return html.replace(/<\/head>/i, `${SPLIT_PREVIEW_FIX}</head>`)
+  if (/<body[^>]*>/i.test(html)) return html.replace(/(<body[^>]*>)/i, `$1${SPLIT_PREVIEW_FIX}`)
+  return SPLIT_PREVIEW_FIX + html
+}
+
 const putHtmlPreview = (el) => {
   const raw = el.innerText
   if (!raw) return
@@ -27,11 +43,12 @@ const putHtmlPreview = (el) => {
 
   for (let i = 0; i < iframes.length; i++) {
     const iframe = iframes[i]
+    const out = iframe.id === "html-split-preview" ? forceEmailWidth(content) : content
     const scrollX = iframe.contentWindow.scrollX
     const scrollY = iframe.contentWindow.scrollY
     const doc = iframe.contentDocument
     doc.open()
-    doc.write(content)
+    doc.write(out)
     doc.close()
     iframe.contentWindow.scrollTo(scrollX, scrollY)
   }

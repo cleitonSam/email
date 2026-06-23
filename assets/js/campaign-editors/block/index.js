@@ -132,5 +132,13 @@ export default class BlockEditor {
       if (!maybeOpen) editor.toolbar.open()
       maybeOpen = true
     })
+
+    // Toque (celular/tablet): não há mouseenter, então a toolbar de blocos
+    // nunca abria. Abrir no toque torna o editor utilizável no mobile. Não
+    // mexe em maybeOpen (flag do hover) pra não ficar travada aberta no touch.
+    place.addEventListener("pointerup", (e) => {
+      if (e.pointerType === "mouse") return
+      editor.toolbar.open()
+    })
   }
 }

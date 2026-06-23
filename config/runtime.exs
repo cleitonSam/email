@@ -5,7 +5,11 @@ require Keila
 {:ok, _} = Application.ensure_all_started(:tls_certificate_check)
 
 exit_from_exception = fn exception, message ->
-  Logger.error(exception.message)
+  # Usa Exception.message/1 (protocolo) em vez de `exception.message`: nem toda
+  # exceção tem o campo struct :message (ex.: System.EnvError quando uma variável
+  # obrigatória como DB_URL não está definida), e o acesso direto quebraria com
+  # KeyError, escondendo a mensagem útil.
+  Logger.error(Exception.message(exception))
   Logger.error(message)
   Logger.flush()
   System.halt(1)

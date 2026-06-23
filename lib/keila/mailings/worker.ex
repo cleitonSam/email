@@ -37,6 +37,8 @@ defmodule Keila.Mailings.Worker do
       recipient ->
         with :ok <- check_sender_rate_limit(recipient, job),
              :ok <- ensure_valid_recipient(recipient),
+             :ok <- ensure_empresa_pode_enviar(recipient),
+             :ok <- ensure_nao_suprimido(recipient),
              email <- Builder.build(recipient.campaign, recipient, %{}),
              :ok <- ensure_valid_email(email) do
           Keila.Mailer.deliver_with_sender(email, recipient.campaign.sender)
@@ -61,6 +63,27 @@ defmodule Keila.Mailings.Worker do
     do: {:error, :already_sent}
 
   defp ensure_valid_recipient(_recipient), do: {:error, :invalid_contact}
+
+  # Gate de KYB/empresa (regra inegociável nº 7): empresa bloqueada/cancelada ou
+  # com KYB não-aprovado não dispara. Projeto sem empresa não é afetado.
+  defp ensure_empresa_pode_enviar(%{campaign: %{project_id: project_id}}) do
+    if Keila.Empresas.projeto_pode_enviar?(project_id),
+      do: :ok,
+      else: {:error, :empresa_bloqueada}
+  end
+
+  defp ensure_empresa_pode_enviar(_recipient), do: :ok
+
+  # Trava de supressão (regra inegociável nº 3): nunca envia para e-mail suprimido
+  # (hard bounce permanente, complaint, opt-out ou bloqueio global).
+  defp ensure_nao_suprimido(%{contact: %{email: email}, campaign: %{project_id: project_id}})
+       when is_binary(email) do
+    if Keila.Suppressions.suprimido?(email, project_id),
+      do: {:error, :suprimido},
+      else: :ok
+  end
+
+  defp ensure_nao_suprimido(_recipient), do: :ok
 
   defp check_sender_rate_limit(recipient, job) do
     scheduling_requested_at = scheduling_requested_at(job)
@@ -170,6 +193,35 @@ defmodule Keila.Mailings.Worker do
     end)
 
     {:cancel, :invalid_contact}
+  end
+
+  # Envio bloqueado por governança da empresa (KYB pendente/rejeitado, empresa
+  # bloqueada/cancelada). Marca o recipient como falho e cancela o job — não há
+  # sentido em retentar enquanto o gate não for liberado pelo Master.
+  defp handle_result({:error, :empresa_bloqueada}, recipient, _job) do
+    Repo.transaction(fn ->
+      recipient
+      |> set_recipient_failed_query()
+      |> Repo.update_all([])
+    end)
+
+    Logger.info(
+      "Envio bloqueado (empresa não liberada) para campanha #{recipient.campaign.id}, recipient #{recipient.id}."
+    )
+
+    {:cancel, :empresa_bloqueada}
+  end
+
+  # Destinatário na lista de supressão (opt-out/hard bounce/complaint/bloqueio
+  # global). Marca como falho e cancela — nunca reenviar para suprimido.
+  defp handle_result({:error, :suprimido}, recipient, _job) do
+    Repo.transaction(fn ->
+      recipient
+      |> set_recipient_failed_query()
+      |> Repo.update_all([])
+    end)
+
+    {:cancel, :suprimido}
   end
 
   # Invalid email address (returned by Keila.Mailer)

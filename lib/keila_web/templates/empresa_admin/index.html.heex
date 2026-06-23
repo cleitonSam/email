@@ -29,8 +29,9 @@
             <th class="px-6 py-4 text-sm font-semibold text-gray-300">{dgettext("admin", "Empresa")}</th>
             <th class="px-6 py-4 text-sm font-semibold text-gray-300 hidden md:table-cell">{dgettext("admin", "Responsável")}</th>
             <th class="px-6 py-4 text-sm font-semibold text-gray-300">{dgettext("admin", "Status")}</th>
+            <th class="px-6 py-4 text-sm font-semibold text-gray-300">{dgettext("admin", "KYB")}</th>
             <th class="px-6 py-4 text-sm font-semibold text-gray-300 hidden sm:table-cell">{dgettext("admin", "Cadastrada")}</th>
-            <th class="px-6 py-4 text-sm font-semibold text-gray-300 w-44"></th>
+            <th class="px-6 py-4 text-sm font-semibold text-gray-300 w-72"></th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-800/30">
@@ -48,15 +49,56 @@
                   {status_label(empresa.status)}
                 </span>
               </td>
+              <td class="px-6 py-4">
+                <span
+                  class={"inline-block px-2.5 py-1 rounded-full text-xs font-medium border #{kyb_classes(empresa.kyb_status)}"}
+                  title={empresa.kyb_motivo_rejeicao}
+                >
+                  {kyb_label(empresa.kyb_status)}
+                </span>
+              </td>
               <td class="px-6 py-4 hidden sm:table-cell">
                 <span class="text-gray-400 text-sm">{format_date(empresa.inserted_at)}</span>
               </td>
               <td class="px-6 py-4">
-                <.form for={%{}} action={Routes.empresa_admin_path(@conn, :resend, empresa.id)} method="post">
-                  <button type="submit" class="button button--small">
-                    {dgettext("admin", "Reenviar convite")}
-                  </button>
-                </.form>
+                <div class="flex flex-wrap items-center gap-2">
+                  <%= if empresa.kyb_status != "aprovado" do %>
+                    <.form for={%{}} action={Routes.empresa_admin_path(@conn, :aprovar_kyb, empresa.id)} method="post">
+                      <button type="submit" class="button button--small button--cta" title={dgettext("admin", "Aprovar KYB e liberar envio")}>
+                        {dgettext("admin", "Aprovar KYB")}
+                      </button>
+                    </.form>
+                  <% end %>
+                  <%= if empresa.kyb_status == "pendente" do %>
+                    <.form
+                      for={%{}}
+                      action={Routes.empresa_admin_path(@conn, :rejeitar_kyb, empresa.id)}
+                      method="post"
+                      onsubmit="this.motivo.value = window.prompt('Motivo da rejeição do KYB:') || ''; return this.motivo.value !== '';"
+                    >
+                      <input type="hidden" name="motivo" value="" />
+                      <button type="submit" class="button button--small">
+                        {dgettext("admin", "Rejeitar")}
+                      </button>
+                    </.form>
+                  <% end %>
+                  <%= if empresa.status == "bloqueada" do %>
+                    <.form for={%{}} action={Routes.empresa_admin_path(@conn, :desbloquear, empresa.id)} method="post">
+                      <button type="submit" class="button button--small">{dgettext("admin", "Reativar")}</button>
+                    </.form>
+                  <% else %>
+                    <.form for={%{}} action={Routes.empresa_admin_path(@conn, :bloquear, empresa.id)} method="post">
+                      <button type="submit" class="button button--small" title={dgettext("admin", "Suspender disparos")}>
+                        {dgettext("admin", "Bloquear")}
+                      </button>
+                    </.form>
+                  <% end %>
+                  <.form for={%{}} action={Routes.empresa_admin_path(@conn, :resend, empresa.id)} method="post">
+                    <button type="submit" class="button button--small">
+                      {dgettext("admin", "Reenviar convite")}
+                    </button>
+                  </.form>
+                </div>
               </td>
             </tr>
           <% end %>

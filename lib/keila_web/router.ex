@@ -125,6 +125,10 @@ defmodule KeilaWeb.Router do
     get "/admin/empresas/nova", EmpresaAdminController, :new
     post "/admin/empresas", EmpresaAdminController, :create
     post "/admin/empresas/:id/reenviar-convite", EmpresaAdminController, :resend
+    post "/admin/empresas/:id/kyb/aprovar", EmpresaAdminController, :aprovar_kyb
+    post "/admin/empresas/:id/kyb/rejeitar", EmpresaAdminController, :rejeitar_kyb
+    post "/admin/empresas/:id/bloquear", EmpresaAdminController, :bloquear
+    post "/admin/empresas/:id/desbloquear", EmpresaAdminController, :desbloquear
 
     resources "/admin/shared-senders", SharedSenderAdminController
     get "/admin/shared-senders/:id/delete", SharedSenderAdminController, :delete_confirmation

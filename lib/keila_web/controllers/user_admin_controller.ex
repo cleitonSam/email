@@ -125,6 +125,14 @@ defmodule KeilaWeb.UserAdminController do
   end
 
   def impersonate(conn, %{"id" => user_id}) do
+    # Registra o "modo suporte" ANTES de trocar a sessão, com o master como ator
+    # (regra inegociável nº 8: todo acesso do Master é rastreado).
+    Keila.Auditoria.registrar_conn(conn, "user.impersonate",
+      entity_type: "user",
+      entity_id: user_id,
+      metadata: %{target_user_id: to_string(user_id)}
+    )
+
     conn
     |> KeilaWeb.AuthSession.end_auth_session()
     |> KeilaWeb.AuthSession.start_auth_session(user_id)

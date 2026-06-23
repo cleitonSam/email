@@ -25,6 +25,7 @@ defmodule Keila.Mailings.RecipientActions.HardBounce do
 
   def update_contact(%Recipient{contact_id: contact_id}) do
     Keila.Contacts.update_contact_status(contact_id, :unreachable)
+    Keila.Mailings.RecipientActions.suprimir_contato(contact_id, "hard_bounce", "webhook")
   end
 
   defp log_event(%Recipient{id: recipient_id, contact_id: contact_id}, data) do

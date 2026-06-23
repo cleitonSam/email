@@ -20,9 +20,24 @@ defmodule KeilaWeb.EmpresaAdminView do
 
   def status_label("ativa"), do: "Ativa"
   def status_label("convidada"), do: "Convite enviado"
+  def status_label("rascunho"), do: "Rascunho"
+  def status_label("bloqueada"), do: "Bloqueada"
+  def status_label("cancelada"), do: "Cancelada"
   def status_label(other), do: other
 
   def status_classes("ativa"), do: "bg-emerald-500/15 text-emerald-300 border-emerald-500/20"
   def status_classes("convidada"), do: "bg-amber-500/15 text-amber-300 border-amber-500/20"
+  def status_classes("bloqueada"), do: "bg-red-500/15 text-red-300 border-red-500/20"
+  def status_classes("cancelada"), do: "bg-red-500/15 text-red-300 border-red-500/20"
   def status_classes(_), do: "bg-gray-500/15 text-gray-300 border-gray-500/20"
+
+  def kyb_label("aprovado"), do: "KYB aprovado"
+  def kyb_label("pendente"), do: "KYB pendente"
+  def kyb_label("rejeitado"), do: "KYB rejeitado"
+  def kyb_label(_), do: "KYB pendente"
+
+  def kyb_classes("aprovado"), do: "bg-emerald-500/15 text-emerald-300 border-emerald-500/20"
+  def kyb_classes("pendente"), do: "bg-amber-500/15 text-amber-300 border-amber-500/20"
+  def kyb_classes("rejeitado"), do: "bg-red-500/15 text-red-300 border-red-500/20"
+  def kyb_classes(_), do: "bg-amber-500/15 text-amber-300 border-amber-500/20"
 end

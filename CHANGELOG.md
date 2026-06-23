@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### Governança multiempresa — Sprint 1 (fundação inegociável)
+- **KYB (Know Your Business):** empresas agora têm gate de KYB. Sem `kyb_status = "aprovado"` a empresa **não dispara** (regra inegociável nº 7). O Master aprova/rejeita/bloqueia/reativa pela tela `/admin/empresas`. Empresas pré-existentes foram migradas como aprovadas (grandfathering).
+- **Cadastro de empresa ampliado:** responsável, telefone, segmento, site, plano, limites diário/mensal, domínio principal, subdomínio de envio, DPO/Encarregado, observações e `criado_por`.
+- **Trilha de auditoria (`audit_logs`):** toda ação crítica é registrada (impersonation/modo suporte, cadastro e KYB de empresa, bloqueio) — regra inegociável nº 8. Módulo `Keila.Auditoria`.
+- **Lista de supressão (`suppressions`):** trava dura de envio por e-mail, em escopo por empresa **e** global (regra inegociável nº 3). Hard bounce, complaint e descadastro agora alimentam a supressão automaticamente. Módulo `Keila.Suppressions`.
+- **Gate de envio no worker:** antes de cada disparo, o worker verifica KYB/empresa liberada e ausência na supressão; caso contrário cancela o envio sem retry.
+
 ## Version 0.19.0
 
 > 👋 Welcome emails, Phoenix 1.7/LiveView 1.x upgrade, protected unsubscribe links, Bulgarian and Hungarian translations

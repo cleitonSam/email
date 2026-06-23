@@ -102,4 +102,91 @@ defmodule Keila.ReleaseTasks do
       end)
     end
   end
+
+  @doc """
+  Cria (ou promove) um usuário a **Master Admin** (super admin global), com a
+  permissão `administer_keila` no grupo raiz. É quem gerencia as empresas,
+  valida KYB e tem acesso global.
+
+  Idempotente: se o usuário já existir, apenas concede o papel de admin.
+
+      bin/keila eval 'Keila.ReleaseTasks.create_admin("admin@fluxo.com", "SenhaForte123")'
+
+  Em produção (Docker), use o script `scripts/create_admin.sh EMAIL SENHA`.
+  """
+  def create_admin(email, password)
+      when is_binary(email) and is_binary(password) do
+    Ecto.Migrator.with_repo(Keila.Repo, fn _repo ->
+      import Ecto.Query
+      alias Keila.{Repo, Auth}
+      alias Keila.Auth.{Role, RolePermission, Permission}
+
+      user =
+        case Auth.find_user_by_email(email) do
+          nil ->
+            case Auth.create_user(%{email: email, password: password},
+                   skip_activation_email: true
+                 ) do
+              {:ok, user} ->
+                Auth.activate_user(user.id)
+                IO.puts("✓ Usuário criado e ativado: #{email}")
+                user
+
+              {:error, changeset} ->
+                errors =
+                  Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
+                    Enum.reduce(opts, msg, fn {k, v}, acc ->
+                      String.replace(acc, "%{#{k}}", to_string(v))
+                    end)
+                  end)
+
+                IO.puts("✗ Erro ao criar usuário: #{inspect(errors)}")
+                nil
+            end
+
+          existing ->
+            IO.puts("ℹ Usuário já existe: #{email} — concedendo acesso de admin")
+            existing
+        end
+
+      # Localiza o papel que concede `administer_keila` (criado pelos seeds).
+      role_id =
+        from(r in Role,
+          join: rp in RolePermission,
+          on: rp.role_id == r.id,
+          join: p in Permission,
+          on: p.id == rp.permission_id,
+          where: p.name == "administer_keila",
+          select: r.id,
+          limit: 1
+        )
+        |> Repo.one()
+
+      cond do
+        is_nil(user) ->
+          {:error, :user_not_created}
+
+        is_nil(role_id) ->
+          IO.puts(
+            "✗ Papel de admin não encontrado. Rode os seeds primeiro: bin/keila eval 'Keila.ReleaseTasks.init()'"
+          )
+
+          {:error, :admin_role_missing}
+
+        true ->
+          root_group = Auth.root_group()
+          :ok = Auth.add_user_group_role(user.id, root_group.id, role_id)
+
+          _ =
+            Keila.Auditoria.registrar("user.promovido_admin",
+              actor_email: "release_task",
+              entity: user,
+              metadata: %{email: email}
+            )
+
+          IO.puts("✓ #{email} agora é Master Admin (administer_keila no grupo raiz).")
+          {:ok, :done}
+      end
+    end)
+  end
 end

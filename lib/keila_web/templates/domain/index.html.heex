@@ -1,0 +1,107 @@
+<div class="container py-8 sm:py-11 mb-8">
+  <div class="flex items-center gap-6 mb-6">
+    <div class="h-12 w-12 rounded-2xl bg-gradient-to-br from-fluxo-400 to-accent-500 flex items-center justify-center shadow-lg shadow-fluxo-500/20">
+      <span class="inline-flex h-6 w-6 text-white">{render_icon(:globe)}</span>
+    </div>
+    <div class="flex-grow">
+      <h1 class="text-3xl sm:text-4xl font-bold text-white">{gettext("Domínios de envio")}</h1>
+      <p class="text-gray-400 text-sm mt-1">
+        {gettext("Valide o DNS (SPF/DMARC) do seu domínio. Sem domínio validado, o envio fica bloqueado.")}
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="container space-y-8">
+  <div class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6">
+    <h2 class="text-lg font-semibold text-white mb-4">{gettext("Cadastrar domínio")}</h2>
+
+    <.form
+      :let={f}
+      for={@changeset}
+      action={Routes.domain_path(@conn, :create, @current_project.id)}
+      method="post"
+      class="flex flex-col sm:flex-row gap-3 sm:items-end"
+    >
+      <div class="flex-grow">
+        <label class="block text-sm text-gray-300 mb-1">{gettext("Domínio")}</label>
+        {text_input(f, :domain,
+          placeholder: "empresa.com.br",
+          class: "w-full rounded-lg bg-gray-800/60 border border-gray-700 px-3 py-2 text-gray-100"
+        )}
+        <%= for {msg, _} <- Keyword.get_values(f.errors, :domain) do %>
+          <span class="text-red-400 text-xs">{msg}</span>
+        <% end %>
+      </div>
+      <div class="w-full sm:w-48">
+        <label class="block text-sm text-gray-300 mb-1">{gettext("Seletor DKIM (opcional)")}</label>
+        {text_input(f, :dkim_selector,
+          placeholder: "default",
+          class: "w-full rounded-lg bg-gray-800/60 border border-gray-700 px-3 py-2 text-gray-100"
+        )}
+      </div>
+      <button type="submit" class="button button--cta">{gettext("Cadastrar e verificar")}</button>
+    </.form>
+
+    <div class="mt-4 text-xs text-gray-500 space-y-1">
+      <p>{gettext("Publique no DNS do domínio, antes de verificar:")}</p>
+      <p>• SPF — registro <code class="text-gray-300">TXT</code> em <code class="text-gray-300">@</code> contendo <code class="text-gray-300">v=spf1 ...</code></p>
+      <p>• DMARC — registro <code class="text-gray-300">TXT</code> em <code class="text-gray-300">_dmarc</code> contendo <code class="text-gray-300">v=DMARC1; p=none; ...</code></p>
+    </div>
+  </div>
+
+  <%= if @domains == [] do %>
+    <div class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-12 text-center">
+      <p class="text-gray-400">{gettext("Nenhum domínio cadastrado ainda.")}</p>
+    </div>
+  <% else %>
+    <div class="bg-gray-900/60 backdrop-blur-sm border border-gray-800/50 rounded-2xl overflow-hidden">
+      <table class="w-full">
+        <thead>
+          <tr class="text-left border-b border-gray-800/30 bg-gray-800/20">
+            <th class="px-6 py-4 text-sm font-semibold text-gray-300">{gettext("Domínio")}</th>
+            <th class="px-6 py-4 text-sm font-semibold text-gray-300">{gettext("Status")}</th>
+            <th class="px-6 py-4 text-sm font-semibold text-gray-300 text-center">SPF</th>
+            <th class="px-6 py-4 text-sm font-semibold text-gray-300 text-center">DKIM</th>
+            <th class="px-6 py-4 text-sm font-semibold text-gray-300 text-center">DMARC</th>
+            <th class="px-6 py-4 text-sm font-semibold text-gray-300 hidden sm:table-cell">{gettext("Última checagem")}</th>
+            <th class="px-6 py-4 text-sm font-semibold text-gray-300 w-48"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-800/30">
+          <%= for domain <- @domains do %>
+            <tr class="hover:bg-gray-800/30 transition-colors">
+              <td class="px-6 py-4">
+                <span class="text-gray-100 font-medium">{domain.domain}</span>
+                <%= if domain.last_error do %>
+                  <span class="block text-xs text-red-400">{domain.last_error}</span>
+                <% end %>
+              </td>
+              <td class="px-6 py-4">
+                <span class={"inline-block px-2.5 py-1 rounded-full text-xs font-medium border #{status_classes(domain.status)}"}>
+                  {status_label(domain.status)}
+                </span>
+              </td>
+              <td class={"px-6 py-4 text-center font-bold #{check_classes(domain.spf_ok)}"}>{check_icon(domain.spf_ok)}</td>
+              <td class={"px-6 py-4 text-center font-bold #{check_classes(domain.dkim_ok)}"}>{check_icon(domain.dkim_ok)}</td>
+              <td class={"px-6 py-4 text-center font-bold #{check_classes(domain.dmarc_ok)}"}>{check_icon(domain.dmarc_ok)}</td>
+              <td class="px-6 py-4 hidden sm:table-cell">
+                <span class="text-gray-400 text-sm">{format_date(domain.last_checked_at)}</span>
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex flex-wrap items-center gap-2">
+                  <.form for={%{}} action={Routes.domain_path(@conn, :verify, @current_project.id, domain.id)} method="post">
+                    <button type="submit" class="button button--small button--cta">{gettext("Verificar")}</button>
+                  </.form>
+                  <.form for={%{}} action={Routes.domain_path(@conn, :delete, @current_project.id, domain.id)} method="post">
+                    <button type="submit" class="button button--small">{gettext("Remover")}</button>
+                  </.form>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+</div>

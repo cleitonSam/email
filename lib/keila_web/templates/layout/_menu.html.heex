@@ -64,6 +64,11 @@
               icon: :speakerphone,
               indent: 1
             )}
+            {menu_link(@conn, :domain, :index, [@current_project.id], gettext("Domínios"),
+              exact: false,
+              icon: :globe,
+              indent: 1
+            )}
           <% end %>
 
           <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-600 px-3 pt-4 pb-1">{gettext("Audience")}</p>

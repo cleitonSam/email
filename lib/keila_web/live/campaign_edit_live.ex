@@ -135,8 +135,7 @@ defmodule KeilaWeb.CampaignEditLive do
     params = socket.assigns.changeset.params || %{}
 
     with {:ok, campaign} <- Mailings.update_campaign(socket.assigns.campaign.id, params, true),
-         false <- is_nil(campaign.sender_id),
-         true <- Mailings.campaign_has_unsubscribe?(Mailings.get_campaign(campaign.id)) do
+         :ok <- Mailings.deliverable_check(campaign.id) do
       Mailings.deliver_campaign_async(campaign.id)
 
       {:noreply,
@@ -144,31 +143,41 @@ defmodule KeilaWeb.CampaignEditLive do
          to: Routes.campaign_path(socket, :stats, campaign.project_id, campaign.id)
        )}
     else
-      true ->
-        changeset =
-          socket.assigns.changeset
-          |> Ecto.Changeset.add_error(:sender_id, gettext("You must select a sender before sending."))
-          |> Map.put(:action, :update)
-
+      {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, put_changesets(socket, changeset)}
 
-      false ->
+      {:error, reason} ->
+        {field, message} = deliverable_error(reason)
+
         changeset =
           socket.assigns.changeset
-          |> Ecto.Changeset.add_error(
-            :html_body,
-            gettext(
-              "Adicione um link de descadastro no corpo do e-mail (ex.: {{ unsubscribe_link }}) antes de enviar."
-            )
-          )
+          |> Ecto.Changeset.add_error(field, message)
           |> Map.put(:action, :update)
 
-        {:noreply, put_changesets(socket, changeset)}
-
-      {:error, changeset} ->
         {:noreply, put_changesets(socket, changeset)}
     end
   end
+
+  # Traduz o motivo de bloqueio de envio em (campo, mensagem) para o formulário.
+  defp deliverable_error(:no_sender),
+    do: {:sender_id, gettext("You must select a sender before sending.")}
+
+  defp deliverable_error(:no_unsubscribe_link),
+    do:
+      {:html_body,
+       gettext(
+         "Adicione um link de descadastro no corpo do e-mail (ex.: {{ unsubscribe_link }}) antes de enviar."
+       )}
+
+  defp deliverable_error(:domain_not_verified),
+    do:
+      {:sender_id,
+       gettext(
+         "O domínio do remetente ainda não foi validado (SPF/DMARC). Verifique o domínio antes de enviar."
+       )}
+
+  defp deliverable_error(_),
+    do: {:sender_id, gettext("Não foi possível enviar a campanha.")}
 
   def handle_event("schedule", params, socket) do
     scheduled_for =

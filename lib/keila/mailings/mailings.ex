@@ -602,12 +602,19 @@ defmodule Keila.Mailings do
               Repo.rollback(:no_sender)
 
             campaign = %Campaign{} ->
-              # Gate inegociável: sem link de descadastro no corpo, não envia
-              # (regra nº 2). O cabeçalho List-Unsubscribe já é sempre injetado.
-              if campaign_has_unsubscribe?(campaign) do
-                do_deliver_campaign(campaign)
-              else
-                Repo.rollback(:no_unsubscribe_link)
+              # Gates inegociáveis antes de enviar:
+              #  - regra nº 2: link de descadastro no corpo
+              #  - regra nº 1: domínio do remetente validado (DNS)
+              # O cabeçalho List-Unsubscribe one-click já é sempre injetado.
+              cond do
+                not campaign_has_unsubscribe?(campaign) ->
+                  Repo.rollback(:no_unsubscribe_link)
+
+                not sender_domain_liberado?(campaign) ->
+                  Repo.rollback(:domain_not_verified)
+
+                true ->
+                  do_deliver_campaign(campaign)
               end
           end
         end,
@@ -758,9 +765,19 @@ defmodule Keila.Mailings do
     from(c in Campaign,
       where: c.id == ^id,
       lock: "FOR NO KEY UPDATE",
-      preload: [:segment, :template]
+      preload: [:segment, :template, :sender]
     )
     |> Repo.one()
+  end
+
+  defp sender_domain_liberado?(%Campaign{project_id: project_id, sender: sender}) do
+    from_email =
+      case sender do
+        %{from_email: email} -> email
+        _ -> nil
+      end
+
+    Keila.Deliverability.dominio_liberado?(project_id, from_email)
   end
 
   defp do_deliver_campaign(campaign) do
@@ -1095,6 +1112,42 @@ defmodule Keila.Mailings do
   end
 
   defp json_to_text(_), do: ""
+
+  @doc """
+  Verifica se uma campanha está apta a ser enviada, aplicando os gates de
+  entregabilidade (sem efeitos colaterais). Usado pela UI/API para dar feedback
+  amigável antes de disparar. Os mesmos gates são reaplicados (defesa em
+  profundidade) dentro de `deliver_campaign`.
+
+  Retorna `:ok` ou `{:error, reason}` com:
+    - `:not_found` — campanha inexistente
+    - `:no_sender` — sem remetente
+    - `:no_unsubscribe_link` — sem descadastro no corpo (regra nº 2)
+    - `:domain_not_verified` — domínio do remetente não validado (regra nº 1)
+  """
+  @spec deliverable_check(Campaign.id()) :: :ok | {:error, atom()}
+  def deliverable_check(id) when is_id(id) do
+    campaign =
+      from(c in Campaign, where: c.id == ^id, preload: [:template, :sender])
+      |> Repo.one()
+
+    cond do
+      is_nil(campaign) ->
+        {:error, :not_found}
+
+      is_nil(campaign.sender_id) ->
+        {:error, :no_sender}
+
+      not campaign_has_unsubscribe?(campaign) ->
+        {:error, :no_unsubscribe_link}
+
+      not sender_domain_liberado?(campaign) ->
+        {:error, :domain_not_verified}
+
+      true ->
+        :ok
+    end
+  end
 
   @doc """
   Returns a signed unsubscribe link for the given project id and recipient.

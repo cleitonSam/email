@@ -2,8 +2,10 @@
 
 ## Unreleased
 
-### Entregabilidade — Sprint 2 (em andamento)
+### Entregabilidade — Sprint 2
+- **Gate de DNS por domínio (regra inegociável nº 1):** nova tela **Domínios de envio** (`/projects/:id/domains`) onde a empresa cadastra o domínio do remetente e verifica **SPF/DMARC** (e DKIM best-effort) via DNS. Módulo `Keila.Deliverability` + tabela `email_domains`. O envio consulta o gate: domínio cadastrado e **não verificado bloqueia**; sem registro, o comportamento é progressivo (libera, salvo modo estrito `REQUIRE_VERIFIED_DOMAIN=true`) para não quebrar projetos existentes.
 - **Enforce de descadastro no corpo (regra inegociável nº 2):** uma campanha sem link/menção de descadastro no corpo (ou no template) **não pode ser enviada nem agendada**. Validação amigável no editor + gate forte em `deliver_campaign` (cobre envio manual, agendado e via API). O cabeçalho `List-Unsubscribe` one-click continua sempre presente.
+- Os gates de envio foram centralizados em `Mailings.deliverable_check/1` (sem efeitos colaterais) e reaplicados dentro de `deliver_campaign` (defesa em profundidade).
 
 ### Governança multiempresa — Sprint 1 (fundação inegociável)
 - **KYB (Know Your Business):** empresas agora têm gate de KYB. Sem `kyb_status = "aprovado"` a empresa **não dispara** (regra inegociável nº 7). O Master aprova/rejeita/bloqueia/reativa pela tela `/admin/empresas`. Empresas pré-existentes foram migradas como aprovadas (grandfathering).

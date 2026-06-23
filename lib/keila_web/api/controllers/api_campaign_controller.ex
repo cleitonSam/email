@@ -127,27 +127,34 @@ defmodule KeilaWeb.ApiCampaignController do
     # TODO immediate feedback on missing sender or insufficient credits
     campaign = Mailings.get_project_campaign(project_id(conn), id)
 
-    cond do
-      is_nil(campaign) ->
-        Errors.send_404(conn)
+    if campaign do
+      case Mailings.deliverable_check(campaign.id) do
+        :ok ->
+          Mailings.deliver_campaign_async(campaign.id)
 
-      not Mailings.campaign_has_unsubscribe?(Mailings.get_campaign(campaign.id)) ->
-        conn
-        |> put_status(422)
-        |> json(%{
-          errors: [
-            %{detail: "Campaign body must contain an unsubscribe link before sending."}
-          ]
-        })
+          conn
+          |> put_status(202)
+          |> render("delivery_queued.json", %{campaign: campaign})
 
-      true ->
-        Mailings.deliver_campaign_async(campaign.id)
-
-        conn
-        |> put_status(202)
-        |> render("delivery_queued.json", %{campaign: campaign})
+        {:error, reason} ->
+          conn
+          |> put_status(422)
+          |> json(%{errors: [%{detail: deliver_error_detail(reason)}]})
+      end
+    else
+      Errors.send_404(conn)
     end
   end
+
+  defp deliver_error_detail(:no_sender), do: "Campaign has no sender."
+
+  defp deliver_error_detail(:no_unsubscribe_link),
+    do: "Campaign body must contain an unsubscribe link before sending."
+
+  defp deliver_error_detail(:domain_not_verified),
+    do: "Sender domain is not verified (SPF/DMARC)."
+
+  defp deliver_error_detail(_), do: "Campaign cannot be delivered."
 
   operation(:schedule,
     summary: "Schedule Campaign",

@@ -24,7 +24,18 @@ end
 if config_env() == :prod do
   # Database
   try do
-    db_url = System.fetch_env!("DB_URL")
+    raw_db_url = System.fetch_env!("DB_URL")
+
+    # URLs de Postgres costumam vir com query string (ex.: "?sslmode=disable").
+    # O parser de URL do Ecto não reconhece esse parâmetro e pode falhar ao
+    # conectar. Removemos a query string e controlamos SSL exclusivamente via
+    # DB_ENABLE_SSL (mais previsível e já documentado).
+    db_url =
+      case String.split(raw_db_url, "?", parts: 2) do
+        [base, _query] -> base
+        [base] -> base
+      end
+
     ssl = System.get_env("DB_ENABLE_SSL") in [1, "1", "true", "TRUE"]
 
     ssl_opts =

@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Entregabilidade — Sprint 2 (em andamento)
+- **Enforce de descadastro no corpo (regra inegociável nº 2):** uma campanha sem link/menção de descadastro no corpo (ou no template) **não pode ser enviada nem agendada**. Validação amigável no editor + gate forte em `deliver_campaign` (cobre envio manual, agendado e via API). O cabeçalho `List-Unsubscribe` one-click continua sempre presente.
+
 ### Governança multiempresa — Sprint 1 (fundação inegociável)
 - **KYB (Know Your Business):** empresas agora têm gate de KYB. Sem `kyb_status = "aprovado"` a empresa **não dispara** (regra inegociável nº 7). O Master aprova/rejeita/bloqueia/reativa pela tela `/admin/empresas`. Empresas pré-existentes foram migradas como aprovadas (grandfathering).
 - **Cadastro de empresa ampliado:** responsável, telefone, segmento, site, plano, limites diário/mensal, domínio principal, subdomínio de envio, DPO/Encarregado, observações e `criado_por`.

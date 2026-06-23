@@ -135,7 +135,8 @@ defmodule KeilaWeb.CampaignEditLive do
     params = socket.assigns.changeset.params || %{}
 
     with {:ok, campaign} <- Mailings.update_campaign(socket.assigns.campaign.id, params, true),
-         false <- is_nil(campaign.sender_id) do
+         false <- is_nil(campaign.sender_id),
+         true <- Mailings.campaign_has_unsubscribe?(Mailings.get_campaign(campaign.id)) do
       Mailings.deliver_campaign_async(campaign.id)
 
       {:noreply,
@@ -147,6 +148,19 @@ defmodule KeilaWeb.CampaignEditLive do
         changeset =
           socket.assigns.changeset
           |> Ecto.Changeset.add_error(:sender_id, gettext("You must select a sender before sending."))
+          |> Map.put(:action, :update)
+
+        {:noreply, put_changesets(socket, changeset)}
+
+      false ->
+        changeset =
+          socket.assigns.changeset
+          |> Ecto.Changeset.add_error(
+            :html_body,
+            gettext(
+              "Adicione um link de descadastro no corpo do e-mail (ex.: {{ unsubscribe_link }}) antes de enviar."
+            )
+          )
           |> Map.put(:action, :update)
 
         {:noreply, put_changesets(socket, changeset)}

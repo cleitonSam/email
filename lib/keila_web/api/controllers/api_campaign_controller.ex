@@ -127,14 +127,25 @@ defmodule KeilaWeb.ApiCampaignController do
     # TODO immediate feedback on missing sender or insufficient credits
     campaign = Mailings.get_project_campaign(project_id(conn), id)
 
-    if campaign do
-      Mailings.deliver_campaign_async(campaign.id)
+    cond do
+      is_nil(campaign) ->
+        Errors.send_404(conn)
 
-      conn
-      |> put_status(202)
-      |> render("delivery_queued.json", %{campaign: campaign})
-    else
-      Errors.send_404(conn)
+      not Mailings.campaign_has_unsubscribe?(Mailings.get_campaign(campaign.id)) ->
+        conn
+        |> put_status(422)
+        |> json(%{
+          errors: [
+            %{detail: "Campaign body must contain an unsubscribe link before sending."}
+          ]
+        })
+
+      true ->
+        Mailings.deliver_campaign_async(campaign.id)
+
+        conn
+        |> put_status(202)
+        |> render("delivery_queued.json", %{campaign: campaign})
     end
   end
 

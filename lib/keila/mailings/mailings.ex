@@ -595,9 +595,20 @@ defmodule Keila.Mailings do
       Repo.transaction(
         fn ->
           case get_and_lock_campaign(id) do
-            %Campaign{sent_at: sent_at} when not is_nil(sent_at) -> Repo.rollback(:already_sent)
-            %Campaign{sender_id: nil} -> Repo.rollback(:no_sender)
-            campaign = %Campaign{} -> do_deliver_campaign(campaign)
+            %Campaign{sent_at: sent_at} when not is_nil(sent_at) ->
+              Repo.rollback(:already_sent)
+
+            %Campaign{sender_id: nil} ->
+              Repo.rollback(:no_sender)
+
+            campaign = %Campaign{} ->
+              # Gate inegociável: sem link de descadastro no corpo, não envia
+              # (regra nº 2). O cabeçalho List-Unsubscribe já é sempre injetado.
+              if campaign_has_unsubscribe?(campaign) do
+                do_deliver_campaign(campaign)
+              else
+                Repo.rollback(:no_unsubscribe_link)
+              end
           end
         end,
         timeout: 60_000
@@ -744,7 +755,11 @@ defmodule Keila.Mailings do
   end
 
   defp get_and_lock_campaign(id) when is_id(id) do
-    from(c in Campaign, where: c.id == ^id, lock: "FOR NO KEY UPDATE", preload: :segment)
+    from(c in Campaign,
+      where: c.id == ^id,
+      lock: "FOR NO KEY UPDATE",
+      preload: [:segment, :template]
+    )
     |> Repo.one()
   end
 
@@ -1023,6 +1038,63 @@ defmodule Keila.Mailings do
     )
     |> Repo.one()
   end
+
+  # Marcadores aceitos como "tem descadastro no corpo". Generoso de propósito:
+  # o objetivo é bloquear campanhas SEM nenhum mecanismo de descadastro, não
+  # exigir uma sintaxe específica. O cabeçalho List-Unsubscribe (one-click) já é
+  # sempre injetado pelo Builder; aqui garantimos o link visível no corpo.
+  @unsubscribe_markers [
+    "unsubscribe_link",
+    "link_unsubscribe",
+    "/unsubscribe/",
+    "list-unsubscribe",
+    "unsubscribe",
+    "descadastr",
+    "cancelar inscri",
+    "cancelar a inscri"
+  ]
+
+  @doc """
+  Verifica se a campanha tem mecanismo de descadastro no corpo
+  (regra inegociável nº 2 do Prompt Mestre).
+
+  Procura o placeholder Liquid de descadastro ou um link/menção de descadastro
+  nos campos de corpo da campanha e no template associado (se carregado).
+  """
+  @spec campaign_has_unsubscribe?(Campaign.t()) :: boolean()
+  def campaign_has_unsubscribe?(%Campaign{} = campaign) do
+    template_body =
+      case campaign.template do
+        %{body: body} when is_binary(body) -> body
+        _ -> ""
+      end
+
+    text =
+      [
+        campaign.text_body,
+        campaign.html_body,
+        campaign.mjml_body,
+        json_to_text(campaign.json_body),
+        template_body
+      ]
+      |> Enum.reject(&is_nil/1)
+      |> Enum.join(" ")
+      |> String.downcase()
+
+    Enum.any?(@unsubscribe_markers, &String.contains?(text, &1))
+  end
+
+  defp json_to_text(nil), do: ""
+  defp json_to_text(value) when is_binary(value), do: value
+
+  defp json_to_text(value) when is_map(value) or is_list(value) do
+    case Jason.encode(value) do
+      {:ok, str} -> str
+      _ -> ""
+    end
+  end
+
+  defp json_to_text(_), do: ""
 
   @doc """
   Returns a signed unsubscribe link for the given project id and recipient.
